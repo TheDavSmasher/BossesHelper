@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Monocle;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
 using System;
@@ -12,6 +13,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require(BossesHelperModule.Instance.Metadata.Name + ":/Assets/LuaBossHelper/cutscene_helper") as LuaTable;
 
+        public LuaFunction attackFunction;
+
         private readonly string filepath;
 
         private LuaTable cutsceneEnv;
@@ -20,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly BossPuppet puppet;
 
-        private LuaFunction attackFunction;
+        private BossController.ControllerDelegates Delegates;
 
         public void LoadCutscene(string filename)
         {
@@ -32,7 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 { "player", player },
                 { "puppet", puppet },
-                { "cutsceneEntity", this },
+                { "bossAttack", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
             LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
@@ -55,17 +58,33 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossAttack(string filepath, Player player, BossPuppet puppet)
+        public BossAttack(string filepath, Player player, BossPuppet puppet, BossController.ControllerDelegates allDelegates)
         {
             this.filepath = filepath;
             this.player = player;
             this.puppet = puppet;
+            Delegates = allDelegates;
             LoadCutscene(filepath);
         }
 
         public IEnumerator Coroutine()
         {
             yield return LuaBossHelper.LuaCoroutineToIEnumerator((cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(attackFunction).ElementAtOrDefault(0) as LuaCoroutine);
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            Delegates.addEntity(entity);
+        }
+
+        public void AddEntity(Entity entity, string name, Action<Entity> action, float timer)
+        {
+            Delegates.addEntityWithTimer(entity, name, action, timer);
+        }
+
+        public void AddEntity(Entity entity, string flag, Action<Entity> action, bool state = true, bool resetFlag = true)
+        {
+            Delegates.addEntityWithFlagger(entity, flag, action, state, resetFlag);
         }
     }
 }

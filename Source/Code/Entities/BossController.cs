@@ -99,6 +99,28 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        public struct ControllerDelegates
+        {
+            public Action<Entity> addEntity;
+
+            public Action<Entity, string, Action<Entity>, float> addEntityWithTimer;
+
+            public Action<Entity, string, Action<Entity>, bool, bool> addEntityWithFlagger;
+
+            public Action<Entity> destroyEntity;
+
+            public Action destroyAll;
+
+            public ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, Action<Entity>, float> addEntityWithTimer, Action<Entity, string, Action<Entity>, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
+            {
+                this.addEntity = addEntity;
+                this.addEntityWithTimer = addEntityWithTimer;
+                this.addEntityWithFlagger = addEntityWithFlagger;
+                this.destroyEntity = destroyEntity;
+                this.destroyAll = destroyAll;
+            }
+        }
+
         public struct BossPhase
         {
             public int phaseID;
@@ -274,7 +296,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(8, 8)), '{', 24, 24), "firstBlock", DestroyEntity, 4f); },
             //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(80, 8)), '{', 24, 24), "blockDone", DestroyEntity); }
             //        ], [0.6f, 2f]);
-            userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet);
+            ControllerDelegates delegates = new ControllerDelegates(AddEntity, AddEntity, AddEntity, DestroyEntity, DestroyAll);
+            userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
         }
 
         private void PopulateEvents(Player player)
@@ -345,7 +368,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void AddEntity(Entity entity, string name)
+        public void AddEntity(Entity entity)
         {
             activeEntities.Add(entity);
             entity.Scene = Level;
@@ -390,12 +413,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntities.Clear();
         }
 
-        public Vector2 GetRoomOffset(Vector2 offset)
-        {
-            return Level.LevelOffset + offset;
-        }
-
-        private void PlayPuppetAnim(string anim)
+        public void PlayPuppetAnim(string anim)
         {
             Puppet.PlayBossAnim(anim);
         }

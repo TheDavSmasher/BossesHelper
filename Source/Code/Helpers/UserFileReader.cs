@@ -155,13 +155,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef)
+        public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef, BossController.ControllerDelegates delegates)
         {
             if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
                 {
-                    attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, playerRef, puppetRef));
+                    attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, playerRef, puppetRef, delegates));
                 }
             }
         }
