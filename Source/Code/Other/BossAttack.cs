@@ -71,20 +71,5 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             yield return LuaBossHelper.LuaCoroutineToIEnumerator((cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(attackFunction).ElementAtOrDefault(0) as LuaCoroutine);
         }
-
-        public void AddEntity(Entity entity)
-        {
-            Delegates.addEntity(entity);
-        }
-
-        public void AddEntity(Entity entity, string name, Action<Entity> action, float timer)
-        {
-            Delegates.addEntityWithTimer(entity, name, action, timer);
-        }
-
-        public void AddEntity(Entity entity, string flag, Action<Entity> action, bool state = true, bool resetFlag = true)
-        {
-            Delegates.addEntityWithFlagger(entity, flag, action, state, resetFlag);
-        }
     }
 }
