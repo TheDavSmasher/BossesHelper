@@ -85,7 +85,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 this.action = action;
             }
 
-            public static EntityFlagger DoActionOnEntityOnFlagState(LuaFunction action, Entity entity, string flag, bool state = true, bool resetFlag = true)
+            public static EntityFlagger DoActionOnEntityOnFlagState(LuaFunction action, Entity entity, string flag,
+                bool state = true, bool resetFlag = true)
             {
                 return new EntityFlagger(entity, flag, state, action, resetFlag);
             }
@@ -294,9 +295,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacks(Player player)
         {
-            //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(8, 8)), '{', 24, 24), "firstBlock", DestroyEntity, 4f); },
-            //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(80, 8)), '{', 24, 24), "blockDone", DestroyEntity); }
-            ControllerDelegates delegates = new ControllerDelegates(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
+            // () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(8, 8)),
+            // () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(80, 8))
+            ControllerDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
         }
 
