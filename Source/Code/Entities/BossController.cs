@@ -17,37 +17,37 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             public Entity target;
 
-            public float timer { get; set; }
+            public float Timer { get; set; }
 
             public string id;
 
             public LuaFunction action;
 
-            public bool done
+            public readonly bool Done
             {
                 get
                 {
-                    return timer <= 0;
+                    return Timer <= 0;
                 }
             }
 
             private EntityTimer(Entity target, float timer, LuaFunction action, string id)
             {
                 this.target = target;
-                this.timer = timer;
+                this.Timer = timer;
                 this.action = action;
                 this.id = id;
             }
 
             public EntityTimer UpdateTimer()
             {
-                timer -= Engine.DeltaTime;
+                Timer -= Engine.DeltaTime;
                 return this;
             }
 
             public void ExecuteEarly()
             {
-                timer = 0;
+                Timer = 0;
             }
 
             public static EntityTimer DoActionOnEntityDelay(LuaFunction action, Entity entity, string id, float timer)
@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public LuaFunction action;
             
-            public bool ready
+            public readonly bool Ready
             {
                 get
                 {
@@ -92,26 +92,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public struct ControllerDelegates
+        public struct ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
         {
-            public Action<Entity> addEntity;
+            public Action<Entity> addEntity = addEntity;
 
-            public Action<Entity, string, LuaFunction, float> addEntityWithTimer;
+            public Action<Entity, string, LuaFunction, float> addEntityWithTimer = addEntityWithTimer;
 
-            public Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger;
+            public Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger = addEntityWithFlagger;
 
-            public Action<Entity> destroyEntity;
+            public Action<Entity> destroyEntity = destroyEntity;
 
-            public Action destroyAll;
-
-            public ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
-            {
-                this.addEntity = addEntity;
-                this.addEntityWithTimer = addEntityWithTimer;
-                this.addEntityWithFlagger = addEntityWithFlagger;
-                this.destroyEntity = destroyEntity;
-                this.destroyAll = destroyAll;
-            }
+            public Action destroyAll = destroyAll;
         }
 
         public struct BossPhase
@@ -147,13 +138,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public List<BossPattern> Patterns;
 
+        private readonly int nodeCount;
+
         private int currentPatternIndex;
 
         private readonly Coroutine currentPattern;
 
         public List<int> patternOrder;
-
-        private readonly Vector2[] nodes;
 
         private int currentNodeOrIndex;
 
@@ -177,7 +168,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
-            nodes = data.Nodes;
+            nodeCount = data.Nodes.Length;
             currentPhase = 1;
             currentNodeOrIndex = 0;
             isAttacking = false;
@@ -222,7 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
             {
-                if (entityTimer.Value.done)
+                if (entityTimer.Value.Done)
                 {
                     entityTimer.Value.action.Call(entityTimer.Value.target);
                     activeEntityTimers.Remove(entityTimer.Key);
@@ -234,7 +225,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             foreach (EntityFlagger entityFlagger in activeEntityFlaggers.Values)
             {
-                if (entityFlagger.ready)
+                if (entityFlagger.Ready)
                 {
                     entityFlagger.action.Call(entityFlagger.target);
                     if (entityFlagger.resetFlag)
@@ -307,7 +298,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void SetPatternOrder()
         {
-            userFileReader.ReadPatternOrderFileInto(ref patternOrder, nodes.Length);
+            userFileReader.ReadPatternOrderFileInto(ref patternOrder, nodeCount);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)

@@ -32,6 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
+            nodes = data.Nodes;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
