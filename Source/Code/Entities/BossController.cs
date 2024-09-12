@@ -289,11 +289,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacks(Player player)
         {
-            //GenerateAttack("fifth", [
             //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(8, 8)), '{', 24, 24), "firstBlock", DestroyEntity, 4f); },
             //        () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(80, 8)), '{', 24, 24), "blockDone", DestroyEntity); }
-            //        ], [0.6f, 2f]);
-            ControllerDelegates delegates = new ControllerDelegates(AddEntity, AddEntity, AddEntity, DestroyEntity, DestroyAll);
+            ControllerDelegates delegates = new ControllerDelegates(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
         }
 
@@ -362,7 +360,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level.Add(entity);
         }
 
-        public void AddEntity(Entity entity, string id, LuaFunction action, float timer)
+        public void AddEntityWithTimer(Entity entity, string id, LuaFunction action, float timer)
         {
             if (!activeEntityTimers.ContainsKey(id))
             {
@@ -373,7 +371,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void AddEntity(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
+        public void AddEntityWithFlagger(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
         {
             if (!activeEntityFlaggers.ContainsKey(flag))
             {
