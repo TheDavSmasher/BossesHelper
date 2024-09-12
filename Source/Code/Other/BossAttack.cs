@@ -10,7 +10,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossAttack
     {
-        public LuaFunction attackFunction;
+        private LuaFunction attackFunction;
+
+        private LuaFunction cleanup;
 
         private readonly string filepath;
 
@@ -39,6 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 {
                     cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
                     attackFunction = array.ElementAtOrDefault(1) as LuaFunction;
+                    cleanup = array.ElementAtOrDefault(2) as LuaFunction;
                 }
                 else
                 {
@@ -61,6 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public IEnumerator Coroutine()
         {
             yield return LuaBossHelper.LuaFunctionToIEnumerator(attackFunction);
+            cleanup?.Call();
         }
     }
 }
