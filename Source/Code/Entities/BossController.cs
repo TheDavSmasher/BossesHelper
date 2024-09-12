@@ -201,7 +201,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Added(scene);
             Level = SceneAs<Level>();
             Level.Add(Puppet);
-
         }
 
         public override void Awake(Scene scene)
@@ -245,7 +244,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     activeEntityFlaggers.Remove(entityFlagger.flag);
                 }
             }
-            if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position)) //Extract to method
+            if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
             {
                 InterruptPattern();
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
@@ -292,8 +291,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacks(Player player)
         {
-            // () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(8, 8)),
-            // () => { AddEntity(new AutoFallingBlock(GetRoomOffset(new Vector2(80, 8))
             ControllerDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
         }
