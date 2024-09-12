@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             IterationCount = null;
         }
 
-        public Method[] ArraysToMethods(string[] names, float?[] durations)
+        private Method[] ArraysToMethods(string[] names, float?[] durations)
         {
             int length = Math.Min(names.Length, durations.Length);
             Method[] methods = new Method[length];

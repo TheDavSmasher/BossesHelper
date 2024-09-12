@@ -172,7 +172,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
-        public BossController(EntityData data, Vector2 offset) : base(data.Position + offset)
+        public BossController(EntityData data, Vector2 offset)
+            : base(data.Position + offset)
         {
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
@@ -247,7 +248,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             if (!isAttacking && Patterns[currentPatternIndex].finishMode == BossPattern.FinishMode.PlayerPositionWithin
-                && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entity.Position.X, (int)entity.Position.Y))
+                && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entity.Position.X, (int)entity.Position.Y)) //Extract to method
             {
                 InterruptPattern();
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
@@ -352,16 +353,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 isAttacking = false;
             }
             yield return method.Duration;
-        }
-
-        private static IEnumerator ActionsAndWaitsToEnumerator(Action[] actions, float?[] waits)
-        {
-            int length = Math.Min(actions.Length, waits.Length);
-            for (int i = 0; i < length; i++)
-            {
-                actions[i]?.Invoke();
-                yield return waits[i];
-            }
         }
 
         public void AddEntity(Entity entity)
