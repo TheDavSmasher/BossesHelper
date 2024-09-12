@@ -135,8 +135,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Freeroam
         }
 
-        private readonly MoveModes moveMode;
-
         public readonly BossPuppet Puppet;
 
         public Dictionary<string, BossAttack> AllAttacks;
@@ -178,7 +176,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
-            moveMode = GetMoveMode(data.Attr("moveMode"));
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             nodes = data.Nodes;
             currentPhase = 1;
@@ -402,25 +399,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntityFlaggers.Clear();
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();
-        }
-
-        private static MoveModes GetMoveMode(string moveMode)
-        {
-            switch (moveMode)
-            {
-                case "static":
-                    return MoveModes.Static;
-                case "screenEdge":
-                    return MoveModes.ScreenEdge;
-                case "playerPos":
-                    return MoveModes.PlayerPos;
-                case "playerScreenEdge":
-                    return MoveModes.PlayerScreenEdge;
-                case "freeroam":
-                    return MoveModes.Freeroam;
-                default:
-                    return MoveModes.Nodes;
-            }
         }
     }
 }

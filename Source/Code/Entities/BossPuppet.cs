@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Collections;
+using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -14,6 +15,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private readonly bool DynamicFacing;
 
         private readonly bool MirrorSprite;
+
+        private BossController.MoveModes MoveMode;
 
         private readonly Vector2[] nodes;
 
@@ -41,6 +44,26 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     Add(new PlayerCollider(KillOnContact));
                 }
+            }
+            MoveMode = GetMoveMode(data.Attr("moveMode"));
+        }
+
+        private static MoveModes GetMoveMode(string moveMode)
+        {
+            switch (moveMode)
+            {
+                case "static":
+                    return MoveModes.Static;
+                case "screenEdge":
+                    return MoveModes.ScreenEdge;
+                case "playerPos":
+                    return MoveModes.PlayerPos;
+                case "playerScreenEdge":
+                    return MoveModes.PlayerScreenEdge;
+                case "freeroam":
+                    return MoveModes.Freeroam;
+                default:
+                    return MoveModes.Nodes;
             }
         }
 
