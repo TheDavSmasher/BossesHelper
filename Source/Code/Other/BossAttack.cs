@@ -1,5 +1,4 @@
-﻿using Monocle;
-using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
 using System;
@@ -11,21 +10,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossAttack
     {
-        private static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require(BossesHelperModule.Instance.Metadata.Name + ":/Assets/LuaBossHelper/cutscene_helper") as LuaTable;
-
         public LuaFunction attackFunction;
 
         private readonly string filepath;
 
         private LuaTable cutsceneEnv;
 
-        private readonly Player player;
-
-        private readonly BossPuppet puppet;
-
         private BossController.ControllerDelegates Delegates;
 
-        public void LoadCutscene(string filename)
+        public void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -41,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
             try
             {
-                object[] array = (cutsceneHelper["getCutsceneData"] as LuaFunction).Call(filename, luaTable);
+                object[] array = (LuaBossHelper.cutsceneHelper["getCutsceneData"] as LuaFunction).Call(filename, luaTable);
                 if (array != null)
                 {
                     cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
@@ -61,15 +54,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public BossAttack(string filepath, Player player, BossPuppet puppet, BossController.ControllerDelegates allDelegates)
         {
             this.filepath = filepath;
-            this.player = player;
-            this.puppet = puppet;
             Delegates = allDelegates;
-            LoadCutscene(filepath);
+            LoadCutscene(filepath, player, puppet);
         }
 
         public IEnumerator Coroutine()
         {
-            yield return LuaBossHelper.LuaCoroutineToIEnumerator((cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(attackFunction).ElementAtOrDefault(0) as LuaCoroutine);
+            yield return LuaBossHelper.LuaFunctionToIEnumerator(attackFunction);
         }
     }
 }

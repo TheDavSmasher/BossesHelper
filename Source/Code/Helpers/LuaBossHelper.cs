@@ -9,6 +9,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class LuaBossHelper
     {
+        public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require(BossesHelperModule.Instance.Metadata.Name + ":/Assets/LuaBossHelper/cutscene_helper") as LuaTable;
+
         public static string GetFileContent(string path)
         {
             ModAsset file = Everest.Content.Get(path);
@@ -60,8 +62,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static IEnumerator LuaCoroutineToIEnumerator(LuaCoroutine routine)
+        public static IEnumerator LuaFunctionToIEnumerator(LuaFunction func)
         {
+            LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaCoroutine;
             while (routine != null && SafeMoveNext(routine))
             {
                 if (routine.Current is double || routine.Current is long)

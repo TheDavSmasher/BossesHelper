@@ -11,23 +11,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossEvent : CutsceneEntity
     {
-        private static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require(BossesHelperModule.Instance.Metadata.Name + ":/Assets/LuaBossHelper/cutscene_helper") as LuaTable;
-
         private readonly string filepath;
 
         public bool finished;
 
         private LuaTable cutsceneEnv;
 
-        private readonly BossPuppet puppet;
-
-        private readonly Player player;
-
         private IEnumerator Cutscene;
 
         private LuaFunction endMethod;
 
-        public void LoadCutscene(string filename)
+        public void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -43,12 +37,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
             try
             {
-                LuaFunction func = cutsceneHelper["getCutsceneData"] as LuaFunction;
+                LuaFunction func = LuaBossHelper.cutsceneHelper["getCutsceneData"] as LuaFunction;
                 object[] array = func.Call(filename, luaTable);
                 if (array != null)
                 {
                     cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
-                    Cutscene = LuaBossHelper.LuaCoroutineToIEnumerator((cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(array.ElementAtOrDefault(1) as LuaFunction).ElementAtOrDefault(0) as LuaCoroutine);
+                    Cutscene = LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(1) as LuaFunction);
                     endMethod = array.ElementAtOrDefault(2) as LuaFunction;
                 }
                 else
@@ -66,10 +60,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             : base(fadeInOnSkip, endingChapterAfter)
         {
             this.filepath = filepath;
-            this.player = player;
-            this.puppet = puppet;
             finished = false;
-            LoadCutscene(this.filepath);
+            LoadCutscene(filepath, player, puppet);
         }
 
         public static void WarmUp()
@@ -92,7 +84,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         private IEnumerator Coroutine(Level level)
         {
             yield return Cutscene;
-            EndCutscene(level);
+            if (level != null)
+            {
+                EndCutscene(level);
+            }
         }
 
         public override void OnBegin(Level level)
