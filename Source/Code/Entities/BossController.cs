@@ -247,8 +247,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     activeEntityFlaggers.Remove(entityFlagger.flag);
                 }
             }
-            if (!isAttacking && Patterns[currentPatternIndex].finishMode == BossPattern.FinishMode.PlayerPositionWithin
-                && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entity.Position.X, (int)entity.Position.Y)) //Extract to method
+            if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position)) //Extract to method
             {
                 InterruptPattern();
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
@@ -266,6 +265,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 AdvanceNode();
                 StartAttackPattern();
             }
+        }
+
+        private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
+        {
+            return Patterns[currentPatternIndex].finishMode == BossPattern.FinishMode.PlayerPositionWithin
+                && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entityPos.X, (int)entityPos.Y);
         }
 
         private void InterruptPattern()
