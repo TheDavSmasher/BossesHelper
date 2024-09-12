@@ -1,12 +1,12 @@
 ﻿using Monocle;
 using System.Collections.Generic;
 using Celeste.Mod.Entities;
-using Celeste.Mod.VortexHelper.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public string id;
 
-            public Action<Entity> action;
+            public LuaFunction action;
 
             public bool done
             {
@@ -31,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private EntityTimer(Entity target, float timer, Action<Entity> action, string id)
+            private EntityTimer(Entity target, float timer, LuaFunction action, string id)
             {
                 this.target = target;
                 this.timer = timer;
@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 timer = 0;
             }
 
-            public static EntityTimer DoActionOnEntityDelay(Action<Entity> action, Entity entity, string id, float timer)
+            public static EntityTimer DoActionOnEntityDelay(LuaFunction action, Entity entity, string id, float timer)
             {
                 return new EntityTimer(entity, timer, action, id);
             }
@@ -64,7 +64,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public bool stateNeeded;
 
-            public Action<Entity> action;
+            public bool resetFlag;
+
+            public LuaFunction action;
             
             public bool ready
             {
@@ -74,26 +76,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private EntityFlagger(Entity target, string flag, bool stateNeeded, Action<Entity> action, bool resetFlag)
+            private EntityFlagger(Entity target, string flag, bool stateNeeded, LuaFunction action, bool resetFlag)
             {
                 this.target = target;
                 this.flag = flag;
                 this.stateNeeded = stateNeeded;
-                if (resetFlag)
-                {
-                    this.action = (entity) =>
-                    {
-                        ((Level) target.Scene).Session.SetFlag(flag, !stateNeeded);
-                        action(entity);
-                    };
-                }
-                else
-                {
-                    this.action = action;
-                }
+                this.resetFlag = resetFlag;
+                this.action = action;
             }
 
-            public static EntityFlagger DoActionOnEntityOnFlagState(Action<Entity> action, Entity entity, string flag, bool state = true, bool resetFlag = true)
+            public static EntityFlagger DoActionOnEntityOnFlagState(LuaFunction action, Entity entity, string flag, bool state = true, bool resetFlag = true)
             {
                 return new EntityFlagger(entity, flag, state, action, resetFlag);
             }
@@ -103,15 +95,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             public Action<Entity> addEntity;
 
-            public Action<Entity, string, Action<Entity>, float> addEntityWithTimer;
+            public Action<Entity, string, LuaFunction, float> addEntityWithTimer;
 
-            public Action<Entity, string, Action<Entity>, bool, bool> addEntityWithFlagger;
+            public Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger;
 
             public Action<Entity> destroyEntity;
 
             public Action destroyAll;
 
-            public ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, Action<Entity>, float> addEntityWithTimer, Action<Entity, string, Action<Entity>, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
+            public ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
             {
                 this.addEntity = addEntity;
                 this.addEntityWithTimer = addEntityWithTimer;
@@ -234,7 +226,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (entityTimer.Value.done)
                 {
-                    entityTimer.Value.action(entityTimer.Value.target);
+                    entityTimer.Value.action.Call(entityTimer.Value.target);
                     activeEntityTimers.Remove(entityTimer.Key);
                 }
                 else
@@ -246,7 +238,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (entityFlagger.ready)
                 {
-                    entityFlagger.action(entityFlagger.target);
+                    entityFlagger.action.Call(entityFlagger.target);
+                    if (entityFlagger.resetFlag)
+                    {
+                        Level.Session.SetFlag(entityFlagger.flag, !entityFlagger.stateNeeded);
+                    }
                     activeEntityFlaggers.Remove(entityFlagger.flag);
                 }
             }
@@ -375,7 +371,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level.Add(entity);
         }
 
-        public void AddEntity(Entity entity, string id, Action<Entity> action, float timer)
+        public void AddEntity(Entity entity, string id, LuaFunction action, float timer)
         {
             if (!activeEntityTimers.ContainsKey(id))
             {
@@ -386,7 +382,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void AddEntity(Entity entity, string flag, Action<Entity> action, bool state = true, bool resetFlag = true)
+        public void AddEntity(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
         {
             if (!activeEntityFlaggers.ContainsKey(flag))
             {
@@ -411,11 +407,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntityFlaggers.Clear();
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();
-        }
-
-        public void PlayPuppetAnim(string anim)
-        {
-            Puppet.PlayBossAnim(anim);
         }
 
         private static MoveModes GetMoveMode(string moveMode)
