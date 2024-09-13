@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossController.ControllerDelegates Delegates { get; private set; }
 
-        public void LoadCutscene(string filename, Player player, BossPuppet puppet)
+        private void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {

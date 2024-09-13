@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private LuaFunction endMethod;
 
-        public void LoadCutscene(string filename, Player player, BossPuppet puppet)
+        private void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {
