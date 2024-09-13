@@ -185,8 +185,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
             patternOrder = new List<int>();
-            PopulatePatterns();
-            SetPatternOrder();
+            PopulatePatternsAndOrder();
             currentPatternIndex = patternOrder[currentNodeOrIndex];
             currentPattern = new Coroutine();
             Add(currentPattern);
@@ -207,8 +206,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
-            PopulateAttacks(player);
-            PopulateEvents(player);
+            PopulateAttacksAndEvents(player);
         }
 
         public override void Update()
@@ -289,24 +287,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
-        private void PopulateAttacks(Player player)
+        private void PopulateAttacksAndEvents(Player player)
         {
             ControllerDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
-        }
-
-        private void PopulateEvents(Player player)
-        {
             userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
         }
 
-        private void PopulatePatterns()
+        private void PopulatePatternsAndOrder()
         {
             userFileReader.ReadPatternFilesInto(ref Patterns);
-        }
-
-        private void SetPatternOrder()
-        {
             userFileReader.ReadPatternOrderFileInto(ref patternOrder, nodeCount);
         }
 
