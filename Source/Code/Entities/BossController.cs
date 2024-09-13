@@ -126,6 +126,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Freeroam
         }
 
+        public enum HurtModes
+        {
+            PlayerContact,
+            PlayerDash,
+            Explosion,
+            HeadBonk,
+            SidekickAttack
+        }
+
         public readonly BossPuppet Puppet;
 
         public Dictionary<string, BossAttack> AllAttacks;
