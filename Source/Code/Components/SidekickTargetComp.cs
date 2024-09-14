@@ -4,7 +4,6 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    [Tracked]
     internal class SidekickTargetComp : Component
     {
         public SidekickTarget target;

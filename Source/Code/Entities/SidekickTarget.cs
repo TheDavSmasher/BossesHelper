@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
+    [Tracked]
     internal class SidekickTarget : Entity
     {
         public Circle circle;
