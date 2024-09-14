@@ -9,18 +9,18 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public SidekickTarget target;
 
-        public Vector2 offset {  get; set; }
+        public Vector2 Offset {  get; set; }
 
         public SidekickTargetComp(Vector2 position, Vector2 offset, float radius) : base(active: true, visible: false)
         {
             target = new SidekickTarget(position + offset, radius);
-            this.offset = offset;
+            Offset = offset;
         }
 
         public override void Update()
         {
             base.Update();
-            target.Position = Entity.Position + offset;
+            target.Position = Entity.Position + Offset;
         }
     }
 }
