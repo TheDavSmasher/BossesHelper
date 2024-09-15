@@ -207,6 +207,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksAndEvents(player);
+            if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
+            {
+                (scene as Level).Add(new BadelineSidekick(player.Position));
+            }
         }
 
         public override void Update()
