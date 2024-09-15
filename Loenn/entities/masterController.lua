@@ -19,6 +19,9 @@ bossMasterController.fieldInformation = {
     hurtMode = {
         options = hurtModeOpts,
         editable = false
+    },
+    bossHitCooldown = {
+        fieldType = "number"
     }
 }
 bossMasterController.placements = {
@@ -29,6 +32,7 @@ bossMasterController.placements = {
         bossHealthMax = 3,
         moveMode = "nodes",
         hurtMode = "playerContact",
+        bossHitCooldown = "0.5",
         dynamicFacing = true,
         mirrorSprite = false,
         killOnContact = false,
