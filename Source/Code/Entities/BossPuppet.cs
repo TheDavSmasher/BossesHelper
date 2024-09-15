@@ -18,6 +18,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private BossController.MoveModes MoveMode;
 
+        private BossController.HurtModes HurtMode;
+
         private readonly Vector2[] nodes;
 
         private int facing;
@@ -47,6 +49,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             MoveMode = GetMoveMode(data.Attr("moveMode"));
+            HurtMode = GetHurtMode(data.Attr("hurtMode"));
         }
 
         private static MoveModes GetMoveMode(string moveMode)
@@ -65,6 +68,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     return MoveModes.Freeroam;
                 default:
                     return MoveModes.Nodes;
+            }
+        }
+
+        private static HurtModes GetHurtMode(string moveMode)
+        {
+            switch (moveMode)
+            {
+                case "playerDash": return HurtModes.PlayerDash;
+                case "explosion": return HurtModes.Explosion;
+                case "headBonk": return HurtModes.HeadBonk;
+                case "sidekickAttack": return HurtModes.SidekickAttack;
+                default: return HurtModes.PlayerContact;
             }
         }
 
