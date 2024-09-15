@@ -1,9 +1,0 @@
-entities.bossMasterController.attributes.description.bossName=The internal name of the Boss, as well as the subdirectory name where all info is held.
-entities.bossMasterController.attributes.description.bossSprite=The main sprite the boss will use.
-entities.bossMasterController.attributes.description.moveMode=TODO
-entities.bossMasterController.attributes.description.hurtMode=TODO
-entities.bossMasterController.attributes.description.bossHitCooldown=The time in seconds when the boss is invulnerable to be hit again.
-entities.bossMasterController.attributes.description.dynamicFacing=If the Boss sprite should flip horizontally according to the player's position relative to itself.
-entities.bossMasterController.attributes.description.mirrorSprite=If the Boss sprite should be flipped horizontally from standard usage.
-entities.bossMasterController.attributes.description.killOnContact=If the player should die or get hurt if they come in contact with the Boss' hitbox.
-entities.bossMasterController.attributes.description.startAttackingImmediately=If the Boss should not wait for the player to move to start its actions.
