@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
+    [Tracked]
     internal class BadelineSidekick : Entity
     {
         public Follower Follower { get; private set; }
@@ -44,6 +45,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly VertexLight Light;
 
+        private SoundSource chargeSfx;
+
+        private SoundSource laserSfx;
+
+        private SidekickTarget Target;
+
+        public Vector2 BeamOrigin
+        {
+            get
+            {
+                return base.Center + Boss.Position + new Vector2(0f, -14f);
+            }
+        }
+
         public BadelineSidekick(Vector2 position) : base(position)
         {
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
@@ -79,13 +94,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player entity = SceneAs<Level>().Tracker.GetEntity<Player>();
+            Level level = SceneAs<Level>();
+            if (level.Tracker.GetEntities<SidekickTarget>().Count == 0)
+            {
+                RemoveSelf();
+                return;
+            }
+            Player entity = level.Tracker.GetEntity<Player>();
             entity?.Leader.GainFollower(Follower);
         }
 
         public override void Update()
         {
-            Player entity = SceneAs<Level>().Tracker.GetEntity<Player>();
+            Level level = SceneAs<Level>();
+            Player entity = level.Tracker.GetEntity<Player>();
             if (entity != null && (Follower.Leader == null || Follower.Leader.Entity != entity))
             {
                 entity.Leader.GainFollower(Follower);
@@ -97,6 +119,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             oldX = X;
             base.Update();
+            Target = level.Tracker.GetNearestEntity<SidekickTarget>(Center);
         }
 
         public override void Render()
