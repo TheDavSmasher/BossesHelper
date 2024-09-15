@@ -1,8 +1,21 @@
 local bossMasterController = {}
 
-local moveModeOpts = { "nodes", "screenEdge", "playerScreenEdge", "playerPos", "static", "freeroam" }
+local moveModeOpts = {
+    {"Nodes", "nodes"},
+    {"Screen Edge", "screenEdge"},
+    {"Player Screen Edge", "playerScreenEdge"},
+    {"Player Position", "playerPos"},
+    {"Static", "static"},
+    {"Freeroam", "freeroam"}
+}
 
-local hurtModeOpts = { "playerContact", "playerDash", "explosion", "headBonk", "sidekickAttack" }
+local hurtModeOpts = {
+    {"Player Contact", "playerContact"},
+    {"Player Dash", "playerDash"},
+    {"Explosion", "explosion"},
+    {"Head Bonk", "headBonk"},
+    {"Sidekick Attack", "sidekickAttack"}
+}
 
 bossMasterController.name = "BossesHelper/BossController"
 bossMasterController.depth = 0
