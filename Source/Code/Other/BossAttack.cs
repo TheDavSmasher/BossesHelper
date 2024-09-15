@@ -18,7 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private LuaTable cutsceneEnv;
 
-        public BossController.ControllerDelegates Delegates { get; private set; }
+        public BossController.AttackDelegates Delegates { get; private set; }
 
         private void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
@@ -54,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossAttack(string filepath, Player player, BossPuppet puppet, BossController.ControllerDelegates allDelegates)
+        public BossAttack(string filepath, Player player, BossPuppet puppet, BossController.AttackDelegates allDelegates)
         {
             this.filepath = filepath;
             Delegates = allDelegates;

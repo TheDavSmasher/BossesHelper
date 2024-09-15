@@ -155,7 +155,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef, BossController.ControllerDelegates delegates)
+        public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef, BossController.AttackDelegates delegates)
         {
             if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
             {

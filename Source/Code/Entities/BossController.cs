@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public struct ControllerDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
+        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
         {
             public Action<Entity> addEntity = addEntity;
 
@@ -293,7 +293,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksAndEvents(Player player)
         {
-            ControllerDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
+            AttackDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
             userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
         }
