@@ -10,7 +10,7 @@ using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    [CustomEntity("BossesHelper/MasterController")]
+    [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
         public struct EntityTimer
