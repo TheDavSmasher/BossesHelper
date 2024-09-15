@@ -10,7 +10,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public Vector2 Offset {  get; set; }
 
-        public SidekickTargetComp(Vector2 position, Vector2 offset, float radius) : base(active: true, visible: false)
+        public SidekickTargetComp(Vector2 position, Vector2 offset, float radius = 4f) : base(active: true, visible: false)
         {
             target = new SidekickTarget(position + offset, radius);
             Offset = offset;
