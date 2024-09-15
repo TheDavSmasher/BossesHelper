@@ -1,4 +1,5 @@
-﻿using Monocle;
+﻿using System;
+using Monocle;
 using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
@@ -39,6 +40,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Sprite Custom;
 
+        private readonly SineWave Wave;
+
+        private readonly VertexLight Light;
+
         public BadelineSidekick(Vector2 position) : base(position)
         {
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
@@ -58,6 +63,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Custom = GFX.SpriteBank.Create("badeline_sidekick");
             //PlayerSprite.CreateFramesMetadata("badeline_sidekick");
             Add(Dummy, DummyHair, Boss, Custom);
+            Add(Wave = new SineWave(0.25f, 0f));
+            Wave.OnUpdate = (float f) =>
+            {
+                ActiveSprite.Position = Vector2.UnitY * f * 2f;
+            };
+            Add(Light = new VertexLight(new Vector2(0f, -8f), Color.PaleVioletRed, 1f, 20, 60));
+
             Add(Follower = new Follower());
             Follower.PersistentFollow = true;
             AddTag(Tags.Persistent);
@@ -81,10 +93,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if ((oldX - X) * ActiveSprite.Scale.X > 0)
             {
                 ActiveSprite.Scale.X *= -1;
-                DummyHair.Facing = (Facings)(((int)DummyHair.Facing) * -1);
+                DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
             }
             oldX = X;
             base.Update();
+        }
+
+        public override void Render()
+        {
+            Vector2 renderPosition = ActiveSprite.RenderPosition;
+            ActiveSprite.RenderPosition = ActiveSprite.RenderPosition.Floor();
+            base.Render();
+            ActiveSprite.RenderPosition = renderPosition;
         }
 
         private void SetActiveSpriteTo(SidekickSprite value)
@@ -114,6 +134,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     DummyHair.Visible = false;
                     break;
             }
+        }
+
+        public void Appear()
+        {
+            Level level = SceneAs<Level>();
+            level.Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
+            level.Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
+            SetActiveSpriteTo(SidekickSprite.Dummy);
+        }
+
+        public void Vanish()
+        {
+            Level level = SceneAs<Level>();
+            level.Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
+            level.Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
+            SetActiveSpriteTo(SidekickSprite.Custom);
         }
     }
 }
