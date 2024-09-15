@@ -145,6 +145,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public int Health { get; private set; }
 
+        private float bossHitCooldown;
+
         public List<BossPattern> Patterns;
 
         private readonly int nodeCount;
@@ -177,6 +179,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
+            bossHitCooldown = data.Float("bossHitCooldown", 0.5f);
             nodeCount = data.Nodes.Length;
             currentPhase = 1;
             currentNodeOrIndex = 0;
