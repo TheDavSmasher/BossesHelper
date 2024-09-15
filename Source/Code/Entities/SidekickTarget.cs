@@ -8,9 +8,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         public Circle circle;
 
-        public SidekickTarget(Vector2 position, float radius = 4f) : base(position)
+        public readonly string BossName;
+
+        public SidekickTarget(string bossName, Vector2 position, float radius = 4f) : base(position)
         {
             circle = new Circle(radius, position.X, position.Y);
+            BossName = bossName;
         }
 
         public override void Added(Scene scene)
