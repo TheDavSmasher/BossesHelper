@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (C) 2018-2020 Cruor
+
 Copyright (c) 2024 DavDualMain
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
