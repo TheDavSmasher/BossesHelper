@@ -209,7 +209,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern = new Coroutine();
             Add(currentPattern);
             userFileReader.ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder);
-            Puppet = new BossPuppet(data, offset, dataHolder);
+            Puppet = new BossPuppet(data, offset, OnHit, dataHolder);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
