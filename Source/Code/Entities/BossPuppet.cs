@@ -1,13 +1,41 @@
-﻿using Monocle;
-using System.Collections.Generic;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
+using Monocle;
 using System.Collections;
+using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Entity
     {
+        public struct HitboxMedatata(List<Collider> baseHitboxes, Hitbox bounceHitbox, Vector2 target, float radius)
+        {
+            public List<Collider> baseHitboxes = baseHitboxes;
+
+            public Hitbox bounceHitbox = bounceHitbox;
+
+            public Vector2 targetOffset = target;
+
+            public float targetRadius = radius;
+
+            public bool UseDefaultBase
+            {
+                get
+                {
+                    return baseHitboxes == null || baseHitboxes.Count == 0;
+                }
+            }
+
+            public bool UseDefaultBounce
+            {
+                get
+                {
+                    return bounceHitbox == null;
+                }
+            }
+        }
+
         private Sprite Sprite;
 
         private readonly string SpriteName;
@@ -28,18 +56,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Dictionary<string, SoundSource> AllSfx;
 
-        public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             nodes = data.Nodes;
+            MoveMode = GetMoveMode(data.Attr("moveMode"));
+            HurtMode = GetHurtMode(data.Attr("hurtMode"));
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
-                base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+                SetHitboxesAndColliders(hitboxMedatata);
                 facing = MirrorSprite ? -1 : 1;
                 Add(Sprite);
                 PlayBossAnim("idle");
@@ -48,8 +78,37 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Add(new PlayerCollider(KillOnContact));
                 }
             }
-            MoveMode = GetMoveMode(data.Attr("moveMode"));
-            HurtMode = GetHurtMode(data.Attr("hurtMode"));
+        }
+
+        private void SetHitboxesAndColliders(HitboxMedatata hitboxMedatata)
+        {
+            if (!hitboxMedatata.UseDefaultBase)
+            {
+                base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+            }
+            else if (hitboxMedatata.baseHitboxes.Count > 1)
+            {
+                base.Collider = new ColliderList(hitboxMedatata.baseHitboxes.ToArray());
+            }
+            else
+            {
+                base.Collider = hitboxMedatata.baseHitboxes[0];
+            }
+            switch (HurtMode)
+            {
+                case HurtModes.HeadBonk:
+                    if (hitboxMedatata.UseDefaultBounce)
+                    {
+                        Add(new PlayerCollider(OnPlayerBounce, new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)));
+                    }
+                    else
+                    {
+                        Add(new PlayerCollider(OnPlayerBounce, hitboxMedatata.bounceHitbox));
+                    }
+                    break;
+                case HurtModes.SidekickAttack:
+                    break;
+            }
         }
 
         private static MoveModes GetMoveMode(string moveMode)
@@ -146,6 +205,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void KillOnContact(Player player)
         {
             player.Die((player.Position - Position).SafeNormalize());
+        }
+
+        private void OnPlayerBounce(Player player)
+        {
+            Audio.Play("event:/game/general/thing_booped", Position);
+            Celeste.Freeze(0.2f);
+            player.Bounce(base.Top + 2f);
         }
 
         public IEnumerator MoveSequence()

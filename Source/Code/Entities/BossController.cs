@@ -208,7 +208,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = patternOrder[currentNodeOrIndex];
             currentPattern = new Coroutine();
             Add(currentPattern);
-            Puppet = new BossPuppet(data, offset);
+            userFileReader.ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder);
+            Puppet = new BossPuppet(data, offset, dataHolder);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();

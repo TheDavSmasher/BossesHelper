@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
@@ -54,50 +55,49 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     while (currentIndex < lines.Count)
                     {
                         string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                        if (currentLine[0].ToLower().Equals("pattern"))
+                        switch (currentLine[0].ToLower())
                         {
-                            patternID = int.Parse(currentLine[1]) - 1;
-                        }
-                        else if (currentLine[0].ToLower().Equals("wait"))
-                        {
-                            actions.Add(currentLine[0]);
-                            floats.Add(float.Parse(currentLine[1]));
-                        }
-                        else if (currentLine[0].ToLower().Equals("goto"))
-                        {
-                            mode = BossPattern.FinishMode.LoopCountGoTo;
-                            vals[0] = 0;
-                            vals[1] = int.Parse(currentLine[1]);
-                            break;
-                        }
-                        else if (currentLine[0].ToLower().Equals("interrupt"))
-                        {
-                            if (currentLine[2].ToLower().Equals("repeat"))
-                            {
+                            case "pattern":
+                                patternID = int.Parse(currentLine[1]) - 1;
+                                break;
+                            case "wait":
+                                actions.Add(currentLine[0]);
+                                floats.Add(float.Parse(currentLine[1]));
+                                break;
+                            case "goto":
                                 mode = BossPattern.FinishMode.LoopCountGoTo;
-                                vals[0] = int.Parse(currentLine[3]);
-                                vals[1] = int.Parse(currentLine[5]);
-                            }
-                            else if (currentLine[2].ToLower().Equals("health"))
-                            {
-                                mode = BossPattern.FinishMode.OnHealthNum;
-                                vals[0] = int.Parse(currentLine[4]);
-                            }
-                            else if (currentLine[2].ToLower().Equals("player"))
-                            {
-                                mode = BossPattern.FinishMode.PlayerPositionWithin;
-                                vals[0] = int.Parse(currentLine[4]);
-                                vals[1] = int.Parse(currentLine[5]);
-                                vals[2] = int.Parse(currentLine[6]);
-                                vals[3] = int.Parse(currentLine[7]);
-                                vals[4] = int.Parse(currentLine[9]);
-                            }
-                            break;
-                        }
-                        else if (!string.IsNullOrEmpty(currentLine[0]))
-                        {
-                            actions.Add(currentLine[0]);
-                            floats.Add(null);
+                                vals[0] = 0;
+                                vals[1] = int.Parse(currentLine[1]);
+                                break;
+                            case "interrupt":
+                                if (currentLine[2].ToLower().Equals("repeat"))
+                                {
+                                    mode = BossPattern.FinishMode.LoopCountGoTo;
+                                    vals[0] = int.Parse(currentLine[3]);
+                                    vals[1] = int.Parse(currentLine[5]);
+                                }
+                                else if (currentLine[2].ToLower().Equals("health"))
+                                {
+                                    mode = BossPattern.FinishMode.OnHealthNum;
+                                    vals[0] = int.Parse(currentLine[4]);
+                                }
+                                else if (currentLine[2].ToLower().Equals("player"))
+                                {
+                                    mode = BossPattern.FinishMode.PlayerPositionWithin;
+                                    vals[0] = int.Parse(currentLine[4]);
+                                    vals[1] = int.Parse(currentLine[5]);
+                                    vals[2] = int.Parse(currentLine[6]);
+                                    vals[3] = int.Parse(currentLine[7]);
+                                    vals[4] = int.Parse(currentLine[9]);
+                                }
+                                break;
+                            default:
+                                if (!string.IsNullOrEmpty(currentLine[0]))
+                                {
+                                    actions.Add(currentLine[0]);
+                                    floats.Add(null);
+                                }
+                                break;
                         }
                         currentIndex++;
                     }
@@ -200,6 +200,72 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find an OnHit file.");
             }
+        }
+
+        public void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
+        {
+            List<Collider> baseHitboxes = null;
+            Hitbox bounceHitboxes = null;
+            Vector2 targetOffset = Vector2.Zero;
+            float radius = 4f;
+            if (Everest.Content.TryGet(MasterFilePath + "/Metadata", out ModAsset metadata))
+            {
+                List<string> lines = new();
+                using (StreamReader reader = new StreamReader(metadata.Stream))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        lines.Add(reader.ReadLine());
+                    }
+                    reader.Close();
+                }
+                int currentIndex = 0;
+                while (currentIndex < lines.Count)
+                {
+                    string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                    if (currentLine[0].ToLower().Equals("base"))
+                    {
+                        baseHitboxes = new List<Collider>();
+                        do 
+                        {
+                            currentIndex++;
+                            currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                            if (currentLine[0].ToLower().Equals("hitbox"))
+                            {
+                                baseHitboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                            }
+                            else if (currentLine[0].ToLower().Equals("circle"))
+                            {
+                                baseHitboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
+                            }
+                        } 
+                        while (!string.IsNullOrEmpty(currentLine[0]));
+                    }
+                    else if (currentLine[0].ToLower().Equals("bounce"))
+                    {
+                        currentIndex++;
+                        currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                        if (!string.IsNullOrEmpty(currentLine[0]))
+                        {
+                            float height = string.IsNullOrEmpty(currentLine[3]) ? 6f : float.Parse(currentLine[3]);
+                            bounceHitboxes = new Hitbox(float.Parse(currentLine[2]), height, float.Parse(currentLine[0]), float.Parse(currentLine[1]));
+                        }
+                    }
+                    else if (!currentLine[0].ToLower().Equals("target"))
+                    {
+                        currentIndex++;
+                        currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                        if (!string.IsNullOrEmpty(currentLine[0]))
+                        {
+                            targetOffset.X = float.Parse(currentLine[0]);
+                            targetOffset.Y = currentLine.Length > 1 ? float.Parse(currentLine[1]) : 0f;
+                            radius = currentLine.Length > 2 ? float.Parse(currentLine[1]) : 4f;
+                        }
+                    }
+                    currentIndex++;
+                }
+            }
+            dataHolder = new(baseHitboxes, bounceHitboxes, targetOffset, radius);
         }
     }
 }
