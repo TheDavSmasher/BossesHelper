@@ -17,6 +17,12 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             Offset = offset;
         }
 
+        public override void EntityAdded(Scene scene)
+        {
+            base.EntityAdded(scene);
+            (scene as Level).Add(target);
+        }
+
         public override void Update()
         {
             base.Update();
