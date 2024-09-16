@@ -58,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LoadCutscene(filepath, player, puppet);
         }
 
-        public IEnumerator OnHit()
+        public IEnumerator OnHitCoroutine()
         {
             yield return LuaBossHelper.LuaFunctionToIEnumerator(OnHitLua);
         }
