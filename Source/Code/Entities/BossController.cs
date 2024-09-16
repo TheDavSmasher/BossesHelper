@@ -178,7 +178,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
-        private BossInterruption OnHit;
+        private BossInterruption OnInterrupt;
 
         public BossController(EntityData data, Vector2 offset)
             : base(data.Position + offset)
@@ -307,7 +307,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
             userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
             OnHitDelegates onHitDelegates = new();
-            userFileReader.ReadOnHitFileInto(ref OnHit, player, Puppet, onHitDelegates);
+            userFileReader.ReadOnHitFileInto(ref OnInterrupt, player, Puppet, onHitDelegates);
         }
 
         private void PopulatePatternsAndOrder()
@@ -365,6 +365,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             yield return method.Duration;
         }
+
+        //Delegate methods
+        //Interruption Delegates
+
+        //Puppet Delegates
+        public void OnHit()
+        {
+            Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
+        }
+
+        //Attack Delegates
 
         public void AddEntity(Entity entity)
         {
