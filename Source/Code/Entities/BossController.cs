@@ -362,17 +362,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         //Delegate methods
         //Interruption Delegates
-        public int GetHealth()
+        private int GetHealth()
         {
             return Health;
         }
 
-        public void SetHealth(int health)
+        private void SetHealth(int health)
         {
             Health = health;
         }
 
-        public void DecreaseHealth(int damage)
+        private void DecreaseHealth(int damage)
         {
             Health -= damage;
         }
@@ -398,14 +398,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         //Attack Delegates
-        public void AddEntity(Entity entity)
+        private void AddEntity(Entity entity)
         {
             activeEntities.Add(entity);
             entity.Scene = Level;
             Level.Add(entity);
         }
 
-        public void AddEntityWithTimer(Entity entity, string id, LuaFunction action, float timer)
+        private void AddEntityWithTimer(Entity entity, string id, LuaFunction action, float timer)
         {
             if (!activeEntityTimers.ContainsKey(id))
             {
@@ -416,7 +416,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void AddEntityWithFlagger(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
+        private void AddEntityWithFlagger(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
         {
             if (!activeEntityFlaggers.ContainsKey(flag))
             {
@@ -427,7 +427,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void DestroyEntity(Entity entity)
+        private void DestroyEntity(Entity entity)
         {
             if (activeEntities.Remove(entity))
             {
@@ -435,7 +435,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void DestroyAll()
+        private void DestroyAll()
         {
             activeEntityTimers.Clear();
             activeEntityFlaggers.Clear();
