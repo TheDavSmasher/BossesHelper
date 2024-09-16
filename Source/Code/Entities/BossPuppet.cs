@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public float targetRadius = radius;
 
-            public bool UseDefaultBase
+            public readonly bool UseDefaultBase
             {
                 get
                 {
@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            public bool UseDefaultBounce
+            public readonly bool UseDefaultBounce
             {
                 get
                 {
@@ -51,15 +51,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
-        private Action OnHit;
+        private readonly Action OnHit;
 
         private float bossHitCooldown;
 
         private int facing;
 
         private Level Level;
-
-        private Dictionary<string, SoundSource> AllSfx;
 
         public BossPuppet(EntityData data, Vector2 offset, Action onHit, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
         {
@@ -129,33 +127,27 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private static MoveModes GetMoveMode(string moveMode)
         {
-            switch (moveMode)
+            return moveMode switch
             {
-                case "static":
-                    return MoveModes.Static;
-                case "screenEdge":
-                    return MoveModes.ScreenEdge;
-                case "playerPos":
-                    return MoveModes.PlayerPos;
-                case "playerScreenEdge":
-                    return MoveModes.PlayerScreenEdge;
-                case "freeroam":
-                    return MoveModes.Freeroam;
-                default:
-                    return MoveModes.Nodes;
-            }
+                "static" => MoveModes.Static,
+                "screenEdge" => MoveModes.ScreenEdge,
+                "playerPos" => MoveModes.PlayerPos,
+                "playerScreenEdge" => MoveModes.PlayerScreenEdge,
+                "freeroam" => MoveModes.Freeroam,
+                _ => MoveModes.Nodes
+            };
         }
 
         private static HurtModes GetHurtMode(string moveMode)
         {
-            switch (moveMode)
+            return moveMode switch
             {
-                case "playerDash": return HurtModes.PlayerDash;
-                case "explosion": return HurtModes.Explosion;
-                case "headBonk": return HurtModes.HeadBonk;
-                case "sidekickAttack": return HurtModes.SidekickAttack;
-                default: return HurtModes.PlayerContact;
-            }
+                "playerDash" => HurtModes.PlayerDash,
+                "explosion" => HurtModes.Explosion,
+                "headBonk" => HurtModes.HeadBonk,
+                "sidekickAttack" => HurtModes.SidekickAttack,
+                _ => HurtModes.PlayerContact
+            };
         }
 
         public override void Added(Scene scene)
@@ -182,6 +174,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                 }
                 
+            }
+            if (bossHitCooldown > 0)
+            {
+                bossHitCooldown -= Engine.DeltaTime;
             }
         }
 
@@ -216,6 +212,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
                 }
             }
+        }
+
+        public void SetBossHitCooldown(float timer)
+        {
+            bossHitCooldown = timer;
         }
 
         private void KillOnContact(Player player)
