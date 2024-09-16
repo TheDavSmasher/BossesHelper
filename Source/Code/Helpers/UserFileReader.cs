@@ -59,6 +59,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             actions.Add(currentLine[0]);
                             floats.Add(float.Parse(currentLine[1]));
                         }
+                        else if (currentLine[0].ToLower().Equals("goto"))
+                        {
+                            mode = BossPattern.FinishMode.LoopCountGoTo;
+                            vals[0] = 0;
+                            vals[1] = int.Parse(currentLine[1]);
+                            break;
+                        }
                         else if (currentLine[0].ToLower().Equals("interrupt"))
                         {
                             if (currentLine[2].ToLower().Equals("repeat"))
@@ -81,6 +88,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                 vals[3] = int.Parse(currentLine[7]);
                                 vals[4] = int.Parse(currentLine[9]);
                             }
+                            break;
                         }
                         else if (!string.IsNullOrEmpty(currentLine[0]))
                         {

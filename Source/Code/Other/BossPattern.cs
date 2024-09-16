@@ -108,7 +108,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
          * Attack/Method + Duration/Pause
          * Attack/Method + Duration/Pause
          * 
-         * Interrupt when: Health < num / Repeat count GoTo target / Player Between x1 y1 x2 y2 goto target
+         * Goto target / Interrupt when {Health < num / Repeat count GoTo target / Player Between x1 y1 x2 y2 goto target}
          */
     }
 }
