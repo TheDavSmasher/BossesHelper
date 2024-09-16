@@ -1,6 +1,7 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
@@ -50,13 +51,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
+        private Action OnHit;
+
         private int facing;
 
         private Level Level;
 
         private Dictionary<string, SoundSource> AllSfx;
 
-        public BossPuppet(EntityData data, Vector2 offset, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset, Action onHit, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
@@ -65,6 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             nodes = data.Nodes;
             MoveMode = GetMoveMode(data.Attr("moveMode"));
             HurtMode = GetHurtMode(data.Attr("hurtMode"));
+            OnHit = onHit;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
@@ -107,6 +111,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     break;
                 case HurtModes.SidekickAttack:
+                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, hitboxMedatata.targetRadius)); //Needs to create a LaserCollider, and pass in the delegate
+                    break;
+                case HurtModes.PlayerDash:
+                    Add(new PlayerCollider(OnPlayerDash));
+                    break;
+                case HurtModes.Explosion:
+                    break;
+                default: //PlayerContact
                     break;
             }
         }
@@ -212,6 +224,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Audio.Play("event:/game/general/thing_booped", Position);
             Celeste.Freeze(0.2f);
             player.Bounce(base.Top + 2f);
+            OnHit.Invoke();
+        }
+
+        private void OnPlayerDash(Player player)
+        {
+            OnHit.Invoke();
         }
 
         public IEnumerator MoveSequence()
