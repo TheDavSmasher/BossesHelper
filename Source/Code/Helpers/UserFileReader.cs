@@ -20,7 +20,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly string PatternPath;
 
-        public UserFileReader(string bossName) : base(true, false)
+        public UserFileReader(string bossName)
+            : base(true, false)
         {
             MasterFilePath = "Assets/Bosses/" + bossName;
             AttacksPath = MasterFilePath + "/Attacks";

@@ -92,7 +92,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
+        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer,
+            Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
         {
             public Action<Entity> addEntity = addEntity;
 
