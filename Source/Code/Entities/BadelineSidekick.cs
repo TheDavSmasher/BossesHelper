@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             //Custom = GFX.SpriteBank.Create("badeline_sidekick");
             //PlayerSprite.CreateFramesMetadata("badeline_sidekick");
-            Add(Dummy, DummyHair, Boss, Custom);
+            Add(Dummy, DummyHair, Boss/*, Custom*/);
             Add(Wave = new SineWave(0.25f, 0f));
             Wave.OnUpdate = (float f) =>
             {
