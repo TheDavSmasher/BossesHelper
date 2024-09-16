@@ -1,19 +1,21 @@
 ﻿using Monocle;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked]
     internal class SidekickTarget : Entity
     {
-        public Circle circle;
-
         public readonly string BossName;
 
-        public SidekickTarget(string bossName, Vector2 position, float radius = 4f)
+        public Action OnLaserCollide;
+
+        public SidekickTarget(string bossName, Vector2 position, Action onLaser, float radius = 4f)
             : base(position)
         {
-            circle = new Circle(radius, position.X, position.Y);
+            base.Collider = new Circle(radius, position.X, position.Y);
+            OnLaserCollide = onLaser;
             BossName = bossName;
         }
 
@@ -21,6 +23,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Depth = -1000;
+        }
+
+        public void OnLaser()
+        {
+            OnLaserCollide?.Invoke();
         }
     }
 }

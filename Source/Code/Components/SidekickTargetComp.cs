@@ -1,6 +1,7 @@
 ﻿using Monocle;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -8,12 +9,12 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public SidekickTarget target;
 
-        public Vector2 Offset {  get; set; }
+        public Vector2 Offset { get; set; }
 
-        public SidekickTargetComp(string bossName, Vector2 position, Vector2 offset, float radius = 4f)
+        public SidekickTargetComp(string bossName, Vector2 position, Vector2 offset, Action onLaser, float radius = 4f)
             : base(active: true, visible: false)
         {
-            target = new SidekickTarget(bossName, position + offset, radius);
+            target = new SidekickTarget(bossName, position + offset, onLaser, radius);
             Offset = offset;
         }
 
