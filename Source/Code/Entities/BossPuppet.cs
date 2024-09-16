@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     break;
                 case HurtModes.Explosion:
                     break;
-                default: //PlayerContact
+                default: //PlayerContact 
                     break;
             }
         }
