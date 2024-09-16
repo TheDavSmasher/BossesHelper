@@ -879,7 +879,7 @@ end
 --- These will not work on Events and are not accessible even by direct call
 --- Since no reference to the Controller is given, these function delegates are necessary
 
-
+--Attack Delegates
 function helpers.AddEntity(entity)
     bossAttack.addEntity:Invoke(entity)
 end
@@ -898,6 +898,27 @@ end
 
 function helpers.DestroyAll()
     bossAttack.destroyAll:Invoke()
+end
+
+--Interrupt Delegates
+function helpers.GetHealth()
+    return boss.getHealth:Invoke()
+end
+
+function helpers.SetHealth(health)
+    boss.setHealth:Invoke(health)
+end
+
+function helpers.DecreaseHealth(health)
+    boss.decreaseHealth:Invoke(health)
+end
+
+function helpers.InterruptPattern()
+    boss.interruptPattern:Invoke()
+end
+
+function helpers.AdvanceNode()
+    boss.advanceNode:Invoke()
 end
 
 --- Additional, non-delegate helper shorthand methods
