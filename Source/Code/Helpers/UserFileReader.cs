@@ -118,6 +118,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     targetOut[patternID] = result;
                 }
             }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern files.");
+            }
         }
 
         public void ReadPatternOrderFileInto(ref List<int> target, int nodeCount = 1)
@@ -147,7 +151,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                //TODO log that will use default
+                Logger.Log(LogLevel.Warn, "Bosses Helper", "Failed to find any Pattern Order file.\nWill use default numerical order.");
                 for (int i = 0; i < nodeCount; i++)
                 {
                     target.Add(i);
@@ -164,6 +168,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     events.Add(eventFile.PathVirtual.Substring(EventsPath.Length + 1), new BossEvent(eventFile.PathVirtual, playerRef, puppetRef));
                 }
             }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Event files.");
+            }
         }
 
         public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef, BossController.AttackDelegates delegates)
@@ -175,6 +183,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, playerRef, puppetRef, delegates));
                 }
             }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
+            }
         }
 
         public void ReadOnHitFileInto(ref BossInterruption onHit, Player playerRef, BossPuppet puppetRef, BossController.OnHitDelegates delegates)
@@ -182,6 +194,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             if (Everest.Content.TryGet(MasterFilePath + "/OnHit", out ModAsset onHitFile))
             {
                 onHit = new BossInterruption(onHitFile.PathVirtual, playerRef, puppetRef, delegates);
+            }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find an OnHit file.");
             }
         }
     }
