@@ -53,6 +53,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Action OnHit;
 
+        private float bossHitCooldown;
+
         private int facing;
 
         private Level Level;
@@ -65,6 +67,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
+            bossHitCooldown = data.Float("bossHitCooldown", 0.5f);
             nodes = data.Nodes;
             MoveMode = GetMoveMode(data.Attr("moveMode"));
             HurtMode = GetHurtMode(data.Attr("hurtMode"));
@@ -111,14 +114,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, hitboxMedatata.targetRadius)); //Needs to create a LaserCollider, and pass in the delegate
+                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, OnHit, hitboxMedatata.targetRadius));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash));
                     break;
-                case HurtModes.Explosion:
+                case HurtModes.Explosion: //TODO figure this out lol
                     break;
                 default: //PlayerContact 
+                    Add(new PlayerCollider(OnPlayerContact));
                     break;
             }
         }
@@ -221,15 +225,29 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnPlayerBounce(Player player)
         {
-            Audio.Play("event:/game/general/thing_booped", Position);
-            Celeste.Freeze(0.2f);
-            player.Bounce(base.Top + 2f);
-            OnHit.Invoke();
+            if (bossHitCooldown <= 0)
+            {
+                Audio.Play("event:/game/general/thing_booped", Position);
+                Celeste.Freeze(0.2f);
+                player.Bounce(base.Top + 2f);
+                OnHit.Invoke();
+            }
         }
 
         private void OnPlayerDash(Player player)
         {
-            OnHit.Invoke();
+            if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
+            {
+                OnHit.Invoke();
+            }
+        }
+
+        private void OnPlayerContact(Player player)
+        {
+            if (bossHitCooldown <= 0)
+            {
+                OnHit.Invoke();
+            }
         }
 
         public IEnumerator MoveSequence()
