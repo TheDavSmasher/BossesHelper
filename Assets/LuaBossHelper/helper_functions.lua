@@ -881,23 +881,23 @@ end
 
 
 function helpers.AddEntity(entity)
-    bossAttack.Delegates.addEntity:Invoke(entity)
+    bossAttack.addEntity:Invoke(entity)
 end
 
 function helpers.AddEntityWithTimer(entity, name, func, timer)
-    bossAttack.Delegates.addEntityWithTimer:Invoke(entity, name, func, timer)
+    bossAttack.addEntityWithTimer:Invoke(entity, name, func, timer)
 end
 
 function helpers.AddEntityWithFlagger(entity, flag, func, state, resetFlag)
-    bossAttack.Delegates.addEntityWithFlagger:Invoke(entity, flag, func, state or state == nil, resetFlag or resetFlag == nil)
+    bossAttack.addEntityWithFlagger:Invoke(entity, flag, func, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 function helpers.DestroyEntity(entity)
-    bossAttack.Delegates.destroyEntity:Invoke(entity)
+    bossAttack.destroyEntity:Invoke(entity)
 end
 
 function helpers.DestroyAll()
-    bossAttack.Delegates.destroyAll:Invoke()
+    bossAttack.destroyAll:Invoke()
 end
 
 --- Additional, non-delegate helper shorthand methods

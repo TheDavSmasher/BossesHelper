@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 { "player", player },
                 { "puppet", puppet },
-                { "bossAttack", this },
+                { "bossAttack", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
             LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
