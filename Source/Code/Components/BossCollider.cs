@@ -11,11 +11,11 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public Collider Collider;
 
-        public Action<Player> OnCollide;
-        public BossCollider(Collider collider, Action<Player> onCollide) : base(active: false, visible: false)
+        public Action OnLaser;
+        public BossCollider(Collider collider, Action onLaser) : base(active: false, visible: false)
         {
             Collider = collider;
-            OnCollide = onCollide;
+            OnLaser = onLaser;
         }
     }
 }
