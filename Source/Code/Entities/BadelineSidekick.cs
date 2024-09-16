@@ -1,6 +1,7 @@
 ﻿using System;
 using Monocle;
 using Microsoft.Xna.Framework;
+using System.Collections;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -45,11 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly VertexLight Light;
 
-        private SoundSource chargeSfx;
-
         private SoundSource laserSfx;
-
-        private SidekickTarget Target;
 
         public Vector2 BeamOrigin
         {
@@ -89,6 +86,30 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Follower.PersistentFollow = true;
             AddTag(Tags.Persistent);
             currentSprite = SidekickSprite.Dummy;
+            Add(laserSfx = new SoundSource());
+        }
+
+        private IEnumerator Beam()
+        {
+            laserSfx.Play("event:/char/badeline/boss_laser_charge");
+            if (ActiveSprite != Boss)
+            {
+                SetActiveSpriteTo(SidekickSprite.Boss);
+            }
+            ActiveSprite.Play("attack2Begin", true);
+            yield return 0.1f;
+            Level level = SceneAs<Level>();
+            SidekickTarget target = level.Tracker.GetNearestEntity<SidekickTarget>(BeamOrigin);
+            if (target != null)
+            {
+                level.CreateAndAdd<SidekickBeam>();
+            }
+            yield return 0.9f;
+            ActiveSprite.Play("attack2Lock", true);
+            yield return 0.5f;
+            laserSfx.Stop();
+            Audio.Play("event:/char/badeline/boss_laser_fire", Position);
+            ActiveSprite.Play("attack2Recoil");
         }
 
         public override void Awake(Scene scene)
@@ -119,7 +140,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             oldX = X;
             base.Update();
-            Target = level.Tracker.GetNearestEntity<SidekickTarget>(Center);
+            Light.Position = ActiveSprite.Position + new Vector2(0f, -10f);
         }
 
         public override void Render()
