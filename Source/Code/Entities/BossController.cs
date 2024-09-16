@@ -105,6 +105,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
+        public struct OnHitDelegates
+        {
+
+        }
+
         public struct BossPhase
         {
             public int phaseID;
@@ -173,6 +178,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
+        private BossInterruption OnHit;
+
         public BossController(EntityData data, Vector2 offset)
             : base(data.Position + offset)
         {
@@ -209,7 +216,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
-            PopulateAttacksAndEvents(player);
+            PopulateAttacksEventsAndInterrupt(player);
             if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position));
@@ -294,11 +301,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
-        private void PopulateAttacksAndEvents(Player player)
+        private void PopulateAttacksEventsAndInterrupt(Player player)
         {
             AttackDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
             userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
+            OnHitDelegates onHitDelegates = new();
+            userFileReader.ReadOnHitFileInto(ref OnHit, player, Puppet, onHitDelegates);
         }
 
         private void PopulatePatternsAndOrder()

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
+using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -171,6 +174,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, playerRef, puppetRef, delegates));
                 }
+            }
+        }
+
+        public void ReadOnHitFileInto(ref BossInterruption onHit, Player playerRef, BossPuppet puppetRef, BossController.OnHitDelegates delegates)
+        {
+            if (Everest.Content.TryGet(MasterFilePath + "/OnHit", out ModAsset onHitFile))
+            {
+                onHit = new BossInterruption(onHitFile.PathVirtual, playerRef, puppetRef, delegates);
             }
         }
     }
