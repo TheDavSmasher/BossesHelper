@@ -341,11 +341,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator PerformMethod(BossPattern.Method method)
         {
-            if (!method.ActionName.ToLower().Equals("wait") && AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
+            if (!method.ActionName.ToLower().Equals("wait"))
             {
-                isAttacking = true;
-                yield return attack.Coroutine();
-                isAttacking = false;
+                if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
+                {
+                    isAttacking = true;
+                    yield return attack.Coroutine();
+                    isAttacking = false;
+                }
+                else if (AllEvents.TryGetValue(method.ActionName, out BossEvent cutscene))
+                {
+                    Level.Add(cutscene);
+                }
             }
             yield return method.Duration;
         }
