@@ -38,6 +38,32 @@ local function prepareCutscene(env, func)
     end
 end
 
+local function prepareAttack(env, func)
+    local success, onBegin = pcall(func)
+
+    if success then
+        onBegin = onBegin or env.onBegin
+
+        return onBegin
+    else
+        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load attack in Lua: " .. onBegin)
+        return success
+    end
+end
+
+local function prepareInterruption(env, func)
+    local success, onHit = pcall(func)
+
+    if success then
+        onHit = onHit or env.onHit
+
+        return onHit
+    else
+        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load attack in Lua: " .. onHit)
+        return success
+    end
+end
+
 function cutsceneHelper.setFuncAsCoroutine(func)
     return func and celesteMod.LuaCoroutine({value = coroutine.create(func), resume = threadProxyResume})
 end
@@ -82,6 +108,14 @@ end
 
 function cutsceneHelper.getCutsceneData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareCutscene)
+end
+
+function cutsceneHelper.getAttackData(filename, data)
+    return cutsceneHelper.getLuaData(filename, data, prepareAttack)
+end
+
+function  cutsceneHelper.getInterruptData(filename, data)
+    return cutsceneHelper.getLuaData(filename, data, prepareInterruption)
 end
 
 return cutsceneHelper

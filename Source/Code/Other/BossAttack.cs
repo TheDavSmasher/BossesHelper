@@ -34,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
             try
             {
-                object[] array = (LuaBossHelper.cutsceneHelper["getCutsceneData"] as LuaFunction).Call(filename, luaTable);
+                object[] array = (LuaBossHelper.cutsceneHelper["getAttackData"] as LuaFunction).Call(filename, luaTable);
                 if (array != null)
                 {
                     cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
