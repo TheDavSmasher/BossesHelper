@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     int currentIndex = 0;
                     int patternID = 0;
                     BossPattern.FinishMode mode = BossPattern.FinishMode.ContinueLoop;
-                    int[] vals = Enumerable.Repeat(0,5).ToArray();
+                    int[] vals = Enumerable.Repeat(0, 5).ToArray();
                     while (currentIndex < lines.Count)
                     {
                         string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
@@ -226,7 +226,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     if (currentLine[0].ToLower().Equals("base"))
                     {
                         baseHitboxes = new List<Collider>();
-                        do 
+                        do
                         {
                             currentIndex++;
                             currentLine = lines[currentIndex].TrimStart(' ').Split(null);
@@ -238,7 +238,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             {
                                 baseHitboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
                             }
-                        } 
+                        }
                         while (!string.IsNullOrEmpty(currentLine[0]));
                     }
                     else if (currentLine[0].ToLower().Equals("bounce"))
