@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -51,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
-        private readonly BossController.PuppetColliderDelegates Delegates;
+        private BossInterruption OnInterrupt;
 
         private readonly float bossHitCooldownBase;
 
@@ -61,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level;
 
-        public BossPuppet(EntityData data, Vector2 offset, BossController.PuppetColliderDelegates delegates, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
@@ -72,7 +73,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             nodes = data.Nodes;
             MoveMode = GetMoveMode(data.Attr("moveMode"));
             HurtMode = GetHurtMode(data.Attr("hurtMode"));
-            Delegates = delegates;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
@@ -86,6 +86,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Add(new PlayerCollider(KillOnContact));
                 }
             }
+        }
+
+        internal void SetOnInterrupt(BossInterruption onInterrupt)
+        {
+            OnInterrupt = onInterrupt;
         }
 
         private void SetHitboxesAndColliders(HitboxMedatata hitboxMedatata)
@@ -233,7 +238,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
-                Delegates.onLaser.Invoke();
+                Add(new Coroutine(OnInterrupt.OnLaserCoroutine()));
             }
         }
 
@@ -244,7 +249,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
                 player.Bounce(base.Top + 2f);
-                Delegates.onBounce.Invoke();
+                Add(new Coroutine(OnInterrupt.OnBounceCoroutine()));
             }
         }
 
@@ -252,7 +257,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
             {
-                Delegates.onDash.Invoke();
+                Add(new Coroutine(OnInterrupt.OnDashCoroutine()));
             }
         }
 
@@ -260,7 +265,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
-                Delegates.onHit.Invoke();
+                Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
             }
         }
 

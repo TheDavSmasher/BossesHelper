@@ -216,8 +216,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern = new Coroutine();
             Add(currentPattern);
             userFileReader.ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder);
-            PuppetColliderDelegates delegates = new PuppetColliderDelegates(OnHit, OnDash, OnBounce, OnLaser);
-            Puppet = new BossPuppet(data, offset, delegates, dataHolder);
+
+            Puppet = new BossPuppet(data, offset, dataHolder);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
@@ -235,6 +235,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndInterrupt(player);
+            Puppet.SetOnInterrupt(OnInterrupt);
             if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f, -4f)));
@@ -399,27 +400,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             currentNodeOrIndex++;
             currentPatternIndex = patternOrder[currentNodeOrIndex];
-        }
-
-        //Puppet Delegates
-        public void OnHit()
-        {
-            Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
-        }
-
-        public void OnDash()
-        {
-            Add(new Coroutine(OnInterrupt.OnDashCoroutine()));
-        }
-
-        public void OnBounce()
-        {
-            Add(new Coroutine(OnInterrupt.OnBounceCoroutine()));
-        }
-
-        public void OnLaser()
-        {
-            Add(new Coroutine(OnInterrupt.OnLaserCoroutine()));
         }
 
         //Attack Delegates
