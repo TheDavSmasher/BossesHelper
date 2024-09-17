@@ -25,12 +25,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             get
             {
-                switch (currentSprite)
+                return currentSprite switch
                 {
-                    case SidekickSprite.Boss : return Boss;
-                    case SidekickSprite.Custom : return Custom;
-                    default: return Dummy;
-                }
+                    SidekickSprite.Boss => Boss,
+                    SidekickSprite.Custom => Custom,
+                    _ => Dummy,
+                };
             }
         }
 
@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly VertexLight Light;
 
-        private SoundSource laserSfx;
+        private readonly SoundSource laserSfx;
 
         public Vector2 BeamOrigin
         {

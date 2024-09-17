@@ -7,20 +7,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossPattern
     {
-        public struct Method
+        public struct Method(string name, float? duration)
         {
-            public string ActionName;
+            public string ActionName = name;
 
-            public float? Duration;
-
-            public Method(string name, float? duration)
-            {
-                ActionName = name;
-                Duration = duration;
-            }
+            public float? Duration = duration;
         }
 
-        public enum FinishMode
+        public enum FinishModes
         {
             ContinueLoop,
             OnHealthNum,
@@ -28,7 +22,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             PlayerPositionWithin
         }
 
-        public FinishMode finishMode { get; private set; }
+        public FinishModes FinishMode { get; private set; }
 
         public int? IterationCount { get; private set; }
 
@@ -46,9 +40,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public Method[] StatePatternOrder { get; private set; }
 
-        public BossPattern(string[] actions, float?[] durations, FinishMode finishMode = FinishMode.ContinueLoop)
+        public BossPattern(string[] actions, float?[] durations, FinishModes finishMode = FinishModes.ContinueLoop)
         {
-            finishMode = FinishMode.ContinueLoop;
+            FinishMode = finishMode;
             CurrentAction = 0;
             int loopSpot = Array.IndexOf(actions, "loop");
             if (loopSpot != -1)
@@ -64,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public void SetInterruptOnHealthBelow(int threshold)
         {
-            finishMode = FinishMode.OnHealthNum;
+            FinishMode = FinishModes.OnHealthNum;
             HealthThreshold = threshold;
 
             IterationCount = null;
@@ -74,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public void SetInterruptOnLoopCountGoTo(int loop, int target)
         {
-            finishMode = FinishMode.LoopCountGoTo;
+            FinishMode = FinishModes.LoopCountGoTo;
             IterationCount = loop;
             GoToPattern = target;
 
@@ -84,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public void SetInterruptWhenPlayerBetween(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, int goTo)
         {
-            finishMode = FinishMode.PlayerPositionWithin;
+            FinishMode = FinishModes.PlayerPositionWithin;
             PlayerPositionTrigger = new Rectangle(topLeftX, topLeftY, bottomRightX - topLeftX, bottomRightY - topLeftY);
             GoToPattern = goTo;
 
@@ -92,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             IterationCount = null;
         }
 
-        private Method[] ArraysToMethods(string[] names, float?[] durations)
+        private static Method[] ArraysToMethods(string[] names, float?[] durations)
         {
             int length = Math.Min(names.Length, durations.Length);
             Method[] methods = new Method[length];

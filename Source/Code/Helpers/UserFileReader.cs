@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
-using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -50,7 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     List<float?> floats = new();
                     int currentIndex = 0;
                     int patternID = 0;
-                    BossPattern.FinishMode mode = BossPattern.FinishMode.ContinueLoop;
+                    BossPattern.FinishModes mode = BossPattern.FinishModes.ContinueLoop;
                     int[] vals = Enumerable.Repeat(0, 5).ToArray();
                     while (currentIndex < lines.Count)
                     {
@@ -65,25 +62,25 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                 floats.Add(float.Parse(currentLine[1]));
                                 break;
                             case "goto":
-                                mode = BossPattern.FinishMode.LoopCountGoTo;
+                                mode = BossPattern.FinishModes.LoopCountGoTo;
                                 vals[0] = 0;
                                 vals[1] = int.Parse(currentLine[1]);
                                 break;
                             case "interrupt":
                                 if (currentLine[2].ToLower().Equals("repeat"))
                                 {
-                                    mode = BossPattern.FinishMode.LoopCountGoTo;
+                                    mode = BossPattern.FinishModes.LoopCountGoTo;
                                     vals[0] = int.Parse(currentLine[3]);
                                     vals[1] = int.Parse(currentLine[5]);
                                 }
                                 else if (currentLine[2].ToLower().Equals("health"))
                                 {
-                                    mode = BossPattern.FinishMode.OnHealthNum;
+                                    mode = BossPattern.FinishModes.OnHealthNum;
                                     vals[0] = int.Parse(currentLine[4]);
                                 }
                                 else if (currentLine[2].ToLower().Equals("player"))
                                 {
-                                    mode = BossPattern.FinishMode.PlayerPositionWithin;
+                                    mode = BossPattern.FinishModes.PlayerPositionWithin;
                                     vals[0] = int.Parse(currentLine[4]);
                                     vals[1] = int.Parse(currentLine[5]);
                                     vals[2] = int.Parse(currentLine[6]);
@@ -104,13 +101,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     BossPattern result = new BossPattern(actions.ToArray(), floats.ToArray());
                     switch (mode)
                     {
-                        case BossPattern.FinishMode.LoopCountGoTo:
+                        case BossPattern.FinishModes.LoopCountGoTo:
                             result.SetInterruptOnLoopCountGoTo(vals[0], vals[1]);
                             break;
-                        case BossPattern.FinishMode.OnHealthNum:
+                        case BossPattern.FinishModes.OnHealthNum:
                             result.SetInterruptOnHealthBelow(vals[0]);
                             break;
-                        case BossPattern.FinishMode.PlayerPositionWithin:
+                        case BossPattern.FinishModes.PlayerPositionWithin:
                             result.SetInterruptWhenPlayerBetween(vals[0], vals[1], vals[2], vals[3], vals[4]);
                             break;
                         default:

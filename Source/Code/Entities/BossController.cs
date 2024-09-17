@@ -276,7 +276,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
-            return Patterns[currentPatternIndex].finishMode == BossPattern.FinishMode.PlayerPositionWithin
+            return Patterns[currentPatternIndex].FinishMode == BossPattern.FinishModes.PlayerPositionWithin
                 && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entityPos.X, (int)entityPos.Y);
         }
 
@@ -314,7 +314,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (pattern.CurrentAction >= pattern.StatePatternOrder.Length)
                 {
-                    if (pattern.finishMode == BossPattern.FinishMode.LoopCountGoTo)
+                    if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo)
                     {
                         loop++;
                         if (loop > pattern.IterationCount)
