@@ -106,7 +106,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Action interruptPattern, Action advanceNode, Action startAttackPattern)
+        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
         {
             public Func<int> getHealth = getHealth;
 
@@ -116,7 +116,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public Action interruptPattern = interruptPattern;
 
-            public Action advanceNode = advanceNode;
+            public Action<bool> advanceNode = advanceNode;
 
             public Action startAttackPattern = startAttackPattern;
         }
@@ -292,8 +292,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (Level.Session.GetFlag("wa_advance"))
             {
                 Level.Session.SetFlag("wa_advance", false);
-                AdvanceNode();
-                StartAttackPattern();
+                AdvanceNode(true);
             }
         }
 
@@ -398,10 +397,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             DestroyAll();
         }
 
-        private void AdvanceNode()
+        private void AdvanceNode(bool startAttacking = false)
         {
             currentNodeOrIndex++;
             currentPatternIndex = patternOrder[currentNodeOrIndex];
+            if (startAttacking)
+            {
+                StartAttackPattern();
+            }
         }
 
         //Attack Delegates
