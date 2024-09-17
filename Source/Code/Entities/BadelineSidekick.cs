@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Boss = GFX.SpriteBank.Create("badeline_boss");
             Boss.OnFrameChange = (string anim) =>
             {
-                if (anim == "idle" && Boss.CurrentAnimationFrame == 18)
+                if (anim == "idle" && Boss.CurrentAnimationFrame == 18 && Boss.Visible)
                 {
                     Audio.Play("event:/char/badeline/boss_idle_air", Position);
                 }
