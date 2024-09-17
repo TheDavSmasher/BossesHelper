@@ -121,17 +121,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action startAttackPattern = startAttackPattern;
         }
 
-        public struct PuppetColliderDelegates(Action onHit, Action onDash, Action onBounce, Action onLaser)
-        {
-            public Action onHit = onHit;
-
-            public Action onDash = onDash;
-
-            public Action onBounce = onBounce;
-
-            public Action onLaser = onLaser;
-        }
-
         public struct BossPhase
         {
             public int phaseID;
