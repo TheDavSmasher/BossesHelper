@@ -87,7 +87,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void SetHitboxesAndColliders(HitboxMedatata hitboxMedatata)
         {
-            if (!hitboxMedatata.UseDefaultBase)
+            if (hitboxMedatata.UseDefaultBase)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
