@@ -251,7 +251,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             bounceHitboxes = new Hitbox(float.Parse(currentLine[2]), height, float.Parse(currentLine[0]), float.Parse(currentLine[1]));
                         }
                     }
-                    else if (!currentLine[0].ToLower().Equals("target"))
+                    else if (currentLine[0].ToLower().Equals("target"))
                     {
                         currentIndex++;
                         currentLine = lines[currentIndex].TrimStart(' ').Split(null);
