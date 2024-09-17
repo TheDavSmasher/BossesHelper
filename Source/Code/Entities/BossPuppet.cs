@@ -51,7 +51,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
-        private readonly Action OnHit;
+        private readonly BossController.PuppetColliderDelegates Delegates;
+
+        private readonly float bossHitCooldownBase;
 
         private float bossHitCooldown;
 
@@ -59,17 +61,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level;
 
-        public BossPuppet(EntityData data, Vector2 offset, Action onHit, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset, BossController.PuppetColliderDelegates delegates, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
-            bossHitCooldown = data.Float("bossHitCooldown", 0.5f);
+            bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
+            bossHitCooldown = 0f;
             nodes = data.Nodes;
             MoveMode = GetMoveMode(data.Attr("moveMode"));
             HurtMode = GetHurtMode(data.Attr("hurtMode"));
-            OnHit = onHit;
+            Delegates = delegates;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
@@ -112,7 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, OnHit, hitboxMedatata.targetRadius));
+                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, OnSidekickLaser, hitboxMedatata.targetRadius));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash));
@@ -216,9 +219,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldown = timer;
         }
 
+        public void ResetBossHitCooldown()
+        {
+            bossHitCooldown = bossHitCooldownBase;
+        }
+
         private void KillOnContact(Player player)
         {
             player.Die((player.Position - Position).SafeNormalize());
+        }
+
+        private void OnSidekickLaser()
+        {
+            if (bossHitCooldown <= 0)
+            {
+                Delegates.onLaser.Invoke();
+            }
         }
 
         private void OnPlayerBounce(Player player)
@@ -228,7 +244,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
                 player.Bounce(base.Top + 2f);
-                OnHit.Invoke();
+                Delegates.onBounce.Invoke();
             }
         }
 
@@ -236,7 +252,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
             {
-                OnHit.Invoke();
+                Delegates.onDash.Invoke();
             }
         }
 
@@ -244,7 +260,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
-                OnHit.Invoke();
+                Delegates.onHit.Invoke();
             }
         }
 

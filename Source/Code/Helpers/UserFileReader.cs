@@ -192,7 +192,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void ReadOnHitFileInto(ref BossInterruption onHit, Player playerRef, BossPuppet puppetRef, BossController.OnHitDelegates delegates)
         {
-            if (Everest.Content.TryGet(MasterFilePath + "/OnHit", out ModAsset onHitFile))
+            if (Everest.Content.TryGet(MasterFilePath + "/OnDamage", out ModAsset onHitFile))
             {
                 onHit = new BossInterruption(onHitFile.PathVirtual, playerRef, puppetRef, delegates);
             }

@@ -119,6 +119,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action advanceNode = advanceNode;
         }
 
+        public struct PuppetColliderDelegates(Action onHit, Action onDash, Action onBounce, Action onLaser)
+        {
+            public Action onHit = onHit;
+
+            public Action onDash = onDash;
+
+            public Action onBounce = onBounce;
+
+            public Action onLaser = onLaser;
+        }
+
         public struct BossPhase
         {
             public int phaseID;
@@ -205,7 +216,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern = new Coroutine();
             Add(currentPattern);
             userFileReader.ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder);
-            Puppet = new BossPuppet(data, offset, OnHit, dataHolder);
+            PuppetColliderDelegates delegates = new PuppetColliderDelegates(OnHit, OnDash, OnBounce, OnLaser);
+            Puppet = new BossPuppet(data, offset, delegates, dataHolder);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
@@ -393,6 +405,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void OnHit()
         {
             Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
+        }
+
+        public void OnDash()
+        {
+            Add(new Coroutine(OnInterrupt.OnDashCoroutine()));
+        }
+
+        public void OnBounce()
+        {
+            Add(new Coroutine(OnInterrupt.OnBounceCoroutine()));
+        }
+
+        public void OnLaser()
+        {
+            Add(new Coroutine(OnInterrupt.OnLaserCoroutine()));
         }
 
         //Attack Delegates

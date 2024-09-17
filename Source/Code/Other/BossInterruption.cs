@@ -13,6 +13,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private LuaFunction OnHitLua;
 
+        private LuaFunction OnDashLua;
+
+        private LuaFunction OnBounceLua;
+
+        private LuaFunction OnLaserLua;
+
         private readonly string filepath;
 
         private LuaTable cutsceneEnv;
@@ -39,6 +45,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 if (array != null)
                 {
                     OnHitLua = array.ElementAtOrDefault(1) as LuaFunction;
+                    OnDashLua = array.ElementAtOrDefault(2) as LuaFunction;
+                    OnBounceLua = array.ElementAtOrDefault(3) as LuaFunction;
+                    OnLaserLua = array.ElementAtOrDefault(4) as LuaFunction;
                 }
                 else
                 {
@@ -60,7 +69,26 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public IEnumerator OnHitCoroutine()
         {
+            if (OnHitLua != null)
             yield return LuaBossHelper.LuaFunctionToIEnumerator(OnHitLua);
+        }
+
+        public IEnumerator OnDashCoroutine()
+        {
+            if (OnDashLua != null)
+            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnDashLua);
+        }
+
+        public IEnumerator OnBounceCoroutine()
+        {
+            if (OnBounceLua != null)
+            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnBounceLua);
+        }
+
+        public IEnumerator OnLaserCoroutine()
+        {
+            if (OnLaserLua != null)
+            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnLaserLua);
         }
     }
 }
