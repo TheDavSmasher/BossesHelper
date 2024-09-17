@@ -163,16 +163,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Dummy.Visible = true;
                     DummyHair.Visible = true;
                     Boss.Visible = false;
-                    Custom.Visible = false;
+                    /*Custom.Visible = false;*/
                     break;
                 case SidekickSprite.Boss:
                     Boss.Visible = true;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
-                    Custom.Visible = false;
+                    /*Custom.Visible = false;*/
                     break;
                 case SidekickSprite.Custom:
-                    Custom.Visible = true;
+                    /*Custom.Visible = true;*/
                     Boss.Visible = false;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
