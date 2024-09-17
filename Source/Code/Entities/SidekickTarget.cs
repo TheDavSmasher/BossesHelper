@@ -37,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (Collider != null)
             {
-                Draw.Circle(Position, radius, Color.AliceBlue, 10);
+                Draw.Circle(Center, radius, Color.AliceBlue, 10);
             }
         }
     }
