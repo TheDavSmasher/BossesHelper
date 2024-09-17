@@ -56,6 +56,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        private bool IsAttacking;
+
         public BadelineSidekick(Vector2 position) : base(position)
         {
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
@@ -91,6 +93,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AddTag(Tags.Persistent);
             SetActiveSpriteTo(SidekickSprite.Dummy);
             Add(laserSfx = new SoundSource());
+            IsAttacking = false;
         }
 
         private IEnumerator Beam()
@@ -106,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickTarget target = level.Tracker.GetNearestEntity<SidekickTarget>(BeamOrigin);
             if (target != null)
             {
-                level.CreateAndAdd<SidekickBeam>();
+                level.CreateAndAdd<SidekickBeam>().Init(this, target);
             }
             yield return 0.9f;
             ActiveSprite.Play("attack2Lock", true);
@@ -114,6 +117,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             laserSfx.Stop();
             Audio.Play("event:/char/badeline/boss_laser_fire", Position);
             ActiveSprite.Play("attack2Recoil");
+            IsAttacking = false;
         }
 
         public override void Awake(Scene scene)
@@ -141,6 +145,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 ActiveSprite.Scale.X *= -1;
                 DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
+            }
+            if (Input.CrouchDashPressed && !IsAttacking)
+            {
+                IsAttacking = true;
+                Add(new Coroutine(Beam()));
             }
             oldX = X;
             base.Update();

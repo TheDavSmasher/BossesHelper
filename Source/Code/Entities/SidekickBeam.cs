@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Celeste.Mod.BossesHelper.Code.Components;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -74,7 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Depth = -1000000;
         }
 
-        public SidekickBeam Init(BadelineSidekick sidekick, Player target)
+        public SidekickBeam Init(BadelineSidekick sidekick, SidekickTarget target)
         {
             this.sidekick = sidekick;
             chargeTimer = 1.4f;
