@@ -917,8 +917,8 @@ function helpers.InterruptPattern()
     boss.interruptPattern:Invoke()
 end
 
-function helpers.AdvanceNode()
-    boss.advanceNode:Invoke()
+function helpers.AdvanceNode(startAttacking)
+    boss.advanceNode:Invoke(startAttacking or false)
 end
 
 function helpers.StartAttackPattern()
