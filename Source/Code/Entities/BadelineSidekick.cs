@@ -85,7 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(Follower = new Follower());
             Follower.PersistentFollow = true;
             AddTag(Tags.Persistent);
-            currentSprite = SidekickSprite.Dummy;
+            SetActiveSpriteTo(SidekickSprite.Dummy);
             Add(laserSfx = new SoundSource());
         }
 
