@@ -283,17 +283,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
                 StartAttackPattern();
             }
-            //TODO Currently used to test node changing
-            if (Level.Session.GetFlag("wa_interrupt"))
-            {
-                Level.Session.SetFlag("wa_interrupt", false);
-                InterruptPattern();
-            }
-            if (Level.Session.GetFlag("wa_advance"))
-            {
-                Level.Session.SetFlag("wa_advance", false);
-                AdvanceNode(true);
-            }
         }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
