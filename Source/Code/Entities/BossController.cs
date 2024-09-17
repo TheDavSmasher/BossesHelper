@@ -106,7 +106,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Action interruptPattern, Action advanceNode)
+        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Action interruptPattern, Action advanceNode, Action startAttackPattern)
         {
             public Func<int> getHealth = getHealth;
 
@@ -117,6 +117,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action interruptPattern = interruptPattern;
 
             public Action advanceNode = advanceNode;
+
+            public Action startAttackPattern = startAttackPattern;
         }
 
         public struct PuppetColliderDelegates(Action onHit, Action onDash, Action onBounce, Action onLaser)
@@ -311,7 +313,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AttackDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
             userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
             userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
-            OnHitDelegates onHitDelegates = new(GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode);
+            OnHitDelegates onHitDelegates = new(GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern);
             userFileReader.ReadOnHitFileInto(ref OnInterrupt, player, Puppet, onHitDelegates);
         }
 

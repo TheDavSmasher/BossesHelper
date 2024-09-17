@@ -921,6 +921,10 @@ function helpers.AdvanceNode()
     boss.advanceNode:Invoke()
 end
 
+function helpers.StartAttackPattern()
+    boss.startAttackPattern:Invoke()
+end
+
 --- Additional, non-delegate helper shorthand methods
 function helpers.PlayPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
