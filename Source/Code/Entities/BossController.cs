@@ -144,7 +144,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             PlayerContact,
             PlayerDash,
-            Explosion,
             HeadBonk,
             SidekickAttack
         }

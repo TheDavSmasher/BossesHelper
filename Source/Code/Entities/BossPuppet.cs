@@ -117,8 +117,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash));
                     break;
-                case HurtModes.Explosion: //TODO figure this out lol
-                    break;
                 default: //PlayerContact 
                     Add(new PlayerCollider(OnPlayerContact));
                     break;
@@ -143,7 +141,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             return moveMode switch
             {
                 "playerDash" => HurtModes.PlayerDash,
-                "explosion" => HurtModes.Explosion,
                 "headBonk" => HurtModes.HeadBonk,
                 "sidekickAttack" => HurtModes.SidekickAttack,
                 _ => HurtModes.PlayerContact

@@ -12,7 +12,6 @@ local moveModeOpts = {
 local hurtModeOpts = {
     {"Player Contact", "playerContact"},
     {"Player Dash", "playerDash"},
-    {"Explosion", "explosion"},
     {"Head Bonk", "headBonk"},
     {"Sidekick Attack", "sidekickAttack"}
 }
