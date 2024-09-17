@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public SidekickTargetComp(string bossName, Vector2 position, Vector2 offset, Action onLaser, float radius = 4f)
             : base(active: true, visible: false)
         {
-            target = new SidekickTarget(bossName, position + offset, onLaser, radius);
+            target = new SidekickTarget(bossName, position, offset, onLaser, radius);
             Offset = offset;
         }
 

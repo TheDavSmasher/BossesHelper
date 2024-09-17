@@ -16,8 +16,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private SidekickTarget Target;
 
-        public static ParticleType P_Dissipate;
-
         public const float ChargeTime = 1.4f;
 
         public const float FollowTime = 0.9f;
@@ -89,9 +87,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 num *= -1;
             }
-            angle = Calc.Angle(sidekick.BeamOrigin, target.Center);
-            Vector2 to = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), target.Center);
-            to += (target.Center - sidekick.BeamOrigin).Perpendicular().SafeNormalize(100f) * num;
+            angle = Calc.Angle(sidekick.BeamOrigin, target.Collider.Center);
+            Vector2 to = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), target.Collider.Center);
+            to += (target.Collider.Center - sidekick.BeamOrigin).Perpendicular().SafeNormalize(100f) * num;
             angle = Calc.Angle(sidekick.BeamOrigin, to);
             return this;
         }
@@ -109,10 +107,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     followTimer -= Engine.DeltaTime;
                     chargeTimer -= Engine.DeltaTime;
-                    if (followTimer > 0f && Target.Center != sidekick.BeamOrigin)
+                    if (followTimer > 0f && Target.Collider.Center != sidekick.BeamOrigin)
                     {
-                        Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), Target.Center);
-                        Vector2 center = Target.Center;
+                        Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), Target.Collider.Center);
+                        Vector2 center = Target.Collider.Center;
                         val = Calc.Approach(val, center, 200f * Engine.DeltaTime);
                         angle = Calc.Angle(sidekick.BeamOrigin, val);
                     }
@@ -162,12 +160,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 for (int j = -1; j <= 1; j += 2)
                 {
-                    level.ParticlesFG.Emit(P_Dissipate, vector + vector5 * i + vector4 * 2f * j + Calc.Random.Range(min, max), direction);
-                    level.ParticlesFG.Emit(P_Dissipate, vector + vector5 * i - vector4 * 2f * j + Calc.Random.Range(min, max), direction2);
+                    level.ParticlesFG.Emit(FinalBossBeam.P_Dissipate, vector + vector5 * i + vector4 * 2f * j + Calc.Random.Range(min, max), direction);
+                    level.ParticlesFG.Emit(FinalBossBeam.P_Dissipate, vector + vector5 * i - vector4 * 2f * j + Calc.Random.Range(min, max), direction2);
                     if (i != 0 && (float)i < num)
                     {
-                        level.ParticlesFG.Emit(P_Dissipate, vector - vector5 * i + vector4 * 2f * j + Calc.Random.Range(min, max), direction);
-                        level.ParticlesFG.Emit(P_Dissipate, vector - vector5 * i - vector4 * 2f * j + Calc.Random.Range(min, max), direction2);
+                        level.ParticlesFG.Emit(FinalBossBeam.P_Dissipate, vector - vector5 * i + vector4 * 2f * j + Calc.Random.Range(min, max), direction);
+                        level.ParticlesFG.Emit(FinalBossBeam.P_Dissipate, vector - vector5 * i - vector4 * 2f * j + Calc.Random.Range(min, max), direction2);
                     }
                 }
             }

@@ -13,10 +13,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Action OnLaserCollide;
 
-        public SidekickTarget(string bossName, Vector2 position, Action onLaser, float radius = 4f)
-            : base(position)
+        public SidekickTarget(string bossName, Vector2 position, Vector2 offset, Action onLaser, float radius = 4f)
+            : base(position + offset)
         {
-            base.Collider = new Circle(radius, position.X, position.Y);
+            base.Collider = new Circle(radius, offset.X, offset.Y);
             this.radius = radius;
             OnLaserCollide = onLaser;
             BossName = bossName;
