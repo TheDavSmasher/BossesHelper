@@ -398,19 +398,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         //Attack Delegates
         private void AddEntity(Entity entity)
         {
+            Level.Add(entity);
             activeEntities.Add(entity);
             entity.Scene = Level;
-            Level.Add(entity);
         }
 
         private void AddEntityWithTimer(Entity entity, string id, LuaFunction action, float timer)
         {
             if (!activeEntityTimers.ContainsKey(id))
             {
+                Level.Add(entity);
                 activeEntities.Add(entity);
                 entity.Scene = Level;
                 activeEntityTimers.Add(id, EntityTimer.DoActionOnEntityDelay(action, entity, id, timer));
-                Level.Add(entity);
             }
         }
 
@@ -418,10 +418,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!activeEntityFlaggers.ContainsKey(flag))
             {
+                Level.Add(entity);
                 activeEntities.Add(entity);
                 entity.Scene = Level;
                 activeEntityFlaggers.Add(flag, EntityFlagger.DoActionOnEntityOnFlagState(action, entity, flag, state, resetFlag));
-                Level.Add(entity);
             }
         }
 
