@@ -238,6 +238,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
+                ResetBossHitCooldown();
                 Add(new Coroutine(OnInterrupt.OnLaserCoroutine()));
             }
         }
@@ -246,6 +247,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
+                ResetBossHitCooldown();
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
                 player.Bounce(base.Top + 2f);
@@ -257,6 +259,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
             {
+                ResetBossHitCooldown();
                 Add(new Coroutine(OnInterrupt.OnDashCoroutine()));
             }
         }
@@ -265,6 +268,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (bossHitCooldown <= 0)
             {
+                ResetBossHitCooldown();
                 Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
             }
         }
