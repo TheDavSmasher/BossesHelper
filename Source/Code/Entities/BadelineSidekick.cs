@@ -60,6 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
             Dummy.Scale.X = -1f;
+            Dummy.Play("fallslow");
             DummyHair = new PlayerHair(Dummy);
             DummyHair.Color = BadelineOldsite.HairColor;
             DummyHair.Border = Color.Black;
@@ -74,7 +75,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             //Custom = GFX.SpriteBank.Create("badeline_sidekick");
             //PlayerSprite.CreateFramesMetadata("badeline_sidekick");
-            Add(Dummy, DummyHair, Boss/*, Custom*/);
+            Add(DummyHair);
+            Add(Dummy);
+            Add(Boss);
+            /*Add(Custom);*/
             Add(Wave = new SineWave(0.25f, 0f));
             Wave.OnUpdate = (float f) =>
             {
