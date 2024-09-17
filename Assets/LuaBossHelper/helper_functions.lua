@@ -910,7 +910,7 @@ function helpers.SetHealth(health)
 end
 
 function helpers.DecreaseHealth(health)
-    boss.decreaseHealth:Invoke(health)
+    boss.decreaseHealth:Invoke(health or 1)
 end
 
 function helpers.InterruptPattern()
@@ -928,6 +928,16 @@ end
 --- Additional, non-delegate helper shorthand methods
 function helpers.PlayPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
+end
+
+function helpers.GetNewEntityData(position, width, height, id)
+    newData = celeste.Mod.BossesHelper.BossesHelperModule.MakeEntityData()
+    newData.ID = id or 1000
+    newData.Level = engine.Scene
+    newData.Position = position or vector2(0,0)
+    newData.Width = width or 0
+    newData.Height = height or 0
+    return newData
 end
 
 return helpers
