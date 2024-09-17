@@ -1,12 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Celeste.Mod.BossesHelper.Code.Components;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -22,27 +16,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public const float ActiveTime = 0.12f;
 
-        private const float AngleStartOffset = 100f;
-
-        private const float RotationSpeed = 200f;
-
-        private const float CollideCheckSep = 2f;
-
-        private const float BeamLength = 2000f;
-
-        private const float BeamStartDist = 12f;
-
-        private const int BeamsDrawn = 15;
-
-        private const float SideDarknessAlpha = 0.35f;
-
         private BadelineSidekick sidekick;
 
-        private Player player;
+        private readonly Sprite beamSprite;
 
-        private Sprite beamSprite;
-
-        private Sprite beamStartSprite;
+        private readonly Sprite beamStartSprite;
 
         private float chargeTimer;
 
@@ -56,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private float sideFadeAlpha;
 
-        private VertexPositionColor[] fade = new VertexPositionColor[24];
+        private readonly VertexPositionColor[] fade = new VertexPositionColor[24];
 
         public SidekickBeam()
         {
@@ -177,14 +155,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Vector2 vector2 = sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f);
             Vector2 vector3 = (vector2 - vector).Perpendicular().SafeNormalize(2f);
             SidekickTarget target = base.Scene.CollideFirst<SidekickTarget>(vector + vector3, vector2 + vector3);
-            if (target == null)
-            {
-                target = base.Scene.CollideFirst<SidekickTarget>(vector - vector3, vector2 - vector3);
-            }
-            if (target == null)
-            {
-                target = base.Scene.CollideFirst<SidekickTarget>(vector, vector2);
-            }
+            target ??= base.Scene.CollideFirst<SidekickTarget>(vector - vector3, vector2 - vector3);
+            target ??= base.Scene.CollideFirst<SidekickTarget>(vector, vector2);
             target?.OnLaser();
         }
 
