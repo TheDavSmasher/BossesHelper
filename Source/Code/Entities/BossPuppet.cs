@@ -9,7 +9,7 @@ using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    public class BossPuppet : Entity
+    public class BossPuppet : Actor
     {
         public struct HitboxMedatata(List<Collider> baseHitboxes, Hitbox bounceHitbox, Vector2 target, float radius)
         {
@@ -184,6 +184,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
+            //TODO move as needed
         }
 
         private bool PositionOver_Quarter(float pos, bool left)
@@ -273,7 +274,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public IEnumerator MoveSequence()
+        public IEnumerator NodeMoveSequence()
         {
             //TODO finish
             yield return null;
