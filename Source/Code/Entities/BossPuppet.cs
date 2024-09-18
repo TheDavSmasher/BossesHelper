@@ -11,9 +11,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Actor
     {
-        public struct HitboxMedatata(List<Collider> baseHitboxes, Hitbox bounceHitbox, Vector2 target, float radius)
+        public struct HitboxMedatata(List<Collider> baseHitboxes, List<Collider> baseHurtboxes, Hitbox bounceHitbox, Vector2 target, float radius)
         {
             public List<Collider> baseHitboxes = baseHitboxes;
+
+            public List<Collider> baseHurtboxes = baseHurtboxes;
 
             public Hitbox bounceHitbox = bounceHitbox;
 
@@ -21,11 +23,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public float targetRadius = radius;
 
-            public readonly bool UseDefaultBase
+            public readonly bool UseDefaultHitbox
             {
                 get
                 {
                     return baseHitboxes == null || baseHitboxes.Count == 0;
+                }
+            }
+
+            public readonly bool UseDefaultHurtbox
+            {
+                get
+                {
+                    return baseHurtboxes == null || baseHurtboxes.Count == 0;
                 }
             }
 
@@ -39,6 +49,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         private Sprite Sprite;
+
+        private Collider Hurtbox;
 
         private readonly string SpriteName;
 
@@ -95,7 +107,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void SetHitboxesAndColliders(HitboxMedatata hitboxMedatata)
         {
-            if (hitboxMedatata.UseDefaultBase)
+            if (hitboxMedatata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
@@ -106,6 +118,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             else
             {
                 base.Collider = hitboxMedatata.baseHitboxes[0];
+            }
+            if (hitboxMedatata.UseDefaultHurtbox)
+            {
+                Hurtbox = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+            }
+            else if (hitboxMedatata.baseHurtboxes.Count > 1)
+            {
+                Hurtbox = new ColliderList(hitboxMedatata.baseHurtboxes.ToArray());
+            }
+            else
+            {
+                Hurtbox = hitboxMedatata.baseHurtboxes[0];
             }
             switch (HurtMode)
             {
@@ -123,10 +147,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, OnSidekickLaser, hitboxMedatata.targetRadius));
                     break;
                 case HurtModes.PlayerDash:
-                    Add(new PlayerCollider(OnPlayerDash));
+                    Add(new PlayerCollider(OnPlayerDash, Hurtbox));
                     break;
                 default: //PlayerContact 
-                    Add(new PlayerCollider(OnPlayerContact));
+                    Add(new PlayerCollider(OnPlayerContact, Hurtbox));
                     break;
             }
         }

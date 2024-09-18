@@ -202,6 +202,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
         {
             List<Collider> baseHitboxes = null;
+            List<Collider> baseHurtboxes = null;
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
             float radius = 4f;
@@ -222,21 +223,41 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
                     if (currentLine[0].ToLower().Equals("base"))
                     {
-                        baseHitboxes = new List<Collider>();
-                        do
+                        if (currentLine[1].ToLower().Contains("hitbox"))
                         {
-                            currentIndex++;
-                            currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                            if (currentLine[0].ToLower().Equals("hitbox"))
+                            baseHitboxes = new List<Collider>();
+                            do
                             {
-                                baseHitboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                                currentIndex++;
+                                currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                                if (currentLine[0].ToLower().Equals("hitbox"))
+                                {
+                                    baseHitboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                                }
+                                else if (currentLine[0].ToLower().Equals("circle"))
+                                {
+                                    baseHitboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
+                                }
                             }
-                            else if (currentLine[0].ToLower().Equals("circle"))
-                            {
-                                baseHitboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
-                            }
+                            while (!string.IsNullOrEmpty(currentLine[0]));
                         }
-                        while (!string.IsNullOrEmpty(currentLine[0]));
+                        else if (currentLine[1].ToLower().Contains("hurtbox")) {
+                            baseHurtboxes = new List<Collider>();
+                            do
+                            {
+                                currentIndex++;
+                                currentLine = lines[currentIndex].TrimStart(' ').Split(null);
+                                if (currentLine[0].ToLower().Equals("hitbox"))
+                                {
+                                    baseHurtboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                                }
+                                else if (currentLine[0].ToLower().Equals("circle"))
+                                {
+                                    baseHurtboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
+                                }
+                            }
+                            while (!string.IsNullOrEmpty(currentLine[0]));
+                        }
                     }
                     else if (currentLine[0].ToLower().Equals("bounce"))
                     {
@@ -262,7 +283,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     currentIndex++;
                 }
             }
-            dataHolder = new(baseHitboxes, bounceHitboxes, targetOffset, radius);
+            dataHolder = new(baseHitboxes, baseHurtboxes, bounceHitboxes, targetOffset, radius);
         }
     }
 }
