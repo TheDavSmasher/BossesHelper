@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(SpriteName, Position, hitboxMedatata.targetOffset, OnSidekickLaser, hitboxMedatata.targetRadius));
+                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMedatata.targetOffset, hitboxMedatata.targetRadius));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash, Hurtbox));
