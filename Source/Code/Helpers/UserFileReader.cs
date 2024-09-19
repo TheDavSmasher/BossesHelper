@@ -192,6 +192,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 LuaBossHelper.DoCustomSetup(customSetupFile.PathVirtual, player, puppet);
             }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find a Setup file.");
+            }
         }
 
         public static void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
