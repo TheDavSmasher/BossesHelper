@@ -159,6 +159,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickAttack
         }
 
+        public HurtModes hurtMode;
+
         public readonly BossPuppet Puppet;
 
         public Dictionary<string, BossAttack> AllAttacks;
@@ -212,11 +214,24 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = patternOrder[currentNodeOrIndex];
             currentPattern = new Coroutine();
             Add(currentPattern);
-            Puppet = new BossPuppet(data, offset);
+            hurtMode = GetHurtMode(data.Attr("hurtMode"));
+            Puppet = new BossPuppet(data, offset, hurtMode);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
         }
+
+        private static HurtModes GetHurtMode(string moveMode)
+        {
+            return moveMode switch
+            {
+                "playerDash" => HurtModes.PlayerDash,
+                "headBonk" => HurtModes.HeadBonk,
+                "sidekickAttack" => HurtModes.SidekickAttack,
+                _ => HurtModes.PlayerContact
+            };
+        }
+
 
         public override void Added(Scene scene)
         {
@@ -231,7 +246,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndInterrupt(player);
             Puppet.SetOnInterrupt(OnInterrupt);
-            if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
+            if (hurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f, -4f)));
             }
@@ -291,11 +306,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndInterrupt(Player player)
         {
-            AttackDelegates delegates = new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
-            UserFileReader.ReadAttackFilesInto(Name, ref AllAttacks, delegates);
+            UserFileReader.ReadAttackFilesInto(Name, ref AllAttacks,
+                new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(Name, ref AllEvents, player, Puppet);
-            OnHitDelegates onHitDelegates = new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern);
-            UserFileReader.ReadOnHitFileInto(Name, ref OnInterrupt, onHitDelegates);
+            UserFileReader.ReadOnHitFileInto(Name, ref OnInterrupt,
+                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern));
         }
 
         private void PopulatePatternsAndOrder()
