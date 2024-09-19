@@ -5,30 +5,15 @@ using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
+using System.Xml;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-    internal class UserFileReader : Component
+    internal static class UserFileReader
     {
-        private readonly string MasterFilePath;
-
-        private readonly string AttacksPath;
-
-        private readonly string EventsPath;
-
-        private readonly string PatternPath;
-
-        public UserFileReader(string bossName)
-            : base(true, false)
+        public static void ReadPatternFilesInto(string bossName, ref List<BossPattern> targetOut)
         {
-            MasterFilePath = "Assets/Bosses/" + bossName;
-            AttacksPath = MasterFilePath + "/Attacks";
-            EventsPath = MasterFilePath + "/Events";
-            PatternPath = MasterFilePath + "/Patterns";
-        }
-
-        public void ReadPatternFilesInto(ref List<BossPattern> targetOut)
-        {
+            string PatternPath = "Assets/Bosses/" + bossName + "/Patterns";
             if (Everest.Content.TryGet(PatternPath, out ModAsset patternBranch))
             {
                 targetOut = new List<BossPattern>(new BossPattern[patternBranch.Children.Count]);
@@ -122,9 +107,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadPatternOrderFileInto(ref List<int> target, int nodeCount = 1)
+        public static void ReadPatternOrderFileInto(string bossName, ref List<int> target, int nodeCount = 1)
         {
-            string patternFilePath = MasterFilePath + "/PatternOrder";
+            string patternFilePath = "Assets/Bosses/" + bossName + "/PatternOrder";
             if (Everest.Content.TryGet(patternFilePath, out ModAsset orderFile))
             {
                 List<string> lines = new();
@@ -157,8 +142,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadEventFilesInto(ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
+        public static void ReadEventFilesInto(string bossName, ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
         {
+            string EventsPath = "Assets/Bosses/" + bossName + "/Events";
             if (Everest.Content.TryGet(EventsPath, out ModAsset eventFiles))
             {
                 foreach (ModAsset eventFile in eventFiles.Children)
@@ -172,13 +158,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, Player playerRef, BossPuppet puppetRef, BossController.AttackDelegates delegates)
+        public static void ReadAttackFilesInto(string bossName, ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
         {
+            string AttacksPath = "Assets/Bosses/" + bossName + "/Events";
             if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
                 {
-                    attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, playerRef, puppetRef, delegates));
+                    attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, delegates));
                 }
             }
             else
@@ -187,11 +174,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadOnHitFileInto(ref BossInterruption onHit, Player playerRef, BossPuppet puppetRef, BossController.OnHitDelegates delegates)
+        public static void ReadOnHitFileInto(string bossName, ref BossInterruption onHit, BossController.OnHitDelegates delegates)
         {
-            if (Everest.Content.TryGet(MasterFilePath + "/OnDamage", out ModAsset onHitFile))
+            string DamagePath = "Assets/Bosses/" + bossName + "/OnDamage";
+            if (Everest.Content.TryGet(DamagePath, out ModAsset onHitFile))
             {
-                onHit = new BossInterruption(onHitFile.PathVirtual, playerRef, puppetRef, delegates);
+                onHit = new BossInterruption(onHitFile.PathVirtual, delegates);
             }
             else
             {
@@ -199,91 +187,77 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
+        public static void ReadMetadataFileInto(string bossName, out BossPuppet.HitboxMedatata dataHolder)
         {
             List<Collider> baseHitboxes = null;
             List<Collider> baseHurtboxes = null;
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
-            float radius = 4f;
-            if (Everest.Content.TryGet(MasterFilePath + "/Metadata", out ModAsset metadata))
+            float radiusT = 4f;
+            string MetadataPath = "Assets/Bosses/" + bossName + "/Metadata";
+            if (Everest.Content.TryGet(MetadataPath, out ModAsset xml))
             {
-                List<string> lines = new();
-                using (StreamReader reader = new StreamReader(metadata.Stream))
+                XmlDocument doc = new XmlDocument();
+                doc.Load(xml.Stream);
+                XmlNodeList hitboxList = doc.SelectSingleNode("HitboxMetadata").ChildNodes;
+                foreach (XmlNode hitboxNode in hitboxList)
                 {
-                    while (!reader.EndOfStream)
+                    switch (hitboxNode.LocalName.ToLower())
                     {
-                        lines.Add(reader.ReadLine());
-                    }
-                    reader.Close();
-                }
-                int currentIndex = 0;
-                while (currentIndex < lines.Count)
-                {
-                    string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                    if (currentLine[0].ToLower().Equals("base"))
-                    {
-                        if (currentLine[1].ToLower().Contains("hitbox"))
-                        {
-                            baseHitboxes = new List<Collider>();
-                            do
+                        case "hitboxes":
+                            baseHitboxes = new();
+                            foreach (XmlElement baseHitbox in hitboxNode.ChildNodes)
                             {
-                                currentIndex++;
-                                currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                                if (currentLine[0].ToLower().Equals("hitbox"))
+                                if (baseHitbox.LocalName.ToLower().Equals("circle"))
                                 {
-                                    baseHitboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                                    baseHitboxes.Add(GetCircleFromXml(baseHitbox.Attributes, 4f));
                                 }
-                                else if (currentLine[0].ToLower().Equals("circle"))
+                                else
                                 {
-                                    baseHitboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
+                                    baseHitboxes.Add(GetHitboxFromXml(baseHitbox.Attributes, 8f, 8f));
                                 }
                             }
-                            while (!string.IsNullOrEmpty(currentLine[0]));
-                        }
-                        else if (currentLine[1].ToLower().Contains("hurtbox")) {
-                            baseHurtboxes = new List<Collider>();
-                            do
+                            break;
+                        case "hurtboxes":
+                            baseHurtboxes = new();
+                            foreach (XmlNode baseHurtbox in hitboxNode.ChildNodes)
                             {
-                                currentIndex++;
-                                currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                                if (currentLine[0].ToLower().Equals("hitbox"))
+                                if (baseHurtbox.LocalName.ToLower().Equals("circle"))
                                 {
-                                    baseHurtboxes.Add(new Hitbox(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3]), float.Parse(currentLine[4])));
+                                    baseHurtboxes.Add(GetCircleFromXml(baseHurtbox.Attributes, 4f));
                                 }
-                                else if (currentLine[0].ToLower().Equals("circle"))
+                                else
                                 {
-                                    baseHurtboxes.Add(new Circle(float.Parse(currentLine[1]), float.Parse(currentLine[2]), float.Parse(currentLine[3])));
+                                    baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox.Attributes, 8f, 8f));
                                 }
                             }
-                            while (!string.IsNullOrEmpty(currentLine[0]));
-                        }
+                            break;
+                        case "bouncebox":
+                            XmlAttributeCollection bounceboxData = hitboxNode.Attributes;
+                            break;
+                        case "target":
+                            XmlAttributeCollection targetData = hitboxNode.Attributes;
+                            break;
                     }
-                    else if (currentLine[0].ToLower().Equals("bounce"))
-                    {
-                        currentIndex++;
-                        currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                        if (!string.IsNullOrEmpty(currentLine[0]))
-                        {
-                            float height = string.IsNullOrEmpty(currentLine[3]) ? 6f : float.Parse(currentLine[3]);
-                            bounceHitboxes = new Hitbox(float.Parse(currentLine[2]), height, float.Parse(currentLine[0]), float.Parse(currentLine[1]));
-                        }
-                    }
-                    else if (currentLine[0].ToLower().Equals("target"))
-                    {
-                        currentIndex++;
-                        currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                        if (!string.IsNullOrEmpty(currentLine[0]))
-                        {
-                            targetOffset.X = float.Parse(currentLine[0]);
-                            targetOffset.Y = currentLine.Length > 1 ? float.Parse(currentLine[1]) : 0f;
-                            radius = currentLine.Length > 2 ? float.Parse(currentLine[1]) : 4f;
-                        }
-                    }
-                    currentIndex++;
                 }
-            }
-            dataHolder = new(baseHitboxes, baseHurtboxes, bounceHitboxes, targetOffset, radius);
+            }                                  
+            dataHolder = new(baseHitboxes, baseHurtboxes, bounceHitboxes, targetOffset, radiusT);
+        }
+
+        private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)
+        {
+            return new Hitbox(GetValueOrDefault(source["width"], defaultWidth), GetValueOrDefault(source["height"], defaultHeight),
+                GetValueOrDefault(source["xOffset"]), GetValueOrDefault(source["yOffset"]));
+        }
+
+        private static Circle GetCircleFromXml(XmlAttributeCollection source, float defaultRadius)
+        {
+            return new Circle(GetValueOrDefault(source["radius"], defaultRadius), GetValueOrDefault(source["xOffset"]), GetValueOrDefault(source["yOffset"]));
+        }
+
+        private static float GetValueOrDefault(XmlAttribute source, float defaultVal = 0f)
+        {
+            return source != null ? float.Parse(source.Value) : defaultVal;
         }
     }
 }
