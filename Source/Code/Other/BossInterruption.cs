@@ -25,7 +25,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossController.OnHitDelegates Delegates { get; private set; }
 
-        private void LoadCutscene(string filename, Player player, BossPuppet puppet)
+        private void LoadMethods(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -64,7 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             this.filepath = filepath;
             Delegates = delegates;
-            LoadCutscene(filepath, delegates.playerRef, delegates.puppetRef);
+            LoadMethods(filepath, delegates.playerRef, delegates.puppetRef);
         }
 
         public IEnumerator OnHitCoroutine()

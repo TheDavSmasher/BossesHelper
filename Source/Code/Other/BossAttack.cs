@@ -18,7 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossController.AttackDelegates Delegates { get; private set; }
 
-        private void LoadCutscene(string filename, Player player, BossPuppet puppet)
+        private void LoadAttacks(string filename, Player player, BossPuppet puppet)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -55,7 +55,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             this.filepath = filepath;
             Delegates = allDelegates;
-            LoadCutscene(filepath, allDelegates.playerRef, allDelegates.puppetRef);
+            LoadAttacks(filepath, allDelegates.playerRef, allDelegates.puppetRef);
         }
 
         public IEnumerator Coroutine()
