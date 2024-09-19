@@ -13,8 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         public static void ReadPatternFilesInto(string bossName, ref List<BossPattern> targetOut)
         {
-            string PatternPath = "Assets/Bosses/" + bossName + "/Patterns";
-            if (Everest.Content.TryGet(PatternPath, out ModAsset patternBranch))
+            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/Patterns", out ModAsset patternBranch))
             {
                 targetOut = new List<BossPattern>(new BossPattern[patternBranch.Children.Count]);
                 foreach (ModAsset pattern in patternBranch.Children)
@@ -109,8 +108,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadPatternOrderFileInto(string bossName, ref List<int> target, int nodeCount = 1)
         {
-            string patternFilePath = "Assets/Bosses/" + bossName + "/PatternOrder";
-            if (Everest.Content.TryGet(patternFilePath, out ModAsset orderFile))
+            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/PatternOrder", out ModAsset orderFile))
             {
                 List<string> lines = new();
                 using (StreamReader reader = new StreamReader(orderFile.Stream))
@@ -176,8 +174,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadOnHitFileInto(string bossName, ref BossInterruption onHit, BossController.OnHitDelegates delegates)
         {
-            string DamagePath = "Assets/Bosses/" + bossName + "/OnDamage";
-            if (Everest.Content.TryGet(DamagePath, out ModAsset onHitFile))
+            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/OnDamage", out ModAsset onHitFile))
             {
                 onHit = new BossInterruption(onHitFile.PathVirtual, delegates);
             }
@@ -194,8 +191,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
             float radiusT = 4f;
-            string MetadataPath = "Assets/Bosses/" + bossName + "/Metadata";
-            if (Everest.Content.TryGet(MetadataPath, out ModAsset xml))
+            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/Metadata", out ModAsset xml))
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(xml.Stream);
