@@ -92,9 +92,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer,
+        public struct AttackDelegates(Player playerRef, BossPuppet puppetRef, Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer,
             Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
         {
+            public Player playerRef = playerRef;
+
+            public BossPuppet puppetRef = puppetRef;
+
             public Action<Entity> addEntity = addEntity;
 
             public Action<Entity, string, LuaFunction, float> addEntityWithTimer = addEntityWithTimer;
@@ -106,8 +110,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
+            Action<int> decreaseHealth, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
         {
+            public Player playerRef = playerRef;
+
+            public BossPuppet puppetRef = puppetRef;
+
             public Func<int> getHealth = getHealth;
 
             public Action<int> setHealth = setHealth;
@@ -156,8 +165,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Dictionary<string, BossEvent> AllEvents;
 
-        private readonly UserFileReader userFileReader;
-
         private int Health;
 
         public List<BossPattern> Patterns;
@@ -198,7 +205,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPhase = 1;
             currentNodeOrIndex = 0;
             isAttacking = false;
-            userFileReader = new UserFileReader(Name);
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
             patternOrder = new List<int>();
@@ -206,9 +212,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = patternOrder[currentNodeOrIndex];
             currentPattern = new Coroutine();
             Add(currentPattern);
-            userFileReader.ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder);
-
-            Puppet = new BossPuppet(data, offset, dataHolder);
+            Puppet = new BossPuppet(data, offset);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
@@ -287,17 +291,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndInterrupt(Player player)
         {
-            AttackDelegates delegates = new(AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
-            userFileReader.ReadAttackFilesInto(ref AllAttacks, player, Puppet, delegates);
-            userFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
-            OnHitDelegates onHitDelegates = new(GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern);
-            userFileReader.ReadOnHitFileInto(ref OnInterrupt, player, Puppet, onHitDelegates);
+            AttackDelegates delegates = new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll);
+            UserFileReader.ReadAttackFilesInto(Name, ref AllAttacks, delegates);
+            UserFileReader.ReadEventFilesInto(Name, ref AllEvents, player, Puppet);
+            OnHitDelegates onHitDelegates = new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern);
+            UserFileReader.ReadOnHitFileInto(Name, ref OnInterrupt, onHitDelegates);
         }
 
         private void PopulatePatternsAndOrder()
         {
-            userFileReader.ReadPatternFilesInto(ref Patterns);
-            userFileReader.ReadPatternOrderFileInto(ref patternOrder, nodeCount);
+            UserFileReader.ReadPatternFilesInto(Name, ref Patterns);
+            UserFileReader.ReadPatternOrderFileInto(Name, ref patternOrder, nodeCount);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)
