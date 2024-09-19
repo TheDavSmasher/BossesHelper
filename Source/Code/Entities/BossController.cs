@@ -7,6 +7,7 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
+using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -264,7 +265,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
             {
-                if (entityTimer.Value.Done)
+                if (entityTimer.Value.Done && !Level.Entities.ToAdd.Contains(entityTimer.Value.target))
                 {
                     entityTimer.Value.action.Call(entityTimer.Value.target);
                     activeEntityTimers.Remove(entityTimer.Key);
@@ -276,7 +277,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             foreach (EntityFlagger entityFlagger in activeEntityFlaggers.Values)
             {
-                if (entityFlagger.Ready)
+                if (entityFlagger.Ready && !Level.Entities.ToAdd.Contains(entityFlagger.target))
                 {
                     entityFlagger.action.Call(entityFlagger.target);
                     if (entityFlagger.resetFlag)
