@@ -160,7 +160,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
         {
-            string AttacksPath = "Assets/Bosses/" + BossName + "/Events";
+            string AttacksPath = "Assets/Bosses/" + BossName + "/Attacks";
             if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
