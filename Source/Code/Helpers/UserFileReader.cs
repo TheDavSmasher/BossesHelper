@@ -186,6 +186,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
+        public static void ReadCustomSetupFile(Player player, BossPuppet puppet)
+        {
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Setup", out ModAsset customSetupFile))
+            {
+                LuaBossHelper.DoCustomSetup(customSetupFile.PathVirtual, player, puppet);
+            }
+        }
+
         public static void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
         {
             List<Collider> baseHitboxes = null;

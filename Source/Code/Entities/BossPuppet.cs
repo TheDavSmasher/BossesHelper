@@ -108,6 +108,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             OnInterrupt = onInterrupt;
         }
 
+        internal void SetCustomBossSetup(Player player)
+        {
+            UserFileReader.ReadCustomSetupFile(player, this);
+        }
+
         private void SetHitboxesAndColliders()
         {
             UserFileReader.ReadMetadataFileInto(out HitboxMedatata hitboxMetadata);

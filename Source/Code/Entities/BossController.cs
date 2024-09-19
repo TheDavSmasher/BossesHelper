@@ -246,6 +246,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndInterrupt(player);
             Puppet.SetOnInterrupt(OnInterrupt);
+            Puppet.SetCustomBossSetup(player);
             if (hurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f, -4f)));

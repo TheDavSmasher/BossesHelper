@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
@@ -77,6 +78,38 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
             yield return null;
+        }
+
+        public static void DoCustomSetup(string filename, Player player, BossPuppet puppet)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                return;
+            }
+            Dictionary<object, object> dict = new Dictionary<object, object>
+            {
+                { "player", player },
+                { "puppet", puppet },
+                { "modMetaData", BossesHelperModule.Instance.Metadata }
+            };
+            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
+            try
+            {
+                object[] array = (LuaBossHelper.cutsceneHelper["setupCustomData"] as LuaFunction).Call(filename, luaTable);
+                if (array != null)
+                {
+                    LuaFunction attackFunction = array.ElementAtOrDefault(1) as LuaFunction;
+                    attackFunction?.Call();
+                }
+                else
+                {
+                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
+            }
         }
     }
 }
