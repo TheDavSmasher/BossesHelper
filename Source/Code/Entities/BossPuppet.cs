@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -74,7 +75,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level;
 
-        public BossPuppet(EntityData data, Vector2 offset, HitboxMedatata hitboxMedatata) : base(data.Position + offset)
+        public Vector2 Speed;
+
+        public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
@@ -89,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
-                SetHitboxesAndColliders(hitboxMedatata);
+                SetHitboxesAndColliders(data.Attr("bossName"));
                 facing = MirrorSprite ? -1 : 1;
                 Add(Sprite);
                 PlayBossAnim("idle");
@@ -105,46 +108,47 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             OnInterrupt = onInterrupt;
         }
 
-        private void SetHitboxesAndColliders(HitboxMedatata hitboxMedatata)
+        private void SetHitboxesAndColliders(string bossName)
         {
-            if (hitboxMedatata.UseDefaultHitbox)
+            UserFileReader.ReadMetadataFileInto(bossName, out HitboxMedatata hitboxMetadata);
+            if (hitboxMetadata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
-            else if (hitboxMedatata.baseHitboxes.Count > 1)
+            else if (hitboxMetadata.baseHitboxes.Count > 1)
             {
-                base.Collider = new ColliderList(hitboxMedatata.baseHitboxes.ToArray());
+                base.Collider = new ColliderList(hitboxMetadata.baseHitboxes.ToArray());
             }
             else
             {
-                base.Collider = hitboxMedatata.baseHitboxes[0];
+                base.Collider = hitboxMetadata.baseHitboxes[0];
             }
-            if (hitboxMedatata.UseDefaultHurtbox)
+            if (hitboxMetadata.UseDefaultHurtbox)
             {
                 Hurtbox = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
-            else if (hitboxMedatata.baseHurtboxes.Count > 1)
+            else if (hitboxMetadata.baseHurtboxes.Count > 1)
             {
-                Hurtbox = new ColliderList(hitboxMedatata.baseHurtboxes.ToArray());
+                Hurtbox = new ColliderList(hitboxMetadata.baseHurtboxes.ToArray());
             }
             else
             {
-                Hurtbox = hitboxMedatata.baseHurtboxes[0];
+                Hurtbox = hitboxMetadata.baseHurtboxes[0];
             }
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
-                    if (hitboxMedatata.UseDefaultBounce)
+                    if (hitboxMetadata.UseDefaultBounce)
                     {
                         Add(new PlayerCollider(OnPlayerBounce, new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)));
                     }
                     else
                     {
-                        Add(new PlayerCollider(OnPlayerBounce, hitboxMedatata.bounceHitbox));
+                        Add(new PlayerCollider(OnPlayerBounce, hitboxMetadata.bounceHitbox));
                     }
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMedatata.targetOffset, hitboxMedatata.targetRadius));
+                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMetadata.targetOffset, hitboxMetadata.targetRadius));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash, Hurtbox));
