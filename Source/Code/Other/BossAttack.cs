@@ -51,11 +51,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossAttack(string filepath, Player player, BossPuppet puppet, BossController.AttackDelegates allDelegates)
+        public BossAttack(string filepath, BossController.AttackDelegates allDelegates)
         {
             this.filepath = filepath;
             Delegates = allDelegates;
-            LoadCutscene(filepath, player, puppet);
+            LoadCutscene(filepath, allDelegates.playerRef, allDelegates.puppetRef);
         }
 
         public IEnumerator Coroutine()

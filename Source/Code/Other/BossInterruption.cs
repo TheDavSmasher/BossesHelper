@@ -60,11 +60,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossInterruption(string filepath, Player player, BossPuppet puppet, BossController.OnHitDelegates delegates)
+        public BossInterruption(string filepath, BossController.OnHitDelegates delegates)
         {
             this.filepath = filepath;
             Delegates = delegates;
-            LoadCutscene(filepath, player, puppet);
+            LoadCutscene(filepath, delegates.playerRef, delegates.puppetRef);
         }
 
         public IEnumerator OnHitCoroutine()
