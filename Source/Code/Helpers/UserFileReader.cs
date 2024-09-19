@@ -11,9 +11,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class UserFileReader
     {
-        public static void ReadPatternFilesInto(string bossName, ref List<BossPattern> targetOut)
+        public static string BossName;
+
+        public static void ReadPatternFilesInto(ref List<BossPattern> targetOut)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/Patterns", out ModAsset patternBranch))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Patterns", out ModAsset patternBranch))
             {
                 targetOut = new List<BossPattern>(new BossPattern[patternBranch.Children.Count]);
                 foreach (ModAsset pattern in patternBranch.Children)
@@ -106,9 +108,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadPatternOrderFileInto(string bossName, ref List<int> target, int nodeCount = 1)
+        public static void ReadPatternOrderFileInto(ref List<int> target, int nodeCount = 1)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/PatternOrder", out ModAsset orderFile))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/PatternOrder", out ModAsset orderFile))
             {
                 List<string> lines = new();
                 using (StreamReader reader = new StreamReader(orderFile.Stream))
@@ -140,9 +142,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadEventFilesInto(string bossName, ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
+        public static void ReadEventFilesInto(ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
         {
-            string EventsPath = "Assets/Bosses/" + bossName + "/Events";
+            string EventsPath = "Assets/Bosses/" + BossName + "/Events";
             if (Everest.Content.TryGet(EventsPath, out ModAsset eventFiles))
             {
                 foreach (ModAsset eventFile in eventFiles.Children)
@@ -156,9 +158,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadAttackFilesInto(string bossName, ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
+        public static void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
         {
-            string AttacksPath = "Assets/Bosses/" + bossName + "/Events";
+            string AttacksPath = "Assets/Bosses/" + BossName + "/Events";
             if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
@@ -172,9 +174,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadOnHitFileInto(string bossName, ref BossInterruption onHit, BossController.OnHitDelegates delegates)
+        public static void ReadOnHitFileInto(ref BossInterruption onHit, BossController.OnHitDelegates delegates)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/OnDamage", out ModAsset onHitFile))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/OnDamage", out ModAsset onHitFile))
             {
                 onHit = new BossInterruption(onHitFile.PathVirtual, delegates);
             }
@@ -184,14 +186,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadMetadataFileInto(string bossName, out BossPuppet.HitboxMedatata dataHolder)
+        public static void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
         {
             List<Collider> baseHitboxes = null;
             List<Collider> baseHurtboxes = null;
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
             float radiusT = 4f;
-            if (Everest.Content.TryGet("Assets/Bosses/" + bossName + "/Metadata", out ModAsset xml))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Metadata", out ModAsset xml))
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(xml.Stream);

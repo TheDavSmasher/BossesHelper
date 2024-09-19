@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
-                SetHitboxesAndColliders(data.Attr("bossName"));
+                SetHitboxesAndColliders();
                 facing = MirrorSprite ? -1 : 1;
                 Add(Sprite);
                 PlayBossAnim("idle");
@@ -108,9 +108,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             OnInterrupt = onInterrupt;
         }
 
-        private void SetHitboxesAndColliders(string bossName)
+        private void SetHitboxesAndColliders()
         {
-            UserFileReader.ReadMetadataFileInto(bossName, out HitboxMedatata hitboxMetadata);
+            UserFileReader.ReadMetadataFileInto(out HitboxMedatata hitboxMetadata);
             if (hitboxMetadata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);

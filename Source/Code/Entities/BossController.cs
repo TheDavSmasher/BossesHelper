@@ -210,6 +210,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
             patternOrder = new List<int>();
+            UserFileReader.BossName = Name;
             PopulatePatternsAndOrder();
             currentPatternIndex = patternOrder[currentNodeOrIndex];
             currentPattern = new Coroutine();
@@ -306,17 +307,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndInterrupt(Player player)
         {
-            UserFileReader.ReadAttackFilesInto(Name, ref AllAttacks,
+            UserFileReader.ReadAttackFilesInto(ref AllAttacks,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(Name, ref AllEvents, player, Puppet);
-            UserFileReader.ReadOnHitFileInto(Name, ref OnInterrupt,
+            UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
+            UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
                 new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern));
         }
 
         private void PopulatePatternsAndOrder()
         {
-            UserFileReader.ReadPatternFilesInto(Name, ref Patterns);
-            UserFileReader.ReadPatternOrderFileInto(Name, ref patternOrder, nodeCount);
+            UserFileReader.ReadPatternFilesInto(ref Patterns);
+            UserFileReader.ReadPatternOrderFileInto(ref patternOrder, nodeCount);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)
