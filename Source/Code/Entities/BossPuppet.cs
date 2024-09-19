@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Vector2 Speed;
 
-        public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
         {
             nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
@@ -87,7 +87,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldown = 0f;
             nodes = data.Nodes;
             MoveMode = GetMoveMode(data.Attr("moveMode"));
-            HurtMode = GetHurtMode(data.Attr("hurtMode"));
+            HurtMode = hurtMode;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
@@ -169,17 +169,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 "playerScreenEdge" => MoveModes.PlayerScreenEdge,
                 "freeroam" => MoveModes.Freeroam,
                 _ => MoveModes.Nodes
-            };
-        }
-
-        private static HurtModes GetHurtMode(string moveMode)
-        {
-            return moveMode switch
-            {
-                "playerDash" => HurtModes.PlayerDash,
-                "headBonk" => HurtModes.HeadBonk,
-                "sidekickAttack" => HurtModes.SidekickAttack,
-                _ => HurtModes.PlayerContact
             };
         }
 
