@@ -15,8 +15,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public bool finished;
 
-        private LuaTable cutsceneEnv;
-
         private IEnumerator Cutscene;
 
         private LuaFunction endMethod;

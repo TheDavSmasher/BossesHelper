@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +12,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         private LuaFunction attackFunction;
 
         private readonly string filepath;
-
-        private LuaTable cutsceneEnv;
 
         public BossController.AttackDelegates Delegates { get; private set; }
 
