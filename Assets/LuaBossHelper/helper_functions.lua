@@ -899,6 +899,7 @@ end
 function helpers.DestroyAll()
     bossAttack.destroyAll:Invoke()
 end
+--End Attack Delegates
 
 --Interrupt Delegates
 function helpers.GetHealth()
@@ -924,10 +925,15 @@ end
 function helpers.StartAttackPattern()
     boss.startAttackPattern:Invoke()
 end
+--End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods
 function helpers.PlayPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
+end
+
+function helpers.AddComponentToBoss(component)
+    boss:Add(component)
 end
 
 function helpers.GetNewEntityData(position, width, height, id)
