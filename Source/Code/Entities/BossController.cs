@@ -142,16 +142,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Level Level;
 
-        public enum MoveModes
-        {
-            Nodes,
-            ScreenEdge,
-            PlayerScreenEdge,
-            PlayerPos,
-            Static,
-            Freeroam
-        }
-
         public enum HurtModes
         {
             PlayerContact,

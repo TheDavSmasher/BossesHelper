@@ -59,8 +59,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly bool MirrorSprite;
 
-        private BossController.MoveModes MoveMode;
-
         private BossController.HurtModes HurtMode;
 
         private readonly Vector2[] nodes;
@@ -86,7 +84,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
             bossHitCooldown = 0f;
             nodes = data.Nodes;
-            MoveMode = GetMoveMode(data.Attr("moveMode"));
             HurtMode = hurtMode;
             if (!string.IsNullOrEmpty(SpriteName))
             {
@@ -162,19 +159,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Add(new PlayerCollider(OnPlayerContact, Hurtbox));
                     break;
             }
-        }
-
-        private static MoveModes GetMoveMode(string moveMode)
-        {
-            return moveMode switch
-            {
-                "static" => MoveModes.Static,
-                "screenEdge" => MoveModes.ScreenEdge,
-                "playerPos" => MoveModes.PlayerPos,
-                "playerScreenEdge" => MoveModes.PlayerScreenEdge,
-                "freeroam" => MoveModes.Freeroam,
-                _ => MoveModes.Nodes
-            };
         }
 
         public override void Added(Scene scene)

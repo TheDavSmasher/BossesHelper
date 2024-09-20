@@ -1,14 +1,5 @@
 local bossMasterController = {}
 
-local moveModeOpts = {
-    {"Nodes", "nodes"},
-    {"Screen Edge", "screenEdge"},
-    {"Player Screen Edge", "playerScreenEdge"},
-    {"Player Position", "playerPos"},
-    {"Static", "static"},
-    {"Freeroam", "freeroam"}
-}
-
 local hurtModeOpts = {
     {"Player Contact", "playerContact"},
     {"Player Dash", "playerDash"},
@@ -19,14 +10,10 @@ local hurtModeOpts = {
 bossMasterController.name = "BossesHelper/BossController"
 bossMasterController.depth = 0
 bossMasterController.nodeLineRenderType = "line"
-bossMasterController.nodeLimits = {1, -1}
+bossMasterController.nodeLimits = {0, -1}
 bossMasterController.fieldInformation = {
     bossHealthMax = {
         fieldType = "integer"
-    },
-    moveMode = {
-        options = moveModeOpts,
-        editable = false
     },
     hurtMode = {
         options = hurtModeOpts,
@@ -42,7 +29,6 @@ bossMasterController.placements = {
         bossName = "boss",
         bossSprite = "",
         bossHealthMax = 3,
-        moveMode = "nodes",
         hurtMode = "playerContact",
         bossHitCooldown = "0.5",
         dynamicFacing = true,
