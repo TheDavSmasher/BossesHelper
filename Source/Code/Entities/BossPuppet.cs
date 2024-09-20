@@ -83,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
             bossHitCooldown = 0f;
-            nodes = data.Nodes;
+            nodes = data.NodesWithPosition(Vector2.Zero);
             HurtMode = hurtMode;
             if (!string.IsNullOrEmpty(SpriteName))
             {
