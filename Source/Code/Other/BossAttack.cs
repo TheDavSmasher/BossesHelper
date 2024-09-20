@@ -24,14 +24,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 return;
             }
-            Dictionary<object, object> dict = new Dictionary<object, object>
+            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(new Dictionary<object, object>
             {
                 { "player", player },
                 { "puppet", puppet },
                 { "bossAttack", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
-            };
-            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
+            });
             try
             {
                 object[] array = (LuaBossHelper.cutsceneHelper["getAttackData"] as LuaFunction).Call(filename, luaTable);
