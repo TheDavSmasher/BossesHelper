@@ -59,11 +59,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     vals[0] = int.Parse(currentLine[3]);
                                     vals[1] = int.Parse(currentLine[5]);
                                 }
-                                else if (currentLine[2].ToLower().Equals("health"))
-                                {
-                                    mode = BossPattern.FinishModes.OnHealthNum;
-                                    vals[0] = int.Parse(currentLine[4]);
-                                }
                                 else if (currentLine[2].ToLower().Equals("player"))
                                 {
                                     mode = BossPattern.FinishModes.PlayerPositionWithin;
@@ -89,9 +84,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     {
                         case BossPattern.FinishModes.LoopCountGoTo:
                             result.SetInterruptOnLoopCountGoTo(vals[0], vals[1]);
-                            break;
-                        case BossPattern.FinishModes.OnHealthNum:
-                            result.SetInterruptOnHealthBelow(vals[0]);
                             break;
                         case BossPattern.FinishModes.PlayerPositionWithin:
                             result.SetInterruptWhenPlayerBetween(vals[0], vals[1], vals[2], vals[3], vals[4]);

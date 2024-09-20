@@ -17,7 +17,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public enum FinishModes
         {
             ContinueLoop,
-            OnHealthNum,
             LoopCountGoTo,
             PlayerPositionWithin
         }
@@ -28,11 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public int? GoToPattern {  get; private set; }
 
-        public int? HealthThreshold { get; private set; }
-
         public Rectangle PlayerPositionTrigger { get; private set; }
-
-        private static Rectangle Empty = new ();
 
         public int CurrentAction;
 
@@ -56,23 +51,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public void SetInterruptOnHealthBelow(int threshold)
-        {
-            FinishMode = FinishModes.OnHealthNum;
-            HealthThreshold = threshold;
-
-            IterationCount = null;
-            GoToPattern = null;
-            PlayerPositionTrigger = Empty;
-        }
-
         public void SetInterruptOnLoopCountGoTo(int loop, int target)
         {
             FinishMode = FinishModes.LoopCountGoTo;
             IterationCount = loop;
             GoToPattern = target;
-
-            HealthThreshold = null;
             PlayerPositionTrigger = new Rectangle();
         }
 
@@ -81,8 +64,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             FinishMode = FinishModes.PlayerPositionWithin;
             PlayerPositionTrigger = new Rectangle(topLeftX, topLeftY, bottomRightX - topLeftX, bottomRightY - topLeftY);
             GoToPattern = goTo;
-
-            HealthThreshold = null;
             IterationCount = null;
         }
 
@@ -102,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
          * Attack/Method + Duration/Pause
          * Attack/Method + Duration/Pause
          * 
-         * Goto target / Interrupt when {Health < num / Repeat count GoTo target / Player Between x1 y1 x2 y2 goto target}
+         * Goto target / Interrupt when {Repeat count GoTo target / Player Between x1 y1 x2 y2 goto target}
          */
     }
 }
