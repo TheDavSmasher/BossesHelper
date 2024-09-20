@@ -243,10 +243,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             break;
                         case "bouncebox":
-                            XmlAttributeCollection bounceboxData = hitboxNode.Attributes;
+                            bounceHitboxes = GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f);
                             break;
                         case "target":
                             XmlAttributeCollection targetData = hitboxNode.Attributes;
+                            targetOffset = new Vector2(GetValueOrDefault(targetData["xOffset"]), GetValueOrDefault(targetData["yOffset"]));
+                            radiusT = GetValueOrDefault(targetData["radius"], 4f);
                             break;
                     }
                 }
