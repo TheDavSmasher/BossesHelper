@@ -111,8 +111,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
-            Action<int> decreaseHealth, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
+            Func<IEnumerator> waitForAttack, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
         {
             public Player playerRef = playerRef;
 
@@ -123,6 +123,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action<int> setHealth = setHealth;
 
             public Action<int> decreaseHealth = decreaseHealth;
+
+            public Func<IEnumerator> waitForAttack = waitForAttack;
 
             public Action interruptPattern = interruptPattern;
 
@@ -303,7 +305,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
             UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
-                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, InterruptPattern, AdvanceNode, StartAttackPattern));
+                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, WaitForAttackToEnd, InterruptPattern, AdvanceNode, StartAttackPattern));
         }
 
         private void PopulatePatternsAndOrder()
@@ -378,6 +380,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void DecreaseHealth(int damage)
         {
             Health -= damage;
+        }
+
+        private IEnumerator WaitForAttackToEnd()
+        {
+            if (isAttacking)
+            {
+                yield return null;
+            }
         }
 
         private void InterruptPattern()

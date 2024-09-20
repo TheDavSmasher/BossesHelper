@@ -914,6 +914,10 @@ function helpers.DecreaseHealth(health)
     boss.decreaseHealth:Invoke(health or 1)
 end
 
+function helpers.WaitForAttackToEnd()
+    return coroutine.yield(boss.waitForAttack:Invoke())
+end
+
 function helpers.InterruptPattern()
     boss.interruptPattern:Invoke()
 end
