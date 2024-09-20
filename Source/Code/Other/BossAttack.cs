@@ -20,33 +20,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private void LoadAttacks(string filename, Player player, BossPuppet puppet)
         {
-            if (string.IsNullOrEmpty(filename))
-            {
-                return;
-            }
-            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(new Dictionary<object, object>
+            Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
                 { "puppet", puppet },
                 { "bossAttack", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
-            });
-            try
+            };
+            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getAttackData", dict);
+            if (array != null)
             {
-                object[] array = (LuaBossHelper.cutsceneHelper["getAttackData"] as LuaFunction).Call(filename, luaTable);
-                if (array != null)
-                {
-                    cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
-                    attackFunction = array.ElementAtOrDefault(1) as LuaFunction;
-                }
-                else
-                {
-                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
+                attackFunction = array.ElementAtOrDefault(0);
             }
         }
 

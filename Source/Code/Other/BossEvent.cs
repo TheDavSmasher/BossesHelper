@@ -23,35 +23,18 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private void LoadCutscene(string filename, Player player, BossPuppet puppet)
         {
-            if (string.IsNullOrEmpty(filename))
-            {
-                return;
-            }
-            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(new Dictionary<object, object>
+            Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
                 { "puppet", puppet },
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
-            });
-            try
+            };
+            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getCutsceneData", dict);
+            if (array != null)
             {
-                LuaFunction func = LuaBossHelper.cutsceneHelper["getCutsceneData"] as LuaFunction;
-                object[] array = func.Call(filename, luaTable);
-                if (array != null)
-                {
-                    cutsceneEnv = array.ElementAtOrDefault(0) as LuaTable;
-                    Cutscene = LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(1) as LuaFunction);
-                    endMethod = array.ElementAtOrDefault(2) as LuaFunction;
-                }
-                else
-                {
-                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
+                Cutscene = LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(0));
+                endMethod = array.ElementAtOrDefault(1);
             }
         }
 

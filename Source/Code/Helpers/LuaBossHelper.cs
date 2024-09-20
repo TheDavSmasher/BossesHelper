@@ -82,34 +82,38 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void DoCustomSetup(string filename, Player player, BossPuppet puppet)
         {
-            if (string.IsNullOrEmpty(filename))
-            {
-                return;
-            }
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
                 { "puppet", puppet },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(dict);
-            try
+            LoadLuaFile(filename, "setupCustomData", dict)?.ElementAtOrDefault(0)?.Call();
+        }
+
+        public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
+        {
+            if (!string.IsNullOrEmpty(filename))
             {
-                object[] array = (LuaBossHelper.cutsceneHelper["setupCustomData"] as LuaFunction).Call(filename, luaTable);
-                if (array != null)
+                LuaTable luaTable = DictionaryToLuaTable(passedVals);
+                try
                 {
-                    LuaFunction attackFunction = array.ElementAtOrDefault(1) as LuaFunction;
-                    attackFunction?.Call();
+                    object[] array = (cutsceneHelper[command] as LuaFunction).Call(filename, luaTable);
+                    if (array != null)
+                    {
+                        return Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
+                    }
+                    else
+                    {
+                        Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
+                    Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
                 }
             }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
-            }
+            return null;
         }
     }
 }

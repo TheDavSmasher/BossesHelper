@@ -21,41 +21,24 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly string filepath;
 
-        private LuaTable cutsceneEnv;
-
         public BossController.OnHitDelegates Delegates { get; private set; }
 
         private void LoadMethods(string filename, Player player, BossPuppet puppet)
         {
-            if (string.IsNullOrEmpty(filename))
+            Dictionary<object, object> dict = new Dictionary<object, object>
             {
-                return;
-            }
-            LuaTable luaTable = LuaBossHelper.DictionaryToLuaTable(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "puppet", puppet },
-                    { "boss", Delegates },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                });
-            try
+                { "player", player },
+                { "puppet", puppet },
+                { "boss", Delegates },
+                { "modMetaData", BossesHelperModule.Instance.Metadata }
+            };
+            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getInterruptData", dict);
+            if (array != null)
             {
-                object[] array = (LuaBossHelper.cutsceneHelper["getInterruptData"] as LuaFunction).Call(filename, luaTable);
-                if (array != null)
-                {
-                    OnHitLua = array.ElementAtOrDefault(1) as LuaFunction;
-                    OnDashLua = array.ElementAtOrDefault(2) as LuaFunction;
-                    OnBounceLua = array.ElementAtOrDefault(3) as LuaFunction;
-                    OnLaserLua = array.ElementAtOrDefault(4) as LuaFunction;
-                }
-                else
-                {
-                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
+                OnHitLua = array.ElementAtOrDefault(0);
+                OnDashLua = array.ElementAtOrDefault(1);
+                OnBounceLua = array.ElementAtOrDefault(2);
+                OnLaserLua = array.ElementAtOrDefault(3);
             }
         }
 
