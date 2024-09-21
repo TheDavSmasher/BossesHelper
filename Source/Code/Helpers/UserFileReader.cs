@@ -23,8 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 foreach (XmlNode pattern in patternsList)
                 {
                     List<BossPattern.Method> methodList = new();
-                    string isRand = pattern.Attributes["random"]?.Value.ToLower();
-                    if (isRand != null && isRand.Equals("true"))
+                    if (pattern.LocalName.ToLower().Equals("random"))
                     {
                         foreach (XmlNode action in pattern.ChildNodes)
                         {
@@ -57,9 +56,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
                                 GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]), GetValueOrDefaultInt(attributes["goto"])));
                         }
-                        else if (attributes.Count == 0)
+                        else if (attributes.Count != 0)
                         {
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(), GetValueOrDefaultInt(attributes["repeat"]), GetValueOrDefaultInt(attributes["goto"])));
+                        }
+                        else
+                        {
+                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray()));
                         }
                     }
                 }
