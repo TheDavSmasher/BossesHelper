@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadPatternFilesInto(ref List<BossPattern> targetOut)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/PatternsX", out ModAsset xml))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Patterns", out ModAsset xml))
             {
                 XmlDocument document = new XmlDocument();
                 document.Load(xml.Stream);
