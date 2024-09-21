@@ -15,123 +15,69 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadPatternFilesInto(ref List<BossPattern> targetOut)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Patterns", out ModAsset patternBranch))
+            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/PatternsX", out ModAsset xml))
             {
-                targetOut = new List<BossPattern>(new BossPattern[patternBranch.Children.Count]);
-                foreach (ModAsset pattern in patternBranch.Children)
+                XmlDocument document = new XmlDocument();
+                document.Load(xml.Stream);
+                XmlNodeList patternsList = document.SelectSingleNode("Patterns").ChildNodes;
+                foreach (XmlNode pattern in patternsList)
                 {
-                    List<string> lines = new();
-                    using (StreamReader reader = new StreamReader(pattern.Stream))
+                    List<BossPattern.Method> methodList = new();
+                    string isRand = pattern.Attributes["random"]?.Value.ToLower();
+                    if (isRand != null && isRand.Equals("true"))
                     {
-                        while (!reader.EndOfStream)
+                        foreach (XmlNode action in pattern.ChildNodes)
                         {
-                            lines.Add(reader.ReadLine());
+                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNull(action.Attributes["wait"])));
                         }
-                        reader.Close();
+                        targetOut.Add(new BossPattern(methodList.ToArray()));
                     }
-                    List<string> actions = new();
-                    List<float?> floats = new();
-                    int currentIndex = 0;
-                    int patternID = 0;
-                    BossPattern.FinishModes mode = BossPattern.FinishModes.ContinueLoop;
-                    int[] vals = Enumerable.Repeat(0, 5).ToArray();
-                    while (currentIndex < lines.Count)
+                    else
                     {
-                        string[] currentLine = lines[currentIndex].TrimStart(' ').Split(null);
-                        switch (currentLine[0].ToLower())
+                        List<BossPattern.Method> preLoopList = null;
+                        foreach (XmlNode action in pattern.ChildNodes)
                         {
-                            case "pattern":
-                                patternID = int.Parse(currentLine[1]) - 1;
-                                break;
-                            case "wait":
-                                actions.Add(currentLine[0]);
-                                floats.Add(float.Parse(currentLine[1]));
-                                break;
-                            case "goto":
-                                mode = BossPattern.FinishModes.LoopCountGoTo;
-                                vals[0] = 0;
-                                vals[1] = int.Parse(currentLine[1]);
-                                break;
-                            case "interrupt":
-                                if (currentLine[2].ToLower().Equals("repeat"))
-                                {
-                                    mode = BossPattern.FinishModes.LoopCountGoTo;
-                                    vals[0] = int.Parse(currentLine[3]);
-                                    vals[1] = int.Parse(currentLine[5]);
-                                }
-                                else if (currentLine[2].ToLower().Equals("player"))
-                                {
-                                    mode = BossPattern.FinishModes.PlayerPositionWithin;
-                                    vals[0] = int.Parse(currentLine[4]);
-                                    vals[1] = int.Parse(currentLine[5]);
-                                    vals[2] = int.Parse(currentLine[6]);
-                                    vals[3] = int.Parse(currentLine[7]);
-                                    vals[4] = int.Parse(currentLine[9]);
-                                }
-                                break;
-                            default:
-                                if (!string.IsNullOrEmpty(currentLine[0]))
-                                {
-                                    actions.Add(currentLine[0]);
-                                    floats.Add(null);
-                                }
-                                break;
+                            if (action.LocalName.ToLower().Equals("wait"))
+                            {
+                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value)));
+                            }
+                            else if (action.LocalName.ToLower().Equals("loop"))
+                            {
+                                preLoopList = new(methodList);
+                                methodList.Clear();
+                            }
+                            else
+                            {
+                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null));
+                            }
                         }
-                        currentIndex++;
+                        XmlAttributeCollection attributes = pattern.Attributes;
+                        if (attributes.Count > 2)
+                        {
+                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
+                                GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]), GetValueOrDefaultInt(attributes["goto"])));
+                        }
+                        else if (attributes.Count == 0)
+                        {
+                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(), GetValueOrDefaultInt(attributes["repeat"]), GetValueOrDefaultInt(attributes["goto"])));
+                        }
                     }
-                    BossPattern result = new BossPattern(actions.ToArray(), floats.ToArray());
-                    switch (mode)
-                    {
-                        case BossPattern.FinishModes.LoopCountGoTo:
-                            result.SetInterruptOnLoopCountGoTo(vals[0], vals[1]);
-                            break;
-                        case BossPattern.FinishModes.PlayerPositionWithin:
-                            result.SetInterruptWhenPlayerBetween(vals[0], vals[1], vals[2], vals[3], vals[4]);
-                            break;
-                        default:
-                            break;
-                    }
-                    targetOut[patternID] = result;
                 }
-            }
+            }            
             else
             {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern files.");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
             }
         }
 
-        public static void ReadPatternOrderFileInto(ref List<int> target, int nodeCount = 1)
+        private static float? GetValueOrDefaultNull(XmlAttribute source, float? value = null)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/PatternOrder", out ModAsset orderFile))
-            {
-                List<string> lines = new();
-                using (StreamReader reader = new StreamReader(orderFile.Stream))
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        lines.Add(reader.ReadLine());
-                    }
-                    reader.Close();
-                }
-                int currentIndex = 0;
-                while (currentIndex < lines.Count)
-                {
-                    int patternID = int.Parse(lines[currentIndex]);
-                    if (patternID > 0)
-                    {
-                        target.Add(patternID - 1);
-                    }
-                    currentIndex++;
-                }
-            }
-            else
-            {
-                Logger.Log(LogLevel.Warn, "Bosses Helper", "Failed to find any Pattern Order file.\nWill use default numerical order.");
-                for (int i = 0; i < nodeCount; i++)
-                {
-                    target.Add(i);
-                }
-            }
+            return source != null ? float.Parse(source.Value) : value;
+        }
+
+        private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
+        {
+            return source != null ? int.Parse(source.Value) : value;
         }
 
         public static void ReadEventFilesInto(ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
@@ -239,8 +185,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                         case "target":
                             XmlAttributeCollection targetData = hitboxNode.Attributes;
-                            targetOffset = new Vector2(GetValueOrDefault(targetData["xOffset"]), GetValueOrDefault(targetData["yOffset"]));
-                            radiusT = GetValueOrDefault(targetData["radius"], 4f);
+                            targetOffset = new Vector2(GetValueOrDefaultFloat(targetData["xOffset"]), GetValueOrDefaultFloat(targetData["yOffset"]));
+                            radiusT = GetValueOrDefaultFloat(targetData["radius"], 4f);
                             break;
                     }
                 }
@@ -250,16 +196,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)
         {
-            return new Hitbox(GetValueOrDefault(source["width"], defaultWidth), GetValueOrDefault(source["height"], defaultHeight),
-                GetValueOrDefault(source["xOffset"]), GetValueOrDefault(source["yOffset"]));
+            return new Hitbox(GetValueOrDefaultFloat(source["width"], defaultWidth), GetValueOrDefaultFloat(source["height"], defaultHeight),
+                GetValueOrDefaultFloat(source["xOffset"]), GetValueOrDefaultFloat(source["yOffset"]));
         }
 
         private static Circle GetCircleFromXml(XmlAttributeCollection source, float defaultRadius)
         {
-            return new Circle(GetValueOrDefault(source["radius"], defaultRadius), GetValueOrDefault(source["xOffset"]), GetValueOrDefault(source["yOffset"]));
+            return new Circle(GetValueOrDefaultFloat(source["radius"], defaultRadius), GetValueOrDefaultFloat(source["xOffset"]), GetValueOrDefaultFloat(source["yOffset"]));
         }
 
-        private static float GetValueOrDefault(XmlAttribute source, float defaultVal = 0f)
+        private static float GetValueOrDefaultFloat(XmlAttribute source, float defaultVal = 0f)
         {
             return source != null ? float.Parse(source.Value) : defaultVal;
         }

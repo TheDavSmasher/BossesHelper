@@ -29,61 +29,52 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public Rectangle PlayerPositionTrigger { get; private set; }
 
-        public int CurrentAction;
+        public readonly bool RandomPattern;
 
         public Method[] PrePatternMethods {  get; private set; }
 
         public Method[] StatePatternOrder { get; private set; }
 
-        public BossPattern(string[] actions, float?[] durations, FinishModes finishMode = FinishModes.ContinueLoop)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods)
         {
-            FinishMode = finishMode;
-            CurrentAction = 0;
-            int loopSpot = Array.IndexOf(actions, "loop");
-            if (loopSpot != -1)
-            {
-                PrePatternMethods = ArraysToMethods(actions.Take(loopSpot).ToArray(), durations.Take(loopSpot).ToArray());
-                StatePatternOrder = ArraysToMethods(actions.Skip(loopSpot + 1).ToArray(), durations.Skip(loopSpot + 1).ToArray());
-            }
-            else
-            {
-                StatePatternOrder = ArraysToMethods(actions, durations);
-            }
+            FinishMode = FinishModes.ContinueLoop;
+            PrePatternMethods = prePatternMethods;
+            StatePatternOrder = statePatternOrder;
+
+            PlayerPositionTrigger = Rectangle.Empty;
+            RandomPattern = false;
         }
 
-        public void SetInterruptOnLoopCountGoTo(int loop, int target)
-        {
-            FinishMode = FinishModes.LoopCountGoTo;
-            IterationCount = loop;
-            GoToPattern = target;
-            PlayerPositionTrigger = new Rectangle();
-        }
-
-        public void SetInterruptWhenPlayerBetween(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY, int goTo)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int goTo)
         {
             FinishMode = FinishModes.PlayerPositionWithin;
-            PlayerPositionTrigger = new Rectangle(topLeftX, topLeftY, bottomRightX - topLeftX, bottomRightY - topLeftY);
+            PrePatternMethods = prePatternMethods;
+            StatePatternOrder = statePatternOrder;
+
+            PlayerPositionTrigger = new Rectangle(x, y, width, height);
             GoToPattern = goTo;
-            IterationCount = null;
+            RandomPattern = false;
         }
 
-        private static Method[] ArraysToMethods(string[] names, float?[] durations)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int goTo)
         {
-            int length = Math.Min(names.Length, durations.Length);
-            Method[] methods = new Method[length];
-            for (int i = 0; i < length; i++)
-            {
-                methods[i] = new Method(names[i], durations[i]);
-            }
-            return methods;
+            FinishMode = FinishModes.LoopCountGoTo;
+            PrePatternMethods = prePatternMethods;
+            StatePatternOrder = statePatternOrder;
+
+            PlayerPositionTrigger = Rectangle.Empty;
+            IterationCount = count;
+            GoToPattern = goTo;
+            RandomPattern = false;
         }
 
-        /*Patter Format:
-         * Pattern {id}
-         * Attack/Method + Duration/Pause
-         * Attack/Method + Duration/Pause
-         * 
-         * Goto target / Interrupt when {Repeat count GoTo target / Player Between x1 y1 x2 y2 goto target}
-         */
+        public BossPattern(Method[] randomPattern)
+        {
+            FinishMode = FinishModes.ContinueLoop;
+            RandomPattern = true;
+            StatePatternOrder = randomPattern;
+
+            PlayerPositionTrigger = Rectangle.Empty;
+        }
     }
 }
