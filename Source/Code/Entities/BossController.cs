@@ -283,7 +283,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void StartAttackPattern(int goTo = 0)
         {
-            currentPatternIndex = goTo != 0 ? goTo - 1 : currentPatternIndex;
+            if (goTo != 0)
+            {
+                currentPatternIndex = goTo - 1;
+            }
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
