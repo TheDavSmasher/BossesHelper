@@ -111,8 +111,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
-            Func<IEnumerator> waitForAttack, Action interruptPattern, Action<bool> advanceNode, Action startAttackPattern)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
+            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Action startAttackPattern)
         {
             public Player playerRef = playerRef;
 
@@ -127,8 +127,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Func<IEnumerator> waitForAttack = waitForAttack;
 
             public Action interruptPattern = interruptPattern;
-
-            public Action<bool> advanceNode = advanceNode;
 
             public Action startAttackPattern = startAttackPattern;
         }
@@ -172,8 +170,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public List<int> patternOrder;
 
-        private int currentNodeOrIndex;
-
         private int currentPhase;
 
         private bool playerHasMoved;
@@ -198,13 +194,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             nodeCount = data.Nodes.Length;
             currentPhase = 1;
-            currentNodeOrIndex = 0;
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
             patternOrder = new List<int>();
             PopulatePatternsAndOrder();
-            currentPatternIndex = patternOrder[currentNodeOrIndex];
+            currentPatternIndex = patternOrder[0];
             currentPattern = new Coroutine();
             Add(currentPattern);
             hurtMode = GetHurtMode(data.Attr("hurtMode"));
@@ -224,7 +219,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 _ => HurtModes.PlayerContact
             };
         }
-
 
         public override void Added(Scene scene)
         {
@@ -305,7 +299,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
             UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
-                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, WaitForAttackToEnd, InterruptPattern, AdvanceNode, StartAttackPattern));
+                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, WaitForAttackToEnd, InterruptPattern, StartAttackPattern));
         }
 
         private void PopulatePatternsAndOrder()
@@ -396,16 +390,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Active = false;
             //activeEntityTimers.ForEach(timer => timer.ExecuteEarly());
             DestroyAll();
-        }
-
-        private void AdvanceNode(bool startAttacking = false)
-        {
-            currentNodeOrIndex++;
-            currentPatternIndex = patternOrder[currentNodeOrIndex];
-            if (startAttacking)
-            {
-                StartAttackPattern();
-            }
         }
 
         //Attack Delegates
