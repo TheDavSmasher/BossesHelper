@@ -152,7 +152,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             PlayerContact,
             PlayerDash,
             HeadBonk,
-            SidekickAttack
+            SidekickAttack,
+            Custom
         }
 
         public HurtModes hurtMode;
@@ -215,6 +216,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 "playerDash" => HurtModes.PlayerDash,
                 "headBonk" => HurtModes.HeadBonk,
                 "sidekickAttack" => HurtModes.SidekickAttack,
+                "custom" => HurtModes.Custom,
                 _ => HurtModes.PlayerContact
             };
         }

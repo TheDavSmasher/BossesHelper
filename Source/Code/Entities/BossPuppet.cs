@@ -137,6 +137,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash, Hurtbox));
                     break;
+                    case HurtModes.Custom:
+                    //Custom depends on Setup.lua's code, does nothing by default
+                    break;
                 default: //PlayerContact 
                     Add(new PlayerCollider(OnPlayerContact, Hurtbox));
                     break;
