@@ -195,7 +195,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
-            PopulatePatternsAndOrder();
+            PopulatePatterns();
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
@@ -273,7 +273,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
             {
                 InterruptPattern();
-                currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
+                currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern;
                 StartAttackPattern(currentPatternIndex);
             }
         }
@@ -284,11 +284,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entityPos.X, (int)entityPos.Y);
         }
 
-        private void StartAttackPattern(int goTo = 0)
+        private void StartAttackPattern(int goTo = -1)
         {
-            if (goTo != 0)
+            if (goTo > 0)
             {
-                currentPatternIndex = goTo - 1;
+                currentPatternIndex = goTo;
             }
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
@@ -303,8 +303,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, WaitForAttackToEnd, InterruptPattern, StartAttackPattern));
         }
 
-        private void PopulatePatternsAndOrder()
+        private void PopulatePatterns()
         {
+            Patterns = new();
             UserFileReader.BossName = Name;
             UserFileReader.ReadPatternFilesInto(ref Patterns);
         }
@@ -337,7 +338,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         loop++;
                         if (loop > pattern.IterationCount)
                         {
-                            currentPatternIndex = (int) pattern.GoToPattern - 1;
+                            currentPatternIndex = (int) pattern.GoToPattern;
                             StartAttackPattern(currentPatternIndex);
                         }
                     }
