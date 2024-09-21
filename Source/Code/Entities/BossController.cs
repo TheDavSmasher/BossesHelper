@@ -7,13 +7,16 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
-using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
+        private static readonly Random random = new Random();
+
+        private static int Next => random.Next();
+
         public struct EntityTimer
         {
             public Entity target;
@@ -308,6 +311,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator PerformPattern(BossPattern pattern)
         {
+            if (pattern.RandomPattern)
+            {
+                while (true)
+                {
+                    int nextAttack = Next % pattern.StatePatternOrder.Length;
+                    yield return PerformMethod(pattern.StatePatternOrder[nextAttack]);
+                }
+            }
             if (pattern.PrePatternMethods != null)
             {
                 foreach (BossPattern.Method method in pattern.PrePatternMethods)
