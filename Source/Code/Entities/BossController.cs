@@ -114,8 +114,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
-            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Action<int> startAttackPattern)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
+            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern, Action<int> startAttackPattern)
         {
             public Player playerRef = playerRef;
 
@@ -130,6 +130,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Func<IEnumerator> waitForAttack = waitForAttack;
 
             public Action interruptPattern = interruptPattern;
+
+            public Func<int> currentPattern = currentPattern;
 
             public Action<int> startAttackPattern = startAttackPattern;
         }
@@ -300,7 +302,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
             UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
-                new(player, Puppet, GetHealth, SetHealth, DecreaseHealth, WaitForAttackToEnd, InterruptPattern, StartAttackPattern));
+                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern));
         }
 
         private void PopulatePatterns()
@@ -367,24 +369,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         //Delegate methods
         //Interruption Delegates
-        private int GetHealth()
-        {
-            return Health;
-        }
-
-        private void SetHealth(int health)
-        {
-            Health = health;
-        }
-
-        private void DecreaseHealth(int damage)
-        {
-            Health -= damage;
-        }
-
         private IEnumerator WaitForAttackToEnd()
         {
-            if (isAttacking)
+            while (isAttacking)
             {
                 yield return null;
             }
