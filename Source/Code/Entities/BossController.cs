@@ -333,14 +333,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (currentAction >= pattern.StatePatternOrder.Length)
                 {
-                    if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo)
+                    if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo && ++loop > pattern.IterationCount)
                     {
-                        loop++;
-                        if (loop > pattern.IterationCount)
-                        {
-                            currentPatternIndex = (int) pattern.GoToPattern;
-                            StartAttackPattern(currentPatternIndex);
-                        }
+                        currentPatternIndex = (int) pattern.GoToPattern;
+                        StartAttackPattern(currentPatternIndex);
                     }
                     currentAction = 0;
                 }
