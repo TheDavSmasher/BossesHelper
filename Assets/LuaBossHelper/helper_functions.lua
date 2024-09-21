@@ -923,7 +923,7 @@ function helpers.InterruptPattern()
 end
 
 function helpers.StartAttackPattern(goTo)
-    boss.startAttackPattern:Invoke(goTo or 0)
+    boss.startAttackPattern:Invoke(goTo or -1)
 end
 --End Interrupt Delegates
 
