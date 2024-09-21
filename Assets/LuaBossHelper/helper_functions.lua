@@ -922,6 +922,10 @@ function helpers.InterruptPattern()
     boss.interruptPattern:Invoke()
 end
 
+function helpers.GetCurrentPatternID()
+    return boss.currentPattern:Invoke()
+end
+
 function helpers.StartAttackPattern(goTo)
     boss.startAttackPattern:Invoke(goTo or -1)
 end
@@ -933,7 +937,7 @@ function helpers.PlayPuppetAnim(anim)
 end
 
 function helpers.AddComponentToBoss(component)
-    boss:Add(component)
+    puppet:Add(component)
 end
 
 function helpers.GetNewEntityData(position, width, height, id)
