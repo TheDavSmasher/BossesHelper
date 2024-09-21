@@ -162,13 +162,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public List<BossPattern> Patterns;
 
-        private readonly int nodeCount;
-
         private int currentPatternIndex;
 
         private readonly Coroutine currentPattern;
-
-        public List<int> patternOrder;
 
         private int currentPhase;
 
@@ -192,14 +188,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
-            nodeCount = data.Nodes.Length;
             currentPhase = 1;
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
-            patternOrder = new List<int>();
             PopulatePatternsAndOrder();
-            currentPatternIndex = patternOrder[0];
+            currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
             hurtMode = GetHurtMode(data.Attr("hurtMode"));
@@ -307,7 +301,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             UserFileReader.BossName = Name;
             UserFileReader.ReadPatternFilesInto(ref Patterns);
-            UserFileReader.ReadPatternOrderFileInto(ref patternOrder, nodeCount);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)
