@@ -325,9 +325,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             int loop = 0;
+            int currentAction = 0;
             while (true)
             {
-                if (pattern.CurrentAction >= pattern.StatePatternOrder.Length)
+                if (currentAction >= pattern.StatePatternOrder.Length)
                 {
                     if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo)
                     {
@@ -338,12 +339,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                             StartAttackPattern();
                         }
                     }
-                    pattern.CurrentAction = 0;
+                    currentAction = 0;
                 }
 
-                yield return PerformMethod(pattern.StatePatternOrder[pattern.CurrentAction]);
+                yield return PerformMethod(pattern.StatePatternOrder[currentAction]);
 
-                pattern.CurrentAction++;
+                currentAction++;
             }
         }
 
@@ -393,7 +394,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void InterruptPattern()
         {
             currentPattern.Active = false;
-            Patterns[currentPatternIndex].CurrentAction = 0;
             //activeEntityTimers.ForEach(timer => timer.ExecuteEarly());
             DestroyAll();
         }
