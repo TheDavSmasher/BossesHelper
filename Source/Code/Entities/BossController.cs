@@ -112,7 +112,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
-            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Action startAttackPattern)
+            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Action<int> startAttackPattern)
         {
             public Player playerRef = playerRef;
 
@@ -128,7 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public Action interruptPattern = interruptPattern;
 
-            public Action startAttackPattern = startAttackPattern;
+            public Action<int> startAttackPattern = startAttackPattern;
         }
 
         public struct BossPhase
@@ -247,7 +247,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!playerHasMoved && (entity != null && entity.Speed != Vector2.Zero || startAttackingImmediately))
             {
                 playerHasMoved = true;
-                StartAttackPattern();
+                StartAttackPattern(currentPatternIndex);
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
             {
@@ -277,7 +277,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 InterruptPattern();
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern - 1;
-                StartAttackPattern();
+                StartAttackPattern(currentPatternIndex);
             }
         }
 
@@ -287,8 +287,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entityPos.X, (int)entityPos.Y);
         }
 
-        private void StartAttackPattern()
+        private void StartAttackPattern(int goTo = 0)
         {
+            currentPatternIndex = goTo != 0 ? goTo - 1 : currentPatternIndex;
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
@@ -330,7 +331,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         if (loop > pattern.IterationCount)
                         {
                             currentPatternIndex = (int) pattern.GoToPattern - 1;
-                            StartAttackPattern();
+                            StartAttackPattern(currentPatternIndex);
                         }
                     }
                     currentAction = 0;

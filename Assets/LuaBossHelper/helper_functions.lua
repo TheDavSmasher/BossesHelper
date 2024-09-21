@@ -922,8 +922,8 @@ function helpers.InterruptPattern()
     boss.interruptPattern:Invoke()
 end
 
-function helpers.StartAttackPattern()
-    boss.startAttackPattern:Invoke()
+function helpers.StartAttackPattern(goTo)
+    boss.startAttackPattern:Invoke(goTo or 0)
 end
 --End Interrupt Delegates
 
