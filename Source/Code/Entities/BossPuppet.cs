@@ -24,29 +24,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public float targetRadius = radius;
 
-            public readonly bool UseDefaultHitbox
-            {
-                get
-                {
-                    return baseHitboxes == null || baseHitboxes.Count == 0;
-                }
-            }
+            public readonly bool UseDefaultHitbox => baseHitboxes == null || baseHitboxes.Count == 0;
 
-            public readonly bool UseDefaultHurtbox
-            {
-                get
-                {
-                    return baseHurtboxes == null || baseHurtboxes.Count == 0;
-                }
-            }
+            public readonly bool UseDefaultHurtbox => baseHurtboxes == null || baseHurtboxes.Count == 0;
 
-            public readonly bool UseDefaultBounce
-            {
-                get
-                {
-                    return bounceHitbox == null;
-                }
-            }
+            public readonly bool UseDefaultBounce => bounceHitbox == null;
         }
 
         private Sprite Sprite;
