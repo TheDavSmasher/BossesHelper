@@ -958,4 +958,8 @@ function helpers.GetNewEntityData(position, width, height, id)
     return newData
 end
 
+function helpers.DoMethodAfterDelay(func, delay)
+    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
+end
+
 return helpers

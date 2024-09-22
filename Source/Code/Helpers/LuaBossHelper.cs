@@ -129,5 +129,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             return new ColliderList(colliders.ToArray());
         }
+
+        public static void DoMethodAfterDelay(LuaFunction func, float delay)
+        {
+            Alarm.Create(Alarm.AlarmMode.Oneshot, delegate { func.Call(); }, delay, true);
+        }
     }
 }
