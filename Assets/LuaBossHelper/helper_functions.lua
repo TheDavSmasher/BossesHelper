@@ -929,6 +929,10 @@ end
 function helpers.StartAttackPattern(goTo)
     boss.startAttackPattern:Invoke(goTo or -1)
 end
+
+function helpers.StartNextAttackPattern()
+    helpers.StartAttackPattern(helpers.GetCurrentPatternID() + 1)
+end
 --End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods
