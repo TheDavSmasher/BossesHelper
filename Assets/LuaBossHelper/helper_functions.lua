@@ -940,6 +940,14 @@ function helpers.AddComponentToBoss(component)
     puppet:Add(component)
 end
 
+function helpers.GetColliderList(...)
+    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
+end
+
+function helpers.GetNewBasicAttackEntity(position, hitboxes, funcOnPlayer, spriteName, xScale, yScale)
+    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer, spriteName, xScale or 1, yScale or 1)
+end
+
 function helpers.GetNewEntityData(position, width, height, id)
     newData = celeste.Mod.BossesHelper.BossesHelperModule.MakeEntityData()
     newData.ID = id or 1000
