@@ -31,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public readonly bool UseDefaultBounce => bounceHitbox == null;
         }
 
-        private Sprite Sprite;
+        private readonly Sprite Sprite;
 
         private Collider Hurtbox;
 
@@ -41,7 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly bool MirrorSprite;
 
-        private BossController.HurtModes HurtMode;
+        private readonly BossController.HurtModes HurtMode;
 
         private readonly Vector2[] nodes;
 
@@ -55,6 +55,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level;
 
+        //Movement constants
+        public const float Gravity = 900f;
+
+        //Movement variables
         public Vector2 Speed;
 
         public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
