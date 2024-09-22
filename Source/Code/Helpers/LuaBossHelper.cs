@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Monocle;
+using NLua;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Celeste.Mod.BossesHelper.Code.Entities;
-using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -114,6 +115,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
             return null;
+        }
+
+        public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
+        {
+            List<Collider> colliders = new List<Collider>();
+            foreach (object colliderVal in luaTable.Values)
+            {
+                if (colliderVal is Collider collider)
+                {
+                    colliders.Add(collider);
+                }
+            }
+            return new ColliderList(colliders.ToArray());
         }
     }
 }
