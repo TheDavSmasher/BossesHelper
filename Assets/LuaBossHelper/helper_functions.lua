@@ -944,8 +944,8 @@ function helpers.GetColliderList(...)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
 end
 
-function helpers.GetNewBasicAttackEntity(position, hitboxes, funcOnPlayer, spriteName, xScale, yScale)
-    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer, spriteName, xScale or 1, yScale or 1)
+function helpers.GetNewBasicAttackEntity(position, hitboxes, funcOnPlayer, startCollidable, spriteName, xScale, yScale)
+    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer, startCollidable, spriteName, xScale or 1, yScale or 1)
 end
 
 function helpers.GetNewEntityData(position, width, height, id)
