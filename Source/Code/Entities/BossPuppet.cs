@@ -6,17 +6,18 @@ using Monocle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Actor
     {
-        public struct HitboxMedatata(List<Collider> baseHitboxes, List<Collider> baseHurtboxes, Hitbox bounceHitbox, Vector2 target, float radius)
+        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, Hitbox bounceHitbox, Vector2 target, float radius)
         {
-            public List<Collider> baseHitboxes = baseHitboxes;
+            public Dictionary<string, Collider> baseHitboxes = baseHitboxes;
 
-            public List<Collider> baseHurtboxes = baseHurtboxes;
+            public Dictionary<string, Collider> baseHurtboxes = baseHurtboxes;
 
             public Hitbox bounceHitbox = bounceHitbox;
 
@@ -33,7 +34,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Sprite Sprite;
 
-        private Collider Hurtbox;
+        private Dictionary<string, Collider> hitboxOptions;
+
+        private Dictionary<string, Collider> hurtboxOptions;
+
+        public Collider Hurtbox { get; private set; }
 
         private readonly string SpriteName;
 
@@ -117,11 +122,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             else if (hitboxMetadata.baseHitboxes.Count > 1)
             {
-                base.Collider = new ColliderList(hitboxMetadata.baseHitboxes.ToArray());
+                hitboxOptions = hitboxMetadata.baseHitboxes;
+                base.Collider = hitboxMetadata.baseHitboxes["main"];
             }
             else
             {
-                base.Collider = hitboxMetadata.baseHitboxes[0];
+                base.Collider = hitboxMetadata.baseHitboxes.Values.First();
             }
             if (hitboxMetadata.UseDefaultHurtbox)
             {
@@ -129,11 +135,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             else if (hitboxMetadata.baseHurtboxes.Count > 1)
             {
-                Hurtbox = new ColliderList(hitboxMetadata.baseHurtboxes.ToArray());
+                hurtboxOptions = hitboxMetadata.baseHurtboxes;
+                Hurtbox = hitboxMetadata.baseHurtboxes["main"];
             }
             else
             {
-                Hurtbox = hitboxMetadata.baseHurtboxes[0];
+                Hurtbox = hitboxMetadata.baseHurtboxes.Values.First();
             }
             switch (HurtMode)
             {
@@ -235,6 +242,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void ResetBossHitCooldown()
         {
             bossHitCooldown = bossHitCooldownBase;
+        }
+
+        public void ChangeHitboxOption(string tag)
+        {
+            base.Collider = hitboxOptions[tag];
+        }
+
+        public void ChangeHurtboxOption(string tag)
+        {
+            Hurtbox = hurtboxOptions[tag];
         }
 
         private void KillOnContact(Player player)

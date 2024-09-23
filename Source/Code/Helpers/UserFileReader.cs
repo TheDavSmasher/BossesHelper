@@ -139,8 +139,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
         {
-            List<Collider> baseHitboxes = null;
-            List<Collider> baseHurtboxes = null;
+            Dictionary<string, Collider> baseHitboxOptions = null;
+            Dictionary<string, Collider> baseHurtboxOptions = null;
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
             float radiusT = 4f;
@@ -154,7 +154,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     switch (hitboxNode.LocalName.ToLower())
                     {
                         case "hitboxes":
-                            baseHitboxes = new();
+                            baseHitboxOptions ??= new();
+                            List<Collider> baseHitboxes = new();
                             foreach (XmlElement baseHitbox in hitboxNode.ChildNodes)
                             {
                                 if (baseHitbox.LocalName.ToLower().Equals("circle"))
@@ -166,9 +167,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     baseHitboxes.Add(GetHitboxFromXml(baseHitbox.Attributes, 8f, 8f));
                                 }
                             }
+                            if (baseHitboxes.Count > 1)
+                            {
+                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHitboxes.ToArray()));
+                            }
+                            else
+                            {
+                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), baseHitboxes[0]);
+                            }
                             break;
                         case "hurtboxes":
-                            baseHurtboxes = new();
+                            baseHitboxOptions ??= new();
+                            List<Collider> baseHurtboxes = new();
                             foreach (XmlNode baseHurtbox in hitboxNode.ChildNodes)
                             {
                                 if (baseHurtbox.LocalName.ToLower().Equals("circle"))
@@ -179,6 +189,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                 {
                                     baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox.Attributes, 8f, 8f));
                                 }
+                            }
+                            if (baseHurtboxes.Count > 1)
+                            {
+                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
+                            }
+                            else
+                            {
+                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), baseHurtboxes[0]);
                             }
                             break;
                         case "bouncebox":
@@ -192,7 +210,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     }
                 }
             }                                  
-            dataHolder = new(baseHitboxes, baseHurtboxes, bounceHitboxes, targetOffset, radiusT);
+            dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetOffset, radiusT);
         }
 
         private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)
@@ -209,6 +227,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static float GetValueOrDefaultFloat(XmlAttribute source, float defaultVal = 0f)
         {
             return source != null ? float.Parse(source.Value) : defaultVal;
+        }
+
+        private static string GetTagOrMain(XmlNode source)
+        {
+            return source["tag"] != null ? source["tag"].Value : "main";
         }
     }
 }
