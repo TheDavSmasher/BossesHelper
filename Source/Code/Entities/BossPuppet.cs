@@ -66,17 +66,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         //Movement variables
         public Vector2 Speed;
 
-        private Collision onCollideH;
+        private readonly Collision onCollideH;
 
-        private Collision onCollideV;
+        private readonly Collision onCollideV;
 
         private bool onGround;
 
-        private bool wasOnGround;
+        private readonly float maxFall;
 
-        private int moveX;
-
-        private float maxFall;
+        private float effectiveGravity;
 
         public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
         {
@@ -93,6 +91,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
                 SetHitboxesAndColliders();
+                onCollideH = OnCollideH;
+                onCollideV = OnCollideV;
                 facing = MirrorSprite ? -1 : 1;
                 Add(Sprite);
                 PlayBossAnim("idle");
@@ -198,7 +198,89 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
-            //TODO move as needed
+            if (base.Collidable && Speed.Y >= 0)
+            {
+                Platform first = CollideFirst<Solid>(base.BottomCenter + Vector2.UnitY);
+                first ??= CollideFirstOutside<JumpThru>(base.BottomCenter + Vector2.UnitY);
+                onGround = first != null;
+            }
+            //Move based on speed
+            MoveH(Speed.X * Engine.DeltaTime, onCollideH);
+            MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+            //Apply gravity
+            if (!onGround)
+            {
+                Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
+            }
+        }
+
+        public void EnableCollisions()
+        {
+            base.Collidable = true;
+        }
+
+        public void DisableCollisions()
+        {
+            base.Collidable = false;
+        }
+
+        public void SetGravityMult(float mult)
+        {
+            effectiveGravity = Gravity * mult;
+        }
+
+        public void SetXSpeed(float speed, int dir = 1)
+        {
+            Speed.X = speed * dir;
+        }
+
+        public void SetYSpeed(float speed, int dir = 1)
+        {
+            Speed.Y = speed * dir;
+        }
+
+        public void SetSpeed(float x, float y)
+        {
+            Speed.Y = y;
+            Speed.X = x;
+        }
+
+        public void SetXSpeedDuring(float speed, float time, int dir = 1)
+        {
+            Add(new Coroutine(KeepXSpeed(speed * dir, time)));
+        }
+
+        public void SetYSpeedDuring(float speed, float time, int dir = 1)
+        {
+            Add(new Coroutine(KeepYSpeed(speed * dir, time)));
+        }
+
+        public void SetSpeedDuring(float x, float y, float time, int dir = 1)
+        {
+            Add(new Coroutine(KeepXSpeed(x * dir, time)));
+            Add(new Coroutine(KeepYSpeed(y * dir, time)));
+        }
+
+        private IEnumerator KeepXSpeed(float speed, float time)
+        {
+            float timer = 0;
+            while (timer < time)
+            {
+                Speed.X = speed;
+                timer += Engine.DeltaTime;
+                yield return null;
+            }
+        }
+
+        private IEnumerator KeepYSpeed(float speed, float time)
+        {
+            float timer = 0;
+            while (timer < time)
+            {
+                Speed.Y = speed;
+                timer += Engine.DeltaTime;
+                yield return null;
+            }
         }
 
         private bool PositionOver_Quarter(float pos, bool left)
@@ -298,10 +380,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public IEnumerator NodeMoveSequence()
+        public void OnCollideH(CollisionData data)
         {
-            //TODO finish
-            yield return null;
+            if (data.Hit != null && data.Hit.OnCollide != null)
+            {
+                data.Hit.OnCollide(data.Direction);
+            }
+            Speed.X = 0;
+        }
+
+        public void OnCollideV(CollisionData data)
+        {
+            if (data.Hit != null && data.Hit.OnCollide != null)
+            {
+                data.Hit.OnCollide(data.Direction);
+            }
+            Speed.Y = 0;
         }
     }
 }
