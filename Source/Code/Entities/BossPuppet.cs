@@ -246,12 +246,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeHitboxOption(string tag)
         {
-            base.Collider = hitboxOptions[tag];
+            base.Collider = hitboxOptions?[tag];
         }
 
         public void ChangeHurtboxOption(string tag)
         {
-            Hurtbox = hurtboxOptions[tag];
+            Hurtbox = hurtboxOptions?[tag];
         }
 
         private void KillOnContact(Player player)
