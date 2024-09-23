@@ -61,6 +61,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         //Movement variables
         public Vector2 Speed;
 
+        private Collision onCollideH;
+
+        private Collision onCollideV;
+
+        private bool onGround;
+
+        private bool wasOnGround;
+
+        private int moveX;
+
+        private float maxFall;
+
         public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
         {
             nodes = data.Nodes;
