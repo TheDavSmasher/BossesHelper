@@ -245,10 +245,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Update();
             Player entity = base.Scene.Tracker.GetEntity<Player>();
-            if (!playerHasMoved && (entity != null && entity.Speed != Vector2.Zero || startAttackingImmediately))
+            if (entity != null)
             {
-                playerHasMoved = true;
-                StartAttackPattern(currentPatternIndex);
+                if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately))
+                {
+                    playerHasMoved = true;
+                    StartAttackPattern(currentPatternIndex);
+                }
+                if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
+                {
+                    InterruptPattern();
+                    currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern;
+                    StartAttackPattern(currentPatternIndex);
+                }
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
             {
@@ -273,12 +282,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     activeEntityFlaggers.Remove(entityFlagger.flag);
                 }
-            }
-            if (!isAttacking && entity != null && IsPlayerWithinSpecifiedRegion(entity.Position))
-            {
-                InterruptPattern();
-                currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern;
-                StartAttackPattern(currentPatternIndex);
             }
         }
 
