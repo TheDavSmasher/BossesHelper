@@ -274,7 +274,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     activeEntityFlaggers.Remove(entityFlagger.flag);
                 }
             }
-            if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
+            if (!isAttacking && entity != null && IsPlayerWithinSpecifiedRegion(entity.Position))
             {
                 InterruptPattern();
                 currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern;
