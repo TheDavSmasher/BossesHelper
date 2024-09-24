@@ -83,6 +83,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
+            maxFall = data.Float("maxFall", 90f);
+            effectiveGravity = data.Float("baseGravityMultiplier", 1f) * Gravity;
             bossHitCooldown = 0f;
             nodes = data.NodesWithPosition(Vector2.Zero);
             HurtMode = hurtMode;

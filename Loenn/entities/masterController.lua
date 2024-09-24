@@ -4,7 +4,8 @@ local hurtModeOpts = {
     {"Player Contact", "playerContact"},
     {"Player Dash", "playerDash"},
     {"Head Bonk", "headBonk"},
-    {"Sidekick Attack", "sidekickAttack"}
+    {"Sidekick Attack", "sidekickAttack"},
+    {"Custom", "custom"}
 }
 
 bossMasterController.name = "BossesHelper/BossController"
@@ -21,6 +22,12 @@ bossMasterController.fieldInformation = {
     },
     bossHitCooldown = {
         fieldType = "number"
+    },
+    maxFall = {
+        fieldType = "number"
+    },
+    baseGravityMultiplier = {
+        fieldType = "number"
     }
 }
 bossMasterController.placements = {
@@ -31,6 +38,8 @@ bossMasterController.placements = {
         bossHealthMax = 3,
         hurtMode = "playerContact",
         bossHitCooldown = "0.5",
+        maxFall = "90",
+        baseGravityMultiplier = "1.0",
         dynamicFacing = true,
         mirrorSprite = false,
         killOnContact = false,
