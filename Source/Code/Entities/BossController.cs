@@ -252,6 +252,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     playerHasMoved = true;
                     StartAttackPattern(currentPatternIndex);
                 }
+                if (!playerHasMoved && isAttacking)
+                {
+                    playerHasMoved = true;
+                }
                 if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
