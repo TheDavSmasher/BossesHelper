@@ -201,8 +201,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             if (Speed.Y >= 0)
             {
-                Platform first = CollideFirst<Solid>(BottomCenter + Vector2.UnitY);
-                first ??= CollideFirstOutside<JumpThru>(BottomCenter + Vector2.UnitY);
+                Platform first = CollideFirst<Solid>(Position + Vector2.UnitY);
+                first ??= CollideFirstOutside<JumpThru>(Position + Vector2.UnitY);
                 onGround = first != null;
             }
             else
