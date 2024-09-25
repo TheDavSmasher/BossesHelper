@@ -179,7 +179,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Update()
         {
-            base.Update();
             Player entity = base.Scene.Tracker.GetEntity<Player>();
             if (entity != null)
             {
@@ -200,16 +199,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
-            if (base.Collidable && Speed.Y >= 0)
+            if (Speed.Y >= 0)
             {
-                Platform first = CollideFirst<Solid>(base.BottomCenter + Vector2.UnitY);
-                first ??= CollideFirstOutside<JumpThru>(base.BottomCenter + Vector2.UnitY);
+                Platform first = CollideFirst<Solid>(BottomCenter + Vector2.UnitY);
+                first ??= CollideFirstOutside<JumpThru>(BottomCenter + Vector2.UnitY);
                 onGround = first != null;
             }
             else
             {
                 onGround = false;
             }
+            base.Update();
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
             MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
