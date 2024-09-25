@@ -399,5 +399,30 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             Speed.Y = 0;
         }
+
+        public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
+        {
+            Tween.Position(this, target, time, easer);
+        }
+
+        public void SpeedXTween(float target, float time, Ease.Easer easer = null)
+        {
+            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
+            tween.OnUpdate = delegate (Tween t)
+            {
+                Speed.X = target * t.Eased;
+            };
+            Add(tween);
+        }
+
+        public void SpeedYTween(float target, float time, Ease.Easer easer = null)
+        {
+            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
+            tween.OnUpdate = delegate (Tween t)
+            {
+                Speed.Y = target * t.Eased;
+            };
+            Add(tween);
+        }
     }
 }

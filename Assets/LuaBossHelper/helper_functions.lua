@@ -966,4 +966,16 @@ function helpers.DoMethodAfterDelay(func, delay)
     celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
+function helpers.PositionTween(target, time, easer)
+    puppet:PositionTween(target, time, easer or nil)
+end
+
+function helpers.SpeedXTween(target, time, easer)
+    puppet:SpeedXTween(target, time, easer or nil)
+end
+
+function helpers.SpeedYTween(target, time, easer)
+    puppet:SpeedYTween(target, time, easer or nil)
+end
+
 return helpers
