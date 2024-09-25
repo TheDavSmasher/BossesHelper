@@ -206,6 +206,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 first ??= CollideFirstOutside<JumpThru>(base.BottomCenter + Vector2.UnitY);
                 onGround = first != null;
             }
+            else
+            {
+                onGround = false;
+            }
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
             MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
