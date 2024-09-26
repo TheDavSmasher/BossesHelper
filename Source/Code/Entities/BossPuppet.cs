@@ -235,14 +235,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             effectiveGravity = Gravity * mult;
         }
 
-        public void SetXSpeed(float speed, int dir = 1)
+        public void SetXSpeed(float speed)
         {
-            Speed.X = speed * dir;
+            Speed.X = speed;
         }
 
-        public void SetYSpeed(float speed, int dir = 1)
+        public void SetYSpeed(float speed)
         {
-            Speed.Y = speed * dir;
+            Speed.Y = speed;
         }
 
         public void SetSpeed(float x, float y)
@@ -251,20 +251,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Speed.X = x;
         }
 
-        public void SetXSpeedDuring(float speed, float time, int dir = 1)
+        public void SetXSpeedDuring(float speed, float time)
         {
-            Add(new Coroutine(KeepXSpeed(speed * dir, time)));
+            Add(new Coroutine(KeepXSpeed(speed, time)));
         }
 
-        public void SetYSpeedDuring(float speed, float time, int dir = 1)
+        public void SetYSpeedDuring(float speed, float time)
         {
-            Add(new Coroutine(KeepYSpeed(speed * dir, time)));
+            Add(new Coroutine(KeepYSpeed(speed, time)));
         }
 
-        public void SetSpeedDuring(float x, float y, float time, int dir = 1)
+        public void SetSpeedDuring(float x, float y, float time)
         {
-            Add(new Coroutine(KeepXSpeed(x * dir, time)));
-            Add(new Coroutine(KeepYSpeed(y * dir, time)));
+            Add(new Coroutine(KeepXSpeed(x, time)));
+            Add(new Coroutine(KeepYSpeed(y, time)));
         }
 
         private IEnumerator KeepXSpeed(float speed, float time)
