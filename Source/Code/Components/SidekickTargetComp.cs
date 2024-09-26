@@ -5,18 +5,11 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    internal class SidekickTargetComp : Component
+    internal class SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Vector2 offset, float radius = 4f) : Component(active: true, visible: false)
     {
-        public SidekickTarget target;
+        public SidekickTarget target = new SidekickTarget(bossName, position, offset, onLaser, radius);
 
-        public Vector2 Offset { get; set; }
-
-        public SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Vector2 offset, float radius = 4f)
-            : base(active: true, visible: false)
-        {
-            target = new SidekickTarget(bossName, position, offset, onLaser, radius);
-            Offset = offset;
-        }
+        public Vector2 Offset { get; set; } = offset;
 
         public override void EntityAdded(Scene scene)
         {
