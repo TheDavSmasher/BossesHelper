@@ -78,7 +78,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
         {
-            nodes = data.Nodes;
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
@@ -418,6 +417,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.Y = target * t.Eased;
             };
             Add(tween);
+        }
+
+        public Vector2 GetNodeAtIndex(int index)
+        {
+            return nodes[index];
         }
     }
 }

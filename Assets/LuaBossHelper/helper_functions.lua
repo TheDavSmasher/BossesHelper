@@ -1030,4 +1030,8 @@ function helpers.SpeedYTween(target, time, easer)
     puppet:SpeedYTween(target, time, easer or nil)
 end
 
+function helpers.GetNodeAtIndex(index)
+    puppet:GetNodeAtIndex(index or 0)
+end
+
 return helpers
