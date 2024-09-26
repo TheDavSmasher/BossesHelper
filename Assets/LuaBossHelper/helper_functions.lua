@@ -880,131 +880,131 @@ end
 --- Since no reference to the Controller is given, these function delegates are necessary
 
 --Attack Delegates
-function helpers.AddEntity(entity)
+function helpers.addEntity(entity)
     bossAttack.addEntity:Invoke(entity)
 end
 
-function helpers.AddEntityWithTimer(entity, name, func, timer)
+function helpers.addEntityWithTimer(entity, name, func, timer)
     bossAttack.addEntityWithTimer:Invoke(entity, name, func, timer)
 end
 
-function helpers.AddEntityWithFlagger(entity, flag, func, state, resetFlag)
+function helpers.addEntityWithFlagger(entity, flag, func, state, resetFlag)
     bossAttack.addEntityWithFlagger:Invoke(entity, flag, func, state or state == nil, resetFlag or resetFlag == nil)
 end
 
-function helpers.DestroyEntity(entity)
+function helpers.destroyEntity(entity)
     bossAttack.destroyEntity:Invoke(entity)
 end
 
-function helpers.DestroyAll()
+function helpers.destroyAll()
     bossAttack.destroyAll:Invoke()
 end
 --End Attack Delegates
 
 --Interrupt Delegates
-function helpers.GetHealth()
+function helpers.getHealth()
     return boss.getHealth:Invoke()
 end
 
-function helpers.SetHealth(health)
+function helpers.setHealth(health)
     boss.setHealth:Invoke(health)
 end
 
-function helpers.DecreaseHealth(health)
+function helpers.decreaseHealth(health)
     boss.decreaseHealth:Invoke(health or 1)
 end
 
-function helpers.WaitForAttackToEnd()
+function helpers.waitForAttackToEnd()
     return coroutine.yield(boss.waitForAttack:Invoke())
 end
 
-function helpers.InterruptPattern()
+function helpers.interruptPattern()
     boss.interruptPattern:Invoke()
 end
 
-function helpers.GetCurrentPatternID()
+function helpers.getCurrentPatternID()
     return boss.currentPattern:Invoke()
 end
 
-function helpers.StartAttackPattern(goTo)
+function helpers.startAttackPattern(goTo)
     boss.startAttackPattern:Invoke(goTo or -1)
 end
 
-function helpers.StartNextAttackPattern()
+function helpers.startNextAttackPattern()
     helpers.StartAttackPattern(helpers.GetCurrentPatternID() + 1)
 end
 --End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods
-function helpers.EnableCollisions()
+function helpers.enableCollisions()
     puppet:EnableCollisions()
 end
 
-function helpers.DisableCollisions()
+function helpers.disableCollisions()
     puppet:DisableCollisions()
 end
 
-function helpers.SetEffectiveGravityMult(mult)
+function helpers.setEffectiveGravityMult(mult)
     puppet:SetGravityMult(mult)
 end
 
-function helpers.SetXSpeed(value)
+function helpers.setXSpeed(value)
     puppet:SetXSpeed(value)
 end
 
-function helpers.SetYSpeed(value)
+function helpers.setYSpeed(value)
     puppet:SetYSpeed(value)
 end
 
-function helpers.SetSpeed(x, y)
+function helpers.setSpeed(x, y)
     puppet:SetSpeed(x, y)
 end
 
-function helpers.SetXSpeedDuring(value, time)
+function helpers.setXSpeedDuring(value, time)
     puppet:SetXSpeedDuring(value, time)
 end
 
-function helpers.SetYSpeedDuring(value, time)
+function helpers.setYSpeedDuring(value, time)
     puppet:SetYSpeedDuring(value, time)
 end
 
-function helpers.SetSpeedDuring(x, y, time)
+function helpers.setSpeedDuring(x, y, time)
     puppet:SetSpeedDuring(x, y, time)
 end
 
-function helpers.PlayPuppetAnim(anim)
+function helpers.playPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
 end
 
-function helpers.SetHitCooldown(value)
+function helpers.setHitCooldown(value)
     puppet:SetBossHitCooldown(value)
 end
 
-function helpers.ResetHitCooldown(value)
+function helpers.resetHitCooldown(value)
     puppet:ResetBossHitCooldown(value)
 end
 
-function helpers.ChangeBaseHitboxTo(tag)
+function helpers.changeBaseHitboxTo(tag)
     puppet:ChangeHitboxOption(tag)
 end
 
-function helpers.ChangeHurtboxTo(tag)
+function helpers.changeHurtboxTo(tag)
     puppet:ChangeHurtboxOption(tag)
 end
 
-function helpers.AddComponentToBoss(component)
+function helpers.addComponentToBoss(component)
     puppet:Add(component)
 end
 
-function helpers.GetColliderList(...)
+function helpers.getColliderList(...)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
 end
 
-function helpers.GetNewBasicAttackEntity(position, hitboxes, funcOnPlayer, startCollidable, spriteName, xScale, yScale)
+function helpers.getNewBasicAttackEntity(position, hitboxes, funcOnPlayer, startCollidable, spriteName, xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer, startCollidable, spriteName, xScale or 1, yScale or 1)
 end
 
-function helpers.GetNewEntityData(position, width, height, id)
+function helpers.getNewEntityData(position, width, height, id)
     newData = celeste.Mod.BossesHelper.BossesHelperModule.MakeEntityData()
     newData.ID = id or 1000
     newData.Level = engine.Scene
@@ -1014,23 +1014,23 @@ function helpers.GetNewEntityData(position, width, height, id)
     return newData
 end
 
-function helpers.DoMethodAfterDelay(func, delay)
+function helpers.doMethodAfterDelay(func, delay)
     celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
-function helpers.PositionTween(target, time, easer)
+function helpers.positionTween(target, time, easer)
     puppet:PositionTween(target, time, easer or nil)
 end
 
-function helpers.SpeedXTween(target, time, easer)
+function helpers.speedXTween(target, time, easer)
     puppet:SpeedXTween(target, time, easer or nil)
 end
 
-function helpers.SpeedYTween(target, time, easer)
+function helpers.speedYTween(target, time, easer)
     puppet:SpeedYTween(target, time, easer or nil)
 end
 
-function helpers.GetNodeAtIndex(index)
+function helpers.getNodeAtIndex(index)
     puppet:GetNodeAtIndex(index or 0)
 end
 
