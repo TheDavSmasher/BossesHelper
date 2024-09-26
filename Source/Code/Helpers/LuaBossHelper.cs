@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Stream stream = file?.Stream;
             if (stream != null)
             {
-                using (StreamReader streamReader = new StreamReader(stream))
+                using (StreamReader streamReader = new(stream))
                 {
                     return streamReader.ReadToEnd();
                 }

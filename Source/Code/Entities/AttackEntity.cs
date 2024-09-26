@@ -6,9 +6,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     internal class AttackEntity : Entity
     {
-        private Sprite sprite;
+        private readonly Sprite sprite;
 
-        private LuaFunction onCollide;
+        private readonly LuaFunction onCollide;
 
         public AttackEntity(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float xScale = 1f, float yScale = 1f) : base(position)
         {

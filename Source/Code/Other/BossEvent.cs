@@ -47,8 +47,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-            BossEvent bossEvent = new BossEvent("Assets/LuaBossHelper/warmup_cutscene", null, null);
-            Coroutine coroutine = new Coroutine(bossEvent.Coroutine(null));
+            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene", null, null);
+            Coroutine coroutine = new(bossEvent.Coroutine(null));
             try
             {
                 while (!coroutine.Finished)

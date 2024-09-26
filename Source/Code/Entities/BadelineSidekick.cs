@@ -63,10 +63,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
             Dummy.Scale.X = -1f;
             Dummy.Play("fallslow");
-            DummyHair = new PlayerHair(Dummy);
-            DummyHair.Color = BadelineOldsite.HairColor;
-            DummyHair.Border = Color.Black;
-            DummyHair.Facing = Facings.Left;
+            DummyHair = new(Dummy)
+            {
+                Color = BadelineOldsite.HairColor,
+                Border = Color.Black,
+                Facing = Facings.Left
+            };
             Boss = GFX.SpriteBank.Create("badeline_boss");
             Boss.OnFrameChange = (string anim) =>
             {

@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Collision onCollideV;
 
-        public bool onGround {  get; private set; }
+        public bool onGround { get; private set; }
 
         private readonly float maxFall;
 

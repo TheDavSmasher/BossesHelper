@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
-        private static readonly Random random = new Random();
+        private static readonly Random random = new();
 
         private static int Next => random.Next();
 
