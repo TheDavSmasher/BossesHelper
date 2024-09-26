@@ -199,16 +199,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
-            if (Speed.Y >= 0)
-            {
-                Platform first = CollideFirst<Solid>(Position + Vector2.UnitY);
-                first ??= CollideFirstOutside<JumpThru>(Position + Vector2.UnitY);
-                onGround = first != null;
-            }
-            else
-            {
-                onGround = false;
-            }
+            onGround = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
