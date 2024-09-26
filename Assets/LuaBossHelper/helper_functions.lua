@@ -936,6 +936,42 @@ end
 --End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods
+function helpers.EnableCollisions()
+    puppet:EnableCollisions()
+end
+
+function helpers.DisableCollisions()
+    puppet:DisableCollisions()
+end
+
+function helpers.SetEffectiveGravityMult(mult)
+    puppet:SetGravityMult(mult)
+end
+
+function helpers.SetXSpeed(value)
+    puppet:SetXSpeed(value)
+end
+
+function helpers.SetYSpeed(value)
+    puppet:SetYSpeed(value)
+end
+
+function helpers.SetSpeed(x, y)
+    puppet:SetSpeed(x, y)
+end
+
+function helpers.SetXSpeedDuring(value, time)
+    puppet:SetXSpeedDuring(value, time)
+end
+
+function helpers.SetYSpeedDuring(value, time)
+    puppet:SetYSpeedDuring(value, time)
+end
+
+function helpers.SetSpeedDuring(x, y, time)
+    puppet:SetSpeedDuring(x, y, time)
+end
+
 function helpers.PlayPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
 end
