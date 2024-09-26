@@ -940,6 +940,22 @@ function helpers.PlayPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
 end
 
+function helpers.SetHitCooldown(value)
+    puppet:SetBossHitCooldown(value)
+end
+
+function helpers.ResetHitCooldown(value)
+    puppet:ResetBossHitCooldown(value)
+end
+
+function helpers.ChangeBaseHitboxTo(tag)
+    puppet:ChangeHitboxOption(tag)
+end
+
+function helpers.ChangeHurtboxTo(tag)
+    puppet:ChangeHurtboxOption(tag)
+end
+
 function helpers.AddComponentToBoss(component)
     puppet:Add(component)
 end
