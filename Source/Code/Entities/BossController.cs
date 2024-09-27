@@ -114,8 +114,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
-            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern, Action<int> startAttackPattern)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Func<IEnumerator> waitForAttack,
+            Action interruptPattern, Func<int> currentPattern, Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession)
         {
             public Player playerRef = playerRef;
 
@@ -134,6 +134,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Func<int> currentPattern = currentPattern;
 
             public Action<int> startAttackPattern = startAttackPattern;
+
+            public Action<int, int, bool> savePhaseChangeToSession = savePhaseChangeToSession;
         }
 
         public readonly string Name;
@@ -169,7 +171,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool isAttacking;
 
-        private readonly bool startAttackingImmediately;
+        private bool startAttackingImmediately;
 
         private readonly List<Entity> activeEntities;
 
@@ -197,6 +199,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
+            FetchSavedPhase();
         }
 
         private static HurtModes GetHurtMode(string moveMode)
@@ -209,6 +212,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 "custom" => HurtModes.Custom,
                 _ => HurtModes.PlayerContact
             };
+        }
+
+        private void FetchSavedPhase()
+        {
+            BossesHelperModuleSession.BossPhase phase = BossesHelperModule.Session.BossPhaseSaved;
+            if (!phase.Equals(null))
+            {
+                Health = phase.bossHealthAt;
+                currentPatternIndex = phase.startWithPatternIndex;
+                startAttackingImmediately = phase.startImmediately;
+            }
         }
 
         public override void Added(Scene scene)
@@ -301,7 +315,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
             UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
-                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern));
+                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
         }
 
         private void PopulatePatterns()
@@ -381,6 +395,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Active = false;
             //activeEntityTimers.ForEach(timer => timer.ExecuteEarly());
             DestroyAll();
+        }
+
+        private void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
+        {
+            BossesHelperModule.Session.BossPhaseSaved = new(health, startImmediately, patternIndex);
         }
 
         //Attack Delegates
