@@ -2,7 +2,7 @@ namespace Celeste.Mod.BossesHelper;
 
 using Microsoft.Xna.Framework.Input;
 
-public class BossesHelperModuleSettings : EverestModuleSettings {
+public class BossesHelperSettings : EverestModuleSettings {
 
     [DefaultButtonBinding(Buttons.LeftShoulder, Keys.Tab)]
     [SettingName("Sidekick Laser")]

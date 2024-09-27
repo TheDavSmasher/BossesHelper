@@ -8,16 +8,16 @@ public class BossesHelperModule : EverestModule {
     public static BossesHelperModule Instance { get; private set; }
 
     // Store Settings
-    public override Type SettingsType => typeof(BossesHelperModuleSettings);
-    public static BossesHelperModuleSettings Settings => (BossesHelperModuleSettings) Instance._Settings;
+    public override Type SettingsType => typeof(BossesHelperSettings);
+    public static BossesHelperSettings Settings => (BossesHelperSettings) Instance._Settings;
 
     // Store Session
-    public override Type SessionType => typeof(BossesHelperModuleSession);
-    public static BossesHelperModuleSession Session => (BossesHelperModuleSession) Instance._Session;
+    public override Type SessionType => typeof(BossesHelperSession);
+    public static BossesHelperSession Session => (BossesHelperSession) Instance._Session;
 
     // Store Save Data
-    public override Type SaveDataType => typeof(BossesHelperModuleSaveData);
-    public static BossesHelperModuleSaveData SaveData => (BossesHelperModuleSaveData) Instance._SaveData;
+    public override Type SaveDataType => typeof(BossesHelperSaveData);
+    public static BossesHelperSaveData SaveData => (BossesHelperSaveData) Instance._SaveData;
 
     public BossesHelperModule() {
         Instance = this;

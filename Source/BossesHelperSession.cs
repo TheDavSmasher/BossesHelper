@@ -1,6 +1,6 @@
 namespace Celeste.Mod.BossesHelper;
 
-public class BossesHelperModuleSession : EverestModuleSession
+public class BossesHelperSession : EverestModuleSession
 {
     public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
     {
