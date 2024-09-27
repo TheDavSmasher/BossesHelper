@@ -136,13 +136,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action<int> startAttackPattern = startAttackPattern;
         }
 
-        public struct BossPhase
-        {
-            public int phaseID;
-
-            public int? bossHealthAt;
-        }
-
         public readonly string Name;
 
         public Level Level;
@@ -172,8 +165,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Coroutine currentPattern;
 
-        private int currentPhase;
-
         private bool playerHasMoved;
 
         private bool isAttacking;
@@ -194,7 +185,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
-            currentPhase = 1;
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
