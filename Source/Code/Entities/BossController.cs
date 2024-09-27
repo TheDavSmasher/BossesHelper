@@ -217,7 +217,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void FetchSavedPhase()
         {
             BossesHelperSession.BossPhase phase = BossesHelperModule.Session.BossPhaseSaved;
-            if (!phase.Equals(null))
+            if (phase.bossHealthAt != 0)
             {
                 Health = phase.bossHealthAt;
                 currentPatternIndex = phase.startWithPatternIndex;
