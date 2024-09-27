@@ -48,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Timer -= Engine.DeltaTime;
                 return this;
             }
-
+            
             public void ExecuteEarly()
             {
                 Timer = 0;
