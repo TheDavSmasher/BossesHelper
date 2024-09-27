@@ -148,7 +148,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 ActiveSprite.Scale.X *= -1;
                 DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
             }
-            if (Input.CrouchDashPressed && !IsAttacking)
+            if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && !IsAttacking)
             {
                 IsAttacking = true;
                 Add(new Coroutine(Beam()));
