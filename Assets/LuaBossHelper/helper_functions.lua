@@ -933,6 +933,10 @@ end
 function helpers.startNextAttackPattern()
     helpers.StartAttackPattern(helpers.GetCurrentPatternID() + 1)
 end
+
+function helpers.savePhaseChangeToSession(health, index, startImmediately)
+    boss.savePhaseChangeToSession:Invoke(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
+end
 --End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods
