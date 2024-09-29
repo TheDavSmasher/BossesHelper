@@ -121,10 +121,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             for(int i = 0; i < health; i++)
             {
-                HealthIcon healthIcon = new HealthIcon(spritePath, spriteCreate, spriteRemove);
-                healthIcons.Add(healthIcon);
-                level.Add(healthIcon);
-                healthIcon.DrawIcon(Position + Vector2.UnitX * iconSpace * i);
+                IncreaseHealth();
             }
         }
 
