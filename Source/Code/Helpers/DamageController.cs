@@ -14,11 +14,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public int health;
 
-        public DamageController(float damageCooldown, bool isGlobal)
+        public DamageController()
         {
-            if (isGlobal)
+            if (BossesHelperModule.healthData.globalController)
                 AddTag(Tags.Global);
-            baseCooldown = damageCooldown;
+            baseCooldown = BossesHelperModule.healthData.damageCooldown;
             health = BossesHelperModule.playerHealthBar.health;
         }
 
