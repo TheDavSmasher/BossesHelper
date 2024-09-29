@@ -64,7 +64,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void RecoverHealth(int amount = 1)
         {
-
+            health += amount;
+            for (int i = 0; i < amount; i++)
+            {
+                BossesHelperModule.playerHealthBar.IncreaseHealth();
+            }
         }
 
         private IEnumerator PlayerStagger(Player player, Vector2 bounce)
