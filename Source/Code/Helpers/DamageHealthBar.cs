@@ -2,27 +2,25 @@
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     [Tracked(false)]
     public class DamageHealthBar : Entity
     {
+        private static BossesHelperModule.HealthSystemData healthData => BossesHelperModule.healthData;
+
         private class HealthIcon : Entity
         {
-            private readonly  Sprite icon;
+            private readonly Sprite icon;
 
-            private readonly string createAnim;
-
-            private readonly string removeAnim;
-
-            public HealthIcon(string spriteName, string createAnim, string removeAnim)
+            public HealthIcon()
             {
-                Add(icon = GFX.SpriteBank.Create(spriteName));
+                Add(icon = GFX.SpriteBank.Create(BossesHelperModule.healthData.iconSprite));
                 base.Tag = Tags.HUD;
-                AddTag(Tags.Global);
-                this.createAnim = createAnim;
-                this.removeAnim = removeAnim;
+                if (BossesHelperModule.healthData.globalController)
+                    AddTag(Tags.Global);
             }
 
             public void DrawIcon(Vector2 position)
@@ -33,8 +31,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(createAnim) && icon.Has(createAnim))
-                    icon.Play(createAnim);
+                if (!string.IsNullOrEmpty(BossesHelperModule.healthData.startAnim) && icon.Has(BossesHelperModule.healthData.startAnim))
+                    icon.Play(BossesHelperModule.healthData.startAnim);
                 yield return 0.32f;
             }
 
@@ -45,8 +43,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator RemoveRoutine()
             {
-                if (!string.IsNullOrEmpty(removeAnim) && icon.Has(removeAnim))
-                    icon.Play(removeAnim);
+                if (!string.IsNullOrEmpty(BossesHelperModule.healthData.endAnim) && icon.Has(BossesHelperModule.healthData.endAnim))
+                    icon.Play(BossesHelperModule.healthData.endAnim);
                 yield return 0.88f;
                 RemoveSelf();
             }
@@ -62,43 +60,40 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly List<HealthIcon> healthIcons;
 
-        private readonly string spritePath;
-
-        private readonly string spriteCreate;
-
-        private readonly string spriteRemove;
-
-        private readonly float iconSpace;
-
         public int health;
 
-        internal DamageHealthBar(Vector2 pos, int health, string iconSprite, string createIconAnim, string removeIconAnim, float iconSeparation)
-            : base(pos)
+        internal DamageHealthBar()
+            : base(BossesHelperModule.healthData.healthBarPos)
         {
             healthIcons = new List<HealthIcon>();
-            spritePath = iconSprite;
-            spriteCreate = createIconAnim;
-            spriteRemove = removeIconAnim;
-            for (int i = 0; i < health; i++)
-            {
-                healthIcons.Add(new HealthIcon(spritePath, spriteCreate, spriteRemove));
-            }
-            this.health = health;
-            iconSpace = iconSeparation;
-            base.Tag = Tags.HUD;
-            AddTag(Tags.Global);
+            Ctor();
         }
 
-        internal DamageHealthBar(EntityData data)
-            : this(new Vector2(data.Float("screenX"), data.Float("screenY")), data.Int("playerHealth"), data.Attr("healthIcon"),
-                  data.Attr("healthIconCreateAnim"), data.Attr("healthIconRemoveAnim"), data.Float("healthIconSeparation"))
+        internal DamageHealthBar(EntityData data, Vector2 offset)
+            : base(data.Position + offset)
         {
-            BossesHelperModule.healthBarPos = Position;
-            BossesHelperModule.playerHealthVal = health;
-            BossesHelperModule.iconSprite = spritePath;
-            BossesHelperModule.startAnim = spriteCreate;
-            BossesHelperModule.endAnim = spriteRemove;
-            BossesHelperModule.iconSeparation = iconSpace;
+            BossesHelperModule.healthData.healthBarPos = Position;
+            BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon");
+            BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim");
+            BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim");
+            BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation");
+            BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
+            BossesHelperModule.healthData.playerHealthVal = health = data.Int("playerHealth");
+            BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
+
+            healthIcons = new List<HealthIcon>();
+            Ctor();
+        }
+
+        private void Ctor()
+        {
+            for (int i = 0; i < health; i++)
+            {
+                healthIcons.Add(new HealthIcon());
+            }
+            base.Tag = Tags.HUD;
+            if (healthData.globalController)
+                AddTag(Tags.Global);
         }
 
         public override void Awake(Scene scene)
@@ -113,7 +108,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             for (int i = 0; i < health; i++)
             {
                 level.Add(healthIcons[i]);
-                healthIcons[i].DrawIcon(Position + Vector2.UnitX * iconSpace * i);
+                healthIcons[i].DrawIcon(Position + Vector2.UnitX * healthData.iconSeparation * i);
             }
         }
 
@@ -127,10 +122,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void IncreaseHealth()
         {
-            HealthIcon healthIcon = new HealthIcon(spritePath, spriteCreate, spriteRemove);
+            HealthIcon healthIcon = new HealthIcon();
             healthIcons.Add(healthIcon);
             level.Add(healthIcon);
-            healthIcon.DrawIcon(Position + Vector2.UnitX * iconSpace * (healthIcons.Count - 1));
+            healthIcon.DrawIcon(Position + Vector2.UnitX * healthData.iconSeparation * (healthIcons.Count - 1));
         }
 
         public void DecreaseHealth()
