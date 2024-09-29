@@ -10,11 +10,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         private float damageCooldown;
 
+        private readonly float baseCooldown;
+
         public int health;
 
-        public DamageController()
+        public DamageController(float damageCooldown, bool isGlobal)
         {
-            AddTag(Tags.Global);
+            if (isGlobal)
+                AddTag(Tags.Global);
+            baseCooldown = damageCooldown;
             health = BossesHelperModule.playerHealthBar.health;
         }
 
@@ -29,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 return;
             }
-            damageCooldown = 1f;
+            damageCooldown = baseCooldown;
             health -= amount;
             level.Shake();
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
