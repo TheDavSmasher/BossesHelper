@@ -63,30 +63,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public int health;
 
         internal DamageHealthBar()
-            : base(BossesHelperModule.healthData.healthBarPos)
         {
+            Position = BossesHelperModule.healthData.healthBarPos;
             healthIcons = new List<HealthIcon>();
-            Ctor();
-        }
-
-        internal DamageHealthBar(EntityData data, Vector2 offset)
-            : base(data.Position + offset)
-        {
-            BossesHelperModule.healthData.healthBarPos = Position;
-            BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon");
-            BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim");
-            BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim");
-            BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation");
-            BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
-            BossesHelperModule.healthData.playerHealthVal = health = data.Int("playerHealth");
-            BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-
-            healthIcons = new List<HealthIcon>();
-            Ctor();
-        }
-
-        private void Ctor()
-        {
             for (int i = 0; i < health; i++)
             {
                 healthIcons.Add(new HealthIcon());
