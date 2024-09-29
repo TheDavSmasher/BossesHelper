@@ -92,7 +92,7 @@ public class BossesHelperModule : EverestModule {
         }
         if (intro == Player.IntroTypes.Transition && playerDamageController != null && playerHealthBar != null)
         {
-            playerDamageController.health = 0;
+            playerDamageController.health = playerHealthVal;
             playerHealthBar.RefillHealth();
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
