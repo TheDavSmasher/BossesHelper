@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
-using Celeste;
+using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -23,8 +23,10 @@ public class BossesHelperModule : EverestModule {
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData SaveData => (BossesHelperSaveData) Instance._SaveData;
 
-    public static DamageController playerDamageController;
+    public static HealthSystemController healthSystemController;
 
+    public static DamageController playerDamageController;
+    
     public static DamageHealthBar playerHealthBar;
 
     public struct HealthSystemData
@@ -44,6 +46,8 @@ public class BossesHelperModule : EverestModule {
         public float damageCooldown;
 
         public bool globalController;
+
+        public bool globalHealth;
     }
 
     public static HealthSystemData healthData;
@@ -99,7 +103,7 @@ public class BossesHelperModule : EverestModule {
                 self.Add(playerDamageController);
             }
         }
-        if (intro == Player.IntroTypes.Transition && playerDamageController != null && playerHealthBar != null)
+        if (intro == Player.IntroTypes.Transition && healthData.globalController && !healthData.globalHealth && playerDamageController != null && playerHealthBar != null)
         {
             playerDamageController.health = healthData.playerHealthVal;
             playerHealthBar.RefillHealth();

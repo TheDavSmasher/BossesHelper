@@ -18,6 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
             BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth");
             BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
+            BossesHelperModule.healthSystemController ??= this;
             BossesHelperModule.playerHealthBar ??= new();
             BossesHelperModule.playerDamageController ??= new();
         }
