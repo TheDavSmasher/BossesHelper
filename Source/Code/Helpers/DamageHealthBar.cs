@@ -72,7 +72,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public int health;
 
-        public DamageHealthBar(Vector2 pos, int health, string iconSprite, string createIconAnim, string removeIconAnim, float iconSeparation)
+        internal DamageHealthBar(Vector2 pos, int health, string iconSprite, string createIconAnim, string removeIconAnim, float iconSeparation)
             : base(pos)
         {
             healthIcons = new List<HealthIcon>();
@@ -89,12 +89,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             AddTag(Tags.Global);
         }
 
-        public DamageHealthBar(EntityData data, Vector2 pos)
-            : this(pos, data.Int("playerHealth"), data.Attr("healthIcon"), data.Attr("healthIconCreateAnim"), data.Attr("healthIconRemoveAnim"), data.Float("healthIconSeparation"))
+        internal DamageHealthBar(EntityData data)
+            : this(new Vector2(data.Float("screenX"), data.Float("screenY")), data.Int("playerHealth"), data.Attr("healthIcon"),
+                  data.Attr("healthIconCreateAnim"), data.Attr("healthIconRemoveAnim"), data.Float("healthIconSeparation"))
         {
             BossesHelperModule.healthBarPos = Position;
-            if (BossesHelperModule.playerHealthVal < health)
-                BossesHelperModule.playerHealthVal = health;
+            BossesHelperModule.playerHealthVal = health;
             BossesHelperModule.iconSprite = spritePath;
             BossesHelperModule.startAnim = spriteCreate;
             BossesHelperModule.endAnim = spriteRemove;
