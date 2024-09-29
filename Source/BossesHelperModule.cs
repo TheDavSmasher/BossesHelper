@@ -27,17 +27,26 @@ public class BossesHelperModule : EverestModule {
 
     public static DamageHealthBar playerHealthBar;
 
-    public static int playerHealthVal;
+    public struct HealthSystemData
+    {
+        public int playerHealthVal;
 
-    public static string iconSprite;
+        public string iconSprite;
 
-    public static string startAnim;
+        public string startAnim;
 
-    public static string endAnim;
+        public string endAnim;
 
-    public static float iconSeparation;
+        public float iconSeparation;
 
-    public static Vector2 healthBarPos;
+        public Vector2 healthBarPos;
+
+        public float damageCooldown;
+
+        public bool globalController;
+    }
+
+    public static HealthSystemData healthData;
 
     public BossesHelperModule() {
         Instance = this;
@@ -82,7 +91,7 @@ public class BossesHelperModule : EverestModule {
         }
         if (self.Session.Area.Mode == AreaMode.Normal && playerHealthBar == null)
         {
-            playerHealthBar = new DamageHealthBar(healthBarPos, playerHealthVal, iconSprite, startAnim, endAnim, iconSeparation);
+            playerHealthBar = new DamageHealthBar();
             self.Add(playerHealthBar);
             if  (playerDamageController == null)
             {
@@ -92,7 +101,7 @@ public class BossesHelperModule : EverestModule {
         }
         if (intro == Player.IntroTypes.Transition && playerDamageController != null && playerHealthBar != null)
         {
-            playerDamageController.health = playerHealthVal;
+            playerDamageController.health = healthData.playerHealthVal;
             playerHealthBar.RefillHealth();
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
