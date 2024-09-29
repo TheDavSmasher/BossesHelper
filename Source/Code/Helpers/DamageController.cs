@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public int health;
 
-        public DamageController()
+        internal DamageController()
         {
             if (BossesHelperModule.healthData.globalController)
                 AddTag(Tags.Global);
