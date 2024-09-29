@@ -65,6 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         internal DamageHealthBar()
         {
             Position = BossesHelperModule.healthData.healthBarPos;
+            health = BossesHelperModule.healthData.playerHealthVal;
             healthIcons = new List<HealthIcon>();
             for (int i = 0; i < health; i++)
             {
