@@ -5,20 +5,20 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    [CustomEntity("BossesHelper/HealthSystemController")]
-    public class HealthSystemController : Entity
+    [CustomEntity("BossesHelper/HealthSystemManagerer")]
+    public class HealthSystemManager : Entity
     {
         public bool enabled;
 
         private readonly string activateFlag;
 
-        public HealthSystemController(EntityData data, Vector2 offset)
+        public HealthSystemManager(EntityData data, Vector2 offset)
         {
             BossesHelperModule.playerHealthBar ??= new();
             BossesHelperModule.playerDamageController ??= new();
-            if (BossesHelperModule.healthSystemController == null)
+            if (BossesHelperModule.healthSystemManager == null)
             {
-                BossesHelperModule.healthSystemController = this;
+                BossesHelperModule.healthSystemManager = this;
                 BossesHelperModule.healthData.healthBarPos = data.Position + offset;
                 BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon");
                 BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim");

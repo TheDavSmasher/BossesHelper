@@ -23,7 +23,7 @@ public class BossesHelperModule : EverestModule {
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData SaveData => (BossesHelperSaveData) Instance._SaveData;
 
-    public static HealthSystemController healthSystemController;
+    public static HealthSystemManager healthSystemManager;
 
     public static DamageController playerDamageController;
     
@@ -85,7 +85,7 @@ public class BossesHelperModule : EverestModule {
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
     {
         orig(self, intro, fromLoader);
-        HealthSystemController controller = self.Tracker.GetEntity<HealthSystemController>();
+        HealthSystemManager controller = self.Tracker.GetEntity<HealthSystemManager>();
         if (controller != null && controller.enabled)
         {
             if (playerHealthBar == null)
