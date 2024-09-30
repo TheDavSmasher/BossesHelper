@@ -41,6 +41,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.playerDamageController ??= new();
             activateFlag = data.Attr("activationFlag");
             enabled = false;
+            if (BossesHelperModule.healthData.globalController)
+                AddTag(Tags.Global);
         }
 
         public override void Added(Scene scene)
