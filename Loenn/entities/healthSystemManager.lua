@@ -14,16 +14,22 @@ healthSystemManager.fieldInformation = {
         fieldType = "number"
     },
     playerHealth = {
-        fieldType = "integer" 
+        fieldType = "integer",
+        minimumValue = 1
     },
     damageCooldown = {
-        fieldType = "number"
+        fieldType = "number",
+        minimumValue = 0
     },
     healthIconScreenX = {
-        fieldType = "number"
+        fieldType = "number",
+        minimumValue = 0,
+        maximumValue = 1920
     },
     healthIconScreenY = {
-        fieldType = "number"
+        fieldType = "number",
+        minimumValue = 0,
+        maximumValue = 1080
     },
     crushEffect = {
         options = crushModeOpts,

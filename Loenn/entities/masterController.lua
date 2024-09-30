@@ -21,7 +21,8 @@ bossMasterController.fieldInformation = {
         editable = false
     },
     bossHitCooldown = {
-        fieldType = "number"
+        fieldType = "number",
+        minimumValue = 0
     },
     maxFall = {
         fieldType = "number"
