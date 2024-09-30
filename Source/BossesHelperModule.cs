@@ -5,6 +5,7 @@ using Celeste.Mod.BossesHelper.Code.Other;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using System.Runtime.Serialization;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -76,11 +77,13 @@ public class BossesHelperModule : EverestModule {
 
     public override void Load() {
         On.Celeste.Level.LoadLevel += new On.Celeste.Level.hook_LoadLevel(SetStartingHealth);
+        On.Celeste.Player.OnSquish += new On.Celeste.Player.hook_OnSquish(ApplyUserCrush);
         On.Celeste.Player.Die += new On.Celeste.Player.hook_Die(OnPlayerCollide);
     }
 
     public override void Unload() {
         On.Celeste.Level.LoadLevel -= new On.Celeste.Level.hook_LoadLevel(SetStartingHealth);
+        On.Celeste.Player.OnSquish -= new On.Celeste.Player.hook_OnSquish(ApplyUserCrush);
         On.Celeste.Player.Die -= new On.Celeste.Player.hook_Die(OnPlayerCollide);
     }
 
@@ -112,6 +115,27 @@ public class BossesHelperModule : EverestModule {
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
         }
+    }
+
+    public static void ApplyUserCrush(On.Celeste.Player.orig_OnSquish orig, Player self, CollisionData data)
+    {
+        orig(self, data);
+        if (healthSystemManager.Active && !self.Dead)
+        {
+            if (healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
+            {
+                self.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height);
+            }
+            else if (healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid)
+            {
+                data.Pusher.Add(new SolidOnInvinciblePlayer());
+            }
+            else //CrushEffect.InstantDeath
+            {
+                PlayerTakesDamage(Vector2.Zero, playerDamageController.health);
+            }
+        }
+
     }
 
     public static PlayerDeadBody OnPlayerCollide(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
