@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    [CustomEntity("BossesHelper/HealthSystemManagerer")]
+    [CustomEntity("BossesHelper/HealthSystemManager")]
     public class HealthSystemManager : Entity
     {
         public bool enabled;
@@ -25,7 +25,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim");
                 BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation");
                 BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
-                BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth");
+                BossesHelperModule.healthData.globalHealth = data.Bool("globalHealth");
+                BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth", 3);
                 BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
                 BossesHelperModule.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
             }
@@ -36,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            if (BossesHelperModule.healthData.applySystemInstantly || string.IsNullOrEmpty(activateFlag))
+            if (BossesHelperModule.healthData.applySystemInstantly)
                 EnableHealthSystem();
         }
 

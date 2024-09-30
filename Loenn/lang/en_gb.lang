@@ -8,3 +8,15 @@ entities.BossesHelper/BossController.attributes.description.killOnContact=If the
 entities.BossesHelper/BossController.attributes.description.startAttackingImmediately=If the Boss should not wait for the player to move to start its actions.
 entities.BossesHelper/BossController.attributes.description.maxFall=The fastest the boss can reach naturally due to gravity acceleration. Can be changed mid-fight in code. Can be surpassed manually.
 entities.BossesHelper/BossController.attributes.description.baseGravityMultiplier=The multiplier applied to gravity the boss will start with. Can be changed mid-fight in code.
+
+entities.BossesHelper/HealthSystemManager.attributes.description.activationFlag=The flag the controller will use to activate. Leave empty if activated through code.
+entities.BossesHelper/HealthSystemManager.attributes.description.healthIcon=The sprite each health icon marker should use per hit point.
+entities.BossesHelper/HealthSystemManager.attributes.description.healthIconCreateAnim=Animation used when regaining a hit point icon.
+entities.BossesHelper/HealthSystemManager.attributes.description.healthIconRemoveAnim=Animation used when losing a hit point icon.
+entities.BossesHelper/HealthSystemManager.attributes.description.healthIconSeparation=The amount of pixels two hit point icon markes will be separated by. Measured from the left of both icons, so value must include the sprite's width or they will overlap.
+entities.BossesHelper/HealthSystemManager.attributes.description.playerHealth=How many hit points the player should default to. No value will default to 3. Can be modified in-game in case of health increases.
+entities.BossesHelper/HealthSystemManager.attributes.description.damageCooldown=The time in seconds when the player is invulnerable to be hit again.
+entities.BossesHelper/HealthSystemManager.attributes.name.isGlobal=Global Controller
+entities.BossesHelper/HealthSystemManager.attributes.description.isGlobal=If the Health System should be active globally. False will remove it when entering a new room or respawning.
+entities.BossesHelper/HealthSystemManager.attributes.description.globalHealth=If the player should keep the same health even on transition. False will refill health on room transition.
+entities.BossesHelper/HealthSystemManager.attributes.description.applySystemInstantly=If the Health System should be active as soon as it is added onto the scene. Must be activated manually otherwise. True will ignore activation flag.

@@ -17,6 +17,7 @@ healthSystemManager.fieldInformation = {
 healthSystemManager.placements = {
     name = "Health System Manager",
     data = {
+        activationFlag = "",
         healthIcon = "",
         healthIconCreateAnim = "",
         healthIconRemoveAnim = "",
