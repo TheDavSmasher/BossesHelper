@@ -52,4 +52,20 @@ bossMasterController.placements = {
     }
 }
 
+function bossMasterController.ignoreFields(entity)
+    local ignored = {
+        "_id",
+        "_name",
+        "sidekickCooldown",
+        "sidekickFreeze"
+    }
+
+    if entity.hurtMode == "sidekickAttack" then
+        table.remove(ignored)
+        table.remove(ignored)
+    end
+
+    return ignored
+end
+
 return bossMasterController
