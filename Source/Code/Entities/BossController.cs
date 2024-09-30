@@ -194,24 +194,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
-            hurtMode = GetHurtMode(data.Attr("hurtMode"));
+            hurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Puppet = new BossPuppet(data, offset, hurtMode);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
             FetchSavedPhase();
-        }
-
-        private static HurtModes GetHurtMode(string moveMode)
-        {
-            return moveMode switch
-            {
-                "playerDash" => HurtModes.PlayerDash,
-                "headBonk" => HurtModes.HeadBonk,
-                "sidekickAttack" => HurtModes.SidekickAttack,
-                "custom" => HurtModes.Custom,
-                _ => HurtModes.PlayerContact
-            };
         }
 
         private void FetchSavedPhase()
