@@ -5,7 +5,6 @@ using Celeste.Mod.BossesHelper.Code.Other;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
-using System.Runtime.Serialization;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -103,7 +102,7 @@ public class BossesHelperModule : EverestModule {
                 playerDamageController = new DamageController();
                 self.Add(playerDamageController);
             }
-            if (intro == Player.IntroTypes.Transition && !healthData.globalHealth)
+            if (intro == Player.IntroTypes.Respawn || intro == Player.IntroTypes.Transition && !healthData.globalHealth)
             {
                 playerDamageController.health = healthData.playerHealthVal;
                 playerHealthBar.RefillHealth();
@@ -163,9 +162,9 @@ public class BossesHelperModule : EverestModule {
         return false;
     }
 
-    public static void PlayerTakesDamage(Vector2 origin, int amount = 1)
+    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false)
     {
-        playerDamageController?.TakeDamage(origin, amount);
+        playerDamageController?.TakeDamage(origin, amount, silent);
     }
 
     public static EntityData MakeEntityData()
