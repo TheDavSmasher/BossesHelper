@@ -94,7 +94,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void RefillHealth()
         {
-            for(int i = 0; i < health; i++)
+            for(int i = healthIcons.Count; i < health; i++)
             {
                 IncreaseHealth();
             }
