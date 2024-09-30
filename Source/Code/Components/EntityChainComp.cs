@@ -2,7 +2,7 @@
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    internal class EntityChainComp(Entity entity, bool chainPosition, bool active, bool visible) : Component(active, visible)
+    public class EntityChainComp(Entity entity, bool chainPosition, bool active, bool visible) : Component(active, visible)
     {
         public Entity chained = entity;
 
