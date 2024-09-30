@@ -228,7 +228,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level level = SceneAs<Level>();
             level.Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
             level.Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
-            SetActiveSpriteTo(SidekickSprite.Custom);
+            //SetActiveSpriteTo(SidekickSprite.Custom);
+            Boss.Visible = false;
+            Dummy.Visible = false;
+            DummyHair.Visible = false;
         }
     }
 }
