@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             if (BossesHelperModule.healthData.globalController)
                 AddTag(Tags.Global);
             baseCooldown = BossesHelperModule.healthData.damageCooldown;
-            health = BossesHelperModule.playerHealthBar.health;
+            health = BossesHelperModule.healthData.playerHealthVal;
         }
 
         public void TakeDamage(Vector2 origin, int amount = 1)
