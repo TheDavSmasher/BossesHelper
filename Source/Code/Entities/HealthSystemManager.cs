@@ -21,16 +21,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 offset)
         {
-            BossesHelperModule.playerHealthBar ??= new();
-            BossesHelperModule.playerDamageController ??= new();
             if (BossesHelperModule.healthSystemManager == null)
             {
                 BossesHelperModule.healthSystemManager = this;
-                BossesHelperModule.healthData.healthBarPos = data.Position + offset;
-                BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon");
-                BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim");
-                BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim");
-                BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation");
+                BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon", "bird");
+                BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
+                BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
+                Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
+                BossesHelperModule.healthData.healthBarPos = screenPosition;
+                BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
                 BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
                 BossesHelperModule.healthData.globalHealth = data.Bool("globalHealth");
                 BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth", 3);
@@ -38,6 +37,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 BossesHelperModule.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
                 BossesHelperModule.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
             }
+            BossesHelperModule.playerHealthBar ??= new();
+            BossesHelperModule.playerDamageController ??= new();
             activateFlag = data.Attr("activationFlag");
             enabled = false;
         }

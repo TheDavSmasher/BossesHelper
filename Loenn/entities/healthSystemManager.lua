@@ -11,13 +11,19 @@ healthSystemManager.depth = 0
 healthSystemManager.nodeLimits = {0, 0}
 healthSystemManager.fieldInformation = {
     healthIconSeparation = {
-        filetype = "number"
+        fieldType = "number"
     },
     playerHealth = {
-        filetype = "integer" 
+        fieldType = "integer" 
     },
     damageCooldown = {
-        filetype = "number"
+        fieldType = "number"
+    },
+    healthIconScreenX = {
+        fieldType = "number"
+    },
+    healthIconScreenY = {
+        fieldType = "number"
     },
     crushEffect = {
         options = crushModeOpts,
@@ -31,11 +37,14 @@ healthSystemManager.placements = {
         healthIcon = "",
         healthIconCreateAnim = "",
         healthIconRemoveAnim = "",
+        healthIconScreenX = "160",
+        healthIconScreenY = "950",
         healthIconSeparation = "1.0",
         playerHealth = "3",
         damageCooldown = "1",
         crushEffect = "instantDeath",
         isGlobal = true,
+        globalHealth = false,
         applySystemInstantly = true
     }
 }
