@@ -31,6 +31,8 @@ public class BossesHelperModule : EverestModule {
 
     public struct HealthSystemData
     {
+        public EntityData entityDataUsed;
+
         public int playerHealthVal;
 
         public string iconSprite;
@@ -88,25 +90,23 @@ public class BossesHelperModule : EverestModule {
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
     {
-        orig(self, intro, fromLoader);
-        HealthSystemManager controller = self.Tracker.GetEntity<HealthSystemManager>();
-        if (controller != null && controller.enabled)
+        if (intro != Player.IntroTypes.Transition && healthSystemManager != null)
         {
-            if (playerHealthBar == null)
-            {
-                playerHealthBar = new DamageHealthBar();
-                self.Add(playerHealthBar);
-            }
-            if  (playerDamageController == null)
-            {
-                playerDamageController = new DamageController();
-                self.Add(playerDamageController);
-            }
-            if (intro == Player.IntroTypes.Respawn || intro == Player.IntroTypes.Transition && !healthData.globalHealth)
-            {
-                playerDamageController.health = healthData.playerHealthVal;
-                playerHealthBar.RefillHealth();
-            }
+            self.Remove(healthSystemManager);
+            healthSystemManager = null;
+            playerDamageController = null;
+            playerHealthBar = null;
+        }
+        orig(self, intro, fromLoader);
+        if (healthSystemManager != null)
+        {
+            playerHealthBar ??= new DamageHealthBar();
+            playerDamageController ??= new DamageController();
+        }
+        if (intro == Player.IntroTypes.Transition && !healthData.globalHealth && healthSystemManager.enabled)
+        {
+            playerDamageController.health = healthData.playerHealthVal;
+            playerHealthBar.RefillHealth();
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
         if (entity != null)
