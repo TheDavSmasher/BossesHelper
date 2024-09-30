@@ -28,6 +28,9 @@ bossMasterController.fieldInformation = {
     },
     baseGravityMultiplier = {
         fieldType = "number"
+    },
+    sidekickCooldown = {
+        fieldType = "number"
     }
 }
 bossMasterController.placements = {
@@ -40,10 +43,12 @@ bossMasterController.placements = {
         bossHitCooldown = "0.5",
         maxFall = "90",
         baseGravityMultiplier = "1.0",
+        sidekickCooldown = "5.0",
         dynamicFacing = true,
         mirrorSprite = false,
         killOnContact = false,
-        startAttackingImmediately = false
+        startAttackingImmediately = false,
+        sidekickFreeze = false
     }
 }
 

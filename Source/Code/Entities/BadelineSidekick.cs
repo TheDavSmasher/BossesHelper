@@ -56,9 +56,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private bool IsAttacking;
+        private bool CanAttack;
 
-        public BadelineSidekick(Vector2 position) : base(position)
+        private bool FreezeOnAttack;
+
+        private readonly float sidekickCooldown;
+
+        public BadelineSidekick(Vector2 position, bool freezeOnAttack, float cooldown) : base(position)
         {
             Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
             Dummy.Scale.X = -1f;
@@ -95,11 +99,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AddTag(Tags.Persistent);
             SetActiveSpriteTo(SidekickSprite.Dummy);
             Add(laserSfx = new SoundSource());
-            IsAttacking = false;
+            FreezeOnAttack = freezeOnAttack;
+            sidekickCooldown = cooldown;
+            CanAttack = true;
         }
 
         private IEnumerator Beam()
         {
+            if (FreezeOnAttack)
+            {
+                Follower.MoveTowardsLeader = false;
+            }
             laserSfx.Play("event:/char/badeline/boss_laser_charge");
             if (ActiveSprite != Boss)
             {
@@ -119,7 +129,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             laserSfx.Stop();
             Audio.Play("event:/char/badeline/boss_laser_fire", Position);
             ActiveSprite.Play("attack2Recoil");
-            IsAttacking = false;
+            yield return 0.5f;
+            Follower.MoveTowardsLeader = true;
+            yield return Reload();
+        }
+
+        private IEnumerator Reload()
+        {
+            Vanish();
+            yield return sidekickCooldown;
+            Appear();
+            CanAttack = true;
         }
 
         public override void Awake(Scene scene)
@@ -148,9 +168,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 ActiveSprite.Scale.X *= -1;
                 DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
             }
-            if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && !IsAttacking)
+            if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && CanAttack)
             {
-                IsAttacking = true;
+                CanAttack = false;
                 Add(new Coroutine(Beam()));
             }
             oldX = X;

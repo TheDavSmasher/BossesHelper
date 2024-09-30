@@ -153,6 +153,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HurtModes hurtMode;
 
+        private readonly bool freezeSidekickOnAttack;
+
+        private readonly float sidekickCooldown;
+
         public readonly BossPuppet Puppet;
 
         public Dictionary<string, BossAttack> AllAttacks;
@@ -195,6 +199,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern = new Coroutine();
             Add(currentPattern);
             hurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
+            freezeSidekickOnAttack = data.Bool("sidekickFreeze");
+            sidekickCooldown = data.Float("sidekickCooldown");
             Puppet = new BossPuppet(data, offset, hurtMode);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
@@ -229,7 +235,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Puppet.SetCustomBossSetup(player);
             if (hurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
-                (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f, -4f)));
+                (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
             }
         }
 
