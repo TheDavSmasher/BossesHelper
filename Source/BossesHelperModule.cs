@@ -50,6 +50,8 @@ public class BossesHelperModule : EverestModule {
         public bool globalHealth;
 
         public bool applySystemInstantly;
+
+        public HealthSystemManager.CrushEffect playerOnCrush;
     }
 
     public static HealthSystemData healthData;

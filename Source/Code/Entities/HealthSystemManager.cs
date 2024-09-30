@@ -8,6 +8,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/HealthSystemManager")]
     public class HealthSystemManager : Entity
     {
+        public enum CrushEffect
+        {
+            PushOut,
+            InvincibleSolid,
+            InstantDeath
+        }
+
         public bool enabled;
 
         private readonly string activateFlag;
@@ -29,6 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth", 3);
                 BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
                 BossesHelperModule.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
+                BossesHelperModule.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
             }
             activateFlag = data.Attr("activationFlag");
             enabled = false;
