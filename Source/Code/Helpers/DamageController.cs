@@ -14,6 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public int health;
 
+        private Level level;
+
         internal DamageController()
         {
             if (BossesHelperModule.healthData.globalController)
@@ -22,13 +24,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             health = BossesHelperModule.healthData.playerHealthVal;
         }
 
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            level = scene as Level;
+        }
+
         public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false)
         {
             if (damageCooldown > 0 || SaveData.Instance.Assists.Invincible)
             {
                 return;
             }
-            Level level = SceneAs<Level>();
             if (level.InCutscene)
             {
                 return;
