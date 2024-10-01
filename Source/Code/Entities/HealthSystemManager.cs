@@ -63,10 +63,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Removed(scene);
             BossesHelperModule.Session.mapHealthSystemManager = null;
-            BossesHelperModule.Session.mapHealthBar.RemoveSelf();
-            BossesHelperModule.Session.mapHealthBar = null;
-            BossesHelperModule.Session.mapDamageController.RemoveSelf();
-            BossesHelperModule.Session.mapDamageController = null;
+            if (BossesHelperModule.Session.mapHealthBar != null)
+            {
+                BossesHelperModule.Session.mapHealthBar.RemoveSelf();
+                BossesHelperModule.Session.mapHealthBar = null;
+            }
+            if (BossesHelperModule.Session.mapDamageController != null)
+            {
+                BossesHelperModule.Session.mapDamageController.RemoveSelf();
+                BossesHelperModule.Session.mapDamageController = null;
+            }
         }
 
         public void EnableHealthSystem()
