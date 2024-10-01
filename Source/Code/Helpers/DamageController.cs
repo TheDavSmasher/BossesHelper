@@ -18,10 +18,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         internal DamageController()
         {
-            if (BossesHelperModule.healthData.globalController)
+            if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
-            baseCooldown = BossesHelperModule.healthData.damageCooldown;
-            health = BossesHelperModule.healthData.playerHealthVal;
+            baseCooldown = BossesHelperModule.Session.healthData.damageCooldown;
+            health = BossesHelperModule.Session.healthData.playerHealthVal;
         }
 
         public override void Added(Scene scene)
@@ -66,11 +66,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 entity.Die((entity.Position - origin).SafeNormalize());
             }
-            if (BossesHelperModule.playerHealthBar != null)
+            if (BossesHelperModule.Session.mapHealthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    BossesHelperModule.playerHealthBar.DecreaseHealth();
+                    BossesHelperModule.Session.mapHealthBar.DecreaseHealth();
                 }
             }
             else
@@ -84,7 +84,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             health += amount;
             for (int i = 0; i < amount; i++)
             {
-                BossesHelperModule.playerHealthBar.IncreaseHealth();
+                BossesHelperModule.Session.mapHealthBar.IncreaseHealth();
             }
         }
 

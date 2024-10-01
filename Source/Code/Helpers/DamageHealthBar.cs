@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     [Tracked(false)]
     public class DamageHealthBar : Entity
     {
-        private static BossesHelperModule.HealthSystemData healthData => BossesHelperModule.healthData;
+        private static BossesHelperSession.HealthSystemData healthData => BossesHelperModule.Session.healthData;
 
         private class HealthIcon : Entity
         {
@@ -17,10 +17,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public HealthIcon()
             {
-                Add(icon = GFX.SpriteBank.Create(BossesHelperModule.healthData.iconSprite));
-                icon.Scale = BossesHelperModule.healthData.healthIconScale;
+                Add(icon = GFX.SpriteBank.Create(BossesHelperModule.Session.healthData.iconSprite));
+                icon.Scale = BossesHelperModule.Session.healthData.healthIconScale;
                 base.Tag = Tags.HUD;
-                if (BossesHelperModule.healthData.globalController)
+                if (BossesHelperModule.Session.healthData.globalController)
                     AddTag(Tags.Global);
             }
 
@@ -32,8 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.healthData.startAnim) && icon.Has(BossesHelperModule.healthData.startAnim))
-                    icon.Play(BossesHelperModule.healthData.startAnim);
+                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim))
+                    icon.Play(BossesHelperModule.Session.healthData.startAnim);
                 yield return 0.32f;
             }
 
@@ -44,8 +44,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator RemoveRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.healthData.endAnim) && icon.Has(BossesHelperModule.healthData.endAnim))
-                    icon.Play(BossesHelperModule.healthData.endAnim);
+                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.endAnim) && icon.Has(BossesHelperModule.Session.healthData.endAnim))
+                    icon.Play(BossesHelperModule.Session.healthData.endAnim);
                 yield return 0.88f;
                 RemoveSelf();
             }
@@ -65,8 +65,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         internal DamageHealthBar()
         {
-            Position = BossesHelperModule.healthData.healthBarPos;
-            health = BossesHelperModule.healthData.playerHealthVal;
+            Position = healthData.healthBarPos;
+            health = healthData.playerHealthVal;
             healthIcons = new List<HealthIcon>();
             base.Tag = Tags.HUD;
             if (healthData.globalController)

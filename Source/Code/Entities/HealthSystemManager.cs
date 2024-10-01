@@ -21,30 +21,34 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 _)
         {
-            BossesHelperModule.healthData.iconSprite = data.Attr("healthIcon", "bird");
-            BossesHelperModule.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
-            BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
-            Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
-            BossesHelperModule.healthData.healthBarPos = screenPosition;
-            Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
-            BossesHelperModule.healthData.healthIconScale = iconScale;
-            BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
-            BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
-            BossesHelperModule.healthData.globalHealth = data.Bool("globalHealth");
-            BossesHelperModule.healthData.playerHealthVal = data.Int("playerHealth", 3);
-            BossesHelperModule.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-            BossesHelperModule.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
-            BossesHelperModule.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
-            activateFlag = data.Attr("activationFlag");
-            enabled = false;
-            if (BossesHelperModule.healthData.globalController)
-                AddTag(Tags.Global);
+            if (BossesHelperModule.Session.mapHealthSystemManager == null)
+            {
+                BossesHelperModule.Session.mapHealthSystemManager = this;
+                BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", "bird");
+                BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
+                BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
+                Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
+                BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
+                Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
+                BossesHelperModule.Session.healthData.healthIconScale = iconScale;
+                BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
+                BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
+                BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
+                BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
+                BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
+                BossesHelperModule.Session.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
+                BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
+                activateFlag = data.Attr("activationFlag");
+                enabled = false;
+                if (BossesHelperModule.Session.healthData.globalController)
+                    AddTag(Tags.Global);
+            }
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            if (BossesHelperModule.healthData.applySystemInstantly)
+            if (enabled || BossesHelperModule.Session.healthData.applySystemInstantly)
                 EnableHealthSystem();
         }
 
@@ -58,10 +62,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            BossesHelperModule.playerHealthBar.RemoveSelf();
-            BossesHelperModule.playerHealthBar = null;
-            BossesHelperModule.playerDamageController.RemoveSelf();
-            BossesHelperModule.playerDamageController = null;
+            BossesHelperModule.Session.mapHealthSystemManager = null;
+            BossesHelperModule.Session.mapHealthBar.RemoveSelf();
+            BossesHelperModule.Session.mapHealthBar = null;
+            BossesHelperModule.Session.mapDamageController.RemoveSelf();
+            BossesHelperModule.Session.mapDamageController = null;
         }
 
         public void EnableHealthSystem()
@@ -70,10 +75,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level level = SceneAs<Level>();
             if (level != null)
             {
-                BossesHelperModule.playerHealthBar ??= new();
-                BossesHelperModule.playerDamageController ??= new();
-                level.Add(BossesHelperModule.playerHealthBar);
-                level.Add(BossesHelperModule.playerDamageController);
+                BossesHelperModule.Session.mapHealthBar ??= new();
+                BossesHelperModule.Session.mapDamageController ??= new();
+                level.Add(BossesHelperModule.Session.mapHealthBar);
+                level.Add(BossesHelperModule.Session.mapDamageController);
             }
         }
     }
