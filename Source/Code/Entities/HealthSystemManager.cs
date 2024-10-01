@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string activateFlag;
 
-        public HealthSystemManager(EntityData data, Vector2 offset)
+        public HealthSystemManager(EntityData data)
         {
             if (BossesHelperModule.healthSystemManager == null)
             {
@@ -65,7 +65,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Removed(scene);
             BossesHelperModule.playerHealthBar.RemoveSelf();
+            BossesHelperModule.playerHealthBar = null;
             BossesHelperModule.playerDamageController.RemoveSelf();
+            BossesHelperModule.playerDamageController = null;
         }
 
         public void EnableHealthSystem()
