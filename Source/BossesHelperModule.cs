@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Other;
-using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 
@@ -21,7 +21,7 @@ public class BossesHelperModule : EverestModule {
 
     // Store Save Data
     public override Type SaveDataType => typeof(BossesHelperSaveData);
-    public static BossesHelperSaveData SaveData => (BossesHelperSaveData) Instance._SaveData;
+    public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData) Instance._SaveData;
 
     public BossesHelperModule() {
         Instance = this;
@@ -82,21 +82,56 @@ public class BossesHelperModule : EverestModule {
 
     public static void ApplyUserCrush(On.Celeste.Player.orig_OnSquish orig, Player self, CollisionData data)
     {
-        orig(self, data);
-        if (Session.mapHealthSystemManager != null && Session.mapHealthSystemManager.Active && !self.Dead)
+        if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
         {
+            orig(self, data);
+            return;
+        }
+        bool ducked = false;
+        if (!self.Ducking && self.StateMachine.State != 1)
+        {
+            ducked = true;
+            self.Ducking = true;
+            data.Pusher.Collidable = true;
+            if (!self.CollideCheck<Solid>())
+            {
+                data.Pusher.Collidable = false;
+                return;
+            }
+            Vector2 position = self.Position;
+            self.Position = data.TargetPosition;
+            if (!self.CollideCheck<Solid>())
+            {
+                data.Pusher.Collidable = false;
+                return;
+            }
+            self.Position = position;
+            data.Pusher.Collidable = false;
+        }
+        if (!self.TrySquishWiggle(data))
+        {
+            bool evenIfInvincible = false;
+            if (data.Pusher != null && data.Pusher.SquishEvenInAssistMode)
+            {
+                evenIfInvincible = true;
+            }
+
             if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
             {
                 self.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height);
             }
-            else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid)
+            else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
             {
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
             }
             else //CrushEffect.InstantDeath
             {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health);
+                self.Die(Vector2.Zero, evenIfInvincible);
             }
+        }
+        else if (ducked && self.CanUnDuck)
+        {
+            self.Ducking = false;
         }
     }
 
@@ -104,6 +139,7 @@ public class BossesHelperModule : EverestModule {
     {
         if (Session.mapDamageController == null || Session.mapDamageController.health <= 0 || PlayerIsOffscreen(self) || always)
         {
+            Session.mapDamageController.health = 0;
             return orig(self, dir, always, register);
         }
         PlayerTakesDamage(dir);
