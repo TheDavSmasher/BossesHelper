@@ -45,6 +45,8 @@ public class BossesHelperModule : EverestModule {
 
         public Vector2 healthBarPos;
 
+        public Vector2 healthIconScale;
+
         public float damageCooldown;
 
         public bool globalController;

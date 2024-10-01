@@ -18,6 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public HealthIcon()
             {
                 Add(icon = GFX.SpriteBank.Create(BossesHelperModule.healthData.iconSprite));
+                icon.Scale = BossesHelperModule.healthData.healthIconScale;
                 base.Tag = Tags.HUD;
                 if (BossesHelperModule.healthData.globalController)
                     AddTag(Tags.Global);

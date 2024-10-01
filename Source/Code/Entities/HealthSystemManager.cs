@@ -29,6 +29,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 BossesHelperModule.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
                 Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
                 BossesHelperModule.healthData.healthBarPos = screenPosition;
+                Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
+                BossesHelperModule.healthData.healthIconScale = iconScale;
                 BossesHelperModule.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
                 BossesHelperModule.healthData.globalController = data.Bool("isGlobal");
                 BossesHelperModule.healthData.globalHealth = data.Bool("globalHealth");
