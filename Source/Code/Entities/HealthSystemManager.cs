@@ -21,28 +21,25 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 _)
         {
-            if (BossesHelperModule.Session.mapHealthSystemManager == null)
-            {
-                BossesHelperModule.Session.mapHealthSystemManager = this;
-                BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", "bird");
-                BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
-                BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
-                Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
-                BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
-                Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
-                BossesHelperModule.Session.healthData.healthIconScale = iconScale;
-                BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
-                BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
-                BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
-                BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
-                BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-                BossesHelperModule.Session.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
-                BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
-                activateFlag = data.Attr("activationFlag");
-                enabled = false;
-                if (BossesHelperModule.Session.healthData.globalController)
-                    AddTag(Tags.Global);
-            }
+            BossesHelperModule.Session.mapHealthSystemManager ??= this;
+            BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", "bird");
+            BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
+            BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
+            Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
+            BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
+            Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
+            BossesHelperModule.Session.healthData.healthIconScale = iconScale;
+            BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
+            BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
+            BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
+            BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
+            BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
+            BossesHelperModule.Session.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
+            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
+            activateFlag = data.Attr("activationFlag");
+            enabled = false;
+            if (BossesHelperModule.Session.healthData.globalController)
+                AddTag(Tags.Global);
         }
 
         public override void Added(Scene scene)
@@ -73,6 +70,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 BossesHelperModule.Session.mapDamageController.RemoveSelf();
                 BossesHelperModule.Session.mapDamageController = null;
             }
+        }
+
+        public void DisableHealthSystem()
+        {
+            enabled = false;
+            RemoveSelf();
         }
 
         public void EnableHealthSystem()
