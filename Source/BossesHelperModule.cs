@@ -23,8 +23,6 @@ public class BossesHelperModule : EverestModule {
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData SaveData => (BossesHelperSaveData) Instance._SaveData;
 
-    public static HealthSystemManager healthSystemManager;
-
     public static DamageController playerDamageController;
     
     public static DamageHealthBar playerHealthBar;
@@ -92,23 +90,19 @@ public class BossesHelperModule : EverestModule {
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
     {
-        if (intro != Player.IntroTypes.Transition && healthSystemManager != null)
-        {
-            self.Remove(healthSystemManager);
-            healthSystemManager = null;
-            playerDamageController = null;
-            playerHealthBar = null;
-        }
         orig(self, intro, fromLoader);
-        if (healthSystemManager != null)
+        HealthSystemManager healthSystemManager = self.Tracker.GetEntity<HealthSystemManager>();
+        if (healthSystemManager == null || !healthSystemManager.enabled)
         {
-            playerHealthBar ??= new DamageHealthBar();
-            playerDamageController ??= new DamageController();
+            return;
         }
-        if ((intro == Player.IntroTypes.Transition && !healthData.globalHealth || intro == Player.IntroTypes.Respawn) && healthSystemManager.enabled)
+        if (healthData.globalController)
         {
-            playerDamageController.health = healthData.playerHealthVal;
-            playerHealthBar.RefillHealth();
+            if ((intro == Player.IntroTypes.Transition && !healthData.globalHealth) || intro == Player.IntroTypes.Respawn)
+            {
+                playerDamageController.health = healthData.playerHealthVal;
+                playerHealthBar.RefillHealth();
+            }
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
         if (entity != null)
@@ -121,7 +115,8 @@ public class BossesHelperModule : EverestModule {
     public static void ApplyUserCrush(On.Celeste.Player.orig_OnSquish orig, Player self, CollisionData data)
     {
         orig(self, data);
-        if (healthSystemManager.Active && !self.Dead)
+        HealthSystemManager healthSystemManager = self.Scene.Tracker.GetEntity<HealthSystemManager>();
+        if (healthSystemManager != null && healthSystemManager.Active && !self.Dead)
         {
             if (healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
             {
@@ -136,7 +131,6 @@ public class BossesHelperModule : EverestModule {
                 PlayerTakesDamage(Vector2.Zero, playerDamageController.health);
             }
         }
-
     }
 
     public static PlayerDeadBody OnPlayerCollide(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)

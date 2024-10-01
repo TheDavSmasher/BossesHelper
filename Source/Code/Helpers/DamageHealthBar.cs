@@ -68,10 +68,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Position = BossesHelperModule.healthData.healthBarPos;
             health = BossesHelperModule.healthData.playerHealthVal;
             healthIcons = new List<HealthIcon>();
-            for (int i = 0; i < health; i++)
-            {
-                healthIcons.Add(new HealthIcon());
-            }
             base.Tag = Tags.HUD;
             if (healthData.globalController)
                 AddTag(Tags.Global);
@@ -86,6 +82,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
+            healthIcons.Clear();
+            for (int i = 0; i < health; i++)
+            {
+                healthIcons.Add(new HealthIcon());
+            }
             DrawHealthBar();
         }
 

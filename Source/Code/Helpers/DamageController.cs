@@ -64,7 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                entity.Die((entity.Center - origin).SafeNormalize());
+                entity.Die((entity.Position - origin).SafeNormalize());
             }
             if (BossesHelperModule.playerHealthBar != null)
             {
