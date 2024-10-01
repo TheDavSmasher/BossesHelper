@@ -105,7 +105,7 @@ public class BossesHelperModule : EverestModule {
             playerHealthBar ??= new DamageHealthBar();
             playerDamageController ??= new DamageController();
         }
-        if (intro == Player.IntroTypes.Transition && !healthData.globalHealth && healthSystemManager.enabled)
+        if ((intro == Player.IntroTypes.Transition && !healthData.globalHealth || intro == Player.IntroTypes.Respawn) && healthSystemManager.enabled)
         {
             playerDamageController.health = healthData.playerHealthVal;
             playerHealthBar.RefillHealth();
