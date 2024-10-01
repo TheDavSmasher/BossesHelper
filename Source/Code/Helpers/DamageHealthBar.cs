@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -32,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim))
+                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim)) 
                     icon.Play(BossesHelperModule.Session.healthData.startAnim);
                 yield return 0.32f;
             }

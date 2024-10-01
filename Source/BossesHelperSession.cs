@@ -19,8 +19,6 @@ public class BossesHelperSession : EverestModuleSession
 
     public struct HealthSystemData
     {
-        public EntityData entityDataUsed;
-
         public int playerHealthVal;
 
         public string iconSprite;
