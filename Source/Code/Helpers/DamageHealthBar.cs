@@ -77,10 +77,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 AddTag(Tags.Global);
         }
 
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            level = SceneAs<Level>();
+        }
+
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            level = SceneAs<Level>();
             DrawHealthBar();
         }
 
