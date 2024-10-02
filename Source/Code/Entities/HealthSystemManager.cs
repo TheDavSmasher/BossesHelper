@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
+            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect");
             activateInstantly = data.Bool("applySystemInstantly");
             activateFlag = data.Attr("activationFlag");
             this.id = id;
