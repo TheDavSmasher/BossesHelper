@@ -8,6 +8,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/HealthSystemManager")]
     public class HealthSystemManager : Entity
     {
+        private readonly EntityID id;
+
         public enum CrushEffect
         {
             PushOut,
@@ -19,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string activateFlag;
 
-        public HealthSystemManager(EntityData data, Vector2 _)
+        public HealthSystemManager(EntityData data, Vector2 _, EntityID id)
         {
             BossesHelperModule.Session.mapHealthSystemManager ??= this;
             BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", "bird");
@@ -37,6 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
             activateFlag = data.Attr("activationFlag");
+            this.id = id;
             enabled = false;
             if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
