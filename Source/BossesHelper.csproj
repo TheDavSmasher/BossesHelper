@@ -39,7 +39,6 @@
 
     <ItemGroup>
       <Folder Include="Code\Effects\" />
-      <Folder Include="Code\Triggers\" />
       <Folder Include="Audio\" />
     </ItemGroup>
 
