@@ -19,6 +19,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool enabled;
 
+        private readonly bool activateInstantly;
+
         private readonly string activateFlag;
 
         public HealthSystemManager(EntityData data, Vector2 _, EntityID id)
@@ -36,8 +38,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-            BossesHelperModule.Session.healthData.applySystemInstantly = data.Bool("applySystemInstantly");
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", CrushEffect.InstantDeath);
+            activateInstantly = data.Bool("applySystemInstantly");
             activateFlag = data.Attr("activationFlag");
             this.id = id;
             enabled = false;
@@ -48,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            if (enabled || BossesHelperModule.Session.healthData.applySystemInstantly)
+            if (enabled || activateInstantly)
                 EnableHealthSystem();
         }
 

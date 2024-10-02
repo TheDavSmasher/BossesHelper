@@ -39,8 +39,6 @@ public class BossesHelperSession : EverestModuleSession
 
         public bool globalHealth;
 
-        public bool applySystemInstantly;
-
         public HealthSystemManager.CrushEffect playerOnCrush;
     }
 
