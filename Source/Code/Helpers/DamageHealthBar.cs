@@ -60,12 +60,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly List<HealthIcon> healthIcons;
 
-        public int health;
+        private static int Health => healthData.playerHealthVal;
 
         internal DamageHealthBar()
         {
             Position = healthData.healthBarPos;
-            health = healthData.playerHealthVal;
             healthIcons = new List<HealthIcon>();
             base.Tag = Tags.HUD;
             if (healthData.globalController)
@@ -82,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             base.Awake(scene);
             healthIcons.Clear();
-            for (int i = 0; i < health; i++)
+            for (int i = 0; i < Health; i++)
             {
                 healthIcons.Add(new HealthIcon());
             }
@@ -91,7 +90,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private void DrawHealthBar()
         {
-            for (int i = 0; i < health; i++)
+            for (int i = 0; i < Health; i++)
             {
                 level.Add(healthIcons[i]);
                 healthIcons[i].DrawIcon(Position + Vector2.UnitX * healthData.iconSeparation * i);
@@ -100,7 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void RefillHealth()
         {
-            for(int i = healthIcons.Count; i < health; i++)
+            for(int i = healthIcons.Count; i < Health; i++)
             {
                 IncreaseHealth();
             }
