@@ -42,12 +42,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             damageCooldown = baseCooldown;
             health -= amount;
-            if (!silent)
-            {
-                level.Shake();
-                Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
-                level.Flash(Color.Red * 0.3f);
-            }
             Player entity = Engine.Scene.Tracker.GetEntity<Player>();
             if (entity == null)
             {
@@ -57,6 +51,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (!silent)
                 {
+                    level.Shake();
+                    Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
+                    level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
                     Add(new Coroutine(PlayerStagger(entity, origin)));
                     Add(new Coroutine(PlayerInvincible(entity)));
@@ -64,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                entity.Die((entity.Position - origin).SafeNormalize());
+                entity.Die((entity.Position - origin).SafeNormalize(), true);
             }
             if (BossesHelperModule.Session.mapHealthBar != null)
             {
