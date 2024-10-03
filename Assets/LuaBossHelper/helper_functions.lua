@@ -1026,12 +1026,12 @@ function helpers.positionTween(target, time, easer)
     puppet:PositionTween(target, time, easer or nil)
 end
 
-function helpers.speedXTween(target, time, easer)
-    puppet:SpeedXTween(target, time, easer or nil)
+function helpers.speedXTween(start, target, time, easer)
+    puppet:SpeedXTween(start, target, time, easer or nil)
 end
 
-function helpers.speedYTween(target, time, easer)
-    puppet:SpeedYTween(target, time, easer or nil)
+function helpers.speedYTween(start, target, time, easer)
+    puppet:SpeedYTween(start, target, time, easer or nil)
 end
 
 function helpers.getNodeAtIndex(index)
