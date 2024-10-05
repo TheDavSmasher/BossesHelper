@@ -8,6 +8,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/HealthSystemManager")]
     public class HealthSystemManager : Entity
     {
+        private static BossesHelperSession.HealthSystemData healthData => BossesHelperModule.Session.healthData;
+
         public enum CrushEffect
         {
             PushOut,
@@ -24,19 +26,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public HealthSystemManager(EntityData data, Vector2 _)
         {
             BossesHelperModule.Session.mapHealthSystemManager ??= this;
-            BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", "bird");
-            BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", "jump");
-            BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", "hurt");
-            Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX"), data.Float("healthIconScreenY"));
+            BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", healthData.iconSprite);
+            BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", healthData.startAnim);
+            BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", healthData.endAnim);
+            Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX", healthData.healthBarPos.X), data.Float("healthIconScreenY", healthData.healthBarPos.Y));
             BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
-            Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", 1), data.Float("healthIconScaleY", 1));
+            Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", healthData.healthIconScale.X), data.Float("healthIconScaleY", healthData.healthIconScale.Y));
             BossesHelperModule.Session.healthData.healthIconScale = iconScale;
-            BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", 10f);
+            BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", healthData.iconSeparation);
             BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
             BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
-            BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", 3);
-            BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", 1f);
-            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect");
+            BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", healthData.playerHealthVal);
+            BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", healthData.damageCooldown);
+            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", healthData.playerOnCrush);
             activateInstantly = data.Bool("applySystemInstantly");
             activateFlag = data.Attr("activationFlag");
             enabled = false;
