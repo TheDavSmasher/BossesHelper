@@ -11,7 +11,7 @@ entities.BossesHelper/BossController.attributes.description.baseGravityMultiplie
 entities.BossesHelper/BossController.attributes.description.sidekickFreeze=If Badeline Sidekick should freeze on the spot where the laser input is pressed.\nFalse will make her follow the player even while shooting, which makes hitting harder unless the player stops moving.\nUnused if not using the Sidekick Attack hurt mode.
 entities.BossesHelper/BossController.attributes.description.sidekickCooldown=How long Badeline Sidekick will take to reload her laser attack.\nUnused if not using the Sidekick Attack hurt mode.
 
-entities.BossesHelper/HealthSystemManager.attributes.description.activationFlag=The flag the controller will use to activate. Leave empty if activated through code.
+entities.BossesHelper/HealthSystemManager.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.
 entities.BossesHelper/HealthSystemManager.attributes.description.healthIcon=The sprite each health icon marker should use per hit point.
 entities.BossesHelper/HealthSystemManager.attributes.description.healthIconCreateAnim=Animation used when regaining a hit point icon.
 entities.BossesHelper/HealthSystemManager.attributes.description.healthIconRemoveAnim=Animation used when losing a hit point icon.
@@ -23,3 +23,17 @@ entities.BossesHelper/HealthSystemManager.attributes.name.isGlobal=Global Contro
 entities.BossesHelper/HealthSystemManager.attributes.description.isGlobal=If the Health System should be active globally.\nFalse will remove it when entering a new room or respawning.
 entities.BossesHelper/HealthSystemManager.attributes.description.globalHealth=If the player should keep the same health even on transition.\nFalse will refill health on room transition.
 entities.BossesHelper/HealthSystemManager.attributes.description.applySystemInstantly=If the Health System should be active as soon as it is added onto the scene. Must be activated manually otherwise.\nTrue will ignore activation flag.
+
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIcon=The sprite each health icon marker should use per hit point.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIconCreateAnim=Animation used when regaining a hit point icon.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIconRemoveAnim=Animation used when losing a hit point icon.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIconSeparation=The amount of pixels two hit point icon markes will be separated by.\nMeasured from the left of both icons, so value must include the sprite's width or they will overlap.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.playerHealth=How many hit points the player should default to. No value will default to 3.\nCan be modified in-game in case of health increases.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.damageCooldown=The time in seconds when the player is invulnerable to be hit again.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.crushEffect=What will happen to the player if damage comes from being crushed by a solid.\n- Push Out: The player will take damage and be pushed away from inside the solid on the closest side.\n- Solid On Invincible Player: The player will take damage and the solid will become intangible while the player stays inside.\n- Instant Death: The player will die regardless of hp left.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.name.isGlobal=Global Controller
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.isGlobal=If the Health System should be active globally.\nFalse will remove it when entering a new room or respawning.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.globalHealth=If the player should keep the same health even on transition.\nFalse will refill health on room transition.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.applySystemInstantly=If the Health System should be active as soon as it is added onto the scene. Must be activated manually otherwise.\nTrue will ignore activation flag.
+entities.BossesHelper/AddHealthSystemTrigger.attributes.description.onlyOnce=If this trigger should not be loaded again once activated.
