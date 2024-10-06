@@ -142,7 +142,8 @@ public class BossesHelperModule : EverestModule {
     {
         if (Session.mapDamageController == null || Session.mapDamageController.health <= 0 || PlayerIsOffscreen(self) || always)
         {
-            Session.mapDamageController.health = 0;
+            if (Session.mapDamageController != null)
+                Session.mapDamageController.health = 0;
             return orig(self, dir, always, register);
         }
         PlayerTakesDamage(dir);
