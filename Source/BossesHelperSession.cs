@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -43,10 +42,4 @@ public class BossesHelperSession : EverestModuleSession
     }
 
     public HealthSystemData healthData;
-
-    public HealthSystemManager mapHealthSystemManager { get; set; }
-
-    public DamageController mapDamageController { get; set; }
-
-    public DamageHealthBar mapHealthBar { get; set; }
 }

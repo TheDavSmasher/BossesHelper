@@ -26,11 +26,11 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             base.OnEnter(player);
             if (enableState)
             {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>().EnableHealthSystem();
+                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.EnableHealthSystem();
             }
             else
             {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>().DisableHealthSystem();
+                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.DisableHealthSystem();
             }
         }
     }

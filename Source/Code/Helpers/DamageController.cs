@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
+using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -63,11 +64,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 entity.Die((entity.Position - origin).SafeNormalize(), true);
             }
-            if (BossesHelperModule.Session.mapHealthBar != null)
+            if (HealthSystemManager.mapHealthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    BossesHelperModule.Session.mapHealthBar.DecreaseHealth();
+                    HealthSystemManager.mapHealthBar.DecreaseHealth();
                 }
             }
             else
@@ -81,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             health += amount;
             for (int i = 0; i < amount; i++)
             {
-                BossesHelperModule.Session.mapHealthBar.IncreaseHealth();
+                HealthSystemManager.mapHealthBar.IncreaseHealth();
             }
         }
 
