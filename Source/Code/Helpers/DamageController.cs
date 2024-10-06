@@ -62,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                entity.Die((entity.Position - origin).SafeNormalize(), true);
+                entity.Die(origin);
             }
             if (HealthSystemManager.mapHealthBar != null)
             {
