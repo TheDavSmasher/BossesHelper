@@ -134,5 +134,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             Alarm.Create(Alarm.AlarmMode.Oneshot, delegate { func.Call(); }, delay, true);
         }
+
+        public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
+        {
+            puppet.Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(func)));
+        }
     }
 }

@@ -1046,4 +1046,8 @@ function helpers.getNodeAtIndex(index)
     puppet:GetNodeAtIndex(index or 0)
 end
 
+function helpers.addConstantBackgroundCoroutine(func)
+    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, func)
+end
+
 return helpers
