@@ -1034,6 +1034,14 @@ function helpers.speedYTween(start, target, time, easer)
     puppet:SpeedYTween(start, target, time, easer or nil)
 end
 
+function helpers.speedXTweenTo(target, time, easer)
+    puppet:SpeedXTween(puppet.Speed.X, target, time, easer or nil)
+end
+
+function helpers.speedYTweenTo(target, time, easer)
+    puppet:SpeedYTween(puppet.Speed.Y, target, time, easer or nil)
+end
+
 function helpers.getNodeAtIndex(index)
     puppet:GetNodeAtIndex(index or 0)
 end
