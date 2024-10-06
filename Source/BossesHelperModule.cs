@@ -55,12 +55,13 @@ public class BossesHelperModule : EverestModule {
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
     {
-        if (fromLoader && HealthSystemManager.mapHealthSystemManager != null)
+        if (fromLoader && Session.healthData.isCreated)
         {
+            HealthSystemManager.mapHealthSystemManager ??= new();
             self.Add(HealthSystemManager.mapHealthSystemManager);
         }
         orig(self, intro, fromLoader);
-        if (HealthSystemManager.mapHealthSystemManager == null || !HealthSystemManager.mapHealthSystemManager.enabled)
+        if (HealthSystemManager.mapHealthSystemManager == null || !Session.healthData.isEnabled)
         {
             return;
         }

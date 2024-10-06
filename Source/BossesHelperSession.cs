@@ -39,6 +39,14 @@ public class BossesHelperSession : EverestModuleSession
         public bool globalHealth;
 
         public HealthSystemManager.CrushEffect playerOnCrush;
+
+        public bool isCreated;
+
+        public bool isEnabled;
+
+        public bool activateInstantly;
+
+        public string activateFlag;
     }
 
     public HealthSystemData healthData;

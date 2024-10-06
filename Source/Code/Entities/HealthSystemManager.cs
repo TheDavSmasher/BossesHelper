@@ -24,15 +24,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        public bool enabled;
-
-        private readonly bool activateInstantly;
-
-        private readonly string activateFlag;
-
         public HealthSystemManager(EntityData data, Vector2 _)
         {
             HealthSystemManager.mapHealthSystemManager ??= this;
+            BossesHelperModule.Session.healthData.isCreated = true;
             BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", healthData.iconSprite);
             BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", healthData.startAnim);
             BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", healthData.endAnim);
@@ -46,24 +41,29 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", healthData.playerHealthVal);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", healthData.damageCooldown);
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", healthData.playerOnCrush);
-            activateInstantly = data.Bool("applySystemInstantly");
-            activateFlag = data.Attr("activationFlag");
-            enabled = false;
+            BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
+            BossesHelperModule.Session.healthData.activateFlag = data.Attr("activationFlag");
+            BossesHelperModule.Session.healthData.isEnabled = false;
             if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
+        }
+
+        public HealthSystemManager() //Will only be called if already created prior but is currently null
+        {
+            HealthSystemManager.mapHealthSystemManager = this;
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            if (enabled || activateInstantly)
+            if (healthData.isEnabled || healthData.activateInstantly)
                 EnableHealthSystem();
         }
 
         public override void Update()
         {
             base.Update();
-            if (!enabled && !string.IsNullOrEmpty(activateFlag) && SceneAs<Level>().Session.GetFlag(activateFlag))
+            if (!healthData.isEnabled && !string.IsNullOrEmpty(healthData.activateFlag) && SceneAs<Level>().Session.GetFlag(healthData.activateFlag))
                 EnableHealthSystem();
         }
 
@@ -71,6 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Removed(scene);
             HealthSystemManager.mapHealthSystemManager = null;
+            BossesHelperModule.Session.healthData.isCreated = false;
             if (HealthSystemManager.mapHealthBar != null)
             {
                 HealthSystemManager.mapHealthBar.RemoveSelf();
@@ -85,13 +86,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void DisableHealthSystem()
         {
-            enabled = false;
+            BossesHelperModule.Session.healthData.isEnabled = false;
             RemoveSelf();
         }
 
         public void EnableHealthSystem()
         {
-            enabled = true;
+            BossesHelperModule.Session.healthData.isEnabled = true;
             Level level = SceneAs<Level>();
             if (level != null)
             {
