@@ -138,24 +138,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action<int, int, bool> savePhaseChangeToSession = savePhaseChangeToSession;
         }
 
-        public readonly string Name;
-
         public Level Level;
-
-        public enum HurtModes
-        {
-            PlayerContact,
-            PlayerDash,
-            HeadBonk,
-            SidekickAttack,
-            Custom
-        }
-
-        public HurtModes hurtMode;
-
-        private readonly bool freezeSidekickOnAttack;
-
-        private readonly float sidekickCooldown;
 
         public readonly BossPuppet Puppet;
 
@@ -185,12 +168,26 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private BossInterruption OnInterrupt;
 
+        private readonly string attacksPath;
+
+        private readonly string eventsPath;
+
+        private readonly string interruptPath;
+
+        private readonly string patternsPath;
+
+        private readonly string customSetupPath;
+
         public BossController(EntityData data, Vector2 offset)
             : base(data.Position + offset)
         {
-            Name = data.Attr("bossName");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
+            attacksPath = data.Attr("attacksPath");
+            eventsPath = data.Attr("eventsPath");
+            interruptPath = data.Attr("interruptPath");
+            patternsPath = data.Attr("patternsPath");
+            customSetupPath = data.Attr("customSetupPath");
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
@@ -198,10 +195,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
-            hurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
-            freezeSidekickOnAttack = data.Bool("sidekickFreeze");
-            sidekickCooldown = data.Float("sidekickCooldown");
-            Puppet = new BossPuppet(data, offset, hurtMode);
+            Puppet = new BossPuppet(data, offset);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
@@ -232,11 +226,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndInterrupt(player);
             Puppet.SetOnInterrupt(OnInterrupt);
-            Puppet.SetCustomBossSetup(player);
-            if (hurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
-            {
-                (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
-            }
+            Puppet.SetCustomBossSetup(customSetupPath, player);
         }
 
         public override void Update()
@@ -304,19 +294,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndInterrupt(Player player)
         {
-            UserFileReader.BossName = Name;
-            UserFileReader.ReadAttackFilesInto(ref AllAttacks,
+            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(ref AllEvents, player, Puppet);
-            UserFileReader.ReadOnHitFileInto(ref OnInterrupt,
+            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
+            UserFileReader.ReadOnHitFileInto(interruptPath, ref OnInterrupt,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
         }
 
         private void PopulatePatterns()
         {
             Patterns = new();
-            UserFileReader.BossName = Name;
-            UserFileReader.ReadPatternFilesInto(ref Patterns);
+            UserFileReader.ReadPatternFileInto(patternsPath, ref Patterns);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)

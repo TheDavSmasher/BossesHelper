@@ -4,16 +4,16 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
+using System.IO;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class UserFileReader
     {
-        public static string BossName;
-
-        public static void ReadPatternFilesInto(ref List<BossPattern> targetOut)
+        public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Patterns", out ModAsset xml))
+            string path = filepath.EndsWith(".xml") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            if (Everest.Content.TryGet(path, out ModAsset xml))
             {
                 XmlDocument document = new XmlDocument();
                 document.Load(xml.Stream);
@@ -81,14 +81,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source != null ? int.Parse(source.Value) : value;
         }
 
-        public static void ReadEventFilesInto(ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
+        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
         {
-            string EventsPath = "Assets/Bosses/" + BossName + "/Events";
-            if (Everest.Content.TryGet(EventsPath, out ModAsset eventFiles))
+            if (Everest.Content.TryGet(path, out ModAsset eventFiles))
             {
                 foreach (ModAsset eventFile in eventFiles.Children)
                 {
-                    events.Add(eventFile.PathVirtual.Substring(EventsPath.Length + 1), new BossEvent(eventFile.PathVirtual, playerRef, puppetRef));
+                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1), new BossEvent(eventFile.PathVirtual, playerRef, puppetRef));
                 }
             }
             else
@@ -97,14 +96,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadAttackFilesInto(ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
+        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
         {
-            string AttacksPath = "Assets/Bosses/" + BossName + "/Attacks";
-            if (Everest.Content.TryGet(AttacksPath, out ModAsset attackFiles))
+            if (Everest.Content.TryGet(path, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
                 {
-                    attacks.Add(attackFile.PathVirtual.Substring(AttacksPath.Length + 1), new BossAttack(attackFile.PathVirtual, delegates));
+                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, delegates));
                 }
             }
             else
@@ -113,9 +111,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadOnHitFileInto(ref BossInterruption onHit, BossController.OnHitDelegates delegates)
+        public static void ReadOnHitFileInto(string filepath, ref BossInterruption onHit, BossController.OnHitDelegates delegates)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/OnDamage", out ModAsset onHitFile))
+            string path = filepath.EndsWith(".lua") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            if (Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
                 onHit = new BossInterruption(onHitFile.PathVirtual, delegates);
             }
@@ -125,9 +124,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadCustomSetupFile(Player player, BossPuppet puppet)
+        public static void ReadCustomSetupFile(string filepath, Player player, BossPuppet puppet)
         {
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Setup", out ModAsset customSetupFile))
+            string path = filepath.EndsWith(".lua") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            if (Everest.Content.TryGet(path, out ModAsset customSetupFile))
             {
                 LuaBossHelper.DoCustomSetup(customSetupFile.PathVirtual, player, puppet);
             }
@@ -137,14 +137,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadMetadataFileInto(out BossPuppet.HitboxMedatata dataHolder)
+        public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
         {
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
             Hitbox bounceHitboxes = null;
             Vector2 targetOffset = Vector2.Zero;
             float radiusT = 4f;
-            if (Everest.Content.TryGet("Assets/Bosses/" + BossName + "/Metadata", out ModAsset xml))
+
+            string path = filepath.EndsWith(".xml") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            if (Everest.Content.TryGet(path, out ModAsset xml))
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(xml.Stream);

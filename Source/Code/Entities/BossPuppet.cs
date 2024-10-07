@@ -46,7 +46,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly bool MirrorSprite;
 
-        private readonly BossController.HurtModes HurtMode;
+        private readonly bool freezeSidekickOnAttack;
+
+        private readonly float sidekickCooldown;
+
+        public enum HurtModes
+        {
+            PlayerContact,
+            PlayerDash,
+            HeadBonk,
+            SidekickAttack,
+            Custom
+        }
+
+        public readonly HurtModes HurtMode;
 
         private readonly Vector2[] nodes;
 
@@ -60,10 +73,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level;
 
-        //Movement constants
         public const float Gravity = 900f;
 
-        //Movement variables
         public Vector2 Speed;
 
         private readonly Collision onCollideH;
@@ -76,7 +87,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private float effectiveGravity;
 
-        public BossPuppet(EntityData data, Vector2 offset, HurtModes hurtMode) : base(data.Position + offset)
+        private readonly string metadataPath;
+
+        public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
             SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
@@ -84,9 +97,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
             maxFall = data.Float("maxFall", 90f);
             effectiveGravity = data.Float("baseGravityMultiplier", 1f) * Gravity;
+            freezeSidekickOnAttack = data.Bool("sidekickFreeze");
+            sidekickCooldown = data.Float("sidekickCooldown");
+            metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
             nodes = data.NodesWithPosition(Vector2.Zero);
-            HurtMode = hurtMode;
+            HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
@@ -109,14 +125,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             OnInterrupt = onInterrupt;
         }
 
-        internal void SetCustomBossSetup(Player player)
+        internal void SetCustomBossSetup(string path, Player player)
         {
-            UserFileReader.ReadCustomSetupFile(player, this);
+            UserFileReader.ReadCustomSetupFile(path, player, this);
         }
 
         private void SetHitboxesAndColliders()
         {
-            UserFileReader.ReadMetadataFileInto(out HitboxMedatata hitboxMetadata);
+            UserFileReader.ReadMetadataFileInto(metadataPath, out HitboxMedatata hitboxMetadata);
             if (hitboxMetadata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
@@ -174,6 +190,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Level = SceneAs<Level>();
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            Player player = scene.Tracker.GetEntity<Player>();
+            if (HurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
+            {
+                (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
+            }
         }
 
         public override void Update()
