@@ -10,7 +10,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly LuaFunction onCollide;
 
-        public AttackEntity(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float xScale = 1f, float yScale = 1f) : base(position)
+        public AttackEntity(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float xScale = 1f, float yScale = 1f)
+            : base(position)
         {
             base.Collider = attackbox;
             base.Collidable = startCollidable;
