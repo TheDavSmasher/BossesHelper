@@ -177,5 +177,4 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             };
         }
     }
-
 }
