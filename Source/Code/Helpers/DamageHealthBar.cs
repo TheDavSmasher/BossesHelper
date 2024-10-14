@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -60,6 +61,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public bool HealthVisible
         {
+            get
+            {
+                return healthIcons.Any(icon => icon.Visible);
+            }
             set
             {
                 foreach (HealthIcon icon in healthIcons)
