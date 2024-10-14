@@ -30,6 +30,7 @@
     <ItemGroup>
         <PackageReference Include="CelesteMod.Publicizer" Version="*" CelesteAssembly="$(CelestePrefix)\Celeste.dll" />
         <PackageReference Include="NLua" Version="1.7.3" />
+        <PackageReference Include="YamlDotNet" Version="16.1.3" />
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
         <Reference Include="VortexHelper">

@@ -22,7 +22,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            SceneAs<Level>().Add(HealthSystemManager.mapHealthSystemManager);
+            SceneAs<Level>().Add(BossesHelperModule.Session.mapHealthSystemManager);
             if (onlyOnce)
             {
                 SceneAs<Level>().Session.DoNotLoad.Add(id);

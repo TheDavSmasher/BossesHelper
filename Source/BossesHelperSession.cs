@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+using YamlDotNet.Serialization;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -50,4 +52,13 @@ public class BossesHelperSession : EverestModuleSession
     }
 
     public HealthSystemData healthData;
+
+    [YamlIgnore]
+    public HealthSystemManager mapHealthSystemManager;
+
+    [YamlIgnore]
+    public DamageController mapDamageController;
+
+    [YamlIgnore]
+    public DamageHealthBar mapHealthBar;
 }

@@ -57,11 +57,11 @@ public class BossesHelperModule : EverestModule {
     {
         if (fromLoader && Session.healthData.isCreated)
         {
-            HealthSystemManager.mapHealthSystemManager ??= new();
-            self.Add(HealthSystemManager.mapHealthSystemManager);
+            Session.mapHealthSystemManager ??= new();
+            self.Add(Session.mapHealthSystemManager);
         }
         orig(self, intro, fromLoader);
-        if (HealthSystemManager.mapHealthSystemManager == null || !Session.healthData.isEnabled)
+        if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
         {
             return;
         }
@@ -69,8 +69,8 @@ public class BossesHelperModule : EverestModule {
         {
             if ((intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth) || intro == Player.IntroTypes.Respawn)
             {
-                HealthSystemManager.mapDamageController.health = Session.healthData.playerHealthVal;
-                HealthSystemManager.mapHealthBar.RefillHealth();
+                Session.mapDamageController.health = Session.healthData.playerHealthVal;
+                Session.mapHealthBar.RefillHealth();
             }
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
@@ -83,7 +83,7 @@ public class BossesHelperModule : EverestModule {
 
     public static void ApplyUserCrush(On.Celeste.Player.orig_OnSquish orig, Player self, CollisionData data)
     {
-        if (HealthSystemManager.mapHealthSystemManager == null || !HealthSystemManager.mapHealthSystemManager.Active)
+        if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
         {
             orig(self, data);
             return;
@@ -129,7 +129,7 @@ public class BossesHelperModule : EverestModule {
             }
             else //CrushEffect.InstantDeath
             {
-                PlayerTakesDamage(Vector2.Zero, HealthSystemManager.mapDamageController.health);
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health);
                 self.Die(Vector2.Zero, evenIfInvincible);
             }
         }
@@ -141,10 +141,10 @@ public class BossesHelperModule : EverestModule {
 
     public static PlayerDeadBody OnPlayerCollide(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        if (HealthSystemManager.mapDamageController == null || HealthSystemManager.mapDamageController.health <= 0 || PlayerIsOffscreen(self) || always)
+        if (Session.mapDamageController == null || Session.mapDamageController.health <= 0 || PlayerIsOffscreen(self) || always)
         {
-            if (HealthSystemManager.mapDamageController != null)
-                HealthSystemManager.mapDamageController.health = 0;
+            if (Session.mapDamageController != null)
+                Session.mapDamageController.health = 0;
             return orig(self, dir, always, register);
         }
         PlayerTakesDamage(dir);
@@ -168,7 +168,7 @@ public class BossesHelperModule : EverestModule {
 
     public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false)
     {
-        HealthSystemManager.mapDamageController?.TakeDamage(origin, amount, silent);
+        Session.mapDamageController?.TakeDamage(origin, amount, silent);
     }
 
     public static EntityData MakeEntityData()

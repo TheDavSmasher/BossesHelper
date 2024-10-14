@@ -64,11 +64,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 entity.Die(origin);
             }
-            if (HealthSystemManager.mapHealthBar != null)
+            if (BossesHelperModule.Session.mapHealthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    HealthSystemManager.mapHealthBar.DecreaseHealth();
+                    BossesHelperModule.Session.mapHealthBar.DecreaseHealth();
                 }
             }
             else
@@ -82,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             health += amount;
             for (int i = 0; i < amount; i++)
             {
-                HealthSystemManager.mapHealthBar.IncreaseHealth();
+                BossesHelperModule.Session.mapHealthBar.IncreaseHealth();
             }
         }
 

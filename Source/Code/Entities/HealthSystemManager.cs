@@ -11,12 +11,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static BossesHelperSession.HealthSystemData healthData => BossesHelperModule.Session.healthData;
 
-        public static HealthSystemManager mapHealthSystemManager;
-
-        public static DamageController mapDamageController;
-
-        public static DamageHealthBar mapHealthBar;
-
         public enum CrushEffect
         {
             PushOut,
@@ -26,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 _)
         {
-            HealthSystemManager.mapHealthSystemManager ??= this;
+            BossesHelperModule.Session.mapHealthSystemManager ??= this;
             BossesHelperModule.Session.healthData.isCreated = true;
             BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", healthData.iconSprite);
             BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", healthData.startAnim);
@@ -50,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager() //Will only be called if already created prior but is currently null
         {
-            HealthSystemManager.mapHealthSystemManager = this;
+            BossesHelperModule.Session.mapHealthSystemManager = this;
         }
 
         public override void Added(Scene scene)
@@ -70,17 +64,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            HealthSystemManager.mapHealthSystemManager = null;
+            BossesHelperModule.Session.mapHealthSystemManager = null;
             BossesHelperModule.Session.healthData.isCreated = false;
-            if (HealthSystemManager.mapHealthBar != null)
+            if (BossesHelperModule.Session.mapHealthBar != null)
             {
-                HealthSystemManager.mapHealthBar.RemoveSelf();
-                HealthSystemManager.mapHealthBar = null;
+                BossesHelperModule.Session.mapHealthBar.RemoveSelf();
+                BossesHelperModule.Session.mapHealthBar = null;
             }
-            if (HealthSystemManager.mapDamageController != null)
+            if (BossesHelperModule.Session.mapDamageController != null)
             {
-                HealthSystemManager.mapDamageController.RemoveSelf();
-                HealthSystemManager.mapDamageController = null;
+                BossesHelperModule.Session.mapDamageController.RemoveSelf();
+                BossesHelperModule.Session.mapDamageController = null;
             }
         }
 
@@ -96,10 +90,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level level = SceneAs<Level>();
             if (level != null)
             {
-                HealthSystemManager.mapHealthBar ??= new();
-                HealthSystemManager.mapDamageController ??= new();
-                level.Add(HealthSystemManager.mapHealthBar);
-                level.Add(HealthSystemManager.mapDamageController);
+                BossesHelperModule.Session.mapHealthBar ??= new();
+                BossesHelperModule.Session.mapDamageController ??= new();
+                level.Add(BossesHelperModule.Session.mapHealthBar);
+                level.Add(BossesHelperModule.Session.mapDamageController);
             }
         }
     }
