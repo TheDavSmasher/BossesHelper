@@ -58,6 +58,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private Level level;
 
+        public bool HealthVisible
+        {
+            set
+            {
+                foreach (HealthIcon icon in healthIcons)
+                {
+                    icon.Visible = value;
+                }
+            }
+        }
+
         private readonly List<HealthIcon> healthIcons;
 
         private static int Health => healthData.playerHealthVal;
