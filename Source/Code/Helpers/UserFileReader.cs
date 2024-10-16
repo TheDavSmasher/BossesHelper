@@ -12,7 +12,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut)
         {
-            string path = filepath.EndsWith(".xml") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
             {
                 XmlDocument document = new XmlDocument();
@@ -113,27 +113,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadOnHitFileInto(string filepath, ref BossFunctions onHit, BossController.OnHitDelegates delegates)
         {
-            string path = filepath.EndsWith(".lua") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            string path = CleanPath(filepath, ".lua");
             if (Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
                 onHit = new BossFunctions(onHitFile.PathVirtual, delegates);
             }
             else
             {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find an OnHit file.");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Lua file.");
             }
         }
 
         public static void ReadCustomSetupFile(string filepath, Player player, BossPuppet puppet)
         {
-            string path = filepath.EndsWith(".lua") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            string path = CleanPath(filepath, ".lua");
             if (Everest.Content.TryGet(path, out ModAsset customSetupFile))
             {
                 LuaBossHelper.DoCustomSetup(customSetupFile.PathVirtual, player, puppet);
             }
             else
             {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find a Setup file.");
+                Logger.Log(LogLevel.Warn, "Bosses Helper", "Did no find any additional setup Lua file.");
             }
         }
 
@@ -145,7 +145,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Vector2 targetOffset = Vector2.Zero;
             float radiusT = 4f;
 
-            string path = filepath.EndsWith(".xml") ? filepath.Substring(0, filepath.Length - 4) : filepath;
+            string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
             {
                 XmlDocument doc = new XmlDocument();
@@ -211,7 +211,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                     }
                 }
-            }                                  
+            }
+            else
+            {
+                Logger.Log(LogLevel.Warn, "Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
+            }
             dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetOffset, radiusT);
         }
 
@@ -234,6 +238,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static string GetTagOrMain(XmlNode source)
         {
             return source["tag"] != null ? source["tag"].Value : "main";
+        }
+
+        private static string CleanPath(string path, string extension)
+        {
+            return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
         }
     }
 }
