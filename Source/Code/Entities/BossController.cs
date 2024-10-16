@@ -221,7 +221,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
-            PopulateAttacksEventsAndInterrupt(player);
+            PopulateAttacksEventsAndFunctions(player);
             Puppet.SetOnInterrupt(bossReactions);
         }
 
@@ -288,7 +288,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
-        private void PopulateAttacksEventsAndInterrupt(Player player)
+        private void PopulateAttacksEventsAndFunctions(Player player)
         {
             UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
