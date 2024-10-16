@@ -81,17 +81,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             yield return null;
         }
 
-        public static void DoCustomSetup(string filename, Player player, BossPuppet puppet)
-        {
-            Dictionary<object, object> dict = new Dictionary<object, object>
-            {
-                { "player", player },
-                { "puppet", puppet },
-                { "modMetaData", BossesHelperModule.Instance.Metadata }
-            };
-            LoadLuaFile(filename, "setupCustomData", dict)?.ElementAtOrDefault(0)?.Call();
-        }
-
         public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
         {
             if (!string.IsNullOrEmpty(filename))

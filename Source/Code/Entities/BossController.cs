@@ -166,17 +166,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
-        private BossFunctions OnInterrupt;
+        private BossFunctions bossReactions;
 
         private readonly string attacksPath;
 
         private readonly string eventsPath;
 
-        private readonly string interruptPath;
+        private readonly string functionsPath;
 
         private readonly string patternsPath;
-
-        private readonly string customSetupPath;
 
         public BossController(EntityData data, Vector2 offset)
             : base(data.Position + offset)
@@ -185,9 +183,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             attacksPath = data.Attr("attacksPath");
             eventsPath = data.Attr("eventsPath");
-            interruptPath = data.Attr("interruptPath");
+            functionsPath = data.Attr("functionsPath");
             patternsPath = data.Attr("patternsPath");
-            customSetupPath = data.Attr("customSetupPath");
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
@@ -225,8 +222,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndInterrupt(player);
-            Puppet.SetOnInterrupt(OnInterrupt);
-            Puppet.SetCustomBossSetup(customSetupPath, player);
+            Puppet.SetOnInterrupt(bossReactions);
         }
 
         public override void Update()
@@ -297,7 +293,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
-            UserFileReader.ReadOnHitFileInto(interruptPath, ref OnInterrupt,
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, ref bossReactions,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
         }
 

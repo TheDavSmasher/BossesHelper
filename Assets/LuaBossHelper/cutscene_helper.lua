@@ -52,7 +52,7 @@ local function prepareAttack(env, func)
 end
 
 local function prepareInterruption(env, func)
-    local success, onHit, onContact, onDash, onBounce, onLaser = pcall(func)
+    local success, onHit, onContact, onDash, onBounce, onLaser, setup = pcall(func)
 
     if success then
         onHit = onHit or env.onHit
@@ -60,23 +60,11 @@ local function prepareInterruption(env, func)
         onDash = onDash or env.onDash
         onBounce = onBounce or env.onBounce
         onLaser = onLaser or env.onLaser
-
-        return onHit, onContact, onDash, onBounce, onLaser
-    else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
-        return success
-    end
-end
-
-local function prepareCustomSetup(env, func)
-    local success, setup = pcall(func)
-    
-    if success then
         setup = setup or env.setup
 
-        return setup
+        return onHit, onContact, onDash, onBounce, onLaser, setup
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load setup data in Lua: " .. onHit)
+        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
         return success
     end
 end
@@ -133,10 +121,6 @@ end
 
 function cutsceneHelper.getInterruptData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareInterruption)
-end
-
-function cutsceneHelper.setupCustomData(filename, data)
-    return cutsceneHelper.getLuaData(filename, data, prepareCustomSetup)
 end
 
 return cutsceneHelper

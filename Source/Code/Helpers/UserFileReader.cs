@@ -111,29 +111,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadOnHitFileInto(string filepath, ref BossFunctions onHit, BossController.OnHitDelegates delegates)
+        public static void ReadCustomCodeFileInto(string filepath, ref BossFunctions functions, BossController.OnHitDelegates delegates)
         {
             string path = CleanPath(filepath, ".lua");
             if (Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
-                onHit = new BossFunctions(onHitFile.PathVirtual, delegates);
+                functions = new BossFunctions(onHitFile.PathVirtual, delegates);
             }
             else
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Lua file.");
-            }
-        }
-
-        public static void ReadCustomSetupFile(string filepath, Player player, BossPuppet puppet)
-        {
-            string path = CleanPath(filepath, ".lua");
-            if (Everest.Content.TryGet(path, out ModAsset customSetupFile))
-            {
-                LuaBossHelper.DoCustomSetup(customSetupFile.PathVirtual, player, puppet);
-            }
-            else
-            {
-                Logger.Log(LogLevel.Warn, "Bosses Helper", "Did no find any additional setup Lua file.");
             }
         }
 

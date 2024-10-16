@@ -42,6 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 OnDashLua = array.ElementAtOrDefault(2) ?? OnHitLua;
                 OnBounceLua = array.ElementAtOrDefault(3) ?? OnHitLua;
                 OnLaserLua = array.ElementAtOrDefault(4) ?? OnHitLua;
+                array.ElementAtOrDefault(5)?.Call();
             }
         }
 
