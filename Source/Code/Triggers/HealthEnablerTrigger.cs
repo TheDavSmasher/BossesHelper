@@ -7,7 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
     [CustomEntity("BossesHelper/HealthEnableTrigger")]
     public class HealthEnablerTrigger : Trigger
     {
-        public bool enableState;
+        private readonly bool enableState;
 
         public HealthEnablerTrigger(EntityData data, Vector2 offset)
             : base(data, offset)
