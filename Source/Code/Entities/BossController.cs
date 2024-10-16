@@ -166,7 +166,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
-        private BossInterruption OnInterrupt;
+        private BossFunctions OnInterrupt;
 
         private readonly string attacksPath;
 

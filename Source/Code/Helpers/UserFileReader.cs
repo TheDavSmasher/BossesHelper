@@ -111,12 +111,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadOnHitFileInto(string filepath, ref BossInterruption onHit, BossController.OnHitDelegates delegates)
+        public static void ReadOnHitFileInto(string filepath, ref BossFunctions onHit, BossController.OnHitDelegates delegates)
         {
             string path = filepath.EndsWith(".lua") ? filepath.Substring(0, filepath.Length - 4) : filepath;
             if (Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
-                onHit = new BossInterruption(onHitFile.PathVirtual, delegates);
+                onHit = new BossFunctions(onHitFile.PathVirtual, delegates);
             }
             else
             {

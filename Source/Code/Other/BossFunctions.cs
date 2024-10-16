@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    internal class BossInterruption
+    internal class BossFunctions
     {
         private LuaFunction OnHitLua;
 
@@ -45,7 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossInterruption(string filepath, BossController.OnHitDelegates delegates)
+        public BossFunctions(string filepath, BossController.OnHitDelegates delegates)
         {
             this.filepath = filepath;
             Delegates = delegates;

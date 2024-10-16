@@ -63,7 +63,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
-        private BossInterruption OnInterrupt;
+        private BossFunctions OnInterrupt;
 
         private readonly float bossHitCooldownBase;
 
@@ -120,7 +120,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        internal void SetOnInterrupt(BossInterruption onInterrupt)
+        internal void SetOnInterrupt(BossFunctions onInterrupt)
         {
             OnInterrupt = onInterrupt;
         }
