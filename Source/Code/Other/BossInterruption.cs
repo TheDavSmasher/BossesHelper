@@ -13,6 +13,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private LuaFunction OnHitLua;
 
+        private LuaFunction OnContactLua;
+
         private LuaFunction OnDashLua;
 
         private LuaFunction OnBounceLua;
@@ -36,9 +38,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             if (array != null)
             {
                 OnHitLua = array.ElementAtOrDefault(0);
-                OnDashLua = array.ElementAtOrDefault(1);
-                OnBounceLua = array.ElementAtOrDefault(2);
-                OnLaserLua = array.ElementAtOrDefault(3);
+                OnContactLua = array.ElementAtOrDefault(1) ?? OnHitLua;
+                OnDashLua = array.ElementAtOrDefault(2) ?? OnHitLua;
+                OnBounceLua = array.ElementAtOrDefault(3) ?? OnHitLua;
+                OnLaserLua = array.ElementAtOrDefault(4) ?? OnHitLua;
             }
         }
 
@@ -49,10 +52,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LoadMethods(filepath, delegates.playerRef, delegates.puppetRef);
         }
 
-        public IEnumerator OnHitCoroutine()
+        public IEnumerator OnContactCoroutine()
         {
-            if (OnHitLua != null)
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnHitLua);
+            if (OnContactLua != null)
+            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnContactLua);
         }
 
         public IEnumerator OnDashCoroutine()

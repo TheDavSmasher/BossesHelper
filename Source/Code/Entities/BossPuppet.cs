@@ -398,7 +398,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (bossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(new Coroutine(OnInterrupt.OnHitCoroutine()));
+                Add(new Coroutine(OnInterrupt.OnContactCoroutine()));
             }
         }
 

@@ -52,15 +52,16 @@ local function prepareAttack(env, func)
 end
 
 local function prepareInterruption(env, func)
-    local success, onHit, onDash, onBounce, onLaser = pcall(func)
+    local success, onHit, onContact, onDash, onBounce, onLaser = pcall(func)
 
     if success then
         onHit = onHit or env.onHit
+        onContact = onContact or env.onContact
         onDash = onDash or env.onDash
         onBounce = onBounce or env.onBounce
         onLaser = onLaser or env.onLaser
 
-        return onHit, onDash, onBounce, onLaser
+        return onHit, onContact, onDash, onBounce, onLaser
     else
         celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
         return success
