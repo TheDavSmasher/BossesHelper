@@ -166,8 +166,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
 
-        private BossFunctions bossReactions;
-
         private readonly string attacksPath;
 
         private readonly string eventsPath;
@@ -228,7 +226,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndFunctions(player);
-            Puppet.SetPuppetFunctions(bossReactions);
         }
 
         private void PopulateAttacksEventsAndFunctions(Player player)
@@ -236,8 +233,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, ref bossReactions,
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
+            Puppet.SetPuppetFunctions(bossReactions);
         }
 
         public override void Update()

@@ -111,7 +111,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadCustomCodeFileInto(string filepath, ref BossFunctions functions, BossController.OnHitDelegates delegates)
+        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, BossController.OnHitDelegates delegates)
         {
             string path = CleanPath(filepath, ".lua");
             if (Everest.Content.TryGet(path, out ModAsset onHitFile))
@@ -121,6 +121,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             else
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Lua file.");
+                functions = null;
             }
         }
 
