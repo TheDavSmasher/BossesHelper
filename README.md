@@ -6,14 +6,12 @@ This is a helper specifically designed to allow the creation of custom bosses wi
 
 The Boss Controller Entity has multiple entries that will enable the Boss to work, as well as a few optional entries.
 
-Optional entries are marked with a * next to their name.
-
 ### Basic Setup Entries
 
 These entries are all related to the basic appeareance of the Boss and its interaction with the game engine, incliding gravity and the Player.
 
 - Boss Sprite: The name of the sprite the boss will use. Works the same way as you'd set the sprite of a custom NPC.
-- Boss Health Max*: This is the amount of health points the Boss will start with. Not all Bosses will work on Health, however.
+- Boss Health Max: This is the amount of health points the Boss will start with. Not all Bosses have to work on Health, however.
 - Hurt Mode: This will determine how the Player can collide with the Boss to trigger a user-defined method to declare what happens, but it's usually lowering the health and start attacking again.
   - a
 - Boss Hit Cooldown: This determines for how long the Boss is invulnerable to being collidable by the Player. While the collision will still happen, the method designed will not trigger.
