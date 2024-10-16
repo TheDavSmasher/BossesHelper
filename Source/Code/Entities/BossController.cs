@@ -15,8 +15,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static readonly Random random = new();
 
-        private static int Next => random.Next();
-
         public struct EntityTimer
         {
             public Entity target;
@@ -256,8 +254,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    currentPatternIndex = (int)Patterns[currentPatternIndex].GoToPattern;
-                    StartAttackPattern(currentPatternIndex);
+                    StartAttackPattern((int)Patterns[currentPatternIndex].GoToPattern);
                 }
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
@@ -307,10 +304,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 while (true)
                 {
-                    int nextAttack = Next % pattern.StatePatternOrder.Length;
+                    int nextAttack = random.Next() % pattern.StatePatternOrder.Length;
                     yield return PerformMethod(pattern.StatePatternOrder[nextAttack]);
                 }
             }
+            //Deterministic Pattern
             if (pattern.PrePatternMethods != null)
             {
                 foreach (BossPattern.Method method in pattern.PrePatternMethods)
@@ -324,12 +322,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (currentAction >= pattern.StatePatternOrder.Length)
                 {
-                    if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo && ++loop > pattern.IterationCount)
-                    {
-                        currentPatternIndex = (int) pattern.GoToPattern;
-                        StartAttackPattern(currentPatternIndex);
-                    }
+                    loop++;
                     currentAction = 0;
+                }
+                if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo && loop > pattern.IterationCount)
+                {
+                    StartAttackPattern((int)pattern.GoToPattern);
                 }
 
                 yield return PerformMethod(pattern.StatePatternOrder[currentAction]);
