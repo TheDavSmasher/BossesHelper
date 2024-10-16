@@ -199,6 +199,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             FetchSavedPhase();
         }
 
+        private void PopulatePatterns()
+        {
+            Patterns = new();
+            UserFileReader.ReadPatternFileInto(patternsPath, ref Patterns);
+        }
+
         private void FetchSavedPhase()
         {
             BossesHelperSession.BossPhase phase = BossesHelperModule.Session.BossPhaseSaved;
@@ -223,6 +229,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndFunctions(player);
             Puppet.SetPuppetFunctions(bossReactions);
+        }
+
+        private void PopulateAttacksEventsAndFunctions(Player player)
+        {
+            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
+                new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
+            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, ref bossReactions,
+                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
         }
 
         public override void Update()
@@ -286,21 +301,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 currentPatternIndex = goTo;
             }
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
-        }
-
-        private void PopulateAttacksEventsAndFunctions(Player player)
-        {
-            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
-                new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, ref bossReactions,
-                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
-        }
-
-        private void PopulatePatterns()
-        {
-            Patterns = new();
-            UserFileReader.ReadPatternFileInto(patternsPath, ref Patterns);
         }
 
         private IEnumerator PerformPattern(BossPattern pattern)
