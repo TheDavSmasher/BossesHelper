@@ -3,11 +3,9 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using static Celeste.Mod.BossesHelper.Code.Entities.BossController;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -63,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2[] nodes;
 
-        private BossFunctions OnInterrupt;
+        private BossFunctions bossFunctions;
 
         private readonly float bossHitCooldownBase;
 
@@ -120,9 +118,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        internal void SetOnInterrupt(BossFunctions onInterrupt)
+        internal void SetPuppetFunctions(BossFunctions functions)
         {
-            OnInterrupt = onInterrupt;
+            bossFunctions = functions;
         }
 
         private void SetHitboxesAndColliders()
@@ -363,7 +361,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (bossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(new Coroutine(OnInterrupt.OnLaserCoroutine()));
+                Add(new Coroutine(bossFunctions.OnLaserCoroutine()));
             }
         }
 
@@ -375,7 +373,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
                 player.Bounce(base.Top + 2f);
-                Add(new Coroutine(OnInterrupt.OnBounceCoroutine()));
+                Add(new Coroutine(bossFunctions.OnBounceCoroutine()));
             }
         }
 
@@ -384,7 +382,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
             {
                 ResetBossHitCooldown();
-                Add(new Coroutine(OnInterrupt.OnDashCoroutine()));
+                Add(new Coroutine(bossFunctions.OnDashCoroutine()));
             }
         }
 
@@ -393,7 +391,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (bossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(new Coroutine(OnInterrupt.OnContactCoroutine()));
+                Add(new Coroutine(bossFunctions.OnContactCoroutine()));
             }
         }
 

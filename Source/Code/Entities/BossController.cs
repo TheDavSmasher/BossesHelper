@@ -222,7 +222,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndFunctions(player);
-            Puppet.SetOnInterrupt(bossReactions);
+            Puppet.SetPuppetFunctions(bossReactions);
         }
 
         public override void Update()
