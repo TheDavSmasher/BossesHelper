@@ -4,6 +4,7 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
+using static Celeste.WindController;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -20,6 +21,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 foreach (XmlNode pattern in patternsList)
                 {
                     List<BossPattern.Method> methodList = new();
+                    if (pattern.NodeType == XmlNodeType.Comment)
+                    {
+                        continue;
+                    }
                     if (pattern.LocalName.ToLower().Equals("random"))
                     {
                         foreach (XmlNode action in pattern.ChildNodes)
@@ -145,6 +150,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 XmlNodeList hitboxList = doc.SelectSingleNode("HitboxMetadata").ChildNodes;
                 foreach (XmlNode hitboxNode in hitboxList)
                 {
+                    if (hitboxNode.NodeType == XmlNodeType.Comment)
+                    {
+                        continue;
+                    }
                     switch (hitboxNode.LocalName.ToLower())
                     {
                         case "hitboxes":
