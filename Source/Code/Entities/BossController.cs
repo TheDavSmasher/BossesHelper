@@ -340,15 +340,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!method.ActionName.ToLower().Equals("wait"))
             {
-                if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
+                if (method.IsEvent && AllEvents.TryGetValue(method.ActionName, out BossEvent cutscene))
+                {
+                    Level.Add(cutscene);
+                }
+                else if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
                 {
                     isAttacking = true;
                     yield return attack.Coroutine();
                     isAttacking = false;
                 }
-                else if (AllEvents.TryGetValue(method.ActionName, out BossEvent cutscene))
+                else
                 {
-                    Level.Add(cutscene);
+                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified " + (method.IsEvent ? "event" : "attack") + " file.");
                 }
             }
             yield return method.Duration;

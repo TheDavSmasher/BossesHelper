@@ -4,7 +4,6 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
-using System.IO;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -25,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     {
                         foreach (XmlNode action in pattern.ChildNodes)
                         {
-                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNull(action.Attributes["wait"])));
+                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNull(action.Attributes["wait"]), IsEvent(action)));
                         }
                         targetOut.Add(new BossPattern(methodList.ToArray()));
                     }
@@ -36,7 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         {
                             if (action.LocalName.ToLower().Equals("wait"))
                             {
-                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value)));
+                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value), IsEvent(action)));
                             }
                             else if (action.LocalName.ToLower().Equals("loop"))
                             {
@@ -45,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             else
                             {
-                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null));
+                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null, IsEvent(action)));
                             }
                         }
                         XmlAttributeCollection attributes = pattern.Attributes;
@@ -79,6 +78,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
         {
             return source != null ? int.Parse(source.Value) : value;
+        }
+
+        private static bool IsEvent(XmlNode source)
+        {
+            return source.LocalName.ToLower().Equals("event");
         }
 
         public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)

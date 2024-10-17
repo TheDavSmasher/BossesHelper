@@ -7,11 +7,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossPattern
     {
-        public struct Method(string name, float? duration)
+        public struct Method(string name, float? duration, bool isEvent)
         {
             public string ActionName = name;
 
             public float? Duration = duration;
+
+            public bool IsEvent = isEvent;
         }
 
         public enum FinishModes
