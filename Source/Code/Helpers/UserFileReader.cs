@@ -4,7 +4,6 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
-using static Celeste.WindController;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -238,7 +237,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static string GetTagOrMain(XmlNode source)
         {
-            return source["tag"] != null ? source["tag"].Value : "main";
+            XmlAttribute tag = source.Attributes["tag"];
+            return tag != null ? tag.Value : "main";
         }
 
         private static string CleanPath(string path, string extension)
