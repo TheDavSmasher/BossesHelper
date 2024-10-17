@@ -2,6 +2,25 @@
 
 This is a helper specifically designed to allow the creation of custom bosses within a Celeste map, fully customizable through input in the map editor or utilizing user-provided .xml and .lua files to execute attacks, cutscenes, and more.
 
+## Layout
+
+- [Boss Setup](#boss-setup)
+  - [Basic Setup Entries](#basic-setup-entries)
+  - [Custom File Entries](#custom-file-entries)
+  - [Other Entries](#other-entries)
+- [File Formats](#file-formats)
+  - [Hitbox Metadata](#hitbox-metadata)
+  - [Patterns](#patterns)
+  - [Attacks](#attacks)
+  - [Events](#events)
+  - [Functions](#functions)
+- [Helper Objects](#helper-objects)
+- [Player Health System](#player-health-system)
+  - [Setup Entries](#setup-entries)
+  - [Health Bar Entries](#health-bar-entries)
+  - [Health System Triggers](#health-system-triggers)
+- [Disclaimer](#disclaimer)
+
 ## Boss Setup
 
 The Boss Controller Entity has multiple entries that will enable the Boss to work, as well as a few optional entries. It is important to note that the code for the Boss is separated into two main classes: the Controller and the Puppet. The Controller will run all logic regarding attacks, events, tracking health, and similar. The Puppet handles all hitboxes, collisions, and sprite logic. Due to this, no reference to the Controller is given to the user at any time, and any methods to interact with it are given through delegates or helper functions.
@@ -313,7 +332,7 @@ The Health System is accompanied with a Health Bar, which are the other half of 
 - Health Icon Scale Y: Each Health Icon's Sprite's Y scale.
 - Health Icon Separation: How much distance is between each Health Icon. This distance is measured from any two Icon's left side, so this value should include the sprite's width if no overlap is desired.
 
-## Health System Triggers
+### Health System Triggers
 
 Alongside the Controller, the Health System comes with three triggers.
 
