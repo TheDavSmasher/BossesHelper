@@ -36,7 +36,7 @@ These entries are all related to the basic appeareance of the Boss and its inter
   - Player Dash: The Boss will active collision when the Player's Dash is active (more specifically while their Dash Attack is active).
   - Head Bounce: The Boss will have a hitbox on top similar to that of Oshiro Boss, activating its collision the same way.
   - Sidekick Attack: Custom addition from this helper. The player will have a Badeline Dummy Follower, which can be activated with a custom bind so she begins targetting the nearest Boss (with the Sidekick Attack hurt mode) and shoots a laser towards it, and then enters cooldown.
-  - Custom: The Boss will start with no hurtbox logic and it will entirely depend on the user's code in the Functions Lua file or other Lua files.
+  - Custom: The Boss will start with no hurtbox logic and it will entirely depend on the user's code in the Functions Lua file or other Lua files. This means that if no `setup()` function can be found inside of the Functions file, nothing will happen on collision.
 - Boss Hit Cooldown: This determines for how long the Boss is invulnerable to being collidable by the Player. While the collision will still happen, the method designed will not trigger.
 - Max Fall: This determines the max fall speed of the Boss. The rate the boss reaches this speed is relative to the gravity multiplier. This speed can still be surpassed manually with speed Tweens or direct speed setting during attacks or cutscenes.
 - Base Gravity Multiplier: This will set the Gravity multiplier to the given value. The gravity constant used is 900, same as the Player.
@@ -120,7 +120,7 @@ This XML file uses the format of the following example:
     <!--Deterministic Looping Pattern-->
     <Pattern>
         <Wait time="2"/>
-        <Attack file="third">
+        <Attack file="third"/>
         <Wait time="2"/>
         <Attack file="first"/>
     </Pattern>
@@ -178,6 +178,7 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
 - If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in repeat. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many *additional* loops will run until it ends. Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
 - Alternatively, alongside a `goto` attribute, attributes `x`, `y`, `width`, and `height` can be provided. These attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, it will go to the given pattern once the current action ends.
+  - The coordinates for the `x` and `y` attributes are global coordinates.
 
 `Random` nodes take no parameters.
 
@@ -188,6 +189,7 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 - `Event` nodes signify a Cutscene will execute as found inside the file matching the `file` attribute.
 - `Loop` nodes can only be used once per `Pattern` node, and they delimit the Pattern's loop. If a `Loop` node is found inside a `Pattern` node, everything above it will execute once, when the pattern begins, and everything below it will execute with whatever loop logic is provided in the `Pattern` node attributes.
   - If more than one `Loop` node exists inside the same `Pattern` node, only everything after the last one will loop and only everything before the last one (but after the previous one) will execute before the loop.
+  - If no `Loop` node is provided, all actions inside the parent node will be part of the pattern execution loop. If one is provided, only everything after it will be part of the loop, and everything prior will only execute at the start. By adding a node, you're essentially moving where the `while (true)` statement to that line.
 
 The `file` attribute of both `Attack` and `Event` nodes **must not** contain the `.lua` extension.
 
@@ -198,7 +200,7 @@ The `file` attribute of both `Attack` and `Event` nodes **must not** contain the
 
 `Random` nodes take no `Wait` nodes because otherwise attacks would execute back to back with no pause in between them. Therefore, each node inside this one has to provide their own post-execution wait time.
 
-This file is mandatory and at least one node must exist within the parent node.
+This file is mandatory and at least one node must exist within the parent node. Any node inside of this will naturally execute indefinitely. No pattern will interrupt itself, unless it's by loop count or player being in the specified region. Even when a Pattern is interrupted, it must be restarted manually or go to a different pattern in the player collision logic.
 
 ### Attacks
 
@@ -226,7 +228,7 @@ function onEnd(level, wasSkipped) --optional
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor.
+An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor. Events, like Cutscenes, are Skippable by default.
 
 ### Functions
 
@@ -261,6 +263,8 @@ end
 This file contains all code that will execute arbitrarily to the Boss either at the start of scene or when collided with.
 
 The functions `onContact()`, `onDasH()`, `onBounce()`, and `onLaser()` will each execute separetely when the Boss's Hurtbox is collided with, depending on the Hurt Mode: `onContact()` for Player Contact, `onDasH()` for Player Dash, `onBounce()` for Head Bounce, and `onLaser()` for Sidekick Attack, respectively. The function `onHit()` is a more generalized function and will be called if no specific method is provided. For example, if Hurt Mode Player Dash is used and the given file has no `onDash()` function, it will call `onHit()` instead. If no `onHit()` function is provided there either, then no code will be executed on collision with the Boss.
+
+These collision functions are essential to fight logic, as its where the user must specify if the Boss takes damage, if the current pattern should be interrupted, if it should wait for the current attack to end, and a new attack pattern should start. Lua helper functions are provided for each of these necessities through delegates.
 
 The `setup()` function will be called during load time, before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary.
 
@@ -300,9 +304,13 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
 
+A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
+
 ## Player Health System
 
 In addition to Bosses, this helper also implements a health System for the player, hooked to the Player's `Die` method. It is implemented with a generalized base for public use. When the Health System is added onto the scene, it starts disabled and must be activated in one of the provided ways explained below.
+
+Due to the nature of the Health System and how it's managed, only one instance of a Health System can exist. If one is added after one already exists, it will simply override its values. Likewise, if a System exists and a new one is provided without any parameters, those values will be kept from the already existing Health System.
 
 ### Setup Entries
 
@@ -337,6 +345,8 @@ The Health System is accompanied with a Health Bar, which are the other half of 
 Alongside the Controller, the Health System comes with three triggers.
 
 - Add Health System Trigger: Can be used to add a new instance of a Health System, and works the exact same way as adding the Controller would, except it's delegated to be added onto the scene when entering the Trigger.
+  - If a Health System already exists, the values provided will override those of the existing System.
+  - If a value is not provided, the pre-exisiting value will be kept.
 - Enable Health Trigger: Can be used to toggle the Enabled state of the existing Health System.
 - Health Bar Visible Trigger: Can be used to toggle the Visible state of all the icons of the Health Bar.
 
