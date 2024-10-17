@@ -247,7 +247,79 @@ The `setup()` function will be called during load time, before the scene starts.
 
 All function in this file are provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
-## Health System
+## Helper Objects
+
+This Helper also adds a few Entities and Components for ease of use or just general usage.
+
+- Entity Chain Component: Can be used to "chain" an entity to another one.
+  - Constructor Parameters:
+    - Entity entity: The Entity this chain will be set on. This is the additional entity.
+    - bool chainPosition: If the chained entity should move around as the chained to one moves, essentially movind as one.
+    - bool active: If the Entity should be Active.
+    - bool visible: If the Entity should be Visible.
+  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChainComp(params)`.
+- Attack Actor: A generic Entity which subclasses the Actor class and has movement and collision logic.
+  - Constructor Parameters:
+    - Vector2 position: Where the Actor will spawn.
+    - Collider attackbox: The Collider Hitbox the Actor will use.
+    - LuaFunction onPlayer: The function to call when the player collides with the Actor's hitbox.
+    - bool startCollidable: If the Actor's hitbox should start collidable when added.
+    - string spriteName: The name of the sprite to use.
+    - float gravMult: The multiplier on the Gravity constant (900, same as the player) that should apply to this Actor.
+    - float maxFall: The max speed gravity will accelerate this Actor to by normal means. This value can be surpassed manually.
+    - float xScale: The Actor's Sprite's X scale. Defaults to 1.
+    - float yScale: The Actor's Sprite's Y scale. Defaults to 1.
+  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackActor(params)`.
+- Attack Entity: A generic Entity which can be used for simple disjointed hitboxes.
+  - Constructor Parameters:
+    - Vector2 position: Where the Entity will spawn.
+    - Collider attackbox: The Collider Hitbox the Entity will use.
+    - LuaFunction onPlayer: The function to call when the player collides with the Entity's hitbox.
+    - bool startCollidable: If the Entity's hitbox should start collidable when added.
+    - string spriteName: The name of the sprite to use.
+    - float xScale: The Entity's Sprite's X scale. Defaults to 1.
+    - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
+  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
+
+## Player Health System
+
+In addition to Bosses, this helper also implements a health System for the player, hooked to the Player's `Die` method. It is implemented with a generalized base for public use. When the Health System is added onto the scene, it starts disabled and must be activated in one of the provided ways explained below.
+
+### Setup Entries
+
+The following entries are provided in Loenn for setting up a Health System.
+
+- Player Health: How many Health Points the player should have.
+- Damage Cooldown: How much time must pass before the player is able to take damage again.
+- Crush Effect: How the Health System should reach when the player is crushed to death.
+  - Push Out: The player will take damage and will be pushed out the nearest end of the crusher it can.
+  - Solid on Invincible Player: The player will take damage and the crushing solid will become intangible while the Player remains inside of it.
+  - Instant Death: The player will lose all Health Points they have and will die instantly.
+- Global Controller: If the Health System controller should stay as a global entity. If marked false, leaving the room or reloading the map in any way will remove it from the scene.
+- Global Health: If the player should keep the same health values even across screens. Only really applicable if Global Controller is marked true. Marking this false will refill the Player's health up to the max value when a transition is hit, whereas false will keep the same health values.
+- Activation Flag: The flag this Controller should wait for to be true to enable the Health System.
+- Apply System Instantly: If the Controller should be active as soon as it is added onto the scene.
+
+### Health Bar Entries
+
+The Health System is accompanied with a Health Bar, which are the other half of the entries.
+
+- Health Icon: The sprite each Health Point icon should use.
+- Health Icon Create Anim: The animation each of the icons' sprites should use when created.
+- Health Icon Remove Anim: The animation each of the icons' sprites should use when a Health Point is lost.
+- Health Icon Screen X: The X coordinates on the screen where the Health Bar will start.
+- Health Icon Screen Y: The Y coordinates on the screen where the Health Bar will start.
+- Health Icon Scale X: Each Health Icon's Sprite's X scale.
+- Health Icon Scale Y: Each Health Icon's Sprite's Y scale.
+- Health Icon Separation: How much distance is between each Health Icon. This distance is measured from any two Icon's left side, so this value should include the sprite's width if no overlap is desired.
+
+## Health System Triggers
+
+Alongside the Controller, the Health System comes with three triggers.
+
+- Add Health System Trigger: Can be used to add a new instance of a Health System, and works the exact same way as adding the Controller would, except it's delegated to be added onto the scene when entering the Trigger.
+- Enable Health Trigger: Can be used to toggle the Enabled state of the existing Health System.
+- Health Bar Visible Trigger: Can be used to toggle the Visible state of all the icons of the Health Bar.
 
 ## Disclaimer
 
