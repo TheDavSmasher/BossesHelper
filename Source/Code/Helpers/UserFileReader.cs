@@ -179,7 +179,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             break;
                         case "hurtboxes":
-                            baseHitboxOptions ??= new();
+                            baseHurtboxOptions ??= new();
                             List<Collider> baseHurtboxes = new();
                             foreach (XmlNode baseHurtbox in hitboxNode.ChildNodes)
                             {
@@ -194,11 +194,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             if (baseHurtboxes.Count > 1)
                             {
-                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
+                                baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
                             }
                             else
                             {
-                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), baseHurtboxes[0]);
+                                baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), baseHurtboxes[0]);
                             }
                             break;
                         case "bouncebox":
