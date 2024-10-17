@@ -4,7 +4,7 @@ This is a helper specifically designed to allow the creation of custom bosses wi
 
 ## Boss Setup
 
-The Boss Controller Entity has multiple entries that will enable the Boss to work, as well as a few optional entries.
+The Boss Controller Entity has multiple entries that will enable the Boss to work, as well as a few optional entries. It is important to note that the code for the Boss is separated into two main classes: the Controller and the Puppet. The Controller will run all logic regarding attacks, events, tracking health, and similar. The Puppet handles all hitboxes, collisions, and sprite logic. Due to this, no reference to the Controller is given to the user at any time, and any methods to interact with it are given through delegates or helper functions.
 
 ### Basic Setup Entries
 
@@ -191,9 +191,23 @@ function onBegin()
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function.
+An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `bossAttack`, as well as access to all helper functions.
 
 ### Events
+
+Every Lua file inside the Events subdirectory should use the following format:
+
+```lua
+function onBegin()
+    --Your code here
+end
+
+function onEnd(level, wasSkipped) --optional
+    --Your code here
+end
+```
+
+An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor.
 
 ### Functions
 
