@@ -57,6 +57,54 @@ local function getClassAndField(full)
     return class, field
 end
 
+local function getEaserByName(name, invert)
+    local ease = require("#monocle.ease")
+    local typ = type(name)
+    if (typ ~= "string") then
+        return nil
+    end
+    local value = string.lower(name)
+    local easers = {
+        linear = ease.Linear,
+        sinein = ease.SineIn,
+        sineout = ease.SineOut,
+        sineinout = ease.SineInOut,
+        quadin = ease.QuadIn,
+        quadout = ease.QuadOut,
+        quadinout = ease.QuadInOut,
+        cubein = ease.CubeIn,
+        cubeout = ease.CubeOut,
+        cubeinout = ease.CubeInOut,
+        quintin = ease.QuintIn,
+        quintout = ease.QuintOut,
+        QuintInOut = ease.QuintInOut,
+        expoin = ease.ExpoIn,
+        expoout = ease.ExpoOut,
+        expoinout = ease.ExpoInOut,
+        backin = ease.BackIn,
+        backout = ease.BackOut,
+        backinout = ease.BackInOut,
+        bigbackin = ease.BigBackIn,
+        bigbackout = ease.BigBackOut,
+        bigbackinout = ease.BigBackInOut,
+        elasticin = ease.ElasticIn,
+        elasticout = ease.ElasticOut,
+        elasticinout = ease.ElasticInOut,
+        bouncein = ease.BounceIn,
+        bounceout = ease.BounceOut,
+        bounceinout = ease.BounceInOut,
+        default = nil
+    }
+    if easers[value] then
+        if invert or false then
+            return ease.Invert(easers[value])
+        end
+        return easers[value]
+    else
+        return easers["default"]
+    end
+end
+
 --- Set the prefix for getting Celeste classes.
 -- By default this is "Celeste.".
 -- @string prefix The new prefix.
@@ -884,6 +932,7 @@ end
 ---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
 ---@alias EntityData EntityData An Everest EntityData object.
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
+---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 
 --- Attack Delegates
 
@@ -1153,43 +1202,48 @@ end
 ---Create a new Position Tween, which will slowly move the Boss to the target.
 ---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time number The time the Boss will take to reach the target.
----@param easer? Easer The easer to apply to the motion. Defaults to nil.
-function helpers.positionTween(target, time, easer)
-    puppet:PositionTween(target, time, easer or nil)
+---@param easer? string|Easer The easer to apply to the motion. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+function helpers.positionTween(target, time, easer, invert)
+    puppet:PositionTween(target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed.
 ---@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? Easer The easer to applt to the x speed value. Defaults to nil.
-function helpers.speedXTween(start, target, time, easer)
-    puppet:SpeedXTween(start, target, time, easer or nil)
+---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+function helpers.speedXTween(start, target, time, easer, invert)
+    puppet:SpeedXTween(start, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' y speed.
 ---@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? Easer The easer to applt to the y speed value. Defaults to nil.
-function helpers.speedYTween(start, target, time, easer)
-    puppet:SpeedYTween(start, target, time, easer or nil)
+---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+function helpers.speedYTween(start, target, time, easer, invert)
+    puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? Easer The easer to applt to the x speed value. Defaults to nil.
-function helpers.speedXTweenTo(target, time, easer)
-    puppet:SpeedXTween(puppet.Speed.X, target, time, easer or nil)
+---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+function helpers.speedXTweenTo(target, time, easer, invert)
+    puppet:SpeedXTween(puppet.Speed.X, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? Easer The easer to applt to the y speed value. Defaults to nil.
-function helpers.speedYTweenTo(target, time, easer)
-    puppet:SpeedYTween(puppet.Speed.Y, target, time, easer or nil)
+---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+function helpers.speedYTweenTo(target, time, easer, invert)
+    puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Returns the Boss' node at the given index.
