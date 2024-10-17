@@ -977,6 +977,11 @@ end
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
     boss.savePhaseChangeToSession:Invoke(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
 end
+
+---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
+function helpers.removeBoss()
+    boss.removeBoss:Invoke()
+end
 --End Interrupt Delegates
 
 --- Additional, non-delegate helper shorthand methods

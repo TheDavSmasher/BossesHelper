@@ -17,6 +17,12 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             (scene as Level).Add(target);
         }
 
+        public override void Removed(Entity entity)
+        {
+            base.Removed(entity);
+            target.RemoveSelf();
+        }
+
         public override void Update()
         {
             base.Update();

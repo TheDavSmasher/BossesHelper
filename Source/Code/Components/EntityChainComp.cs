@@ -16,5 +16,11 @@ namespace Celeste.Mod.BossesHelper.Code.Components
                 chained.Position = Entity.Position + chained.Position;
             }
         }
+
+        public override void Removed(Entity entity)
+        {
+            base.Removed(entity);
+            chained.RemoveSelf();
+        }
     }
 }

@@ -112,8 +112,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth, Func<IEnumerator> waitForAttack,
-            Action interruptPattern, Func<int> currentPattern, Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession)
+        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
+            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern,
+            Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action removeBoss)
         {
             public Player playerRef = playerRef;
 
@@ -134,6 +135,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action<int> startAttackPattern = startAttackPattern;
 
             public Action<int, int, bool> savePhaseChangeToSession = savePhaseChangeToSession;
+
+            public Action removeBoss = removeBoss;
         }
 
         public Level Level;
@@ -232,8 +235,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions,
-                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd, InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession));
+                new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd,
+                InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveSelf));
             Puppet.SetPuppetFunctions(bossReactions);
+        }
+
+        public override void Removed(Scene scene)
+        {
+            base.Removed(scene);
+            DestroyAll();
+            Puppet.RemoveSelf();
         }
 
         public override void Update()
