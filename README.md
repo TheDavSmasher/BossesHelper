@@ -207,9 +207,45 @@ function onEnd(level, wasSkipped) --optional
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor.
+An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor.
 
 ### Functions
+
+This Lua file should follow the following format:
+
+```lua
+function onContact()
+    --Your code here
+end
+
+function onDash()
+    --Your code here
+end
+
+function onBounce()
+    --Your code here
+end
+
+function onLaser()
+    --Your code here
+end
+
+function onHit()
+    --Your code here
+end
+
+function setup()
+    --Your code here
+end
+```
+
+This file contains all code that will execute arbitrarily to the Boss either at the start of scene or when collided with.
+
+The functions `onContact()`, `onDasH()`, `onBounce()`, and `onLaser()` will each execute separetely when the Boss's Hurtbox is collided with, depending on the Hurt Mode: `onContact()` for Player Contact, `onDasH()` for Player Dash, `onBounce()` for Head Bounce, and `onLaser()` for Sidekick Attack, respectively. The function `onHit()` is a more generalized function and will be called if no specific method is provided. For example, if Hurt Mode Player Dash is used and the given file has no `onDash()` function, it will call `onHit()` instead. If no `onHit()` function is provided there either, then no code will be executed on collision with the Boss.
+
+The `setup()` function will be called during load time, before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary.
+
+All function in this file are provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
 ## Health System
 
