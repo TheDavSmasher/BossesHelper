@@ -114,7 +114,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
             Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern,
-            Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action removeBoss)
+            Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action<bool> removeBoss)
         {
             public Player playerRef = playerRef;
 
@@ -136,8 +136,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public Action<int, int, bool> savePhaseChangeToSession = savePhaseChangeToSession;
 
-            public Action removeBoss = removeBoss;
+            public Action<bool> removeBoss = removeBoss;
         }
+
+        private EntityID id;
 
         public Level Level;
 
@@ -175,9 +177,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string patternsPath;
 
-        public BossController(EntityData data, Vector2 offset)
+        public BossController(EntityData data, Vector2 offset, EntityID id)
             : base(data.Position + offset)
         {
+            this.id = id;
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             attacksPath = data.Attr("attacksPath");
@@ -236,7 +239,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd,
-                InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveSelf));
+                InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
             Puppet.SetPuppetFunctions(bossReactions);
         }
 
@@ -389,6 +392,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
         {
             BossesHelperModule.Session.BossPhaseSaved = new(health, startImmediately, patternIndex);
+        }
+
+        private void RemoveBoss(bool permanent)
+        {
+            RemoveSelf();
+            if (permanent)
+            {
+                Level.Session.DoNotLoad.Add(id);
+            }
         }
 
         //Attack Delegates

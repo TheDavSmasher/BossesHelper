@@ -979,8 +979,9 @@ function helpers.savePhaseChangeToSession(health, index, startImmediately)
 end
 
 ---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
-function helpers.removeBoss()
-    boss.removeBoss:Invoke()
+---@param permanent boolean If the boss should not be loaded again. False will spawn the Boss every time the room is loaded.
+function helpers.removeBoss(permanent)
+    boss.removeBoss:Invoke(permanent or false)
 end
 --End Interrupt Delegates
 
