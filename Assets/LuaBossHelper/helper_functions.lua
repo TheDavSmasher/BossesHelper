@@ -1073,6 +1073,26 @@ function helpers.addComponentToBoss(component)
     puppet:Add(component)
 end
 
+---Create a new Rectangular Hitbox Collider
+---@param width number The width of the collider.
+---@param height number The height of the collider.
+---@param x number The x offset of the hitbox. Defaults to 0.
+---@param y number The y offest of the Hitbox. Defaults to 0.
+---@return Collider hitbox The created Hitbox Collider
+function helpers.getHitbox(width, height, x, y)
+    return monocle.Hitbox(width, height, x or 0, y or 0)
+end
+
+
+---Create a new Circle Collider
+---@param radius number The radius of the collider.
+---@param x number The x offset of the hitbox. Defaults to 0.
+---@param y number The y offest of the Hitbox. Defaults to 0.
+---@return Collider circle The created Hitbox Collider
+function helpers.getCircle(radius, x, y)
+    return monocle.Circle(radius, x or 0, y or 0)
+end
+
 ---Create a ColliderList object from the provided colliders.
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
