@@ -326,6 +326,8 @@ The following entries are provided in Loenn for setting up a Health System.
 - Global Health: If the player should keep the same health values even across screens. Only really applicable if Global Controller is marked true. Marking this false will refill the Player's health up to the max value when a transition is hit, whereas false will keep the same health values.
 - Activation Flag: The flag this Controller should wait for to be true to enable the Health System.
 - Apply System Instantly: If the Controller should be active as soon as it is added onto the scene.
+- On Damage Function: This takes a path to a Lua file, whose `onDamage()` method will execute every time the player takes damage.
+  - Make sure your main code is inside the `function onDamage() ... end` block.
 
 ### Health Bar Entries
 
