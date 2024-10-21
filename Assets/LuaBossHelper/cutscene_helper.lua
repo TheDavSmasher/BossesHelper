@@ -69,6 +69,19 @@ local function prepareInterruption(env, func)
     end
 end
 
+local function prepareFunction(env, func)
+    local success, onDamage = pcall(func)
+
+    if success then
+        onDamage = onDamage or env.onDamage
+
+        return onDamage
+    else
+        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load on damage function in Lua: " .. onDamage)
+        return success
+    end
+end
+
 function cutsceneHelper.setFuncAsCoroutine(func)
     return func and celesteMod.LuaCoroutine({value = coroutine.create(func), resume = threadProxyResume})
 end
@@ -121,6 +134,10 @@ end
 
 function cutsceneHelper.getInterruptData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareInterruption)
+end
+
+function cutsceneHelper.getFunctionData(filename, data)
+    return cutsceneHelper.getLuaData(filename, data, prepareFunction)
 end
 
 return cutsceneHelper

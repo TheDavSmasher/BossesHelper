@@ -2,13 +2,17 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
-using Celeste.Mod.BossesHelper.Code.Entities;
+using System.Collections.Generic;
+using NLua;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     [Tracked(false)]
     public class DamageController : Entity
     {
+        private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
+
         private float damageCooldown;
 
         private readonly float baseCooldown;
@@ -60,6 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         Add(new Coroutine(PlayerStagger(entity, origin)));
                     if (BossesHelperModule.Session.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
+                    ExecuteFunction(entity);
                 }
             }
             else
@@ -140,6 +145,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             tween.Stop();
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
+        }
+
+        private void ExecuteFunction(Player player)
+        {
+            if (!string.IsNullOrEmpty(Filepath))
+            {
+                Dictionary<object, object> dict = new Dictionary<object, object>
+                {
+                    { "player", player },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                };
+                LuaFunction[] array = LuaBossHelper.LoadLuaFile(Filepath, "getFunctionData", dict);
+                if (array != null)
+                {
+                    Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(0))));
+                }
+            }
         }
 
         public override void Update()
