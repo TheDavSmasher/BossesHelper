@@ -1259,4 +1259,14 @@ function helpers.addConstantBackgroundCoroutine(func)
     celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, func)
 end
 
+---Get the Player's current health value on the active Health System
+---@return number health The player's health value, or -1 if there's no active Health System
+function helpers.getPlayerHealth()
+    local controller = celeste.Mod.BossesHelper.BossesHelperModule.Session.mapDamageController
+    if controller then
+       return controller.health
+    end
+    return -1
+end
+
 return helpers
