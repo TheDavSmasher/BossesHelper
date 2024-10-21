@@ -46,6 +46,10 @@ public class BossesHelperSession : EverestModuleSession
 
         public bool isEnabled;
 
+        public bool playerStagger;
+
+        public bool playerBlink;
+
         public bool activateInstantly;
 
         public string activateFlag;

@@ -54,6 +54,8 @@ addHealthSystemTrigger.placements = {
         isGlobal = true,
         globalHealth = false,
         applySystemInstantly = true,
+        playerStagger = true,
+        playerBlink = true,
         onlyOnce = true
     }
 }

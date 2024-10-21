@@ -27,6 +27,9 @@ entities.BossesHelper/HealthSystemManager.attributes.name.isGlobal=Global Contro
 entities.BossesHelper/HealthSystemManager.attributes.description.isGlobal=If the Health System should be active globally.\nFalse will remove it when entering a new room or respawning.
 entities.BossesHelper/HealthSystemManager.attributes.description.globalHealth=If the player should keep the same health even on transition.\nFalse will refill health on room transition.
 entities.BossesHelper/HealthSystemManager.attributes.description.applySystemInstantly=If the Health System should be active as soon as it is added onto the scene. Must be activated manually otherwise.\nTrue will ignore activation flag.
+entities.BossesHelper/HealthSystemManager.attributes.description.playerStagger=If the player should stagger back when taking damage. False will keep the player in control and with no movement affected.
+entities.BossesHelper/HealthSystemManager.attributes.name.playerBlink=PLayer Blink On Damage
+entities.BossesHelper/HealthSystemManager.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
 
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIcon=The sprite each health icon marker should use per hit point.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
@@ -40,4 +43,7 @@ triggers.BossesHelper/AddHealthSystemTrigger.attributes.name.isGlobal=Global Con
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.isGlobal=If the Health System should be active globally.\nFalse will remove it when entering a new room or respawning.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.globalHealth=If the player should keep the same health even on transition.\nFalse will refill health on room transition.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.applySystemInstantly=If the Health System should be active as soon as it is added onto the scene. Must be activated manually otherwise.\nTrue will ignore activation flag.
+triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerStagger=If the player should stagger back when taking damage. False will keep the player in control and with no movement affected.
+triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
+triggers.BossesHelper/AddHealthSystemTrigger.attributes.name.playerBlink=PLayer Blink On Damage
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.onlyOnce=If this trigger should not be loaded again once activated.

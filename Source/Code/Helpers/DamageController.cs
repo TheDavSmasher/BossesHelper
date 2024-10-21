@@ -56,8 +56,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
                     level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
-                    Add(new Coroutine(PlayerStagger(entity, origin)));
-                    Add(new Coroutine(PlayerInvincible(entity)));
+                    if (BossesHelperModule.Session.healthData.playerStagger)
+                        Add(new Coroutine(PlayerStagger(entity, origin)));
+                    if (BossesHelperModule.Session.healthData.playerBlink)
+                        Add(new Coroutine(PlayerInvincible(entity)));
                 }
             }
             else
@@ -99,9 +101,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 tween.OnUpdate = delegate (Tween t)
                 {
                     Vector2 val = from + (to - from) * t.Eased;
-                    player.MoveToX(val.X);
-                    player.MoveToY(val.Y);
-                    player.Sprite.Rotation = (float)(Math.Floor(t.Eased * 4f) * 6.2831854820251465);
+                    if (player != null)
+                    {
+                        player.MoveToX(val.X);
+                        player.MoveToY(val.Y);
+                        player.Sprite.Rotation = (float)(Math.Floor(t.Eased * 4f) * 6.2831854820251465);
+                    }
                 };
                 yield return tween.Duration;
                 tween.Stop();

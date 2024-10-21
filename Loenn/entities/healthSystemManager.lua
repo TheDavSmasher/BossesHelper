@@ -53,7 +53,9 @@ healthSystemManager.placements = {
         crushEffect = "instantDeath",
         isGlobal = true,
         globalHealth = false,
-        applySystemInstantly = true
+        applySystemInstantly = true,
+        playerStagger = true,
+        playerBlink = true
     }
 }
 
