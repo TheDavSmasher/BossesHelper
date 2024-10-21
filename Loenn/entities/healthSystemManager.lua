@@ -51,6 +51,7 @@ healthSystemManager.placements = {
         playerHealth = "3",
         damageCooldown = "1",
         crushEffect = "instantDeath",
+        onDamageFunction = "",
         isGlobal = true,
         globalHealth = false,
         applySystemInstantly = true,

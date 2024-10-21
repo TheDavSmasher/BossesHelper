@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using YamlDotNet.Serialization;
+using NLua;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -53,6 +54,8 @@ public class BossesHelperSession : EverestModuleSession
         public bool activateInstantly;
 
         public string activateFlag;
+
+        public string onDamageFunction;
     }
 
     public HealthSystemData healthData;

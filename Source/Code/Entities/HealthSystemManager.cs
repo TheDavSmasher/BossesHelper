@@ -35,6 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", healthData.playerHealthVal);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", healthData.damageCooldown);
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", healthData.playerOnCrush);
+            BossesHelperModule.Session.healthData.onDamageFunction = data.Attr("onDamageFunction");
             BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
             BossesHelperModule.Session.healthData.playerBlink = data.Bool("playerBlink", true);
             BossesHelperModule.Session.healthData.playerStagger = data.Bool("playerStagger", true);
