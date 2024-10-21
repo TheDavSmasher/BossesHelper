@@ -21,6 +21,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private Level level;
 
+        private LuaFunction onDamage;
+
         internal DamageController()
         {
             if (BossesHelperModule.Session.healthData.globalController)
@@ -33,6 +35,30 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             base.Added(scene);
             level = scene as Level;
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            Player player = level.Tracker.GetEntity<Player>();
+            LoadFunction(player);
+        }
+
+        private void LoadFunction(Player player)
+        {
+            if (!string.IsNullOrEmpty(Filepath))
+            {
+                Dictionary<object, object> dict = new Dictionary<object, object>
+                {
+                    { "player", player },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                };
+                LuaFunction[] array = LuaBossHelper.LoadLuaFile(Filepath, "getFunctionData", dict);
+                if (array != null)
+                {
+                    onDamage = array.ElementAtOrDefault(0);
+                }
+            }
         }
 
         public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false)
@@ -64,7 +90,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         Add(new Coroutine(PlayerStagger(entity, origin)));
                     if (BossesHelperModule.Session.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
-                    ExecuteFunction(entity);
+                    if (onDamage != null)
+                        Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(onDamage)));
                 }
             }
             else
@@ -145,23 +172,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             tween.Stop();
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
-        }
-
-        private void ExecuteFunction(Player player)
-        {
-            if (!string.IsNullOrEmpty(Filepath))
-            {
-                Dictionary<object, object> dict = new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                };
-                LuaFunction[] array = LuaBossHelper.LoadLuaFile(Filepath, "getFunctionData", dict);
-                if (array != null)
-                {
-                    Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(0))));
-                }
-            }
         }
 
         public override void Update()
