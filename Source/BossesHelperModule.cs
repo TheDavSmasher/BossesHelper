@@ -120,7 +120,8 @@ public class BossesHelperModule : EverestModule {
             if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
             {
                 PlayerTakesDamage(Vector2.Zero);
-                self.TrySquishWiggle(data, int.MaxValue, int.MaxValue);
+                if (self.TrySquishWiggle(data, self.level.Bounds.Width, self.level.Bounds.Height))
+                    self.Die(Vector2.Zero, evenIfInvincible);
             }
             else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
             {
