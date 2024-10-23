@@ -3,7 +3,15 @@ local healthSystemManager = {}
 local crushModeOpts = {
     {"Push Out", "pushOut"},
     {"Solid On Invincible Player", "invincibleSolid"},
-    {"Instant Death", "instantDeath"}
+    {"Instant Death", "instantDeath"},
+    {"Use Old Value", ""}
+}
+
+local offscreenModeOpts = {
+    {"Bounce Up", "bounceUp"},
+    {"Bubble Back", "bubbleBack"},
+    {"Instant Death", "instantDeath"},
+    {"Use Old Value", ""}
 }
 
 healthSystemManager.name = "BossesHelper/HealthSystemManager"
@@ -34,6 +42,10 @@ healthSystemManager.fieldInformation = {
     crushEffect = {
         options = crushModeOpts,
         editable = false
+    },
+    offscreenEffect = {
+        options = offscreenModeOpts,
+        editable = false
     }
 }
 healthSystemManager.placements = {
@@ -51,6 +63,7 @@ healthSystemManager.placements = {
         playerHealth = "3",
         damageCooldown = "1",
         crushEffect = "instantDeath",
+        offscreenEffect = "instantDeath",
         onDamageFunction = "",
         isGlobal = true,
         globalHealth = false,

@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod.Entities;
 using Monocle;
 using Microsoft.Xna.Framework;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -15,6 +14,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             PushOut,
             InvincibleSolid,
+            InstantDeath
+        }
+
+        public enum OffscreenEffect
+        {
+            BounceUp,
+            BubbleBack,
             InstantDeath
         }
 
@@ -35,6 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", healthData.playerHealthVal);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", healthData.damageCooldown);
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", healthData.playerOnCrush);
+            BossesHelperModule.Session.healthData.playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", healthData.playerOffscreen);
             BossesHelperModule.Session.healthData.onDamageFunction = data.Attr("onDamageFunction");
             BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
             BossesHelperModule.Session.healthData.playerBlink = data.Bool("playerBlink", true);

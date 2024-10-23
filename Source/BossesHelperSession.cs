@@ -43,6 +43,8 @@ public class BossesHelperSession : EverestModuleSession
 
         public HealthSystemManager.CrushEffect playerOnCrush;
 
+        public HealthSystemManager.OffscreenEffect playerOffscreen;
+
         public bool isCreated;
 
         public bool isEnabled;
