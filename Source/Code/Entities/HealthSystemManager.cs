@@ -42,11 +42,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", healthData.damageCooldown);
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", healthData.playerOnCrush);
             BossesHelperModule.Session.healthData.playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", healthData.playerOffscreen);
-            BossesHelperModule.Session.healthData.onDamageFunction = data.Attr("onDamageFunction");
+            BossesHelperModule.Session.healthData.onDamageFunction = data.Attr("onDamageFunction", healthData.onDamageFunction);
             BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
             BossesHelperModule.Session.healthData.playerBlink = data.Bool("playerBlink", true);
             BossesHelperModule.Session.healthData.playerStagger = data.Bool("playerStagger", true);
-            BossesHelperModule.Session.healthData.activateFlag = data.Attr("activationFlag");
+            BossesHelperModule.Session.healthData.activateFlag = data.Attr("activationFlag", healthData.activateFlag);
             BossesHelperModule.Session.healthData.isEnabled = false;
             if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
