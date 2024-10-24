@@ -1122,6 +1122,18 @@ function helpers.changeHurtboxTo(tag)
     puppet:ChangeHurtboxOption(tag)
 end
 
+---Change the Boss' bouncebox to that stored under the given tag.
+---@param tag string The bouncebox tag to use.
+function helpers.changeBaseHitboxTo(tag)
+    puppet:ChangeHitboxOption(tag)
+end
+
+---Change the Boss' Sidekick Target to that stored under the given tag.
+---@param tag string The Sidekick Target tag to use.
+function helpers.changeHurtboxTo(tag)
+    puppet:ChangeHurtboxOption(tag)
+end
+
 ---Add a component to the Boss.
 ---@param component Component The component to add.
 function helpers.addComponentToBoss(component)
