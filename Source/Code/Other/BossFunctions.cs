@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

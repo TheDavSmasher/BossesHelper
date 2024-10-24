@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
+﻿using System.Drawing;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
