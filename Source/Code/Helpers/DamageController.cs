@@ -61,20 +61,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false)
+        public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
         {
-            if (damageCooldown > 0 || SaveData.Instance.Assists.Invincible)
-            {
-                return;
-            }
-            if (level.InCutscene)
+            if ((damageCooldown > 0 && !ignoreCooldown) || SaveData.Instance.Assists.Invincible ||
+                level.InCutscene || amount <= 0)
             {
                 return;
             }
             damageCooldown = baseCooldown;
             health -= amount;
             Player entity = Engine.Scene.Tracker.GetEntity<Player>();
-            if (entity == null)
+            if (entity == null || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
@@ -86,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
                     level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
-                    if (BossesHelperModule.Session.healthData.playerStagger)
+                    if (BossesHelperModule.Session.healthData.playerStagger && stagger)
                         Add(new Coroutine(PlayerStagger(entity, origin)));
                     if (BossesHelperModule.Session.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
