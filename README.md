@@ -177,7 +177,7 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 
 - If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted when the Boss is collided with.
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
-- If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in repeat. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many *additional* loops will run until it ends. Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
+- If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in repeat. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends. Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
 - Alternatively, alongside a `goto` attribute, attributes `x`, `y`, `width`, and `height` can be provided. These attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, it will go to the given pattern once the current action ends.
   - The coordinates for the `x` and `y` attributes are global coordinates.
 
