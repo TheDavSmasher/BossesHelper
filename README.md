@@ -37,6 +37,7 @@ These entries are all related to the basic appeareance of the Boss and its inter
   - Head Bounce: The Boss will have a hitbox on top similar to that of Oshiro Boss, activating its collision the same way.
   - Sidekick Attack: Custom addition from this helper. The player will have a Badeline Dummy Follower, which can be activated with a custom bind so she begins targetting the nearest Boss (with the Sidekick Attack hurt mode) and shoots a laser towards it, and then enters cooldown.
   - Custom: The Boss will start with no hurtbox logic and it will entirely depend on the user's code in the Functions Lua file or other Lua files. This means that if no `setup()` function can be found inside of the Functions file, nothing will happen on collision.
+    - It is important to note that all Hurt Modes will still execute the `setup()` method found in this file if provided. The main difference is that Custom provides _nothing_ but the code within `setup()`, whereas the other Hurt Modes will include their own logic _on top_ of anything provided inside `setup()`.
 - Boss Hit Cooldown: This determines for how long the Boss is invulnerable to being collidable by the Player. While the collision will still happen, the method designed will not trigger.
 - Max Fall: This determines the max fall speed of the Boss. The rate the boss reaches this speed is relative to the gravity multiplier. This speed can still be surpassed manually with speed Tweens or direct speed setting during attacks or cutscenes.
 - Base Gravity Multiplier: This will set the Gravity multiplier to the given value. The gravity constant used is 900, same as the Player.
@@ -266,7 +267,7 @@ The functions `onContact()`, `onDasH()`, `onBounce()`, and `onLaser()` will each
 
 These collision functions are essential to fight logic, as its where the user must specify if the Boss takes damage, if the current pattern should be interrupted, if it should wait for the current attack to end, and a new attack pattern should start. Lua helper functions are provided for each of these necessities through delegates.
 
-The `setup()` function will be called during load time, before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary.
+The `setup()` function will be called during load time, before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary. If the Hurt Mode was set to Custom, it's highly encouraged to add this file, since otherwise the Boss cannot be hurt. This function will still be called regardless of Hurt Mode, though.
 
 All function in this file are provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
