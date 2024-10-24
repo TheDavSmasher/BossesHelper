@@ -83,6 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Position = healthData.healthBarPos;
             healthIcons = new List<HealthIcon>();
             base.Tag = Tags.HUD;
+            HealthVisible = healthData.startVisible;
             if (healthData.globalController)
                 AddTag(Tags.Global);
         }

@@ -44,6 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", healthData.playerOffscreen);
             BossesHelperModule.Session.healthData.onDamageFunction = data.Attr("onDamageFunction", healthData.onDamageFunction);
             BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
+            BossesHelperModule.Session.healthData.startVisible = data.Bool("startVisible");
             BossesHelperModule.Session.healthData.playerBlink = data.Bool("playerBlink", true);
             BossesHelperModule.Session.healthData.playerStagger = data.Bool("playerStagger", true);
             BossesHelperModule.Session.healthData.activateFlag = data.Attr("activationFlag", healthData.activateFlag);
