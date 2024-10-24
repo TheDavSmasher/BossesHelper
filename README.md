@@ -318,20 +318,31 @@ The following entries are provided in Loenn for setting up a Health System.
 
 - Player Health: How many Health Points the player should have.
 - Damage Cooldown: How much time must pass before the player is able to take damage again.
-- Crush Effect: How the Health System should reach when the player is crushed to death.
+- Crush Effect: How the Health System should react when the player is crushed to death.
   - Push Out: The player will take damage and will be pushed out the nearest end of the crusher it can.
   - Solid on Invincible Player: The player will take damage and the crushing solid will become intangible while the Player remains inside of it.
-  - Instant Death: The player will lose all Health Points they have and will die instantly.
+  - Instant Death: The player will lose all Health Points they have and will die instantly, much like Vanilla would act without a Health System.
+  - Keep Old Value: The Health System will keep using whatever it's old crush effect was prior.
+- Offscreen Effect: How the Health System should react whent the player dies due to falling offstage.
+  - Bounce Up: The player will take damage and will bounce, similar to what would happen if the Invinciblity Assist was turned on.
+  - Bubble Back: The player will take damage and will be bubbled back to the last safe ground they were on.
+    - The Bubble Back works similar to the Bubble of Cassettes or Keys.
+    - Last Safe Ground is determined by the player's own `onSafeGround` value.
+    - Loading into a level will always store the spawn point position as an initial Safe Ground, just in case there's none around and one is needed.
+  - Instant Death: The player will lose all Health Points they have and will die instantly, much like Vanilla would act without a Health System.
+  - Keep Old Value: The Health System will keep using whatever it's old Offscreen effect was prior.
 - Global Controller: If the Health System controller should stay as a global entity. If marked false, leaving the room or reloading the map in any way will remove it from the scene.
 - Global Health: If the player should keep the same health values even across screens. Only really applicable if Global Controller is marked true. Marking this false will refill the Player's health up to the max value when a transition is hit, whereas false will keep the same health values.
 - Activation Flag: The flag this Controller should wait for to be true to enable the Health System.
 - Apply System Instantly: If the Controller should be active as soon as it is added onto the scene.
+- Player Blink: If the player should "blink", representing a visual way to know if the player's damage cooldown is still active.
+- Player Stagger: If the player's movement and controll should be interrupted when taking damage as the player staggers back from the hit.
 - On Damage Function: This takes a path to a Lua file, whose `onDamage()` method will execute every time the player takes damage.
   - Make sure your main code is inside the `function onDamage() ... end` block.
 
 ### Health Bar Entries
 
-The Health System is accompanied with a Health Bar, which are the other half of the entries.
+The Health System is accompanied with a Health Bar, which are the other half of the entries, and only encompass the visual side of the Health System.
 
 - Health Icon: The sprite each Health Point icon should use.
 - Health Icon Create Anim: The animation each of the icons' sprites should use when created.
@@ -346,9 +357,9 @@ The Health System is accompanied with a Health Bar, which are the other half of 
 
 Alongside the Controller, the Health System comes with three triggers.
 
-- Add Health System Trigger: Can be used to add a new instance of a Health System, and works the exact same way as adding the Controller would, except it's delegated to be added onto the scene when entering the Trigger.
+- Add Health System Trigger: Can be used to add an instance of a Health System, and works the exact same way as adding the Controller would, except it's delegated to be added onto the scene when entering the Trigger.
   - If a Health System already exists, the values provided will override those of the existing System.
-  - If a value is not provided, the pre-exisiting value will be kept.
+  - If a specific value is not provided, the pre-exisiting value for that entry will be kept.
 - Enable Health Trigger: Can be used to toggle the Enabled state of the existing Health System.
 - Health Bar Visible Trigger: Can be used to toggle the Visible state of all the icons of the Health Bar.
 

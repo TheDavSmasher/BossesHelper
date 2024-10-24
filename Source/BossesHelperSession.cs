@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using YamlDotNet.Serialization;
-using NLua;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -27,8 +26,35 @@ public class BossesHelperSession : EverestModuleSession
 
     public struct HealthSystemData
     {
+        //Overhead
+        public bool isCreated;
+
+        public bool isEnabled;
+
+        //Damage
+        public bool activateInstantly;
+
+        public bool globalController;
+
+        public bool globalHealth;
+
+        public string activateFlag;
+
         public int playerHealthVal;
 
+        public float damageCooldown;
+
+        public bool playerStagger;
+
+        public bool playerBlink;
+
+        public string onDamageFunction;
+
+        public HealthSystemManager.CrushEffect playerOnCrush;
+
+        public HealthSystemManager.OffscreenEffect playerOffscreen;
+
+        //Visual
         public string iconSprite;
 
         public string startAnim;
@@ -41,29 +67,7 @@ public class BossesHelperSession : EverestModuleSession
 
         public Vector2 healthIconScale;
 
-        public float damageCooldown;
-
-        public bool globalController;
-
-        public bool globalHealth;
-
-        public HealthSystemManager.CrushEffect playerOnCrush;
-
-        public HealthSystemManager.OffscreenEffect playerOffscreen;
-
-        public bool isCreated;
-
-        public bool isEnabled;
-
-        public bool playerStagger;
-
-        public bool playerBlink;
-
-        public bool activateInstantly;
-
-        public string activateFlag;
-
-        public string onDamageFunction;
+        public bool startVisible;
     }
 
     public HealthSystemData healthData;
