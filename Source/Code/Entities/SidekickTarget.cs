@@ -4,7 +4,7 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    [Tracked]
+    [Tracked(false)]
     internal class SidekickTarget : Entity
     {
         public readonly string BossName;
@@ -13,11 +13,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Action OnLaserCollide;
 
-        public SidekickTarget(string bossName, Vector2 position, Vector2 offset, Action onLaser, float radius = 4f)
-            : base(position + offset)
+        public SidekickTarget(string bossName, Vector2 position, Action onLaser, Circle collider)
+            : base(position)
         {
-            base.Collider = new Circle(radius, offset.X, offset.Y);
-            this.radius = radius;
+            base.Collider = collider;
+            this.radius = collider.Radius;
             OnLaserCollide = onLaser;
             BossName = bossName;
         }

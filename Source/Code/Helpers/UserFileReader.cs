@@ -138,8 +138,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
             Hitbox bounceHitboxes = null;
-            Vector2 targetOffset = Vector2.Zero;
-            float radiusT = 4f;
+            Circle targetCircles = null;
 
             string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
@@ -205,9 +204,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             bounceHitboxes = GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f);
                             break;
                         case "target":
-                            XmlAttributeCollection targetData = hitboxNode.Attributes;
-                            targetOffset = new Vector2(GetValueOrDefaultFloat(targetData["xOffset"]), GetValueOrDefaultFloat(targetData["yOffset"]));
-                            radiusT = GetValueOrDefaultFloat(targetData["radius"], 4f);
+                            targetCircles = GetCircleFromXml(hitboxNode.Attributes, 4f);
                             break;
                     }
                 }
@@ -216,7 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Logger.Log(LogLevel.Warn, "Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
             }
-            dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetOffset, radiusT);
+            dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetCircles);
         }
 
         private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)

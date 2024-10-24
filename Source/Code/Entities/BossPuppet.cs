@@ -11,7 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Actor
     {
-        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, Hitbox bounceHitbox, Vector2 target, float radius)
+        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, Hitbox bounceHitbox, Circle target)
         {
             public Dictionary<string, Collider> baseHitboxes = baseHitboxes;
 
@@ -19,9 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public Hitbox bounceHitbox = bounceHitbox;
 
-            public Vector2 targetOffset = target;
-
-            public float targetRadius = radius;
+            public Circle target = target;
 
             public readonly bool UseDefaultHitbox => baseHitboxes == null || baseHitboxes.Count == 0;
 
@@ -165,7 +163,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMetadata.targetOffset, hitboxMetadata.targetRadius));
+                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMetadata.target));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash, Hurtbox));
