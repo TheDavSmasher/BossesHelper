@@ -8,6 +8,10 @@ namespace Celeste.Mod.BossesHelper;
 
 public class BossesHelperSession : EverestModuleSession
 {
+    public bool wasOffscreen;
+
+    public Vector2 lastSafePosition;
+
     public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
     {
         public int bossHealthAt = bossHealthAt;
