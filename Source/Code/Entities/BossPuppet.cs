@@ -11,30 +11,35 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Actor
     {
-        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, Hitbox bounceHitbox, Circle target)
+        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, 
+            Dictionary<string, Hitbox> bounceHitboxes, Dictionary<string, Circle> targetCircles)
         {
             public Dictionary<string, Collider> baseHitboxes = baseHitboxes;
 
             public Dictionary<string, Collider> baseHurtboxes = baseHurtboxes;
 
-            public Hitbox bounceHitbox = bounceHitbox;
+            public Dictionary<string, Hitbox> bounceHitboxes = bounceHitboxes;
 
-            public Circle target = target;
+            public Dictionary<string, Circle> targetCircles = targetCircles;
 
             public readonly bool UseDefaultHitbox => baseHitboxes == null || baseHitboxes.Count == 0;
 
             public readonly bool UseDefaultHurtbox => baseHurtboxes == null || baseHurtboxes.Count == 0;
 
-            public readonly bool UseDefaultBounce => bounceHitbox == null;
+            public readonly bool UseDefaultBounce => bounceHitboxes == null || bounceHitboxes.Count == 0;
+
+            public readonly bool UseDefaultTarget => targetCircles == null || targetCircles.Count == 0;
         }
 
         private readonly Sprite Sprite;
 
-        private Dictionary<string, Collider> hitboxOptions;
-
-        private Dictionary<string, Collider> hurtboxOptions;
+        private HitboxMedatata hitboxMetadata;
 
         public Collider Hurtbox { get; private set; }
+
+        public Hitbox BounceBox { get; private set; }
+
+        public Circle Target { get; private set; }
 
         private readonly string SpriteName;
 
@@ -123,56 +128,74 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void SetHitboxesAndColliders()
         {
-            UserFileReader.ReadMetadataFileInto(metadataPath, out HitboxMedatata hitboxMetadata);
+            UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
+            //Hitbox
             if (hitboxMetadata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
             else if (hitboxMetadata.baseHitboxes.Count > 1)
             {
-                hitboxOptions = hitboxMetadata.baseHitboxes;
                 base.Collider = hitboxMetadata.baseHitboxes["main"];
             }
             else
             {
                 base.Collider = hitboxMetadata.baseHitboxes.Values.First();
             }
+            //Hurtbox
             if (hitboxMetadata.UseDefaultHurtbox)
             {
                 Hurtbox = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
             else if (hitboxMetadata.baseHurtboxes.Count > 1)
             {
-                hurtboxOptions = hitboxMetadata.baseHurtboxes;
                 Hurtbox = hitboxMetadata.baseHurtboxes["main"];
             }
             else
             {
                 Hurtbox = hitboxMetadata.baseHurtboxes.Values.First();
             }
+            //Bouncebox and Target
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
                     if (hitboxMetadata.UseDefaultBounce)
                     {
-                        Add(new PlayerCollider(OnPlayerBounce, new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)));
+                        BounceBox = new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+                    }
+                    else if (hitboxMetadata.bounceHitboxes.Count > 1)
+                    {
+                        BounceBox = hitboxMetadata.bounceHitboxes["main"];
                     }
                     else
                     {
-                        Add(new PlayerCollider(OnPlayerBounce, hitboxMetadata.bounceHitbox));
+                        BounceBox = hitboxMetadata.bounceHitboxes.Values.First();
                     }
+                    Add(new PlayerCollider(OnPlayerBounce, BounceBox));
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, hitboxMetadata.target));
+                    if (hitboxMetadata.UseDefaultTarget)
+                    {
+                        Target = new Circle(4f);
+                    }
+                    else if (hitboxMetadata.targetCircles.Count > 1)
+                    {
+                        Target = hitboxMetadata.targetCircles["main"];
+                    }
+                    else
+                    {
+                        Target = hitboxMetadata.targetCircles.Values.First();
+                    }
+                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, Target));
                     break;
                 case HurtModes.PlayerDash:
                     Add(new PlayerCollider(OnPlayerDash, Hurtbox));
                     break;
-                    case HurtModes.Custom:
-                    //Custom depends on Setup.lua's code, does nothing by default
-                    break;
-                default: //PlayerContact 
+                case HurtModes.PlayerContact:
                     Add(new PlayerCollider(OnPlayerContact, Hurtbox));
+                    break;
+                default: //Custom
+                    //Custom depends on Setup.lua's code, does nothing by default
                     break;
             }
         }
@@ -341,12 +364,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeHitboxOption(string tag)
         {
-            base.Collider = hitboxOptions?[tag];
+            base.Collider = hitboxMetadata.baseHitboxes?[tag];
         }
 
         public void ChangeHurtboxOption(string tag)
         {
-            Hurtbox = hurtboxOptions?[tag];
+            Hurtbox = hitboxMetadata.baseHurtboxes?[tag];
+        }
+
+        public void ChangeBounceboxOption(string tag)
+        {
+            BounceBox = hitboxMetadata.bounceHitboxes?[tag];
+        }
+
+        public void ChangeTargetOption(string tag)
+        {
+            Target = hitboxMetadata.targetCircles?[tag];
         }
 
         private void KillOnContact(Player player)

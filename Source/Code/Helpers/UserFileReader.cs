@@ -137,8 +137,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
-            Hitbox bounceHitboxes = null;
-            Circle targetCircles = null;
+            Dictionary<string, Hitbox> bounceHitboxes = null;
+            Dictionary<string, Circle> targetCircles = null;
 
             string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
@@ -201,10 +201,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             break;
                         case "bouncebox":
-                            bounceHitboxes = GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f);
+                            bounceHitboxes ??= new();
+                            bounceHitboxes.Add(GetTagOrMain(hitboxNode), GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
                             break;
                         case "target":
-                            targetCircles = GetCircleFromXml(hitboxNode.Attributes, 4f);
+                            targetCircles ??= new();
+                            targetCircles.Add(GetTagOrMain(hitboxNode), GetCircleFromXml(hitboxNode.Attributes, 4f));
                             break;
                     }
                 }
