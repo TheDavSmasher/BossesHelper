@@ -352,6 +352,7 @@ The Health System is accompanied with a Health Bar, which are the other half of 
 - Health Icon Scale X: Each Health Icon's Sprite's X scale.
 - Health Icon Scale Y: Each Health Icon's Sprite's Y scale.
 - Health Icon Separation: How much distance is between each Health Icon. This distance is measured from any two Icon's left side, so this value should include the sprite's width if no overlap is desired.
+- Start Visible: If the Health Bar should start being visible when added onto the scene.
 
 ### Health System Triggers
 
