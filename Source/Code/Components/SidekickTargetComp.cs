@@ -5,7 +5,8 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    internal class SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Vector2 offset, float radius = 4f) : Component(active: true, visible: false)
+    internal class SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Vector2 offset, float radius = 4f)
+        : Component(active: true, visible: false)
     {
         public SidekickTarget target = new(bossName, position, offset, onLaser, radius);
 
