@@ -1124,13 +1124,13 @@ end
 
 ---Change the Boss' bouncebox to that stored under the given tag.
 ---@param tag string The bouncebox tag to use.
-function helpers.changeBaseHitboxTo(tag)
+function helpers.changeBounceboxTo(tag)
     puppet:ChangeHitboxOption(tag)
 end
 
 ---Change the Boss' Sidekick Target to that stored under the given tag.
 ---@param tag string The Sidekick Target tag to use.
-function helpers.changeHurtboxTo(tag)
+function helpers.changeTargetTo(tag)
     puppet:ChangeHurtboxOption(tag)
 end
 
