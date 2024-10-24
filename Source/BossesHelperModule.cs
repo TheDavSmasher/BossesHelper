@@ -42,15 +42,17 @@ public class BossesHelperModule : EverestModule {
     }
 
     public override void Load() {
-        On.Celeste.Level.LoadLevel += new On.Celeste.Level.hook_LoadLevel(SetStartingHealth);
-        On.Celeste.Player.OnSquish += new On.Celeste.Player.hook_OnSquish(ApplyUserCrush);
-        On.Celeste.Player.Die += new On.Celeste.Player.hook_Die(OnPlayerCollide);
+        On.Celeste.Level.LoadLevel += SetStartingHealth;
+        On.Celeste.Player.Update += UpdatePlayerLastSafe;
+        On.Celeste.Player.OnSquish += ApplyUserCrush;
+        On.Celeste.Player.Die += OnPlayerCollide;
     }
 
     public override void Unload() {
-        On.Celeste.Level.LoadLevel -= new On.Celeste.Level.hook_LoadLevel(SetStartingHealth);
-        On.Celeste.Player.OnSquish -= new On.Celeste.Player.hook_OnSquish(ApplyUserCrush);
-        On.Celeste.Player.Die -= new On.Celeste.Player.hook_Die(OnPlayerCollide);
+        On.Celeste.Level.LoadLevel -= SetStartingHealth;
+        On.Celeste.Player.Update -= UpdatePlayerLastSafe;
+        On.Celeste.Player.OnSquish -= ApplyUserCrush;
+        On.Celeste.Player.Die -= OnPlayerCollide;
     }
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
@@ -78,6 +80,20 @@ public class BossesHelperModule : EverestModule {
         {
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
+            Session.lastSafePosition = entity.Position;
+        }
+    }
+
+    public void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
+    {
+        orig(self);
+        if (self.OnSafeGround)
+        {
+            Session.lastSafePosition = self.Position;
+        }
+        if (self.StateMachine.State != Player.StCassetteFly)
+        {
+            Session.alreadyFlying = false;
         }
     }
 
