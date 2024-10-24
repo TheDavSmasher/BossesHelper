@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Other;
-using Celeste;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 
@@ -146,8 +146,7 @@ public class BossesHelperModule : EverestModule {
             }
             else //CrushEffect.InstantDeath
             {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health);
-                self.Die(Vector2.Zero, evenIfInvincible);
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
             }
         }
         else if (ducked && self.CanUnDuck)
@@ -158,34 +157,70 @@ public class BossesHelperModule : EverestModule {
 
     public static PlayerDeadBody OnPlayerCollide(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        if (Session.mapDamageController == null || Session.mapDamageController.health <= 0 || PlayerIsOffscreen(self) || always)
+        if (Session.mapDamageController == null || Session.mapDamageController.health <= 0)
         {
-            if (Session.mapDamageController != null)
-                Session.mapDamageController.health = 0;
             return orig(self, dir, always, register);
+        }
+        if (always)
+        {
+            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health);
+            return orig(self, dir, always, register);
+        }
+        float? offscreemAtY = GetFromY(self.SceneAs<Level>(), self);
+        if (offscreemAtY != null)
+        {
+            if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.BounceUp)
+            {
+                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                self.Play("event:/game/general/assist_screenbottom");
+                self.Bounce((float)offscreemAtY);
+                return null;
+            }
+            if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.BubbleBack)
+            {
+                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                if (!Session.alreadyFlying)
+                    self.Add(new Coroutine(PlayerFlyBack(self)));
+                return null;
+            }
+            if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.InstantDeath)
+            {
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+            } 
         }
         PlayerTakesDamage(dir);
         return null;
     }
 
-    private static bool PlayerIsOffscreen(Player player)
+    private static IEnumerator PlayerFlyBack(Player player)
     {
-        if (player != null)
-        {
-            Level level = player.SceneAs<Level>();
-            if (level != null)
-            {
-                Rectangle bounds = level.Bounds;
-                Rectangle val = new Rectangle((int)level.Camera.Left, (int)level.Camera.Top, 320, 180);
-                return (level.CameraLockMode != 0 && (val.Bottom < bounds.Bottom - 4 && player.Top > val.Bottom) || player.Top > bounds.Bottom + 4);
-            }
-        }
-        return false;
+        Session.alreadyFlying = true;
+        yield return 0.3f;
+        Audio.Play("event:/game/general/cassette_bubblereturn", player.SceneAs<Level>().Camera.Position + new Vector2(160f, 90f));
+        Vector2 middle = new(player.X + (Session.lastSafePosition.X - player.X)/2, player.Y + (Session.lastSafePosition.Y - player.Y)/2);
+        player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY*8);
     }
 
-    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false)
+    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
     {
-        Session.mapDamageController?.TakeDamage(origin, amount, silent);
+        Session.mapDamageController?.TakeDamage(origin, amount, silent, stagger, ignoreCooldown);
+    }
+
+    private static float? GetFromY(Level level, Player player)
+    {
+        Rectangle camera = new((int)level.Camera.Left, (int)level.Camera.Top, 320, 180);
+        if (level.CameraLockMode != Level.CameraLockModes.None)
+        {
+            if (camera.Bottom < level.Bounds.Bottom - 4 && player.Top > camera.Bottom)
+                return camera.Top;
+            if (camera.Top > level.Bounds.Top + 4 && player.Bottom < level.Bounds.Top)
+                return level.Bounds.Top;
+        }
+        if (player.Bottom < level.Bounds.Top)
+            return level.Bounds.Top;
+        if (player.Top > level.Bounds.Bottom)
+            return level.Bounds.Bottom;
+        return null;
     }
 
     public static EntityData MakeEntityData()
