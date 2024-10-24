@@ -168,14 +168,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     baseHitboxes.Add(GetHitboxFromXml(baseHitbox.Attributes, 8f, 8f));
                                 }
                             }
-                            if (baseHitboxes.Count > 1)
-                            {
-                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHitboxes.ToArray()));
-                            }
-                            else
-                            {
-                                baseHitboxOptions.Add(GetTagOrMain(hitboxNode), baseHitboxes[0]);
-                            }
+                            baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHitboxes.ToArray()));
                             break;
                         case "hurtboxes":
                             baseHurtboxOptions ??= new();
@@ -191,14 +184,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox.Attributes, 8f, 8f));
                                 }
                             }
-                            if (baseHurtboxes.Count > 1)
-                            {
-                                baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
-                            }
-                            else
-                            {
-                                baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), baseHurtboxes[0]);
-                            }
+                            baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
                             break;
                         case "bouncebox":
                             bounceHitboxes ??= new();
