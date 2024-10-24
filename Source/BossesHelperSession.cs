@@ -12,6 +12,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public Vector2 lastSafePosition;
 
+    public bool alreadyFlying;
+
     public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
     {
         public int bossHealthAt = bossHealthAt;
