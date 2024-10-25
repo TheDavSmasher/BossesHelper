@@ -7,11 +7,9 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 {
     public class SidekickTarget : Component
     {
-        private SidekickTargetCollider sidekickTarget;
+        private readonly SidekickTargetCollider sidekickTarget;
 
-        private Action onLaser;
-
-        private readonly string bossName;
+        public readonly string BossName;
 
         public Collider Collider
         {
@@ -28,13 +26,15 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public SidekickTarget(Action onLaser, string bossName, Vector2 position, Collider target)
             : base(active: true, visible: false)
         {
-            sidekickTarget = new(bossName, position, onLaser, target);
+            BossName = bossName;
+            sidekickTarget = new(position, onLaser, target);
         }
 
         public override void EntityAdded(Scene scene)
         {
             base.EntityAdded(scene);
             (scene as Level).Add(sidekickTarget);
+            sidekickTarget.Depth = -1000;
         }
 
         public override void Removed(Entity entity)
@@ -47,6 +47,25 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         {
             base.Update();
             sidekickTarget.Position = Entity.Position;
+        }
+
+        public override void DebugRender(Camera camera)
+        {
+            if (Collider != null)
+            {
+                if (Collider is Circle single)
+                {
+                    Draw.Circle(single.AbsolutePosition, single.Radius, Color.AliceBlue, 10);
+                }
+                if (Collider is ColliderList colliderList)
+                {
+                    foreach (Collider collider in colliderList.colliders)
+                    {
+                        Circle target = collider as Circle;
+                        Draw.Circle(target.AbsolutePosition, target.Radius, Color.AliceBlue, 10);
+                    }
+                }
+            }
         }
     }
 }
