@@ -109,18 +109,22 @@ This XML file uses the format of the following example:
     <Target tag="main" radius="4" xOffset="10" yOffset="-2"/>
     <Target tag="main" radius="4"/>
 
-    <Target radius="4" xOffset="10" yOffset="-2"/>
+    <Target tag="other" radius="4" xOffset="10" yOffset="-2"/>
     <!--(...)-->
 </HitboxMetadata>
 ```
 
-The entirety of the contents are inside the `HitboxMetadata` node. There can be multiple sets of `Hitboxes` and `Hurtboxes` nodes, but there can only be one `Bouncebox` and one Badeline Sidekick `Target`.
+The entirety of the contents are inside the `HitboxMetadata` node. There can be multiple sets of any of the `Hitboxes`, `Hurtboxes`, `Bouncebox`, and Badeline Sidekick `Target` nodes, or none at all.
 
-`Hitboxes` are used for collisions with solids and will hold the KillOnContact Player Collider if marked. `Hurtboxes` are used specifically for the Boss being hit and applying the correct collision logic. The `Bouncebox` is specifically only used if the Hurt Mode is set to `Head Bounce`, and is the hitbox that must be collided with to bounce. `Target` is a Circle hitbox that Badeline Sidekick will track and aim towards whenever it tries to shoot. It will collide only with Badeline Sidekick's Lasers and react accordingly.
+`Hitboxes` are used for collisions with solids and will hold the KillOnContact Player Collider if marked. `Hurtboxes` are used specifically for the Boss being hit and applying the correct collision logic. `Bouncebox` is specifically only used if the Hurt Mode is set to `Head Bounce`, and is the hitbox or hibox group that must be collided with to bounce. `Target` is a Circle hitbox or hitbox group that Badeline Sidekick will track and aim towards whenever it tries to shoot. It will collide only with Badeline Sidekick's Lasers and react accordingly. If there exists more than one Sidekick Target, Badeline will target the closest one.
 
-`Hitboxes` and `Hurtboxes` alike can have multiple hitboxes in the same set, comprised of Rectangular Hitboxes or Circle Hitboxes, marked with `Hitbox` and `Circle` respectively. Each set of `Hitboxes` or `Hurtboxes` can have a tag to differentiate them. If no tag is given, it will use the default tag "main" and will be hitbox set to be used when the Boss loads in by default. All sets are stored in a Dictionary so make sure each set, if multiple, had unique tags. `Hitboxes` and `Hurtboxes` are stored in separate Dictionaries so duplicate tags between a set of Hitboxes and a set of Hurtboxes is acceptable. Any number of sets can be defined, even none at all.
+`Hitboxes` and `Hurtboxes` alike can have multiple hitboxes in the same set, comprised of Rectangular Hitboxes or Circle Hitboxes, marked with `Hitbox` and `Circle` respectively. Each set of `Hitboxes` or `Hurtboxes` can have a tag to differentiate them. If no tag is given, it will use the default tag "main" and will be hitbox set to be used when the Boss loads in by default. Likewise, a set tagged "main" will be used initially. All sets are stored in a Dictionary so make sure each set, if multiple, had unique tags. `Hitboxes` and `Hurtboxes` are stored in separate Dictionaries so duplicate tags between a set of Hitboxes and a set of Hurtboxes is acceptable. Any number of sets can be defined, even none at all.
 
 Each Rectangular Hitbox has up to 4 attributes: `width`, `height`, `xOffset`, and `yOffset`. Each Circle Hitbox has up to 3 attributes: `radius`, `xOffset`, and `yOffset`. If a value isn't given, `width` and `height` will default to 8 (1 tile), `radius` defaults to 4 (1 tile diameter), and `xOffset` and `yOffset` will default to 0. If `Bouncebox` is not provided with `height`, it will default to 6 instead of 8.
+
+`Bouncebox` and `Target` behave somewhat similarly, but due to the fact that they are restricted to Rectangular hitboxes and Circle colliders respectively, they are formatted somewhat differently. Instead of having a Parent node to delimit a set, any number of `Bouncebox` or `Target` nodes that share the same tag (no tag is equivalent to `tag="main"`) will be considered as part of the same set. `Bouncebox` attributes are the same as those of a Rectangular Hitbox, and `Target` attributes are the same as those of a Circle Hitbox. All `Bouncebox` and `Target` hitboxes are also stored in their respective dictionaries, so shared tags between different hitbox node type is accepted.
+
+The Tags for each set of Hitboxes is useful for switching between them with designated helper functions, such as `changeBaseHitboxTo()`. Each of the 4 Hitbox Type sets (Hitbox, Hurtbox, Bouncebox, Target) has their own method, as each one is stored in separate dictionaries.
 
 If no `Hitboxes` node is provided, the Boss will use a default Hitbox of the dimensions and position of the Boss's Sprite, aligned with the sprite's position. Same applies for `Hurtboxes`. If no `Bouncebox` node is provided, it will use a default Hitbox of the same width of the Boss's Sprite, height of 6, and aligned to the top of the sprite. If no `Target` node is provided, the Boss will use a default Circle of radius 4 and offset 0. If no file is provided, the Boss will use all of the previously mentioned default hitboxes.
 
@@ -344,7 +348,7 @@ The following entries are provided in Loenn for setting up a Health System.
     - Last Safe Ground is determined by the player's own `onSafeGround` value.
     - Loading into a level will always store the spawn point position as an initial Safe Ground, just in case there's none around and one is needed.
   - Instant Death: The player will lose all Health Points they have and will die instantly, much like Vanilla would act without a Health System.
-  - Keep Old Value: The Health System will keep using whatever it's old Offscreen effect was.
+  - Keep Old Value: The Health System will keep using whatever its old Offscreen effect was.
 - Global Controller: If the Health System controller should stay as a global entity. If marked false, leaving the room or reloading the map in any way will remove it from the scene.
 - Global Health: If the player should keep the same health values even across screens. Only really applicable if Global Controller is marked true. Marking this false will refill the Player's health up to the max value when a transition is hit, whereas false will keep the same health values.
 - Activation Flag: The flag this Controller should wait for to be true to enable the Health System.
