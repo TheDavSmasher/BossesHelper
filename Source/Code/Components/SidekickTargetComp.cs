@@ -13,6 +13,18 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         private readonly string bossName;
 
+        public Collider Collider
+        {
+            get
+            {
+                return sidekickTarget.Collider;
+            }
+            set
+            {
+                sidekickTarget.Collider = value;
+            }
+        }
+
         public SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Collider target)
             : base(active: true, visible: false)
         {

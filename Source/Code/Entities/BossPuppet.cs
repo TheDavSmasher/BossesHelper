@@ -361,7 +361,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeTargetOption(string tag)
         {
-            (bossCollision as SidekickTargetComp).sidekickTarget.Collider = hitboxMetadata.targetCircles?[tag];
+            (bossCollision as SidekickTargetComp).Collider = hitboxMetadata.targetCircles?[tag];
         }
 
         private void KillOnContact(Player player)
