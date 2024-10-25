@@ -9,15 +9,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         public readonly string BossName;
 
-        private readonly float radius;
-
         public Action OnLaserCollide;
 
-        public SidekickTarget(string bossName, Vector2 position, Action onLaser, Circle collider)
+        public SidekickTarget(string bossName, Vector2 position, Action onLaser, Collider collider)
             : base(position)
         {
             base.Collider = collider;
-            this.radius = collider.Radius;
             OnLaserCollide = onLaser;
             BossName = bossName;
         }
@@ -37,7 +34,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (Collider != null)
             {
-                Draw.Circle(Center, radius, Color.AliceBlue, 10);
+                if (Collider is Circle single)
+                {
+                    Draw.Circle(Center, single.Radius, Color.AliceBlue, 10);
+                }
+                if (Collider is ColliderList colliderList)
+                {
+                    foreach (Collider collider in colliderList.colliders)
+                    {
+                        Draw.Circle(Center, (collider as Circle).Radius, Color.AliceBlue, 10);
+                    }
+                }
             }
         }
     }

@@ -137,8 +137,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
-            Dictionary<string, Hitbox> bounceHitboxes = null;
-            Dictionary<string, Circle> targetCircles = null;
+            Dictionary<string, Collider> bounceHitboxes = null;
+            Dictionary<string, Collider> targetCircles = null;
 
             string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
@@ -188,11 +188,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                         case "bouncebox":
                             bounceHitboxes ??= new();
-                            bounceHitboxes.Add(GetTagOrMain(hitboxNode), GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                            string tag = GetTagOrMain(hitboxNode);
+                            if (bounceHitboxes.ContainsKey(tag))
+                            {
+                                bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                break;
+                            }
+                            bounceHitboxes.Add(tag, GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
                             break;
                         case "target":
                             targetCircles ??= new();
-                            targetCircles.Add(GetTagOrMain(hitboxNode), GetCircleFromXml(hitboxNode.Attributes, 4f));
+                            string tag_t = GetTagOrMain(hitboxNode);
+                            if (targetCircles.ContainsKey(tag_t))
+                            {
+                                targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                break;
+                            }
+                            targetCircles.Add(tag_t, GetCircleFromXml(hitboxNode.Attributes, 4f));
                             break;
                     }
                 }

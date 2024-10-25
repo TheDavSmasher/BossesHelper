@@ -12,15 +12,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     public class BossPuppet : Actor
     {
         public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, 
-            Dictionary<string, Hitbox> bounceHitboxes, Dictionary<string, Circle> targetCircles)
+            Dictionary<string, Collider> bounceHitboxes, Dictionary<string, Collider> targetCircles)
         {
             public Dictionary<string, Collider> baseHitboxes = baseHitboxes;
 
             public Dictionary<string, Collider> baseHurtboxes = baseHurtboxes;
 
-            public Dictionary<string, Hitbox> bounceHitboxes = bounceHitboxes;
+            public Dictionary<string, Collider> bounceHitboxes = bounceHitboxes;
 
-            public Dictionary<string, Circle> targetCircles = targetCircles;
+            public Dictionary<string, Collider> targetCircles = targetCircles;
 
             public readonly bool UseDefaultHitbox => baseHitboxes == null || baseHitboxes.Count == 0;
 
@@ -37,9 +37,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Collider Hurtbox { get; private set; }
 
-        public Hitbox BounceBox { get; private set; }
+        public Collider BounceBox { get; private set; }
 
-        public Circle Target { get; private set; }
+        public Collider Target { get; private set; }
 
         private readonly string SpriteName;
 

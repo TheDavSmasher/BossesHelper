@@ -5,27 +5,36 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    internal class SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Circle target)
-        : Component(active: true, visible: false)
+    public class SidekickTargetComp : Component
     {
-        public SidekickTarget target = new(bossName, position, onLaser, target);
+        public SidekickTarget sidekickTarget;
+
+        private Action onLaser;
+
+        private readonly string bossName;
+
+        public SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Collider target)
+            : base(active: true, visible: false)
+        {
+            sidekickTarget = new(bossName, position, onLaser, target);
+        }
 
         public override void EntityAdded(Scene scene)
         {
             base.EntityAdded(scene);
-            (scene as Level).Add(target);
+            (scene as Level).Add(sidekickTarget);
         }
 
         public override void Removed(Entity entity)
         {
             base.Removed(entity);
-            target.RemoveSelf();
+            sidekickTarget.RemoveSelf();
         }
 
         public override void Update()
         {
             base.Update();
-            target.Position = Entity.Position;
+            sidekickTarget.Position = Entity.Position;
         }
     }
 }
