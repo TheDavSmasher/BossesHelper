@@ -230,6 +230,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
             }
+            //Return Sprite Scale
+            Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
+            Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
         }
 
         public void EnableCollisions()
