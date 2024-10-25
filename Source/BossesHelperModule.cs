@@ -84,7 +84,7 @@ public class BossesHelperModule : EverestModule {
         }
     }
 
-    public void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
+    public static void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
         if (self.OnSafeGround)
