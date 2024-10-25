@@ -4,6 +4,7 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -191,7 +192,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             string tag = GetTagOrMain(hitboxNode);
                             if (bounceHitboxes.ContainsKey(tag))
                             {
-                                bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                if (bounceHitboxes[tag] is ColliderList list)
+                                {
+                                    Collider[] currentColliders = list.colliders;
+                                    currentColliders.Append(GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                    bounceHitboxes[tag] = new ColliderList(currentColliders);
+                                }
+                                else
+                                {
+                                    bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                }
                                 break;
                             }
                             bounceHitboxes.Add(tag, GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
@@ -201,7 +211,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             string tag_t = GetTagOrMain(hitboxNode);
                             if (targetCircles.ContainsKey(tag_t))
                             {
-                                targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                if (targetCircles[tag_t] is ColliderList list)
+                                {
+                                    Collider[] currentColliders = list.colliders;
+                                    currentColliders.Append(GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                    targetCircles[tag_t] = new ColliderList(currentColliders);
+                                }
+                                else
+                                {
+                                    targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                }
                                 break;
                             }
                             targetCircles.Add(tag_t, GetCircleFromXml(hitboxNode.Attributes, 4f));
