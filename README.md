@@ -84,7 +84,7 @@ This XML file uses the format of the following example:
         <Hitbox width="8" height="8" xOffset="0" yOffset="0"/>
         <Circle radius="16" xOffset="0"/>
     </Hitboxes>
-    <!--Optionally more Sets-->
+    <!--Optionally more Sets (...)-->
 
     <Hurtboxes>
         <Hitbox width="4" height="4" xOffset="2" yOffset="2"/>
@@ -95,10 +95,22 @@ This XML file uses the format of the following example:
         <Hitbox width="4" height="4"/>
         <Circle radius="12" yOffset="2"/>
     </Hurtboxes>
-    <!--Optionally more Sets-->
+    <!--(...)-->
 
     <Bouncebox width="8" height="6" xOffset="0" yOffset="-16"/>
+    <Bouncebox width="8" height="6" xOffset="0"/>
+    <Bouncebox tag="main" width="8" height="6" xOffset="0"/>
+
+    <Bouncebox tag="secondary" width="8" height="6"/>
+    <Bouncebox tag="secondary" width="8" height="6" xOffset="10" yOffset="-16"/>
+    <!--(...)-->
+
     <Target radius="4" xOffset="10" yOffset="-2"/>
+    <Target tag="main" radius="4" xOffset="10" yOffset="-2"/>
+    <Target tag="main" radius="4"/>
+
+    <Target radius="4" xOffset="10" yOffset="-2"/>
+    <!--(...)-->
 </HitboxMetadata>
 ```
 
