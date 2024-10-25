@@ -4,13 +4,12 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
-using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class UserFileReader
     {
-        public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut)
+        public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut, Vector2 offset)
         {
             string path = CleanPath(filepath, ".xml");
             if (Everest.Content.TryGet(path, out ModAsset xml))
@@ -55,8 +54,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         XmlAttributeCollection attributes = pattern.Attributes;
                         if (attributes.Count > 2)
                         {
-                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
-                                GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]), GetValueOrDefaultInt(attributes["goto"])));
+                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
+                                GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
+                                GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]),
+                                GetValueOrDefaultInt(attributes["goto"]), offset));
                         }
                         else if (attributes.Count != 0)
                         {
@@ -101,7 +102,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Event files.");
+                Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
             }
         }
 
@@ -129,7 +130,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Lua file.");
+                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
                 functions = null;
             }
         }

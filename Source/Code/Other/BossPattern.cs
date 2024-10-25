@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
@@ -44,13 +44,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             RandomPattern = false;
         }
 
-        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int goTo)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int goTo, Vector2 offset)
         {
             FinishMode = FinishModes.PlayerPositionWithin;
             PrePatternMethods = prePatternMethods;
             StatePatternOrder = statePatternOrder;
 
-            PlayerPositionTrigger = new Rectangle(x, y, width, height);
+            PlayerPositionTrigger = new Rectangle(x + (int)offset.X, y + (int)offset.Y, width, height);
             GoToPattern = goTo;
             RandomPattern = false;
         }

@@ -190,7 +190,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             isAttacking = false;
             AllAttacks = new Dictionary<string, BossAttack>();
             AllEvents = new Dictionary<string, BossEvent>();
-            PopulatePatterns();
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
@@ -199,12 +198,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
             FetchSavedPhase();
-        }
-
-        private void PopulatePatterns()
-        {
-            Patterns = new();
-            UserFileReader.ReadPatternFileInto(patternsPath, ref Patterns);
         }
 
         private void FetchSavedPhase()
@@ -223,6 +216,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Added(scene);
             Level = SceneAs<Level>();
             Level.Add(Puppet);
+            PopulatePatterns((scene as Level).LevelOffset);
+        }
+
+        private void PopulatePatterns(Vector2 levelOffset)
+        {
+            Patterns = new();
+            UserFileReader.ReadPatternFileInto(patternsPath, ref Patterns, levelOffset);
         }
 
         public override void Awake(Scene scene)
