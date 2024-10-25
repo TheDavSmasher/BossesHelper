@@ -5,7 +5,7 @@ using System;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    internal class SidekickTarget : Entity
+    public class SidekickTarget : Entity
     {
         public readonly string BossName;
 
