@@ -60,24 +60,5 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             base.Update();
             Position = Entity.Position;
         }
-
-        public override void DebugRender(Camera camera)
-        {
-            if (Collider != null)
-            {
-                if (Collider is Circle single)
-                {
-                    Draw.Circle(single.AbsolutePosition, single.Radius, Color.AliceBlue, 10);
-                }
-                if (Collider is ColliderList colliderList)
-                {
-                    foreach (Collider collider in colliderList.colliders)
-                    {
-                        Circle target = collider as Circle;
-                        Draw.Circle(target.AbsolutePosition, target.Radius, Color.AliceBlue, 10);
-                    }
-                }
-            }
-        }
     }
 }
