@@ -23,6 +23,18 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             }
         }
 
+        public Vector2 Position
+        {
+            get
+            {
+                return sidekickTarget.Position;
+            }
+            set
+            {
+                sidekickTarget.Position = value;
+            }
+        }
+
         public SidekickTarget(Action onLaser, string bossName, Vector2 position, Collider target)
             : base(active: true, visible: false)
         {
@@ -46,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public override void Update()
         {
             base.Update();
-            sidekickTarget.Position = Entity.Position;
+            Position = Entity.Position;
         }
 
         public override void DebugRender(Camera camera)
