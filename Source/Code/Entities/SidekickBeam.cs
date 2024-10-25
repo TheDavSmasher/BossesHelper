@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Monocle;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -8,8 +11,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [Tracked(false)]
     internal class SidekickBeam : Entity
     {
-        private SidekickTarget Target;
-
         public const float ChargeTime = 1.4f;
 
         public const float FollowTime = 0.9f;
@@ -60,14 +61,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             beamSprite.Play("charge");
             sideFadeAlpha = 0f;
             beamAlpha = 0f;
-            int num = ((target.Y <= sidekick.Y + 16f) ? 1 : (-1));
-            if (target.X >= sidekick.X)
+            Vector2 center = ClosestCollider(target.Collider, sidekick.BeamOrigin);
+            int num = ((center.Y <= sidekick.Y + 16f) ? 1 : (-1));
+            if (center.X >= sidekick.X)
             {
                 num *= -1;
             }
-            angle = Calc.Angle(sidekick.BeamOrigin, target.Center);
-            Vector2 to = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), target.Center);
-            to += (target.Center - sidekick.BeamOrigin).Perpendicular().SafeNormalize(100f) * num;
+            angle = Calc.Angle(sidekick.BeamOrigin, center);
+            Vector2 to = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), center);
+            to += (center - sidekick.BeamOrigin).Perpendicular().SafeNormalize(100f) * num;
             angle = Calc.Angle(sidekick.BeamOrigin, to);
             return this;
         }
@@ -76,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Update();
             Level level = SceneAs<Level>();
-            Target = level.Tracker.GetNearestEntity<SidekickTarget>(Center);
+            SidekickTarget Target = level.Tracker.GetNearestEntity<SidekickTarget>(Center);
             beamAlpha = Calc.Approach(beamAlpha, 1f, 2f * Engine.DeltaTime);
             if (chargeTimer > 0f)
             {
@@ -85,10 +87,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     followTimer -= Engine.DeltaTime;
                     chargeTimer -= Engine.DeltaTime;
-                    if (followTimer > 0f && Target.Center != sidekick.BeamOrigin)
+                    Vector2 center = ClosestCollider(Target.Collider, sidekick.BeamOrigin);
+                    if (followTimer > 0f && center != sidekick.BeamOrigin)
                     {
-                        Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), Target.Center);
-                        Vector2 center = Target.Center;
+                        Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), center);
                         val = Calc.Approach(val, center, 200f * Engine.DeltaTime);
                         angle = Calc.Angle(sidekick.BeamOrigin, val);
                     }
@@ -118,6 +120,31 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     TargetCollideCheck();
                 }
             }
+        }
+
+        private Vector2 ClosestCollider(Collider source, Vector2 origin)
+        {
+            if (source is ColliderList list)
+            {
+                List<Collider> colliders = new(list.colliders);
+                List<float> distances = new();
+                foreach (Collider collider in colliders)
+                {
+                    distances.Add(DistanceBetween(sidekick.BeamOrigin, collider.AbsolutePosition));
+                }
+                return colliders[distances.IndexOf(distances.Min())].AbsolutePosition;
+            }
+            else
+            {
+                return source.AbsolutePosition;
+            }
+        }
+
+        private float DistanceBetween(Vector2 start, Vector2 end)
+        {
+            var dx = start.X - end.X;
+            var dy = start.X - end.Y;
+            return (float) Math.Sqrt(dx * dx + dy * dy);
         }
 
         private void DissipateParticles()
