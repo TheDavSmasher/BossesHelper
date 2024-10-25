@@ -5,9 +5,9 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    public class SidekickTargetComp : Component
+    public class SidekickTarget : Component
     {
-        public SidekickTarget sidekickTarget;
+        private SidekickTargetCollider sidekickTarget;
 
         private Action onLaser;
 
@@ -25,7 +25,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             }
         }
 
-        public SidekickTargetComp(Action onLaser, string bossName, Vector2 position, Collider target)
+        public SidekickTarget(Action onLaser, string bossName, Vector2 position, Collider target)
             : base(active: true, visible: false)
         {
             sidekickTarget = new(bossName, position, onLaser, target);

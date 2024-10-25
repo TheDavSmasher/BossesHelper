@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             ActiveSprite.Play("attack2Begin", true);
             yield return 0.1f;
             Level level = SceneAs<Level>();
-            SidekickTarget target = level.Tracker.GetNearestEntity<SidekickTarget>(BeamOrigin);
+            SidekickTargetCollider target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(BeamOrigin);
             if (target != null)
             {
                 level.CreateAndAdd<SidekickBeam>().Init(this, target);
@@ -146,7 +146,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Level level = SceneAs<Level>();
-            if (level.Tracker.GetEntities<SidekickTarget>().Count == 0)
+            if (level.Tracker.GetEntities<SidekickTargetCollider>().Count == 0)
             {
                 RemoveSelf();
                 return;

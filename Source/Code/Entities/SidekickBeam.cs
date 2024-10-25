@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Depth = -1000000;
         }
 
-        public SidekickBeam Init(BadelineSidekick sidekick, SidekickTarget target)
+        public SidekickBeam Init(BadelineSidekick sidekick, SidekickTargetCollider target)
         {
             this.sidekick = sidekick;
             chargeTimer = 1.4f;
@@ -78,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Update();
             Level level = SceneAs<Level>();
-            SidekickTarget Target = level.Tracker.GetNearestEntity<SidekickTarget>(Center);
+            SidekickTargetCollider Target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(Center);
             beamAlpha = Calc.Approach(beamAlpha, 1f, 2f * Engine.DeltaTime);
             if (chargeTimer > 0f)
             {
@@ -181,9 +181,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Vector2 vector = sidekick.BeamOrigin + Calc.AngleToVector(angle, 12f);
             Vector2 vector2 = sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f);
             Vector2 vector3 = (vector2 - vector).Perpendicular().SafeNormalize(2f);
-            SidekickTarget target = base.Scene.CollideFirst<SidekickTarget>(vector + vector3, vector2 + vector3);
-            target ??= base.Scene.CollideFirst<SidekickTarget>(vector - vector3, vector2 - vector3);
-            target ??= base.Scene.CollideFirst<SidekickTarget>(vector, vector2);
+            SidekickTargetCollider target = base.Scene.CollideFirst<SidekickTargetCollider>(vector + vector3, vector2 + vector3);
+            target ??= base.Scene.CollideFirst<SidekickTargetCollider>(vector - vector3, vector2 - vector3);
+            target ??= base.Scene.CollideFirst<SidekickTargetCollider>(vector, vector2);
             target?.OnLaser();
         }
 

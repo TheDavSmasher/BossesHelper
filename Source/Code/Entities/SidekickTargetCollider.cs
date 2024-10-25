@@ -5,13 +5,13 @@ using System;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    public class SidekickTarget : Entity
+    internal class SidekickTargetCollider : Entity
     {
         public readonly string BossName;
 
         public Action OnLaserCollide;
 
-        public SidekickTarget(string bossName, Vector2 position, Action onLaser, Collider collider)
+        public SidekickTargetCollider(string bossName, Vector2 position, Action onLaser, Collider collider)
             : base(position)
         {
             base.Collider = collider;

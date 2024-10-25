@@ -154,11 +154,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 case HurtModes.SidekickAttack:
                     if (hitboxMetadata.UseDefaultTarget)
                     {
-                        Add(bossCollision = new SidekickTargetComp(OnSidekickLaser, SpriteName, Position,
+                        Add(bossCollision = new SidekickTarget(OnSidekickLaser, SpriteName, Position,
                             new Circle(4f)));
                         break;
                     }
-                    Add(bossCollision = new SidekickTargetComp(OnSidekickLaser, SpriteName, Position,
+                    Add(bossCollision = new SidekickTarget(OnSidekickLaser, SpriteName, Position,
                         GetMainFromDictionary(hitboxMetadata.targetCircles)));
                     break;
                 case HurtModes.PlayerDash:
@@ -361,7 +361,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeTargetOption(string tag)
         {
-            (bossCollision as SidekickTargetComp).Collider = hitboxMetadata.targetCircles?[tag];
+            (bossCollision as SidekickTarget).Collider = hitboxMetadata.targetCircles?[tag];
         }
 
         private void KillOnContact(Player player)
