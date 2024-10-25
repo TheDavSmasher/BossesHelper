@@ -194,9 +194,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             {
                                 if (bounceHitboxes[tag] is ColliderList list)
                                 {
-                                    Collider[] currentColliders = list.colliders;
-                                    currentColliders.Append(GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
-                                    bounceHitboxes[tag] = new ColliderList(currentColliders);
+                                    List<Collider> currentColliders = new(list.colliders);
+                                    currentColliders.Add(GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                    bounceHitboxes[tag] = new ColliderList(currentColliders.ToArray());
                                 }
                                 else
                                 {
@@ -213,9 +213,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             {
                                 if (targetCircles[tag_t] is ColliderList list)
                                 {
-                                    Collider[] currentColliders = list.colliders;
-                                    currentColliders.Append(GetCircleFromXml(hitboxNode.Attributes, 4f));
-                                    targetCircles[tag_t] = new ColliderList(currentColliders);
+                                    List<Collider> currentColliders = new(list.colliders);
+                                    currentColliders.Add(GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                    targetCircles[tag_t] = new ColliderList(currentColliders.ToArray());
                                 }
                                 else
                                 {
