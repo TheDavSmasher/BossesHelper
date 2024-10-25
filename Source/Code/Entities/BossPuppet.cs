@@ -35,11 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private HitboxMedatata hitboxMetadata;
 
-        public Collider Hurtbox { get; private set; }
-
-        public Collider BounceBox { get; private set; }
-
-        public Collider Target { get; private set; }
+        private Component bossCollision;
 
         private readonly string SpriteName;
 
@@ -129,75 +125,61 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void SetHitboxesAndColliders()
         {
             UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
-            //Hitbox
+
             if (hitboxMetadata.UseDefaultHitbox)
             {
                 base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
-            else if (hitboxMetadata.baseHitboxes.Count > 1)
-            {
-                base.Collider = hitboxMetadata.baseHitboxes["main"];
-            }
             else
             {
-                base.Collider = hitboxMetadata.baseHitboxes.Values.First();
+                base.Collider = GetMainFromDictionary(hitboxMetadata.baseHitboxes);
             }
-            //Hurtbox
-            if (hitboxMetadata.UseDefaultHurtbox)
-            {
-                Hurtbox = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
-            }
-            else if (hitboxMetadata.baseHurtboxes.Count > 1)
-            {
-                Hurtbox = hitboxMetadata.baseHurtboxes["main"];
-            }
-            else
-            {
-                Hurtbox = hitboxMetadata.baseHurtboxes.Values.First();
-            }
-            //Bouncebox and Target
+
+            Collider Hurtbox = hitboxMetadata.UseDefaultHurtbox ?
+                new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
+                : GetMainFromDictionary(hitboxMetadata.baseHurtboxes);
+            
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
                     if (hitboxMetadata.UseDefaultBounce)
                     {
-                        BounceBox = new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+                        Add(bossCollision = new PlayerCollider(OnPlayerBounce,
+                            new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)));
+                        break;
                     }
-                    else if (hitboxMetadata.bounceHitboxes.Count > 1)
-                    {
-                        BounceBox = hitboxMetadata.bounceHitboxes["main"];
-                    }
-                    else
-                    {
-                        BounceBox = hitboxMetadata.bounceHitboxes.Values.First();
-                    }
-                    Add(new PlayerCollider(OnPlayerBounce, BounceBox));
+                    Add(bossCollision = new PlayerCollider(OnPlayerBounce,
+                        GetMainFromDictionary(hitboxMetadata.bounceHitboxes)));
                     break;
                 case HurtModes.SidekickAttack:
                     if (hitboxMetadata.UseDefaultTarget)
                     {
-                        Target = new Circle(4f);
+                        Add(bossCollision = new SidekickTargetComp(OnSidekickLaser, SpriteName, Position,
+                            new Circle(4f)));
+                        break;
                     }
-                    else if (hitboxMetadata.targetCircles.Count > 1)
-                    {
-                        Target = hitboxMetadata.targetCircles["main"];
-                    }
-                    else
-                    {
-                        Target = hitboxMetadata.targetCircles.Values.First();
-                    }
-                    Add(new SidekickTargetComp(OnSidekickLaser, SpriteName, Position, Target));
+                    Add(bossCollision = new SidekickTargetComp(OnSidekickLaser, SpriteName, Position,
+                        GetMainFromDictionary(hitboxMetadata.targetCircles)));
                     break;
                 case HurtModes.PlayerDash:
-                    Add(new PlayerCollider(OnPlayerDash, Hurtbox));
+                    Add(bossCollision = new PlayerCollider(OnPlayerDash, Hurtbox));
                     break;
                 case HurtModes.PlayerContact:
-                    Add(new PlayerCollider(OnPlayerContact, Hurtbox));
+                    Add(bossCollision = new PlayerCollider(OnPlayerContact, Hurtbox));
                     break;
                 default: //Custom
                     //Custom depends on Setup.lua's code, does nothing by default
                     break;
             }
+        }
+
+        private Collider GetMainFromDictionary(Dictionary<string, Collider> dictionary)
+        {
+            if (dictionary.Count > 1)
+            {
+                return dictionary["main"];
+            }
+            return dictionary.Values.First();
         }
 
         public override void Added(Scene scene)
@@ -369,17 +351,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeHurtboxOption(string tag)
         {
-            Hurtbox = hitboxMetadata.baseHurtboxes?[tag];
+            (bossCollision as PlayerCollider).Collider = hitboxMetadata.baseHurtboxes?[tag];
         }
 
         public void ChangeBounceboxOption(string tag)
         {
-            BounceBox = hitboxMetadata.bounceHitboxes?[tag];
+            (bossCollision as PlayerCollider).Collider = hitboxMetadata.bounceHitboxes?[tag];
         }
 
         public void ChangeTargetOption(string tag)
         {
-            Target = hitboxMetadata.targetCircles?[tag];
+            (bossCollision as SidekickTargetComp).sidekickTarget.Collider = hitboxMetadata.targetCircles?[tag];
         }
 
         private void KillOnContact(Player player)
