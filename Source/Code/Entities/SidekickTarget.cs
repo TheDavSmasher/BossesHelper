@@ -42,7 +42,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     foreach (Collider collider in colliderList.colliders)
                     {
-                        Draw.Circle(Center, (collider as Circle).Radius, Color.AliceBlue, 10);
+                        Circle target = collider as Circle;
+                        Draw.Circle(target.Center, target.Radius, Color.AliceBlue, 10);
                     }
                 }
             }
