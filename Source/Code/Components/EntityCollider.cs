@@ -6,17 +6,14 @@ using System.Linq;
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
     [Tracked(false)]
-    public class EntityCollider<T> : Component where T : Entity
+    public class EntityCollider<T> : EntityColliderComponent where T : Entity
     {
         public Action<T> OnEntityAction;
 
-        public Collider Collider;
-
         public EntityCollider(Action<T> onEntity, Collider collider = null)
-            : base(active: true, visible: false)
+            : base(collider)
         {
             OnEntityAction = onEntity;
-            Collider = collider;
         }
 
         public override void Update()
