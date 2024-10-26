@@ -11,10 +11,15 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public Action<T> OnEntityAction;
 
-        public EntityCollider(LuaFunction onEntityLua, Collider collider = null)
+        public EntityCollider(Action<T> onEntityAction, Collider collider = null)
             : base(collider)
         {
-            OnEntityAction = (T entity) => onEntityLua.Call(entity);
+            OnEntityAction = onEntityAction;
+        }
+
+        public EntityCollider(LuaFunction onEntityLua, Collider collider = null)
+            : this((T entity) => onEntityLua.Call(entity), collider)
+        {
         }
 
         public override void Update()
