@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -139,6 +138,31 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
         {
             puppet.Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(func)));
+        }
+
+        public static void AddEntityColliderTo(Entity parent, object baseEntity, LuaFunction func, Collider collider = null)
+        {
+            Type baseType;
+            if (baseEntity is string val)
+            {
+            baseType = LuaMethodWrappers.GetTypeFromString(val);
+            }
+            else if (baseEntity is Entity entity)
+            {
+                baseType = entity.GetType();
+            }
+            else
+            {
+                return;
+            }
+
+            Action<Entity> action = (Entity entity) => func.Call(entity);
+
+            Type componentType = typeof(EntityCollider<>).MakeGenericType(baseType);
+            object[] componentArgs = { action, collider };
+            object entityCollider = Activator.CreateInstance(componentType, componentArgs);
+
+            parent.Add(entityCollider as EntityColliderComponent);
         }
     }
 }
