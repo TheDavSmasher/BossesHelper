@@ -935,6 +935,7 @@ end
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 
 --- Attack Delegates
+--- The following Delegates will only work on Attack files.
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
 ---@param entity Entity The entity to add
@@ -972,7 +973,9 @@ function helpers.destroyAll()
 end
 --End Attack Delegates
 
---Interrupt Delegates
+
+--- Interrupt Delegates
+--- The following Delegates will only on the Interruption functions, such as onHit()
 
 ---Get the Boss' current health value
 ---@return number health The Boss's current health value
@@ -1034,7 +1037,9 @@ function helpers.removeBoss(permanent)
 end
 --End Interrupt Delegates
 
+
 --- Additional, non-delegate helper shorthand methods
+--- These can be used anywhere within the Mod.
 
 --- Enable the Boss' Collision checks, including collisions with solids.
 function helpers.enableCollisions()
