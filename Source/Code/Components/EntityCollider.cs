@@ -1,4 +1,5 @@
 ﻿using Monocle;
+using NLua;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public Action<T> OnEntityAction;
 
-        public EntityCollider(Action<T> onEntity, Collider collider = null)
+        public EntityCollider(LuaFunction onEntityLua, Collider collider = null)
             : base(collider)
         {
-            OnEntityAction = onEntity;
+            OnEntityAction = (T entity) => onEntityLua.Call(entity);
         }
 
         public override void Update()

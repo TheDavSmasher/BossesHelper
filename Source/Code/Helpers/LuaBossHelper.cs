@@ -156,10 +156,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 return;
             }
 
-            Action<Entity> action = (Entity entity) => func.Call(entity);
-
             Type componentType = typeof(EntityCollider<>).MakeGenericType(baseType);
-            object[] componentArgs = { action, collider };
+            object[] componentArgs = { func, collider };
             object entityCollider = Activator.CreateInstance(componentType, componentArgs);
 
             parent.Add(entityCollider as EntityColliderComponent);
