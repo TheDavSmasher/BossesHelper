@@ -320,6 +320,12 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - float xScale: The Entity's Sprite's X scale. Defaults to 1.
     - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
+- Entity Collider: A Generic Typed Component that can be used to enable/track collisions between the parent entity and the Entity type specified and execute a function.
+  - In order to add one to an entity within Lua, call the `addEntityColliderTo()` helper function.
+    - The second parameter, the one used to define the type of the Entity it should collide with, like Springs or Spinners, can be either an instance of the entity itself or a string with the absolute path to it, including namespace, but still relative to the `Celeste.` namespace.
+      - For Springs, for example, you can provide either a Spring object or the "Spring" name.
+      - For Maddie Helping Hand MoreCustomNPC, for example, you can also provide an instance or the "Mod.MaxHelpingHand.Entities.MoreCustomNPC" name.
+  - This Component is also created such that it can be used by anything.
 
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
