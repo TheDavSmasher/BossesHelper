@@ -145,7 +145,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Type baseType;
             if (baseEntity is string val)
             {
-            baseType = LuaMethodWrappers.GetTypeFromString(val);
+                baseType = LuaMethodWrappers.GetTypeFromString(val);
             }
             else if (baseEntity is Entity entity)
             {
