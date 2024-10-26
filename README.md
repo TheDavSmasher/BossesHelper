@@ -387,6 +387,7 @@ Alongside the Controller, the Health System comes with three triggers.
   - If a specific value is not provided, the pre-exisiting value for that entry will be kept, similar to adding another Health System manually.
 - Enable Health Trigger: Can be used to toggle the Enabled state of the existing Health System.
 - Health Bar Visible Trigger: Can be used to toggle the Visible state of all the icons of the Health Bar.
+- Recover Health Trigger: Can be used for a quick simple way to recover some hit points for the player. `Only Once` will remove the trigger once entered, `Permanent` will make it so that the trigger doesn't load again
 
 ## Bosses Helper API
 

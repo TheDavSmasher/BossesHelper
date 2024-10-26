@@ -51,3 +51,7 @@ triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerStagge
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.name.playerBlink=PLayer Blink On Damage
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.onlyOnce=If this trigger should not be loaded again once activated.
+
+triggers.BossesHelper/RecoverHealthTrigger.attributes.description.healAmount=The number of hit points the player will recover.
+triggers.BossesHelper/RecoverHealthTrigger.attributes.description.onlyOnce=If the trigger should remove itself after being used.
+triggers.BossesHelper/RecoverHealthTrigger.attributes.description.permanent=If the trigger should not load again once used, even on respawn.
