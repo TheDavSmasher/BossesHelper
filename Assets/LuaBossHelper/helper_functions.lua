@@ -1288,7 +1288,7 @@ end
 ---@param type string|Entity The entity type to collide with. Accepts an entity of the type desired or the full name of the class as a string.
 ---@param func fun(entity) The function that will execute when the collision check returns true.
 ---@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
-function helpers.AddEntityColliderTo(parent, type, func, collider)
+function helpers.addEntityColliderTo(parent, type, func, collider)
     celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddEntityColliderTo(parent, type, func, collider)
 end
 
