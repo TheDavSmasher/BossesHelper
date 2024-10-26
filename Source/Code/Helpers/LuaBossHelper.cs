@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
 using NLua;
 using System;
@@ -6,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -79,6 +81,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
             yield return null;
+        }
+
+        public static Action LuaFunctionToAction(LuaFunction func)
+        {
+            return () => func.Call();
+        }
+
+        public static Action<T> LuaFunctionToActionEntity<T>(LuaFunction func) where T : Entity
+        {
+            return (entity) => func.Call(entity);
         }
 
         public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
