@@ -278,8 +278,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void SetSpeedDuring(float x, float y, float time)
         {
-            Add(new Coroutine(KeepXSpeed(x, time)));
-            Add(new Coroutine(KeepYSpeed(y, time)));
+            SetXSpeedDuring(x, time);
+            SetYSpeedDuring(y, time);
         }
 
         private IEnumerator KeepXSpeed(float speed, float time)
