@@ -388,6 +388,16 @@ Alongside the Controller, the Health System comes with three triggers.
 - Enable Health Trigger: Can be used to toggle the Enabled state of the existing Health System.
 - Health Bar Visible Trigger: Can be used to toggle the Visible state of all the icons of the Health Bar.
 
+## Bosses Helper API
+
+This Helper includes a few things exported with ModInterop, namely:
+
+- **GetEntityColliderComponent**: Returns an Entity Collider Component ready to be used by any entity with any other entity Type.
+- **GetEntityChainComponent**: Returns an Entity Chain Component to keep two entities's positions tied together.
+- **GetCurrentPlayerHealth**: Useful to know if a Health System is active on Scene and if so, what the Player's health value is at. Returns -1 if no Health System is active.
+
+The Mod Import Name is `"BossesHelper"`.
+
 ## Disclaimer
 
 Currently I have referenced and used code from Ricky06's Conqueror's Peak, Cruor's LuaCutscenes, and IsaGoodFriend's BadelineFollower, all of which either have their code under license or have explicitly allowed me to do code reference and copying. All other code is original or from Vanilla Celeste.
