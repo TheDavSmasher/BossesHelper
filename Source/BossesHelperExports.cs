@@ -1,6 +1,7 @@
 ﻿using System;
 using Monocle;
 using MonoMod.ModInterop;
+using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Components;
 
 namespace Celeste.Mod.BossesHelper
@@ -18,11 +19,21 @@ namespace Celeste.Mod.BossesHelper
             return new EntityChain(entity, chain);
         }
 
-        public static int GetPlayerCurrentHealth()
+        public static int GetCurrentPlayerHealth()
         {
             if (BossesHelperModule.Session.mapDamageController != null)
                 return BossesHelperModule.Session.mapDamageController.health;
             return -1;
+        }
+
+        public static void RecoverPlayerHealth(int amount)
+        {
+            BossesHelperModule.Session.mapDamageController?.RecoverHealth(amount);
+        }
+
+        public static void MakePlayerTakeDamage(Vector2 from, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
+        {
+            BossesHelperModule.PlayerTakesDamage(from, amount, silent, stagger, ignoreCooldown);
         }
     }
 }

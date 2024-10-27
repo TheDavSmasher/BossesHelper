@@ -396,6 +396,8 @@ This Helper includes a few things exported with ModInterop, namely:
 - **GetEntityColliderComponent**: Returns an Entity Collider Component ready to be used by any entity with any other entity Type.
 - **GetEntityChainComponent**: Returns an Entity Chain Component to keep two entities's positions tied together.
 - **GetCurrentPlayerHealth**: Useful to know if a Health System is active on Scene and if so, what the Player's health value is at. Returns -1 if no Health System is active.
+- **RecoverPlayerHealth**: Makes the player recover health points as many as the value given. This can go over the PLayer's default health value.
+- **MakePlayerTakeDamage**: Useful to extend utility from the Health System so as to set custom parameters to taking damage.
 
 The Mod Import Name is `"BossesHelper"`.
 
