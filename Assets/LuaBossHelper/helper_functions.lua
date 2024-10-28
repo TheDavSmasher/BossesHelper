@@ -1263,13 +1263,6 @@ function helpers.speedYTweenTo(target, time, easer, invert)
     puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
 end
 
----Returns the Boss' node at the given index.
----@param index number The node index to return. Defaults to 0, which is the base position.
----@return Vector2 nodePosition The vector2 position of the returned node. Index 0 is the Boss's defined position.
-function helpers.getNodeAtIndex(index)
-    return puppet:GetNodeAtIndex(index or 0)
-end
-
 ---Add a function that will run in the background.
 ---@param func function The function that will run in the background. Will run to completion or loop as defined.
 function helpers.addConstantBackgroundCoroutine(func)

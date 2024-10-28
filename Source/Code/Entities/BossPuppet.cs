@@ -56,8 +56,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HurtModes HurtMode;
 
-        private readonly Vector2[] nodes;
-
         private BossFunctions bossFunctions;
 
         private readonly float bossHitCooldownBase;
@@ -96,7 +94,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
-            nodes = data.NodesWithPosition(Vector2.Zero);
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             if (!string.IsNullOrEmpty(SpriteName))
             {
@@ -450,11 +447,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.Y = start + (target - start) * t.Eased;
             };
             Add(tween);
-        }
-
-        public Vector2 GetNodeAtIndex(int index)
-        {
-            return nodes[index];
         }
     }
 }
