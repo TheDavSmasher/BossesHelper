@@ -12,7 +12,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public Action<T> OnEntityAction;
 
         public EntityCollider(Action<T> onEntityAction, Collider collider = null)
-            : base(collider)
+            : base(typeof(T).Name, collider)
         {
             OnEntityAction = onEntityAction;
         }
