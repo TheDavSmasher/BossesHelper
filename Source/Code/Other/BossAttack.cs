@@ -15,11 +15,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossController.AttackDelegates Delegates { get; private set; }
 
-        private void LoadAttacks(string filename, Player player, BossPuppet puppet)
+        private void LoadAttacks(string filename, string bossId, Player player, BossPuppet puppet)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
+                { "bossID", bossId },
                 { "puppet", puppet },
                 { "bossAttack", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
@@ -31,11 +32,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossAttack(string filepath, BossController.AttackDelegates allDelegates)
+        public BossAttack(string filepath, string bossId, BossController.AttackDelegates allDelegates)
         {
             this.filepath = filepath;
             Delegates = allDelegates;
-            LoadAttacks(filepath, allDelegates.playerRef, allDelegates.puppetRef);
+            LoadAttacks(filepath, bossId, allDelegates.playerRef, allDelegates.puppetRef);
         }
 
         public IEnumerator Coroutine()

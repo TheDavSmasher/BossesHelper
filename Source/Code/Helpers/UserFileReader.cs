@@ -91,13 +91,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source.LocalName.ToLower().Equals("event");
         }
 
-        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, Player playerRef, BossPuppet puppetRef)
+        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId, Player playerRef, BossPuppet puppetRef)
         {
             if (Everest.Content.TryGet(path, out ModAsset eventFiles))
             {
                 foreach (ModAsset eventFile in eventFiles.Children)
                 {
-                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1), new BossEvent(eventFile.PathVirtual, playerRef, puppetRef));
+                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1), new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef));
                 }
             }
             else
@@ -106,13 +106,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, BossController.AttackDelegates delegates)
+        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, string bossId, BossController.AttackDelegates delegates)
         {
             if (Everest.Content.TryGet(path, out ModAsset attackFiles))
             {
                 foreach (ModAsset attackFile in attackFiles.Children)
                 {
-                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, delegates));
+                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
                 }
             }
             else
@@ -121,12 +121,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, BossController.OnHitDelegates delegates)
+        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, BossController.OnHitDelegates delegates)
         {
             string path = CleanPath(filepath, ".lua");
             if (Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
-                functions = new BossFunctions(onHitFile.PathVirtual, delegates);
+                functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
             }
             else
             {

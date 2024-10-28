@@ -19,11 +19,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private LuaFunction endMethod;
 
-        private void LoadCutscene(string filename, Player player, BossPuppet puppet)
+        private void LoadCutscene(string filename, string bossId, Player player, BossPuppet puppet)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
+                { "bossID", bossId },
                 { "puppet", puppet },
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
@@ -36,18 +37,18 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossEvent(string filepath, Player player, BossPuppet puppet, bool fadeInOnSkip = true, bool endingChapterAfter = false)
+        public BossEvent(string filepath, string bossId, Player player, BossPuppet puppet, bool fadeInOnSkip = true, bool endingChapterAfter = false)
             : base(fadeInOnSkip, endingChapterAfter)
         {
             this.filepath = filepath;
             finished = false;
-            LoadCutscene(filepath, player, puppet);
+            LoadCutscene(filepath, bossId, player, puppet);
         }
 
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene", null, null);
+            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene", null, null, null);
             Coroutine coroutine = new(bossEvent.Coroutine(null));
             try
             {

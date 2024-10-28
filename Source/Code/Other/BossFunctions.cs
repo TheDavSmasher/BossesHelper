@@ -24,11 +24,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossController.OnHitDelegates Delegates { get; private set; }
 
-        private void LoadMethods(string filename, Player player, BossPuppet puppet)
+        private void LoadMethods(string filename, string bossId, Player player, BossPuppet puppet)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
+                { "bossID", bossId },
                 { "puppet", puppet },
                 { "boss", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
@@ -45,11 +46,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossFunctions(string filepath, BossController.OnHitDelegates delegates)
+        public BossFunctions(string filepath, string bossId, BossController.OnHitDelegates delegates)
         {
             this.filepath = filepath;
             Delegates = delegates;
-            LoadMethods(filepath, delegates.playerRef, delegates.puppetRef);
+            LoadMethods(filepath, bossId, delegates.playerRef, delegates.puppetRef);
         }
 
         public IEnumerator OnContactCoroutine()

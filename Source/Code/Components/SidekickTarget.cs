@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         private readonly SidekickTargetCollider sidekickTarget;
 
-        public readonly string BossName;
+        public readonly string BossID;
 
         public Collider Collider
         {
@@ -35,10 +35,10 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             }
         }
 
-        public SidekickTarget(Action onLaser, string bossName, Vector2 position, Collider target)
+        public SidekickTarget(Action onLaser, string bossId, Vector2 position, Collider target)
             : base(active: true, visible: false)
         {
-            BossName = bossName;
+            BossID = bossId;
             sidekickTarget = new(position, onLaser, target);
         }
 

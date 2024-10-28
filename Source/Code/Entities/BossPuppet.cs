@@ -37,8 +37,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Component bossCollision;
 
-        private readonly string SpriteName;
-
         private readonly bool DynamicFacing;
 
         private readonly bool MirrorSprite;
@@ -88,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SpriteName = data.Attr("bossSprite");
+            string SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
@@ -104,7 +102,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
-                SetHitboxesAndColliders();
+                SetHitboxesAndColliders(data.Attr("bossID"));
                 onCollideH = OnCollideH;
                 onCollideV = OnCollideV;
                 facing = MirrorSprite ? -1 : 1;
@@ -122,7 +120,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossFunctions = functions;
         }
 
-        private void SetHitboxesAndColliders()
+        private void SetHitboxesAndColliders(string bossID)
         {
             UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
 
@@ -154,11 +152,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 case HurtModes.SidekickAttack:
                     if (hitboxMetadata.UseDefaultTarget)
                     {
-                        Add(bossCollision = new SidekickTarget(OnSidekickLaser, SpriteName, Position,
+                        Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
                             new Circle(4f)));
                         break;
                     }
-                    Add(bossCollision = new SidekickTarget(OnSidekickLaser, SpriteName, Position,
+                    Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
                         GetMainFromDictionary(hitboxMetadata.targetCircles)));
                     break;
                 case HurtModes.PlayerDash:

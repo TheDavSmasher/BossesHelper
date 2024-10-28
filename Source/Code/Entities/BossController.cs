@@ -141,6 +141,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private EntityID id;
 
+        private readonly string BossID;
+
         public Level Level;
 
         public readonly BossPuppet Puppet;
@@ -181,6 +183,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             : base(data.Position + offset)
         {
             this.id = id;
+            BossID = data.Attr("bossID");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             attacksPath = data.Attr("attacksPath");
@@ -234,10 +237,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndFunctions(Player player)
         {
-            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks,
+            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks, BossID,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, player, Puppet);
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions,
+            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, BossID, player, Puppet);
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd,
                 InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
             Puppet.SetPuppetFunctions(bossReactions);
