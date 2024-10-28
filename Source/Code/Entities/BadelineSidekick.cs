@@ -8,7 +8,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [Tracked]
     internal class BadelineSidekick : Entity
     {
-        public Follower Follower { get; private set; }
+        private readonly Follower Follower;
 
         private float oldX;
 
