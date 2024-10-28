@@ -16,6 +16,7 @@ local offscreenModeOpts = {
 
 healthSystemManager.name = "BossesHelper/HealthSystemManager"
 healthSystemManager.depth = 0
+healthSystemManager.texture = "loenn/BossesHelper/HealthController"
 healthSystemManager.nodeLimits = {0, 0}
 healthSystemManager.fieldInformation = {
     healthIconSeparation = {
