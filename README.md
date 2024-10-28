@@ -29,6 +29,8 @@ The Boss Controller Entity has multiple entries that will enable the Boss to wor
 
 These entries are all related to the basic appeareance of the Boss and its interaction with the game engine, incliding gravity and the Player.
 
+- Boss ID: A unique ID to identify a specific Boss instance from Lua.
+  - While not enforced to be unique, it's useful if multiple files are used by multiple Boss instances as to difference between them.
 - Boss Sprite: The name of the sprite the boss will use. Works the same way as you'd set the sprite of a custom NPC.
 - Boss Health Max: This is the amount of health points the Boss will start with. Not all Bosses have to work on Health, however.
 - Hurt Mode: This will determine how the Player can collide with the Boss to trigger a user-defined method to declare what happens, but it's usually lowering the health and start attacking again.
@@ -229,7 +231,7 @@ function onBegin()
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `bossAttack`, as well as access to all helper functions.
+An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `bossAttack`, as well as access to all regular helper functions.
 
 ### Events
 
@@ -245,7 +247,7 @@ function onEnd(level, wasSkipped) --optional
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor. Events, like Cutscenes, are Skippable by default.
+An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all regular helper functions. An `onEnd(level, wasSkipped)` function is not required, but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor. Events, like Cutscenes, are Skippable by default.
 
 ### Functions
 
@@ -285,7 +287,7 @@ These collision functions are essential to fight logic, as its where the user mu
 
 The `setup()` function will be called during load time, before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary. If the Hurt Mode was set to Custom, it's highly encouraged to add this file, since otherwise the Boss cannot be hurt. This function will still be called regardless of Hurt Mode, though.
 
-All function in this file are provided with a reference to the `player`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
+All function in this file are provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all regular helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
 ## Helper Objects
 

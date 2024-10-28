@@ -42,6 +42,7 @@ bossMasterController.placements = {
         eventsPath = "",
         functionsPath = "",
         patternsPath = "",
+        bossID = "",
         bossSprite = "",
         bossHealthMax = 3,
         hurtMode = "playerContact",
