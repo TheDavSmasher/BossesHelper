@@ -10,9 +10,10 @@ local hurtModeOpts = {
 
 bossMasterController.name = "BossesHelper/BossController"
 bossMasterController.depth = 0
-bossMasterController.justification = {0.5, 1.0}
-bossMasterController.nodeLineRenderType = "line"
-bossMasterController.nodeLimits = {0, -1}
+bossMasterController.texture = "loenn/BossesHelper/BossController"
+--bossMasterController.justification = {0.5, 1.0}
+--bossMasterController.nodeLineRenderType = "line"
+bossMasterController.nodeLimits = {0, 0}
 bossMasterController.fieldInformation = {
     bossHealthMax = {
         fieldType = "integer"
@@ -60,10 +61,10 @@ bossMasterController.placements = {
     }
 }
 
-function bossMasterController.texture(room, entity)
+--[[function bossMasterController.texture(room, entity)
     local texture = string.format("characters/%s00", entity.bossSprite or "")
 
     return (entity.bossSprite == "") and texture or "loenn/BossesHelper/BossController"
-end
+end]]--
 
 return bossMasterController
