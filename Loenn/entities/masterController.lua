@@ -18,6 +18,9 @@ bossMasterController.fieldInformation = {
     bossHealthMax = {
         fieldType = "integer"
     },
+    __Boss_pad = {
+        fieldType = "spacer"
+    },
     hurtMode = {
         options = hurtModeOpts,
         editable = false
@@ -35,6 +38,12 @@ bossMasterController.fieldInformation = {
     sidekickCooldown = {
         fieldType = "number"
     }
+}
+
+bossMasterController.fieldOrder = {
+    "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "sidekickCooldown",
+    "hitboxMetadataPath", "attacksPath", "eventsPath", "patternsPath", "functionsPath", "__Boss_pad",
+    "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "sidekickFreeze"
 }
 
 bossMasterController.placements = {

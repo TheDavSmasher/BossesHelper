@@ -14,7 +14,7 @@ local offscreenModeOpts = {
     {"Use Old Value", ""}
 }
 
-addHealthSystemTrigger.name = "BossesHelper/HealthSystemManager"
+addHealthSystemTrigger.name = "BossesHelper/AddHealthSystemTrigger"
 addHealthSystemTrigger.depth = 0
 addHealthSystemTrigger.nodeLimits = {0, 0}
 addHealthSystemTrigger.fieldInformation = {
@@ -48,6 +48,15 @@ addHealthSystemTrigger.fieldInformation = {
         editable = false
     }
 }
+
+addHealthSystemTrigger.fieldOrder = {
+    "x", "y", "width", "height",
+    "playerHealth", "damageCooldown", "crushEffect", "offscreenEffect", "activationFlag", "onDamageFunction",
+    "healthIcon", "healthIconCreateAnim", "healthIconSeparation", "healthIconRemoveAnim",
+    "healthIconScreenX", "healthIconScreenY", "healthIconScaleX", "healthIconScaleY",
+    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink", "playerStagger", "startVisible", "onlyOnce"
+}
+
 addHealthSystemTrigger.placements = {
     name = "Add Health System Trigger",
     data = {

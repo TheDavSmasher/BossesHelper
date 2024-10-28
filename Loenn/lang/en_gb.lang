@@ -33,6 +33,7 @@ entities.BossesHelper/HealthSystemManager.attributes.description.applySystemInst
 entities.BossesHelper/HealthSystemManager.attributes.description.playerStagger=If the player should stagger back when taking damage. False will keep the player in control and with no movement affected.
 entities.BossesHelper/HealthSystemManager.attributes.name.playerBlink=PLayer Blink On Damage
 entities.BossesHelper/HealthSystemManager.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
+entities.BossesHelper/HealthSystemManager.attributes.description.startVisible=If the Health Bar should start being visible when the Health System gets added.
 
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIcon=The sprite each health icon marker should use per hit point.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
@@ -52,6 +53,7 @@ triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerStagge
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.name.playerBlink=PLayer Blink On Damage
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.onlyOnce=If this trigger should not be loaded again once activated.
+triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.startVisible=If the Health Bar should start being visible when the Health System gets added.
 
 triggers.BossesHelper/RecoverHealthTrigger.attributes.description.healAmount=The number of hit points the player will recover.
 triggers.BossesHelper/RecoverHealthTrigger.attributes.description.onlyOnce=If the trigger should remove itself after being used.

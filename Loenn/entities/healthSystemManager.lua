@@ -49,6 +49,15 @@ healthSystemManager.fieldInformation = {
         editable = false
     }
 }
+
+healthSystemManager.fieldOrder = {
+    "x", "y",
+    "playerHealth", "damageCooldown", "crushEffect", "offscreenEffect", "activationFlag", "onDamageFunction",
+    "healthIcon", "healthIconCreateAnim", "healthIconSeparation", "healthIconRemoveAnim",
+    "healthIconScreenX", "healthIconScreenY", "healthIconScaleX", "healthIconScaleY",
+    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink", "playerStagger", "startVisible"
+}
+
 healthSystemManager.placements = {
     name = "Health System Manager",
     data = {
