@@ -10,6 +10,7 @@ local hurtModeOpts = {
 
 bossMasterController.name = "BossesHelper/BossController"
 bossMasterController.depth = 0
+bossMasterController.justification = {0.5, 1.0}
 bossMasterController.nodeLineRenderType = "line"
 bossMasterController.nodeLimits = {0, -1}
 bossMasterController.fieldInformation = {
@@ -34,6 +35,7 @@ bossMasterController.fieldInformation = {
         fieldType = "number"
     }
 }
+
 bossMasterController.placements = {
     name = "Boss Controller",
     data = {
@@ -57,5 +59,11 @@ bossMasterController.placements = {
         sidekickFreeze = false
     }
 }
+
+function bossMasterController.texture(room, entity)
+    local texture = string.format("characters/%s00", entity.bossSprite or "")
+
+    return (entity.bossSprite == "") and texture or "loenn/BossesHelper/BossController"
+end
 
 return bossMasterController
