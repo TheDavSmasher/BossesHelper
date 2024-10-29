@@ -42,7 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossPattern(string eventName, int goTo)
+        public BossPattern(string eventName, int? goTo)
         {
             FinishMode = FinishModes.LoopCountGoTo;
             StatePatternOrder = [new Method(eventName, null)];
@@ -65,7 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             RandomPattern = false;
         }
 
-        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int goTo, Vector2 offset)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int? goTo, Vector2 offset)
         {
             FinishMode = FinishModes.PlayerPositionWithin;
             PrePatternMethods = prePatternMethods;
@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             RandomPattern = false;
         }
 
-        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int goTo)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int? goTo)
         {
             FinishMode = FinishModes.LoopCountGoTo;
             PrePatternMethods = prePatternMethods;
