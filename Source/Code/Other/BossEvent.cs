@@ -81,10 +81,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public override void OnEnd(Level level)
         {
+            finished = true;
             try
             {
                 endMethod?.Call(level, WasSkipped);
-                finished = true;
             }
             catch (Exception e)
             {
