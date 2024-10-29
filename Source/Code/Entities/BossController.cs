@@ -317,6 +317,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator PerformPattern(BossPattern pattern)
         {
+            //Boss Event
+            if (pattern.IsEvent)
+            {
+                AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene);
+                Level.Add(cutscene);
+                while (!cutscene.finished)
+                {
+                    yield return null;
+                }
+                StartAttackPattern((int)pattern.GoToPattern);
+            }
+            //Random Pattern
             if (pattern.RandomPattern)
             {
                 while (true)
@@ -357,11 +369,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!method.ActionName.ToLower().Equals("wait"))
             {
-                if (method.IsEvent && AllEvents.TryGetValue(method.ActionName, out BossEvent cutscene))
-                {
-                    Level.Add(cutscene);
-                }
-                else if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
+                if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
                 {
                     isAttacking = true;
                     yield return attack.Coroutine();
@@ -369,7 +377,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 else
                 {
-                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified " + (method.IsEvent ? "event" : "attack") + " file.");
+                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified attack file.");
                 }
             }
             yield return method.Duration;
