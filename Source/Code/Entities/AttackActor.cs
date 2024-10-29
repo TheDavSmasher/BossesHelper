@@ -14,6 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public const float Gravity = 900f;
 
+        private bool SolidCollidable;
+
         private readonly Collision onCollideH;
 
         private readonly Collision onCollideV;
@@ -57,6 +59,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void OnCollideH(CollisionData data)
         {
+            if (!SolidCollidable)
+            {
+                return;
+            }
             if (data.Hit != null && data.Hit.OnCollide != null)
             {
                 data.Hit.OnCollide(data.Direction);
@@ -66,6 +72,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void OnCollideV(CollisionData data)
         {
+            if (!SolidCollidable)
+            {
+                return;
+            }
             if (data.Hit != null && data.Hit.OnCollide != null)
             {
                 data.Hit.OnCollide(data.Direction);
@@ -88,6 +98,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void OnPlayer(Player player)
         {
             onCollide.Call(player);
+        }
+
+        public void SetSolidCollisionActive(bool active)
+        {
+            SolidCollidable = active;
         }
 
         public void SetCollisionActive(bool active)
