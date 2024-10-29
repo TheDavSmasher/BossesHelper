@@ -366,7 +366,7 @@ The following entries are provided in Loenn for setting up a Health System.
   - Keep Old Value: The Health System will keep using whatever it's old crush effect was.
 - Offscreen Effect: How the Health System should react whent the player dies due to falling offstage.
   - Bounce Up: The player will take damage and will bounce, similar to what would happen if the Invinciblity Assist was turned on.
-    - While not fully encompassing with other mods, it should at least still work with Gravity Helper's dying up offstage.
+    - While not fully encompassing with other mods, it still works with Gravity Helper's dying up offstage.
   - Bubble Back: The player will take damage and will be bubbled back to the last safe ground they were on.
     - The Bubble Back works similar to the Bubble of Cassettes or Keys.
     - Last Safe Ground is determined by the player's own `onSafeGround` value.
