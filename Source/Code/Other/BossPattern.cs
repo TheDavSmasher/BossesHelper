@@ -11,14 +11,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public float? Duration = duration;
         }
 
-        public readonly bool IsEvent;
-
         public enum FinishModes
         {
             ContinueLoop,
             LoopCountGoTo,
             PlayerPositionWithin
         }
+
+        public readonly bool IsEvent;
 
         public FinishModes FinishMode { get; private set; }
 
@@ -42,62 +42,41 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossPattern(string eventName, int? goTo)
+        private BossPattern(Method[] patternLoop, Rectangle trigger, Method[] prePattern = null, FinishModes finishMode = FinishModes.ContinueLoop, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
         {
-            FinishMode = FinishModes.LoopCountGoTo;
-            StatePatternOrder = [new Method(eventName, null)];
-            IsEvent = true;
-
+            FinishMode = finishMode;
+            IterationCount = count;
             GoToPattern = goTo;
-            IterationCount = 0;
-            PlayerPositionTrigger = Rectangle.Empty;
-            RandomPattern = false;
+            PlayerPositionTrigger = trigger;
+            RandomPattern = random;
+            IsEvent = isEvent;
+            PrePatternMethods = prePattern;
+            StatePatternOrder = patternLoop;
+        }
+
+        public BossPattern(string eventName, int? goTo)
+            : this(patternLoop: [new Method(eventName, null)], trigger: Rectangle.Empty, finishMode: FinishModes.LoopCountGoTo, count: 0, goTo: goTo, isEvent: true)
+        {
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, trigger: Rectangle.Empty)
         {
-            FinishMode = FinishModes.ContinueLoop;
-            PrePatternMethods = prePatternMethods;
-            StatePatternOrder = statePatternOrder;
-            IsEvent = false;
-
-            PlayerPositionTrigger = Rectangle.Empty;
-            RandomPattern = false;
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int? goTo, Vector2 offset)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.PlayerPositionWithin, trigger: new Rectangle(x + (int)offset.X, y + (int)offset.Y, width, height), goTo: goTo)
         {
-            FinishMode = FinishModes.PlayerPositionWithin;
-            PrePatternMethods = prePatternMethods;
-            StatePatternOrder = statePatternOrder;
-            IsEvent = false;
-
-            PlayerPositionTrigger = new Rectangle(x + (int)offset.X, y + (int)offset.Y, width, height);
-            GoToPattern = goTo;
-            RandomPattern = false;
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int? goTo)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, trigger: Rectangle.Empty, finishMode: FinishModes.LoopCountGoTo, count: count, goTo: goTo)
         {
-            FinishMode = FinishModes.LoopCountGoTo;
-            PrePatternMethods = prePatternMethods;
-            StatePatternOrder = statePatternOrder;
-            IsEvent = false;
-
-            PlayerPositionTrigger = Rectangle.Empty;
-            IterationCount = count;
-            GoToPattern = goTo;
-            RandomPattern = false;
         }
 
         public BossPattern(Method[] randomPattern)
+            : this(patternLoop: randomPattern, trigger: Rectangle.Empty, random: true)
         {
-            FinishMode = FinishModes.ContinueLoop;
-            RandomPattern = true;
-            StatePatternOrder = randomPattern;
-            IsEvent = false;
-
-            PlayerPositionTrigger = Rectangle.Empty;
         }
     }
 }
