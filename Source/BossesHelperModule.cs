@@ -50,7 +50,7 @@ public class BossesHelperModule : EverestModule {
         On.Celeste.Level.LoadLevel += SetStartingHealth;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish += ApplyUserCrush;
-        On.Celeste.Player.Die += OnPlayerCollide;
+        On.Celeste.Player.Die += OnPlayerDie;
     }
 
     public override void Unload() {
@@ -58,7 +58,7 @@ public class BossesHelperModule : EverestModule {
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish -= ApplyUserCrush;
-        On.Celeste.Player.Die -= OnPlayerCollide;
+        On.Celeste.Player.Die -= OnPlayerDie;
     }
 
     private void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
@@ -171,7 +171,7 @@ public class BossesHelperModule : EverestModule {
         }
     }
 
-    public static PlayerDeadBody OnPlayerCollide(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
+    public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
         if (Session.mapDamageController == null || Session.mapDamageController.health <= 0)
         {
@@ -224,6 +224,10 @@ public class BossesHelperModule : EverestModule {
 
     private static float? GetFromY(Level level, Player player)
     {
+        if (!Session.wasOffscreen)
+        {
+            return null;
+        }
         Rectangle camera = new((int)level.Camera.Left, (int)level.Camera.Top, 320, 180);
         if (level.CameraLockMode != Level.CameraLockModes.None)
         {
