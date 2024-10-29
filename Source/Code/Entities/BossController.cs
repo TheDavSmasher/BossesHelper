@@ -271,7 +271,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    StartAttackPattern((int)Patterns[currentPatternIndex].GoToPattern);
+                    if (Patterns[currentPatternIndex].GoToPattern == null)
+                    {
+                        StartNextAttackPattern();
+                    }
+                    else
+                    {
+                        StartAttackPattern((int)Patterns[currentPatternIndex].GoToPattern);
+                    }
                 }
             }
             foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
@@ -315,6 +322,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
+        private void StartNextAttackPattern()
+        {
+            StartAttackPattern(currentPatternIndex + 1);
+        }
+
         private IEnumerator PerformPattern(BossPattern pattern)
         {
             //Boss Event
@@ -325,6 +337,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 while (!cutscene.finished)
                 {
                     yield return null;
+                }
+                if (pattern.GoToPattern == null)
+                {
+                    StartNextAttackPattern();
                 }
                 StartAttackPattern((int)pattern.GoToPattern);
             }
@@ -356,6 +372,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo && loop > pattern.IterationCount)
                 {
+                    if (pattern.GoToPattern == null)
+                    {
+                        StartNextAttackPattern();
+                    }
                     StartAttackPattern((int)pattern.GoToPattern);
                 }
 

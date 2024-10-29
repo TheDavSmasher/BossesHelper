@@ -17,29 +17,34 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 XmlDocument document = new XmlDocument();
                 document.Load(xml.Stream);
                 XmlNodeList patternsList = document.SelectSingleNode("Patterns").ChildNodes;
-                foreach (XmlNode pattern in patternsList)
+                foreach (XmlNode patternNode in patternsList)
                 {
                     List<BossPattern.Method> methodList = new();
-                    if (pattern.NodeType == XmlNodeType.Comment)
+                    if (patternNode.NodeType == XmlNodeType.Comment)
                     {
                         continue;
                     }
-                    if (pattern.LocalName.ToLower().Equals("random"))
+                    if (patternNode.LocalName.ToLower().Equals("random"))
                     {
-                        foreach (XmlNode action in pattern.ChildNodes)
+                        foreach (XmlNode action in patternNode.ChildNodes)
                         {
-                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNull(action.Attributes["wait"]), IsEvent(action)));
+                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNullF(action.Attributes["wait"])));
                         }
                         targetOut.Add(new BossPattern(methodList.ToArray()));
+                    }
+                    else if (patternNode.LocalName.ToLower().Equals("event"))
+                    {
+                        XmlAttributeCollection attributes = patternNode.Attributes;
+                        targetOut.Add(new BossPattern(attributes["file"].Value, GetValueOrDefaultNullI(attributes["goto"])));
                     }
                     else
                     {
                         List<BossPattern.Method> preLoopList = null;
-                        foreach (XmlNode action in pattern.ChildNodes)
+                        foreach (XmlNode action in patternNode.ChildNodes)
                         {
                             if (action.LocalName.ToLower().Equals("wait"))
                             {
-                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value), IsEvent(action)));
+                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value)));
                             }
                             else if (action.LocalName.ToLower().Equals("loop"))
                             {
@@ -48,20 +53,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             else
                             {
-                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null, IsEvent(action)));
+                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null));
                             }
                         }
-                        XmlAttributeCollection attributes = pattern.Attributes;
+                        XmlAttributeCollection attributes = patternNode.Attributes;
                         if (attributes.Count > 2)
                         {
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
                                 GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
                                 GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]),
-                                GetValueOrDefaultInt(attributes["goto"]), offset));
+                                GetValueOrDefaultNullI(attributes["goto"]), offset));
                         }
                         else if (attributes.Count != 0)
                         {
-                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(), GetValueOrDefaultInt(attributes["repeat"]), GetValueOrDefaultInt(attributes["goto"])));
+                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
+                                GetValueOrDefaultInt(attributes["repeat"]), GetValueOrDefaultNullI(attributes["goto"])));
                         }
                         else
                         {
@@ -76,19 +82,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        private static float? GetValueOrDefaultNull(XmlAttribute source, float? value = null)
+        private static float? GetValueOrDefaultNullF(XmlAttribute source, float? value = null)
         {
             return source != null ? float.Parse(source.Value) : value;
+        }
+
+        private static int? GetValueOrDefaultNullI(XmlAttribute source, int? value = null)
+        {
+            return source != null ? int.Parse(source.Value) : value;
         }
 
         private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
         {
             return source != null ? int.Parse(source.Value) : value;
-        }
-
-        private static bool IsEvent(XmlNode source)
-        {
-            return source.LocalName.ToLower().Equals("event");
         }
 
         public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId, Player playerRef, BossPuppet puppetRef)

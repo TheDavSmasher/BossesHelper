@@ -147,7 +147,7 @@ This XML file uses the format of the following example:
     <!--Deterministic Looping Pattern with Pre-Loop Actions-->
     <Pattern>
         <Wait time="2"/>
-        <Event file="start"/>
+        <Attack file="start"/>
         <Loop/>
         <Wait time="2"/>
         <Attack file="first"/>
@@ -159,13 +159,18 @@ This XML file uses the format of the following example:
         <Wait time="4"/>
         <Attack file="first"/>
         <Wait time="4"/>
-        <Event file="scream"/>
+        <Attack file="scream"/>
         <Wait time="4"/>
     </Pattern>
     
-    <Pattern goto="0">
+    <Pattern goto="3">
         <Wait time="1"/>
         <Attack file="second"/>
+        <Wait time="2.6"/>
+    </Pattern>
+
+    <Pattern repeat="3">
+        <Attack file="bullets"/>
         <Wait time="2.6"/>
     </Pattern>
 
@@ -177,6 +182,11 @@ This XML file uses the format of the following example:
         <Wait time="4.5"/>
     </Pattern>
 
+    <!--Boss Event Cutscenes-->
+    <Event file="initialScreech_M" goto="2">
+
+    <Event file="middleScreech_A">
+
     <!--Random order Pattern-->
     <Random>
         <Attack file="first" wait="2"/>
@@ -187,25 +197,32 @@ This XML file uses the format of the following example:
 </Patterns>
 ```
 
-The entirety of the contents are inside the `Patterns` node. There can be as many `Pattern` or `Random` nodes inside, but there must be at least 1 in general of either kind. All nodes in the file are stored in the same order as they are in the file, and are indexed as such as well, inside an index-0 array (meaning that the first Pattern provided is index 0).
+The entirety of the contents are inside the `Patterns` node. There can be as many `Pattern`, `Random`, or `Event` nodes inside, but there must be at least 1 in general of either kind. All nodes in the file are stored in the same order as they are in the file, and are indexed as such as well, inside an index-0 array (meaning that the first Pattern provided is index 0).
 
-`Pattern` nodes delimits any deterministic set of Actions that will always be performed in the same order. In contrast, `Random` nodes deilimit any set of Actions that will have no set order, and therefore has a different format. Any Pattern, be deterministic or random can be manually interrupted within the Boss's Collision logic functions.
+`Pattern` nodes delimits any deterministic set of Actions that will always be performed in the same order. In contrast, `Random` nodes deilimit any set of Actions that will have no set order, and therefore has a different format. Any Pattern, be deterministic or random can be manually interrupted within the Boss's Collision logic functions. `Event` nodes are used to have actual cutscenes in the middle of a fight, between attack patterns.
 
 `Pattern` nodes can have different attributes to make them end in different ways.
 
 - If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted when the Boss is collided with.
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
-- If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in repeat. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends. Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
+- If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in repeat. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends.
+  - Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
+  - Only providing `repeat` with no `goto` will make it so goTo pattern is the one directly below the current one.
 - Alternatively, alongside a `goto` attribute, attributes `x`, `y`, `width`, and `height` can be provided. These attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, it will go to the given pattern once the current action ends.
   - The coordinates for the `x` and `y` attributes are room coordinates.
 
-`Random` nodes take no parameters.
+`Random` nodes take no attributes.
+
+`Event` nodes can take up to two attributes.
+
+- A `file` attribute is required, and must match the name of a `.lua` file inside the Events subdirectory provided.
+- A `goto` attribute may be provided if the Event should go to a specific pattern after the Cutscene ends.
+  - Not providing this attribute will start the next available pattern after this one.
 
 `Pattern` nodes can have any number of nodes inside them.
 
 - `Wait` nodes signify the Boss will not do anything during the specified `time` attribute.
 - `Attack` nodes signify the Boss will perform the attack found inside the file mathcing the `file` attribute.
-- `Event` nodes signify a Cutscene will execute as found inside the file matching the `file` attribute.
 - `Loop` nodes can only be used once per `Pattern` node, and they delimit the Pattern's loop. If a `Loop` node is found inside a `Pattern` node, everything above it will execute once, when the pattern begins, and everything below it will execute with whatever loop logic is provided in the `Pattern` node attributes.
   - If more than one `Loop` node exists inside the same `Pattern` node, only everything after the last one will loop and only everything before the last one (but after the previous one) will execute before the loop.
   - If no `Loop` node is provided, all actions inside the parent node will be part of the pattern execution loop. If one is provided, only everything after it will be part of the loop, and everything prior will only execute at the start. By adding a node, you're essentially moving where the `while (true)` statement to that line.
@@ -215,11 +232,10 @@ The `file` attribute of both `Attack` and `Event` nodes **must not** contain the
 `Random` nodes can also have any number of nodes inside them.
 
 - `Attack` nodes signify the Boss will perform the attack found inside the file mathcing the `file` attribute, and then will do nothing during the time provided in the `wait` attribute.
-- `Event` nodes signify a Cutscene will execute as found inside the file matching the `file` attribute, and then will do nothing during the time provided in the `wait` attribute.
 
-`Random` nodes take no `Wait` nodes because otherwise attacks would execute back to back with no pause in between them. Therefore, each node inside this one has to provide their own post-execution wait time.
+`Random` nodes take no `Wait` nodes because otherwise attacks would execute back to back with no pause in between them, or execute multiple waits back to back. Therefore, each node inside this one has to provide their own post-execution wait time.
 
-This file is mandatory and at least one node must exist within the parent node. Any node inside of this will naturally execute indefinitely. No pattern will interrupt itself, unless it's by loop count or player being in the specified region. Even when a Pattern is interrupted, it must be restarted manually or go to a different pattern in the player collision logic.
+This file is mandatory and at least one node must exist within the parent node. Any node inside of this will naturally execute indefinitely, except for Events. No pattern will interrupt itself, unless it's by loop count or player being in the specified region, of the Event ending. Even when a Pattern is interrupted, it must be restarted manually or go to a different pattern in the player collision logic.
 
 ### Attacks
 

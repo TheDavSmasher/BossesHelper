@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -42,6 +43,10 @@ public class BossesHelperModule : EverestModule {
     }
 
     public override void Load() {
+        using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 1, after: ["*"])).Use())
+        {
+            On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
+        }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish += ApplyUserCrush;
@@ -49,10 +54,18 @@ public class BossesHelperModule : EverestModule {
     }
 
     public override void Unload() {
+        On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish -= ApplyUserCrush;
         On.Celeste.Player.Die -= OnPlayerCollide;
+    }
+
+    private void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
+    {
+        Session.wasOffscreen = true;
+        orig(self, player);
+        Session.wasOffscreen = false;
     }
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
