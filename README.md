@@ -321,6 +321,7 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - Vector2 position: Where the Actor will spawn.
     - Collider attackbox: The Collider Hitbox the Actor will use.
     - LuaFunction onPlayer: The function to call when the player collides with the Actor's hitbox.
+      - Will be called with the parameters `player` and `self`, being the Player and the Entity itself.
     - bool startCollidable: If the Actor's hitbox should start collidable when added.
     - string spriteName: The name of the sprite to use.
     - float gravMult: The multiplier on the Gravity constant (900, same as the player) that should apply to this Actor.
@@ -333,6 +334,7 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - Vector2 position: Where the Entity will spawn.
     - Collider attackbox: The Collider Hitbox the Entity will use.
     - LuaFunction onPlayer: The function to call when the player collides with the Entity's hitbox.
+      - Will be called with the parameters `player` and `self`, being the Player and the Entity itself.
     - bool startCollidable: If the Entity's hitbox should start collidable when added.
     - string spriteName: The name of the sprite to use.
     - float xScale: The Entity's Sprite's X scale. Defaults to 1.
