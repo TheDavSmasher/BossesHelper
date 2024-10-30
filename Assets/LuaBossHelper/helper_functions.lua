@@ -946,19 +946,19 @@ end
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities, with a function delegate on a timer attached.
 ---@param entity Entity The entity to add
 ---@param name string The name the specific entity and timer will be tracked with. Must be unique
----@param func fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the same as the entity parameter
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the DestroyEntity function.
 function helpers.addEntityWithTimer(entity, name, func, timer)
-    bossAttack.addEntityWithTimer:Invoke(entity, name, func, timer)
+    bossAttack.addEntityWithTimer:Invoke(entity, name, func or helpers.destroyEntity, timer)
 end
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities, with a function delegate on flag activation attached.
 ---@param entity Entity The entity to add
 ---@param flag string The session flag the entity will use to activate its function. It is also used to track the flagger. Must be unique
----@param func fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will be the same as the entity parameter
+---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the destroyEntity function.
 ---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
 ---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
 function helpers.addEntityWithFlagger(entity, flag, func, state, resetFlag)
-    bossAttack.addEntityWithFlagger:Invoke(entity, flag, func, state or state == nil, resetFlag or resetFlag == nil)
+    bossAttack.addEntityWithFlagger:Invoke(entity, flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
@@ -1172,16 +1172,36 @@ function helpers.getColliderList(...)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
 end
 
+local function killPlayer(player, entity)
+    if player and not player.Dead then
+        player:Die(vector2(player.Position - entity.Position), false, true)
+    end
+end
+
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
----@param funcOnPlayer fun(player) The function that will be called when the entity collides with the Player.
 ---@param spriteName string The sprite the entity will use.
+---@param funcOnPlayer? fun(player, self) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
-function helpers.getNewBasicAttackEntity(position, hitboxes, funcOnPlayer, spriteName, startCollidable, xScale, yScale)
-    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, funcOnPlayer, startCollidable, xScale, yScale)
+    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+end
+
+---Create and return a basic entity to use in attacks.
+---@param position Vector2 The position the entity will be at.
+---@param hitboxes Collider The collider the entity will use.
+---@param spriteName string The sprite the entity will use.
+---@param gravMult? number The multiplier to the Gravity constant the Actor should use.
+---@param maxFall? number The fastest the Boss will fall naturally due to gravity.
+---@param funcOnPlayer? fun(player, self) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
+---@param xScale? number The horizontal sprite scale. Defaults to 1.
+---@param yScale? number The vertical sprite scale. Defaults to 1.
+function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, funcOnPlayer, startCollidable, xScale, yScale)
+    return celeste.Mod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
 ---Get a new EntityData object
