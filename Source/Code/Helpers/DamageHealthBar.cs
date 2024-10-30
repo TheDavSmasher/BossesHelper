@@ -32,7 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim)) 
+                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim))
                     icon.Play(BossesHelperModule.Session.healthData.startAnim);
                 yield return 0.32f;
             }
@@ -116,7 +116,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void RefillHealth()
         {
-            for(int i = healthIcons.Count; i < Health; i++)
+            for (int i = healthIcons.Count; i < Health; i++)
             {
                 IncreaseHealth();
             }

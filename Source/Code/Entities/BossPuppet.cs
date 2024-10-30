@@ -11,7 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public class BossPuppet : Actor
     {
-        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes, 
+        public struct HitboxMedatata(Dictionary<string, Collider> baseHitboxes, Dictionary<string, Collider> baseHurtboxes,
             Dictionary<string, Collider> bounceHitboxes, Dictionary<string, Collider> targetCircles)
         {
             public Dictionary<string, Collider> baseHitboxes = baseHitboxes;
@@ -133,7 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Collider Hurtbox = hitboxMetadata.UseDefaultHurtbox ?
                 new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
                 : GetMainFromDictionary(hitboxMetadata.baseHurtboxes);
-            
+
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
@@ -209,7 +209,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         facing = -1;
                     }
                 }
-                
+
             }
             if (bossHitCooldown > 0)
             {

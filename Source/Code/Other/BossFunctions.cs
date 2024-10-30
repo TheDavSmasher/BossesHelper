@@ -56,25 +56,25 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public IEnumerator OnContactCoroutine()
         {
             if (OnContactLua != null)
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnContactLua);
+                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnContactLua);
         }
 
         public IEnumerator OnDashCoroutine()
         {
             if (OnDashLua != null)
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnDashLua);
+                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnDashLua);
         }
 
         public IEnumerator OnBounceCoroutine()
         {
             if (OnBounceLua != null)
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnBounceLua);
+                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnBounceLua);
         }
 
         public IEnumerator OnLaserCoroutine()
         {
             if (OnLaserLua != null)
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(OnLaserLua);
+                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnLaserLua);
         }
     }
 }

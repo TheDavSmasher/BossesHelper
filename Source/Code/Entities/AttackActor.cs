@@ -26,7 +26,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private float effectiveGravity;
 
-        public AttackActor(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float gravMult, float maxFall, float xScale = 1f, float yScale = 1f)
+        public AttackActor(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable,
+            string spriteName, float gravMult, float maxFall, float xScale = 1f, float yScale = 1f)
             : base(position)
         {
             base.Collider = attackbox;

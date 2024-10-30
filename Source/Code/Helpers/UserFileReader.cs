@@ -75,7 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         }
                     }
                 }
-            }            
+            }
             else
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");

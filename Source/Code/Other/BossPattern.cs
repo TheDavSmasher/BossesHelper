@@ -24,13 +24,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public int? IterationCount { get; private set; }
 
-        public int? GoToPattern {  get; private set; }
+        public int? GoToPattern { get; private set; }
 
         public Rectangle PlayerPositionTrigger { get; private set; }
 
         public readonly bool RandomPattern;
 
-        public Method[] PrePatternMethods {  get; private set; }
+        public Method[] PrePatternMethods { get; private set; }
 
         public Method[] StatePatternOrder { get; private set; }
 

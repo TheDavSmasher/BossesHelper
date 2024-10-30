@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             var dx = start.X - end.X;
             var dy = start.X - end.Y;
-            return (float) Math.Sqrt(dx * dx + dy * dy);
+            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
         private void DissipateParticles()

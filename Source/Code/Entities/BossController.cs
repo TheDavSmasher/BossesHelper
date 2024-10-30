@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Timer -= Engine.DeltaTime;
                 return this;
             }
-            
+
             public void ExecuteEarly()
             {
                 Timer = 0;
@@ -69,7 +69,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public bool resetFlag;
 
             public LuaFunction action;
-            
+
             public readonly bool Ready
             {
                 get

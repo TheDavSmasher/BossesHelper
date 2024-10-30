@@ -9,22 +9,24 @@ using MonoMod.RuntimeDetour;
 
 namespace Celeste.Mod.BossesHelper;
 
-public class BossesHelperModule : EverestModule {
+public class BossesHelperModule : EverestModule
+{
     public static BossesHelperModule Instance { get; private set; }
 
     // Store Settings
     public override Type SettingsType => typeof(BossesHelperSettings);
-    public static BossesHelperSettings Settings => (BossesHelperSettings) Instance._Settings;
+    public static BossesHelperSettings Settings => (BossesHelperSettings)Instance._Settings;
 
     // Store Session
     public override Type SessionType => typeof(BossesHelperSession);
-    public static BossesHelperSession Session => (BossesHelperSession) Instance._Session;
+    public static BossesHelperSession Session => (BossesHelperSession)Instance._Session;
 
     // Store Save Data
     public override Type SaveDataType => typeof(BossesHelperSaveData);
-    public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData) Instance._SaveData;
+    public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData)Instance._SaveData;
 
-    public BossesHelperModule() {
+    public BossesHelperModule()
+    {
         Instance = this;
 #if DEBUG
         // debug builds use verbose logging
@@ -42,7 +44,8 @@ public class BossesHelperModule : EverestModule {
         BossEvent.WarmUp();
     }
 
-    public override void Load() {
+    public override void Load()
+    {
         using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 1, after: ["*"])).Use())
         {
             On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
@@ -53,7 +56,8 @@ public class BossesHelperModule : EverestModule {
         On.Celeste.Player.Die += OnPlayerDie;
     }
 
-    public override void Unload() {
+    public override void Unload()
+    {
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
@@ -153,7 +157,7 @@ public class BossesHelperModule : EverestModule {
                 {
                     if (!self.TrySquishWiggle(data, self.level.Bounds.Width, self.level.Bounds.Height))
                         self.Die(Vector2.Zero, evenIfInvincible);
-                } 
+                }
             }
             else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
             {
@@ -202,7 +206,7 @@ public class BossesHelperModule : EverestModule {
             if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.InstantDeath)
             {
                 PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
-            } 
+            }
         }
         PlayerTakesDamage(dir);
         return null;
@@ -213,8 +217,8 @@ public class BossesHelperModule : EverestModule {
         Session.alreadyFlying = true;
         yield return 0.3f;
         Audio.Play("event:/game/general/cassette_bubblereturn", player.SceneAs<Level>().Camera.Position + new Vector2(160f, 90f));
-        Vector2 middle = new(player.X + (Session.lastSafePosition.X - player.X)/2, player.Y + (Session.lastSafePosition.Y - player.Y)/2);
-        player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY*8);
+        Vector2 middle = new(player.X + (Session.lastSafePosition.X - player.X) / 2, player.Y + (Session.lastSafePosition.Y - player.Y) / 2);
+        player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY * 8);
     }
 
     public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
