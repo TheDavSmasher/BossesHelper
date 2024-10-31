@@ -1,4 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 

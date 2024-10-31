@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Celeste.Mod.BossesHelper;

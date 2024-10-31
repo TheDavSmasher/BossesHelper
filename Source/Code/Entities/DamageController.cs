@@ -5,8 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using NLua;
 using System.Linq;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     public class DamageController : Entity
@@ -63,7 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
         {
-            if ((damageCooldown > 0 && !ignoreCooldown) || SaveData.Instance.Assists.Invincible ||
+            if (damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
                 level.InCutscene || amount <= 0)
             {
                 return;
@@ -124,7 +125,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Celeste.Freeze(0.05f);
                 yield return null;
                 Vector2 from = player.Position;
-                Vector2 to = new Vector2(from.X + (float)((!(bounce.X < 0f)) ? 1 : (-1)) * 20f, from.Y - 5f);
+                Vector2 to = new Vector2(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
                 Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.2f, start: true);
                 Add(tween);
                 tween.OnUpdate = delegate (Tween t)
@@ -149,7 +150,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Add(tween);
             tween.OnUpdate = delegate
             {
-                if (base.Scene.OnInterval(0.02f))
+                if (Scene.OnInterval(0.02f))
                 {
                     if (times <= 0)
                     {

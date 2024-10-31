@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     public class DamageHealthBar : Entity
@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Add(icon = GFX.SpriteBank.Create(BossesHelperModule.Session.healthData.iconSprite));
                 icon.Scale = BossesHelperModule.Session.healthData.healthIconScale;
-                base.Tag = Tags.HUD;
+                Tag = Tags.HUD;
                 if (BossesHelperModule.Session.healthData.globalController)
                     AddTag(Tags.Global);
             }
@@ -53,7 +53,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Render()
             {
                 base.Render();
-                icon.Visible = !base.Scene.Paused;
+                icon.Visible = !Scene.Paused;
             }
         }
 
@@ -82,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             Position = healthData.healthBarPos;
             healthIcons = new List<HealthIcon>();
-            base.Tag = Tags.HUD;
+            Tag = Tags.HUD;
             HealthVisible = healthData.startVisible;
             if (healthData.globalController)
                 AddTag(Tags.Global);
