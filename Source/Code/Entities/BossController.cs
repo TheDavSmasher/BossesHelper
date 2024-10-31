@@ -196,7 +196,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
-            Puppet = new BossPuppet(data, offset);
+            Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
             activeEntityTimers = new Dictionary<string, EntityTimer>();
             activeEntityFlaggers = new Dictionary<string, EntityFlagger>();

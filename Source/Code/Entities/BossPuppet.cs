@@ -3,6 +3,7 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using Monocle;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string metadataPath;
 
-        public BossPuppet(EntityData data, Vector2 offset) : base(data.Position + offset)
+        public readonly Func<int> BossHealth;
+
+        public BossPuppet(EntityData data, Vector2 offset, Func<int> health) : base(data.Position + offset)
         {
             string SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
@@ -95,6 +98,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
+            BossHealth = health;
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
