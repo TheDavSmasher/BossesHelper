@@ -83,8 +83,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string metadataPath;
 
-        public readonly Func<int> BossHealth;
-
         public BossPuppet(EntityData data, Vector2 offset, Func<int> health) : base(data.Position + offset)
         {
             string SpriteName = data.Attr("bossSprite");
@@ -98,7 +96,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
-            BossHealth = health;
+            Add(new BossHealthComponent(health));
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);
