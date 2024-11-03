@@ -313,15 +313,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<string> SeparateList(string listString)
         {
-            string clearString = listString.Replace(" ", string.Empty);
-            return clearString.Split([',']).ToList();
+            return listString.Replace(" ", string.Empty).Split([',']).ToList();
         }
 
         public static List<float> SeparateFloatList(string listString)
         {
-            string clearString = listString.Replace(" ", string.Empty);
-            string[] values = clearString.Split([',']);
-            return values.Select(float.Parse).ToList();
+            return listString.Replace(" ", string.Empty).Split([',']).Select(float.Parse).ToList();
         }
     }
 }
