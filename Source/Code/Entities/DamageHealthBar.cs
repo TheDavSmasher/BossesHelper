@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [Tracked(false)]
     public class DamageHealthBar : Entity
     {
-        private static BossesHelperSession.HealthSystemData healthData => BossesHelperModule.Session.healthData;
+        private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         private class HealthIcon : Entity
         {
@@ -76,15 +76,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly List<HealthIcon> healthIcons;
 
-        private static int Health => healthData.playerHealthVal;
+        private static int Health => HealthData.playerHealthVal;
 
         internal DamageHealthBar()
         {
-            Position = healthData.healthBarPos;
+            Position = HealthData.healthBarPos;
             healthIcons = new List<HealthIcon>();
             Tag = Tags.HUD;
-            Visible = healthData.startVisible;
-            if (healthData.globalController)
+            Visible = HealthData.startVisible;
+            if (HealthData.globalController)
                 AddTag(Tags.Global);
         }
 
@@ -110,7 +110,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             for (int i = 0; i < Health; i++)
             {
                 level.Add(healthIcons[i]);
-                healthIcons[i].DrawIcon(Position + Vector2.UnitX * healthData.iconSeparation * i);
+                healthIcons[i].DrawIcon(Position + Vector2.UnitX * HealthData.iconSeparation * i);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthIcon healthIcon = new HealthIcon();
             healthIcons.Add(healthIcon);
             level.Add(healthIcon);
-            healthIcon.DrawIcon(Position + Vector2.UnitX * healthData.iconSeparation * (healthIcons.Count - 1));
+            healthIcon.DrawIcon(Position + Vector2.UnitX * HealthData.iconSeparation * (healthIcons.Count - 1));
         }
 
         public void DecreaseHealth()
