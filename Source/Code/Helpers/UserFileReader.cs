@@ -268,11 +268,5 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
         }
-
-        //Not exactly reading filed, but class needs to be static
-        public static string ElementAtOrDefault(this IList<string> list, int index, string @default)
-        {
-            return index >= 0 && index < list.Count ? list[index] : @default;
-        }
     }
 }
