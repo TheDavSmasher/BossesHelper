@@ -110,7 +110,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private readonly float leftEdge;
 
-            private readonly bool anchorRight;
+            private readonly int barDir;
 
             private readonly Color baseColor;
 
@@ -120,16 +120,25 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private readonly int MaxHealth;
 
-            public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, bool anchorRight)
+            public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, int barDir)
             {
                 base.Collider = new Hitbox(barScale.X, barScale.Y);
                 MaxWidth = barScale.X;
                 base.Position = barPosition;
+                this.barDir = barDir;
+                if (barDir == -1)
+                {
+                    Position.X = barPosition.X - barScale.X;
+                }
+                else if (barDir == 0)
+                {
+                    Position.X = barPosition.X - barScale.X / 2;
+                }
                 leftEdge = Position.X;
                 this.bossHealth = bossHealth;
                 this.baseColor = color;
                 this.color = color;
-                this.anchorRight = anchorRight;
+                
                 MaxHealth = bossHealth.Invoke();
                 Tag = Tags.HUD;
             }
@@ -142,9 +151,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     color = Color.Lerp(color, baseColor, 0.1f);
                 }
                 Collider.Width = MaxWidth * bossHealth() / MaxHealth;
-                if (anchorRight)
+                if (barDir == -1)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width);
+                }
+                else if (barDir == 0)
+                {
+                    Position.X = leftEdge + (MaxWidth - Collider.Width) / 2;
                 }
             }
 
@@ -166,6 +179,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Icons,
             BarLeft,
             BarRight,
+            BarCentered,
             Countdown
         }
 
@@ -249,7 +263,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     level.Add(healthNumber = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
                     break;
                 default:
-                    level.Add(healthBar = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (barType == BarTypes.BarRight)));
+                    int barAnchor = barType == BarTypes.BarCentered ? 0 : barType == BarTypes.BarLeft ? -1 : 1;
+                    level.Add(healthBar = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, barAnchor));
                     break;
             }
             HealthVisible = entityData.Bool("startVisible");

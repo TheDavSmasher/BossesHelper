@@ -4,6 +4,7 @@ local barTypeOpts = {
     {"Icons", "icons"},
     {"Bar (Left)", "barLeft"},
     {"Bar (Right)", "barRight"},
+    {"Bar (Center)", "barCentered"},
     {"Countdown", "countdown"}
 }
 
@@ -131,6 +132,18 @@ bossHealthBar.placements = {
         name = "Boss Health Bar (Bar, Right)",
         data = {
             barType = "barRight",
+            baseColor = "#FF0000",
+            healthBarX = 0,
+            healthBarY = 0,
+            healthScaleX = 1,
+            healthScaleY = 1,
+            startVisible = true
+        }
+    },
+    {
+        name = "Boss Health Bar (Bar, Center)",
+        data = {
+            barType = "barCentered",
             baseColor = "#FF0000",
             healthBarX = 0,
             healthBarY = 0,
