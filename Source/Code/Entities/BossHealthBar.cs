@@ -131,6 +131,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 this.color = color;
                 this.anchorRight = anchorRight;
                 MaxHealth = bossHealth.Invoke();
+                Tag = Tags.HUD;
             }
 
             public override void Update()
