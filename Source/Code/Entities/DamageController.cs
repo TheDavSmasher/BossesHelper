@@ -100,7 +100,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    BossesHelperModule.Session.mapHealthBar.DecreaseHealth();
+                    BossesHelperModule.Session.mapHealthBar.healthIcons.DecreaseHealth();
                 }
             }
             else
@@ -114,7 +114,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             health += amount;
             for (int i = 0; i < amount; i++)
             {
-                BossesHelperModule.Session.mapHealthBar.IncreaseHealth();
+                BossesHelperModule.Session.mapHealthBar.healthIcons.IncreaseHealth(i);
             }
         }
 

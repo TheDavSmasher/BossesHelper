@@ -89,7 +89,7 @@ public class BossesHelperModule : EverestModule
             if ((intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth) || intro == Player.IntroTypes.Respawn)
             {
                 Session.mapDamageController.health = Session.healthData.playerHealthVal;
-                Session.mapHealthBar.RefillHealth();
+                Session.mapHealthBar.healthIcons.RefillHealth();
             }
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
