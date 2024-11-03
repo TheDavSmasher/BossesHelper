@@ -78,8 +78,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly Vector2 BarScale;
 
-            private readonly EntityData entityData;
-
             private readonly int Health;
 
             private Level level;
@@ -104,16 +102,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList(EntityData data, int health, Vector2 barScale)
+            public HealthIconList(List<string> icons, List<string> createAnims, List<string> removeAnims, List<float> iconSeparations,
+                int health, Vector2 barScale)
             {
-                this.entityData = data;
                 Health = health;
                 BarScale = barScale;
                 healthIcons = new List<HealthIcon>();
-                icons = SeparateList(entityData.Attr("healthIcons"));
-                createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
+                this.icons = icons;
+                this.createAnims = createAnims;
+                this.removeAnims = removeAnims;
+                this.iconSeparations = iconSeparations;
                 for (int i = 0; i < Health; i++)
                 {
                     healthIcons.Add(new HealthIcon(BarScale,
@@ -123,6 +121,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         )
                     );
                 }
+            }
+
+            public HealthIconList(EntityData entityData, int health, Vector2 barScale)
+                : this(SeparateList(entityData.Attr("healthIcons")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
+                      SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateFloatList(entityData.Attr("healthIconsSeparation")),
+                      health, barScale)
+            {
             }
 
             public override void Added(Scene scene)
