@@ -1,5 +1,4 @@
 ﻿using Monocle;
-using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.HealthBarUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
@@ -25,19 +24,25 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal DamageHealthBar()
         {
-            Position = HealthData.healthBarPos;
             healthIcons = new([HealthData.iconSprite], [HealthData.startAnim], [HealthData.endAnim], [HealthData.iconSeparation],
-                HealthData.playerHealthVal, HealthData.healthIconScale);
+                HealthData.playerHealthVal, HealthData.healthBarPos, HealthData.healthIconScale);
             Tag = Tags.HUD;
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
                 AddTag(Tags.Global);
         }
 
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            (scene as Level).Add(healthIcons);
+        }
+
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
             healthIcons.Clear();
+            healthIcons.RefillHealth();
             healthIcons.DrawHealthBar();
         }
 
