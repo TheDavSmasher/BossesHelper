@@ -6,6 +6,7 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -18,57 +19,183 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Func<int> BossHealth;
 
-        private class HealthIcon : Entity
+        public class HealthIconList : Entity
         {
-            private readonly Sprite icon;
-
-            private readonly string startAnim;
-
-            private readonly string endAnim;
-
-            public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
+            public class HealthIcon : Entity
             {
-                Add(icon = GFX.SpriteBank.Create(iconSprite));
-                this.startAnim = startAnim;
-                this.endAnim = endAnim;
-                icon.Scale = barScale;
-                Tag = Tags.HUD;
+                private readonly Sprite icon;
+
+                private readonly string startAnim;
+
+                private readonly string endAnim;
+
+                public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
+                {
+                    Add(icon = GFX.SpriteBank.Create(iconSprite));
+                    this.startAnim = startAnim;
+                    this.endAnim = endAnim;
+                    icon.Scale = barScale;
+                    Tag = Tags.HUD;
+                }
+
+                public void DrawIcon(Vector2 position)
+                {
+                    Position = position;
+                    Add(new Coroutine(DrawRoutine()));
+                }
+
+                private IEnumerator DrawRoutine()
+                {
+                    if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim))
+                        icon.Play(startAnim);
+                    yield return 0.32f;
+                }
+
+                public void RemoveIcon()
+                {
+                    Add(new Coroutine(RemoveRoutine()));
+                }
+
+                private IEnumerator RemoveRoutine()
+                {
+                    if (!string.IsNullOrEmpty(endAnim) && icon.Has(endAnim))
+                        icon.Play(endAnim);
+                    yield return 0.88f;
+                    RemoveSelf();
+                }
+
+                public override void Render()
+                {
+                    base.Render();
+                    icon.Visible = !Scene.Paused;
+                }
             }
 
-            public void DrawIcon(Vector2 position)
+            private readonly List<HealthIcon> healthIcons;
+
+            private readonly List<string> icons;
+
+            private readonly List<string> createAnims;
+            
+            private readonly List<string> removeAnims;
+
+            private readonly List<float> iconSeparations;
+
+            private readonly Vector2 BarScale;
+
+            private readonly EntityData entityData;
+
+            private readonly int Health;
+
+            private Level level;
+
+            public int Count
             {
-                Position = position;
-                Add(new Coroutine(DrawRoutine()));
+                get
+                {
+                    return healthIcons.Count;
+                }
             }
 
-            private IEnumerator DrawRoutine()
+            public new bool Visible
             {
-                if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim))
-                    icon.Play(startAnim);
-                yield return 0.32f;
+                get
+                {
+                    return healthIcons.Any(icon => icon.Visible);
+                }
+                set
+                {
+                    healthIcons.ForEach(icon => icon.Visible = value);
+                }
             }
 
-            public void RemoveIcon()
+            public HealthIconList(EntityData data, int health, Vector2 barScale)
             {
-                Add(new Coroutine(RemoveRoutine()));
+                this.entityData = data;
+                Health = health;
+                BarScale = barScale;
+                healthIcons = new List<HealthIcon>();
+                icons = SeparateList(entityData.Attr("healthIcons"));
+                createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
+                for (int i = 0; i < Health; i++)
+                {
+                    healthIcons.Add(new HealthIcon(BarScale,
+                        icons.ElementAtOrDefault(i, icons.Last()),
+                        createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                        removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                        )
+                    );
+                }
             }
 
-            private IEnumerator RemoveRoutine()
+            public override void Added(Scene scene)
             {
-                if (!string.IsNullOrEmpty(endAnim) && icon.Has(endAnim))
-                    icon.Play(endAnim);
-                yield return 0.88f;
-                RemoveSelf();
+                base.Added(scene);
+                level = scene as Level;
             }
 
-            public override void Render()
+            public void DrawHealthBar()
             {
-                base.Render();
-                icon.Visible = !Scene.Paused;
+                for (int i = 0; i < Health; i++)
+                {
+                    level.Add(healthIcons[i]);
+                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * iconSeparations.ElementAtOrDefault(i) * i);
+                }
+            }
+
+            public void RefillHealth()
+            {
+                for (int i = healthIcons.Count; i < Health; i++)
+                {
+                    IncreaseHealth(i);
+                }
+            }
+
+            public void IncreaseHealth(int i)
+            {
+                HealthIcon healthIcon = new HealthIcon(BarScale,
+                    icons.ElementAtOrDefault(i, icons.Last()),
+                    createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                    removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                );
+                healthIcons.Add(healthIcon);
+                level.Add(healthIcon);
+                healthIcon.DrawIcon(Position + Vector2.UnitX * iconSeparations.ElementAtOrDefault(i) * (healthIcons.Count - 1));
+            }
+
+            public void DecreaseHealth()
+            {
+                if (healthIcons.Count > 0)
+                {
+                    healthIcons[healthIcons.Count - 1].RemoveIcon();
+                    healthIcons.RemoveAt(healthIcons.Count - 1);
+                }
+                else
+                {
+                    Logger.Log("Health Render", "No Health Icon to remove");
+                }
+            }
+
+            public void ForEach(Action<HealthIcon> action)
+            {
+                healthIcons.ForEach(action);
+            }
+
+            public void Clear()
+            {
+                healthIcons.Clear();
+            }
+
+            public override void Removed(Scene scene)
+            {
+                healthIcons.ForEach((x) => x.RemoveSelf());
+                base.Removed(scene);  
             }
         }
 
-        private class HealthNumber : Entity
+        public class HealthNumber : Entity
         {
             private readonly Func<int> bossHealth;
 
@@ -104,7 +231,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private class HealthBar : Entity
+        public class HealthBar : Entity
         {
             private readonly Func<int> bossHealth;
 
@@ -166,12 +293,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Draw.Rect(Collider, color);
                 base.Render();
             }
-
-            public override void DebugRender(Camera camera)
-            {
-                base.DebugRender(camera);
-                Collider.Render(camera, Collidable ? Color.Red : Color.DarkRed);
-            }
         }
 
         private enum BarTypes
@@ -187,41 +308,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly BarTypes barType;
 
-        private List<HealthIcon> healthIcons;
-
-        private HealthNumber healthNumber;
-
-        private HealthBar healthBar;
+        private Entity barEntity;
 
         private readonly EntityData entityData;
 
-        private int Health => BossHealth.Invoke();
-
-        public bool HealthVisible
+        public new bool Visible
         {
             get
             {
-                return barType switch
-                {
-                    BarTypes.Icons => healthIcons.Any(icon => icon.Visible),
-                    BarTypes.Countdown => healthNumber.Visible,
-                    _ => healthBar.Visible
-                };
+                return barEntity.Visible;
             }
             set
             {
-                switch (barType)
-                {
-                    case BarTypes.Icons:
-                        healthIcons.ForEach(icon => icon.Visible = value);
-                        break;
-                    case BarTypes.Countdown:
-                        healthNumber.Visible = value;
-                        break;
-                    default:
-                        healthBar.Visible = value;
-                        break;
-                }
+                barEntity.Visible = value;
             }
         }
 
@@ -249,27 +348,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             switch (barType)
             {
                 case BarTypes.Icons:
-                    healthIcons = new List<HealthIcon>();
-                    for (int i = 0; i < Health; i++)
-                    {
-                        healthIcons.Add(new HealthIcon(BarScale,
-                            entityData.Attr("healthIcons"),
-                            entityData.Attr("healthIconsCreateAnim"),
-                            entityData.Attr("healthIconsRemoveAnim")
-                            )
-                         );
-                    }
-                    DrawHealthBar();
+                    level.Add(barEntity = new HealthIconList(entityData, BossHealth.Invoke(), BarScale));
                     break;
                 case BarTypes.Countdown:
-                    level.Add(healthNumber = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
+                    level.Add(barEntity = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
                     break;
                 default:
                     int barAnchor = barType == BarTypes.BarCentered ? 0 : barType == BarTypes.BarLeft ? -1 : 1;
-                    level.Add(healthBar = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, barAnchor));
+                    level.Add(barEntity = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, barAnchor));
                     break;
             }
-            HealthVisible = entityData.Bool("startVisible");
+            Visible = entityData.Bool("startVisible");
         }
 
         public override void Update()
@@ -277,67 +366,36 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Update();
             if (barType == BarTypes.Icons)
             {
-                int lostHealth = healthIcons.Count - BossHealth();
-                if (lostHealth > 0)
+                HealthIconList healthIcons = (HealthIconList) barEntity;
+                for (int i = 0; i < (healthIcons.Count - BossHealth()); i++)
                 {
-                    for (int i = 0; i < lostHealth; i++)
-                    {
-                        DecreaseHealth();
-                    }
+                    healthIcons.DecreaseHealth();
                 }
-            }
-        }
-
-        private void DrawHealthBar()
-        {
-            float separation = entityData.Float("healthIconsSeparation", 1f);
-            for (int i = 0; i < Health; i++)
-            {
-                level.Add(healthIcons[i]);
-                healthIcons[i].DrawIcon(Position + Vector2.UnitX * separation * i);
-            }
-        }
-
-        public void RefillHealth()
-        {
-            for (int i = healthIcons.Count; i < Health; i++)
-            {
-                IncreaseHealth();
-            }
-        }
-
-        public void IncreaseHealth()
-        {
-            HealthIcon healthIcon = new HealthIcon(BarScale,
-                entityData.Attr("healthIcons"),
-                entityData.Attr("healthIconsCreateAnim"),
-                entityData.Attr("healthIconsRemoveAnim")
-            );
-            healthIcons.Add(healthIcon);
-            level.Add(healthIcon);
-            healthIcon.DrawIcon(Position + Vector2.UnitX * entityData.Float("healthIconsSeparation", 1f) * (healthIcons.Count - 1));
-        }
-
-        public void DecreaseHealth()
-        {
-            if (healthIcons.Count > 0)
-            {
-                healthIcons[healthIcons.Count - 1].RemoveIcon();
-                healthIcons.RemoveAt(healthIcons.Count - 1);
-            }
-            else
-            {
-                Logger.Log("Health Render", "No Health Icon to remove");
             }
         }
 
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            healthIcons?.ForEach(x => x.RemoveSelf());
-            healthIcons?.Clear();
-            healthBar?.RemoveSelf();
-            healthNumber?.RemoveSelf();
+            barEntity.RemoveSelf();
+        }
+
+        public static List<string> SeparateList(string listString)
+        {
+            string clearString = listString.Replace(" ", string.Empty);
+            return clearString.Split([',']).ToList();
+        }
+
+        public static List<float> SeparateFloatList(string listString)
+        {
+            string clearString = listString.Replace(" ", string.Empty);
+            string[] values = clearString.Split([',']);
+            List<float> result = [0f];
+            foreach (string value in values)
+            {
+                result.Add(float.Parse(value));
+            }
+            return result;
         }
     }
 }
