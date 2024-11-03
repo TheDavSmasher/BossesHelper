@@ -255,7 +255,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         healthIcons.Add(new HealthIcon(BarScale,
                             entityData.Attr("healthIcons"),
                             entityData.Attr("healthIconsCreateAnim"),
-                            entityData.Attr("healthIconsRemoveAnim")));
+                            entityData.Attr("healthIconsRemoveAnim")
+                            )
+                         );
                     }
                     DrawHealthBar();
                     break;
@@ -309,7 +311,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthIcon healthIcon = new HealthIcon(BarScale,
                 entityData.Attr("healthIcons"),
                 entityData.Attr("healthIconsCreateAnim"),
-                entityData.Attr("healthIconsRemoveAnim"));
+                entityData.Attr("healthIconsRemoveAnim")
+            );
             healthIcons.Add(healthIcon);
             level.Add(healthIcon);
             healthIcon.DrawIcon(Position + Vector2.UnitX * entityData.Float("healthIconsSeparation", 1f) * (healthIcons.Count - 1));
