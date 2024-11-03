@@ -321,12 +321,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             string clearString = listString.Replace(" ", string.Empty);
             string[] values = clearString.Split([',']);
-            List<float> result = [];
-            foreach (string value in values)
-            {
-                result.Add(float.Parse(value));
-            }
-            return result;
+            return values.Select(float.Parse).ToList();
         }
     }
 }
