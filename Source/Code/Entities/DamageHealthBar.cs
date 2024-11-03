@@ -17,10 +17,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public HealthIcon()
             {
-                Add(icon = GFX.SpriteBank.Create(BossesHelperModule.Session.healthData.iconSprite));
-                icon.Scale = BossesHelperModule.Session.healthData.healthIconScale;
+                Add(icon = GFX.SpriteBank.Create(HealthData.iconSprite));
+                icon.Scale = HealthData.healthIconScale;
                 Tag = Tags.HUD;
-                if (BossesHelperModule.Session.healthData.globalController)
+                if (HealthData.globalController)
                     AddTag(Tags.Global);
             }
 
@@ -32,8 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.startAnim) && icon.Has(BossesHelperModule.Session.healthData.startAnim))
-                    icon.Play(BossesHelperModule.Session.healthData.startAnim);
+                if (!string.IsNullOrEmpty(HealthData.startAnim) && icon.Has(HealthData.startAnim))
+                    icon.Play(HealthData.startAnim);
                 yield return 0.32f;
             }
 
@@ -44,8 +44,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private IEnumerator RemoveRoutine()
             {
-                if (!string.IsNullOrEmpty(BossesHelperModule.Session.healthData.endAnim) && icon.Has(BossesHelperModule.Session.healthData.endAnim))
-                    icon.Play(BossesHelperModule.Session.healthData.endAnim);
+                if (!string.IsNullOrEmpty(HealthData.endAnim) && icon.Has(HealthData.endAnim))
+                    icon.Play(HealthData.endAnim);
                 yield return 0.88f;
                 RemoveSelf();
             }
