@@ -23,7 +23,7 @@ addHealthSystemTrigger.fieldInformation = {
     },
     playerHealth = {
         fieldType = "integer",
-        minimumValue = 1
+        minimumValue = 2
     },
     damageCooldown = {
         fieldType = "number",
