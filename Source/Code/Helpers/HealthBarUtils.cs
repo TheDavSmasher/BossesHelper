@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public static class HealthBarUtils
     {
-        public static string ElementAtOrDefault(this IList<string> list, int index, string @default)
+        public static T ElementAtOrDefault<T>(this IList<T> list, int index, T @default)
         {
             return index >= 0 && index < list.Count ? list[index] : @default;
         }
@@ -103,9 +103,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
 
             public HealthIconList(List<string> icons, List<string> createAnims, List<string> removeAnims, List<float> iconSeparations,
-                int health, Vector2 barScale)
+                int health, Vector2 barPosition, Vector2 barScale)
             {
                 Health = health;
+                Position = barPosition;
                 BarScale = barScale;
                 healthIcons = new List<HealthIcon>();
                 this.icons = icons;
@@ -123,10 +124,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList(EntityData entityData, int health, Vector2 barScale)
+            public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
                 : this(SeparateList(entityData.Attr("healthIcons")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
                       SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateFloatList(entityData.Attr("healthIconsSeparation")),
-                      health, barScale)
+                      health, barPosition, barScale)
             {
             }
 
@@ -141,7 +142,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 for (int i = 0; i < Health; i++)
                 {
                     level.Add(healthIcons[i]);
-                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * iconSeparations.ElementAtOrDefault(i) * i);
+                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
                 }
             }
 
@@ -162,7 +163,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 );
                 healthIcons.Add(healthIcon);
                 level.Add(healthIcon);
-                healthIcon.DrawIcon(Position + Vector2.UnitX * iconSeparations.ElementAtOrDefault(i) * (healthIcons.Count - 1));
+                healthIcon.DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
+            }
+
+            private float GetEffectiveSeparation(int index)
+            {
+                if (index == 0)
+                    return 0f;
+                if (index == 1)
+                    return iconSeparations[0];
+
+                float sum = iconSeparations[0];
+                for (int i = 1; i < index; i++)
+                {
+                    sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.Last());
+                }
+                return sum;
             }
 
             public void DecreaseHealth()
