@@ -18,7 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            SceneAs<Level>().Tracker.GetEntity<DamageHealthBar>().HealthVisible = state;
+            SceneAs<Level>().Tracker.GetEntity<DamageHealthBar>().Visible = state;
         }
     }
 }

@@ -59,7 +59,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level level;
 
-        public bool HealthVisible
+        public new bool Visible
         {
             get
             {
@@ -83,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Position = healthData.healthBarPos;
             healthIcons = new List<HealthIcon>();
             Tag = Tags.HUD;
-            HealthVisible = healthData.startVisible;
+            Visible = healthData.startVisible;
             if (healthData.globalController)
                 AddTag(Tags.Global);
         }
