@@ -72,7 +72,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 case BarTypes.Icons:
                     level.Add(barEntity = new HealthIconList(entityData, BossHealth.Invoke(), BarPosition, BarScale));
-                    (barEntity as HealthIconList).DrawHealthBar();
                     break;
                 case BarTypes.Countdown:
                     level.Add(barEntity = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
