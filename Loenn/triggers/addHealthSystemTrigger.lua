@@ -18,8 +18,30 @@ addHealthSystemTrigger.name = "BossesHelper/AddHealthSystemTrigger"
 addHealthSystemTrigger.depth = 0
 addHealthSystemTrigger.nodeLimits = {0, 0}
 addHealthSystemTrigger.fieldInformation = {
-    healthIconSeparation = {
-        fieldType = "number"
+    healthIcons = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsCreateAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsRemoveAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsSeparation = {
+        fieldType = "list",
+        minimumElements = 1
     },
     playerHealth = {
         fieldType = "integer",
@@ -29,12 +51,12 @@ addHealthSystemTrigger.fieldInformation = {
         fieldType = "number",
         minimumValue = 0
     },
-    healthIconScreenX = {
+    healthIconsScreenX = {
         fieldType = "number",
         minimumValue = 0,
         maximumValue = 1920
     },
-    healthIconScreenY = {
+    healthIconsScreenY = {
         fieldType = "number",
         minimumValue = 0,
         maximumValue = 1080
@@ -50,25 +72,31 @@ addHealthSystemTrigger.fieldInformation = {
 }
 
 addHealthSystemTrigger.fieldOrder = {
-    "x", "y", "width", "height",
-    "playerHealth", "damageCooldown", "crushEffect", "offscreenEffect", "activationFlag", "onDamageFunction",
-    "healthIcon", "healthIconCreateAnim", "healthIconSeparation", "healthIconRemoveAnim",
-    "healthIconScreenX", "healthIconScreenY", "healthIconScaleX", "healthIconScaleY",
-    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink", "playerStagger", "startVisible", "onlyOnce"
+    "x", "y",
+    "width", "height",
+    "playerHealth", "damageCooldown",
+    "crushEffect", "offscreenEffect",
+    "activationFlag", "onDamageFunction",
+    "healthIcons", "healthIconsCreateAnim",
+    "healthIconsSeparation", "healthIconsRemoveAnim",
+    "healthIconsScreenX", "healthIconsScreenY",
+    "healthIconsScaleX", "healthIconsScaleY",
+    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink",
+    "playerStagger", "startVisible", "onlyOnce"
 }
 
 addHealthSystemTrigger.placements = {
     name = "Add Health System Trigger",
     data = {
         activationFlag = "",
-        healthIcon = "",
-        healthIconCreateAnim = "",
-        healthIconRemoveAnim = "",
-        healthIconScreenX = "160",
-        healthIconScreenY = "950",
-        healthIconScaleX = "1",
-        healthIconScaleY = "1",
-        healthIconSeparation = "1.0",
+        healthIcons = "",
+        healthIconsCreateAnim = "",
+        healthIconsRemoveAnim = "",
+        healthIconsScreenX = "160",
+        healthIconsScreenY = "950",
+        healthIconsScaleX = "1",
+        healthIconsScaleY = "1",
+        healthIconsSeparation = "1.0",
         playerHealth = "3",
         damageCooldown = "1",
         crushEffect = "instantDeath",

@@ -24,8 +24,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal DamageHealthBar()
         {
-            healthIcons = new([HealthData.iconSprite], [HealthData.startAnim], [HealthData.endAnim], [HealthData.iconSeparation],
-                HealthData.playerHealthVal, HealthData.healthBarPos, HealthData.healthIconScale);
+            healthIcons = new(SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim), SeparateList(HealthData.endAnim),
+                SeparateFloatList(HealthData.iconSeparation), HealthData.playerHealthVal, HealthData.healthBarPos, HealthData.healthIconScale);
             Tag = Tags.HUD;
             Visible = HealthData.startVisible;
             if (HealthData.globalController)

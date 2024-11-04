@@ -19,8 +19,30 @@ healthSystemManager.depth = 0
 healthSystemManager.texture = "loenn/BossesHelper/HealthController"
 healthSystemManager.nodeLimits = {0, 0}
 healthSystemManager.fieldInformation = {
-    healthIconSeparation = {
-        fieldType = "number"
+    healthIcons = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsCreateAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsRemoveAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsSeparation = {
+        fieldType = "list",
+        minimumElements = 1
     },
     playerHealth = {
         fieldType = "integer",
@@ -52,24 +74,29 @@ healthSystemManager.fieldInformation = {
 
 healthSystemManager.fieldOrder = {
     "x", "y",
-    "playerHealth", "damageCooldown", "crushEffect", "offscreenEffect", "activationFlag", "onDamageFunction",
-    "healthIcon", "healthIconCreateAnim", "healthIconSeparation", "healthIconRemoveAnim",
-    "healthIconScreenX", "healthIconScreenY", "healthIconScaleX", "healthIconScaleY",
-    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink", "playerStagger", "startVisible"
+    "playerHealth", "damageCooldown",
+    "crushEffect", "offscreenEffect",
+    "activationFlag", "onDamageFunction",
+    "healthIcons", "healthIconsCreateAnim",
+    "healthIconsSeparation", "healthIconsRemoveAnim",
+    "healthIconsScreenX", "healthIconsScreenY",
+    "healthIconsScaleX", "healthIconsScaleY",
+    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink",
+    "playerStagger", "startVisible"
 }
 
 healthSystemManager.placements = {
     name = "Health System Manager",
     data = {
         activationFlag = "",
-        healthIcon = "",
-        healthIconCreateAnim = "",
-        healthIconRemoveAnim = "",
-        healthIconScreenX = "160",
-        healthIconScreenY = "950",
-        healthIconScaleX = "1",
-        healthIconScaleY = "1",
-        healthIconSeparation = "1.0",
+        healthIcons = "",
+        healthIconsCreateAnim = "",
+        healthIconsRemoveAnim = "",
+        healthIconsScreenX = "160",
+        healthIconsScreenY = "950",
+        healthIconsScaleX = "1",
+        healthIconsScaleY = "1",
+        healthIconsSeparation = "1.0",
         playerHealth = "3",
         damageCooldown = "1",
         crushEffect = "instantDeath",

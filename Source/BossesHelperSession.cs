@@ -60,7 +60,7 @@ public class BossesHelperSession : EverestModuleSession
 
         public string endAnim;
 
-        public float iconSeparation;
+        public string iconSeparation;
 
         public Vector2 healthBarPos;
 

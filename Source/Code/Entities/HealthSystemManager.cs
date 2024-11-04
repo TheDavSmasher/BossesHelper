@@ -28,14 +28,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BossesHelperModule.Session.mapHealthSystemManager ??= this;
             BossesHelperModule.Session.healthData.isCreated = true;
-            BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcon", healthData.iconSprite);
-            BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconCreateAnim", healthData.startAnim);
-            BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconRemoveAnim", healthData.endAnim);
-            Vector2 screenPosition = new Vector2(data.Float("healthIconScreenX", healthData.healthBarPos.X), data.Float("healthIconScreenY", healthData.healthBarPos.Y));
+            BossesHelperModule.Session.healthData.iconSprite = data.Attr("healthIcons", healthData.iconSprite);
+            BossesHelperModule.Session.healthData.startAnim = data.Attr("healthIconsCreateAnim", healthData.startAnim);
+            BossesHelperModule.Session.healthData.endAnim = data.Attr("healthIconsRemoveAnim", healthData.endAnim);
+            Vector2 screenPosition = new Vector2(data.Float("healthIconsScreenX", healthData.healthBarPos.X), data.Float("healthIconsScreenY", healthData.healthBarPos.Y));
             BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
-            Vector2 iconScale = new Vector2(data.Float("healthIconScaleX", healthData.healthIconScale.X), data.Float("healthIconScaleY", healthData.healthIconScale.Y));
+            Vector2 iconScale = new Vector2(data.Float("healthIconsScaleX", healthData.healthIconScale.X), data.Float("healthIconsScaleY", healthData.healthIconScale.Y));
             BossesHelperModule.Session.healthData.healthIconScale = iconScale;
-            BossesHelperModule.Session.healthData.iconSeparation = data.Float("healthIconSeparation", healthData.iconSeparation);
+            BossesHelperModule.Session.healthData.iconSeparation = data.Attr("healthIconsSeparation", healthData.iconSeparation);
             BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
             BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", healthData.playerHealthVal);
