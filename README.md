@@ -15,6 +15,10 @@ This is a helper specifically designed to allow the creation of custom bosses wi
   - [Events](#events)
   - [Functions](#functions)
 - [Helper Objects](#helper-objects)
+- [Boss Health Bar](#boss-health-bar)
+  - [Countdown](#countdown)
+  - [Health Icons](#health-icons)
+  - [Shrinking Bar](#shrinking-bar)
 - [Player Health System](#player-health-system)
   - [Setup Entries](#setup-entries)
   - [Health Bar Entries](#health-bar-entries)
@@ -349,6 +353,44 @@ This Helper also adds a few Entities and Components for ease of use or just gene
 
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
+## Boss Health Bar
+
+Due to the fact that not all Bosses will require or use Health Bars, a separate entity is included for those that do.
+
+There are three different kind of Health "Bars" provided: a numerical Countdown, health point icons, or an actual bar (which can grow left, right, or be centered).
+
+All Health Bar displays share the following entries:
+
+- Health Bar X: The X coordinate the display will be on the screen. This is relative to the camera, and is limited by the game's resoultion.
+- Health Bar Y: The Y coordinate the display will be on the screen. This is relative to the camera, and is limited by the game's resoultion.
+- Health Scale X: The X value that will be applied to the display's scale.
+- Health Scale Y: The Y value that will be applied to the display's scale.
+- Bar Type: The type of the display that the entity will use:
+  - Countdown: The health value will be represented as a number displayed on screen.
+  - Health Icons: The health display will be represented with sprites provided, one per health point.
+  - Bar: The Health Display will be represented by a rectangle that will shrink proportionally to its total length and the health value. The width and height of this rectangle are obtained from the Scale value.
+    - Left: The Bar will grow to the Left and shrink back to the right. The Position determines it's right side.
+    - Right: The Bar will grow to the Right and shrink back to the left. The Position determines it's left side.
+    - Centered: The Bar will grow on both ends and shrink back to the center. The Position determines it's middle.
+- Start Visible: Whether the Health Display will start Visible immidiately.
+
+Based on the different Type placed for the Bar Type via the placements provided, extra entries are given.
+
+### Countdown
+
+- Base Color: The color the number display.
+
+### Health Icons
+
+- Health Icon: The sprite each Health Point icon should use.
+- Health Icon Create Anim: The animation each of the icons' sprites should use when created.
+- Health Icon Remove Anim: The animation each of the icons' sprites should use when a Health Point is lost.
+- Health Icons Separation: How much distance is between each Health Icon. This distance is measured from any two Icon's left side, so this value should include the sprite's width if no overlap is desired.
+
+### Shrinking Bar
+
+- Base Color: The color the solid rectangle will use.
+
 ## Player Health System
 
 In addition to Bosses, this helper also implements a health System for the player, hooked to the Player's `Die` method. It is implemented with a generalized base for public use. When the Health System is added onto the scene, it starts disabled and must be activated in one of the provided ways explained below.
@@ -418,6 +460,8 @@ This Helper includes a few things exported with ModInterop, namely:
 - **GetCurrentPlayerHealth**: Useful to know if a Health System is active on Scene and if so, what the Player's health value is at. Returns -1 if no Health System is active.
 - **RecoverPlayerHealth**: Makes the player recover health points as many as the value given. This can go over the PLayer's default health value.
 - **MakePlayerTakeDamage**: Useful to extend utility from the Health System to set custom parameters to take damage.
+- **GetBossHealthComponent**: Returns a component that allows any entity that can track a number to use the Boss Health Bar entity display for it.
+  - The integer can represent anything, and can be represented in multiple ways.
 
 The Mod Import Name is `"BossesHelper"`.
 
