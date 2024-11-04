@@ -52,9 +52,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator DrawRoutine()
             {
-                if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim))
-                    icon.Play(startAnim);
-                yield return 0.32f;
+                if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim)) {
+                    yield return icon.PlayRoutine(startAnim);
+                }
             }
 
             public void RemoveIcon()
@@ -65,8 +65,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private IEnumerator RemoveRoutine()
             {
                 if (!string.IsNullOrEmpty(endAnim) && icon.Has(endAnim))
-                    icon.Play(endAnim);
-                yield return 0.88f;
+                {
+                    yield return icon.PlayRoutine(endAnim);
+                }
                 RemoveSelf();
             }
 
