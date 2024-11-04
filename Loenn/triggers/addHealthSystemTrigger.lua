@@ -39,25 +39,36 @@ addHealthSystemTrigger.fieldInformation = {
     healthIconsSeparation = {
         fieldType = "list",
         elementDefault = "0.0",
-        elementOptions = {}
+        elementOptions = {
+            validator = function (string)
+                res = tonumber(string)
+                return res ~= nil and res >= 0
+            end
+        }
     },
     playerHealth = {
-        fieldType = "integer",
-        minimumValue = 2
+        validator = function (string)
+            res = tonumber(string)
+            return res == nil or res > 1 and string:find("%.") == nil
+        end
     },
     damageCooldown = {
-        fieldType = "number",
-        minimumValue = 0
+        validator = function (string)
+            res = tonumber(string)
+            return res == nil or res >= 0
+        end
     },
     healthIconsScreenX = {
-        fieldType = "number",
-        minimumValue = 0,
-        maximumValue = 1920
+        validator = function (string)
+            res = tonumber(string)
+            return res == nil or (res >= 0 and res <= 1920)
+        end
     },
     healthIconsScreenY = {
-        fieldType = "number",
-        minimumValue = 0,
-        maximumValue = 1080
+        validator = function (string)
+            res = tonumber(string)
+            return res == nil or (res >= 0 and res <= 1080)
+        end
     },
     crushEffect = {
         options = crushModeOpts,
@@ -68,11 +79,6 @@ addHealthSystemTrigger.fieldInformation = {
         editable = false
     }
 }
-
-function addHealthSystemTrigger.fieldInformation.healthIconsSeparation.elementOptions.validator(string)
-    res = tonumber(string)
-    return res ~= nil and res >= 0
-end
 
 addHealthSystemTrigger.fieldOrder = {
     "x", "y",
