@@ -24,8 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal DamageHealthBar()
         {
-            healthIcons = new(SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim), SeparateList(HealthData.endAnim),
-                SeparateFloatList(HealthData.iconSeparation), HealthData.playerHealthVal, HealthData.healthBarPos, HealthData.healthIconScale);
+            healthIcons = new();
             Tag = Tags.HUD;
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
@@ -40,10 +39,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Awake(Scene scene)
         {
-            base.Awake(scene);
             healthIcons.Clear();
             healthIcons.RefillHealth();
-            healthIcons.DrawHealthBar();
+            base.Awake(scene);
         }
 
         public override void Removed(Scene scene)
