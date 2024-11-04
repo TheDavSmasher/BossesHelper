@@ -37,7 +37,9 @@ bossHealthBar.fieldInformation = {
     },
     healthIconsSeparation = {
         fieldType = "list",
-        minimumElements = 1
+        minimumElements = 1,
+        elementDefault = "0",
+        elementOptions = {}
     },
     baseColor = {
         fieldType = "color"
@@ -60,6 +62,11 @@ bossHealthBar.fieldInformation = {
         fieldType = "spacer"
     }
 }
+
+function bossHealthBar.fieldInformation.healthIconsSeparation.elementOptions.validator(string)
+    res = tonumber(string)
+    return res ~= nil and res >= 0
+end
 
 function bossHealthBar.fieldOrder(entity)
     if entity.barType == "icons" then
@@ -124,7 +131,7 @@ bossHealthBar.placements = {
             healthIcons = "",
             healthIconsCreateAnim = "",
             healthIconsRemoveAnim = "",
-            healthIconsSeparation = "",
+            healthIconsSeparation = "0",
             healthBarX = 0,
             healthBarY = 0,
             healthScaleX = 1,

@@ -42,7 +42,9 @@ healthSystemManager.fieldInformation = {
     },
     healthIconsSeparation = {
         fieldType = "list",
-        minimumElements = 1
+        minimumElements = 1,
+        elementDefault = "0",
+        elementOptions = {}
     },
     playerHealth = {
         fieldType = "integer",
@@ -71,6 +73,11 @@ healthSystemManager.fieldInformation = {
         editable = false
     }
 }
+
+function healthSystemManager.fieldInformation.healthIconsSeparation.elementOptions.validator(string)
+    res = tonumber(string)
+    return res ~= nil and res >= 0
+end
 
 healthSystemManager.fieldOrder = {
     "x", "y",
