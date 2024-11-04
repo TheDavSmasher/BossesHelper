@@ -9,16 +9,27 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
     {
         private readonly bool state;
 
+        private readonly bool onlyOnce;
+
         public PlayerHealthBarVisibleTrigger(EntityData data, Vector2 offset)
             : base(data, offset)
         {
             state = data.Bool("visible");
+            onlyOnce = data.Bool("onlyOnce");
         }
 
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            SceneAs<Level>().Tracker.GetEntity<DamageHealthBar>().Visible = state;
+            DamageHealthBar bar = SceneAs<Level>().Tracker.GetEntity<DamageHealthBar>();
+            if (bar != null)
+            {
+                bar.Visible = state;
+                if (onlyOnce)
+                {
+                    RemoveSelf();
+                }
+            }
         }
     }
 }

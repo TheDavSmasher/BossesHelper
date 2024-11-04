@@ -6,7 +6,8 @@ healthBarVisibleTrigger.nodeLimits = {0, 0}
 healthBarVisibleTrigger.placements = {
     name = "Health Bar Visible Trigger",
     data = {
-        state = true
+        state = true,
+        onlyOnce = true
     }
 }
 
