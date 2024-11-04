@@ -39,7 +39,12 @@ bossHealthBar.fieldInformation = {
         fieldType = "list",
         minimumElements = 1,
         elementDefault = "0.0",
-        elementOptions = {}
+        elementOptions = {
+            validator = function (string)
+                res = tonumber(string)
+                return res == nil or res >= 0
+            end
+        }
     },
     baseColor = {
         fieldType = "color"
@@ -62,11 +67,6 @@ bossHealthBar.fieldInformation = {
         fieldType = "spacer"
     }
 }
-
-function bossHealthBar.fieldInformation.healthIconsSeparation.elementOptions.validator(string)
-    res = tonumber(string)
-    return res ~= nil and res >= 0
-end
 
 function bossHealthBar.fieldOrder(entity)
     if entity.barType == "icons" then
