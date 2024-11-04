@@ -19,6 +19,11 @@ namespace Celeste.Mod.BossesHelper
             return new EntityChain(entity, chain);
         }
 
+        public static Component GetBossHealthComponent(Func<int> action)
+        {
+            return new BossHealthComponent(action);
+        }
+
         public static int GetCurrentPlayerHealth()
         {
             if (BossesHelperModule.Session.mapDamageController != null)
