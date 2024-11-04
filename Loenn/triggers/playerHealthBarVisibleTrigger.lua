@@ -1,6 +1,6 @@
 local healthBarVisibleTrigger = {}
 
-healthBarVisibleTrigger.name = "BossesHelper/HealthBarVisibleTrigger"
+healthBarVisibleTrigger.name = "BossesHelper/PlayerHealthBarVisibleTrigger"
 healthBarVisibleTrigger.depth = 0
 healthBarVisibleTrigger.nodeLimits = {0, 0}
 healthBarVisibleTrigger.placements = {

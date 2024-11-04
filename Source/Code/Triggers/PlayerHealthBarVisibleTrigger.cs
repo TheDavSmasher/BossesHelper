@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
-    [CustomEntity("BossesHelper/HealthBarVisibleTrigger")]
-    public class HealthBarVisibleTrigger : Trigger
+    [CustomEntity("BossesHelper/PlayerHealthBarVisibleTrigger")]
+    public class PlayerHealthBarVisibleTrigger : Trigger
     {
         private readonly bool state;
 
-        public HealthBarVisibleTrigger(EntityData data, Vector2 offset)
+        public PlayerHealthBarVisibleTrigger(EntityData data, Vector2 offset)
             : base(data, offset)
         {
             state = data.Bool("visible");
