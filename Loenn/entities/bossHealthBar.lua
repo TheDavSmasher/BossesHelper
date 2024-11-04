@@ -16,7 +16,32 @@ bossHealthBar.nodeLineRenderType = "line"
 bossHealthBar.fieldInformation = {
     healthIcons = {
         fieldType = "list",
-        minimumElements = 1
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsCreateAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsRemoveAnim = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "string"
+        }
+    },
+    healthIconsSeparation = {
+        fieldType = "list",
+        minimumElements = 1,
+        elementOptions = {
+            fieldType = "number",
+            minimumValue = 0
+        }
     },
     baseColor = {
         fieldType = "color"
@@ -35,28 +60,35 @@ bossHealthBar.fieldInformation = {
         minimumValue = 0,
         maximumValue = 1080
     },
-    healthScaleX = {
-        fieldType = "number"
-    },
-    healthScaleY = {
-        fieldType = "number"
-    },
+    __bar_pad = {
+        fieldType = "spacer"
+    }
 }
 
 function bossHealthBar.fieldOrder(entity)
     if entity.barType == "icons" then
         return {
-            "healthBarX", "healthBarY", "barType", "healthIcons", "healthIconsCreateAnim", "healthIconsRemoveAnim",
-            "healthScaleX", "healthScaleY", "healthIconsSeparation", "startVisible"
+            "healthBarX", "healthBarY",
+            "barType", "healthIcons",
+            "healthIconsCreateAnim", "healthIconsRemoveAnim",
+            "healthScaleX", "healthScaleY",
+            "healthIconsSeparation", "__bar_pad",
+            "startVisible"
         }
     end
     if entity.barType == "countdown" then
         return {
-            "healthBarX", "healthBarY", "barType", "baseColor", "healthScaleX", "healthScaleY", "startVisible"
+            "healthBarX", "healthBarY",
+            "barType", "baseColor",
+            "healthScaleX", "healthScaleY",
+            "startVisible"
         }
     end
     return {
-        "healthBarX", "healthBarY", "barType", "baseColor", "healthScaleX", "healthScaleY", "startVisible"
+        "healthBarX", "healthBarY",
+        "barType", "baseColor",
+        "healthScaleX", "healthScaleY",
+        "startVisible"
     }
 end
 
@@ -96,7 +128,7 @@ bossHealthBar.placements = {
             healthIcons = "",
             healthIconsCreateAnim = "",
             healthIconsRemoveAnim = "",
-            healthIconsSeparation = 0,
+            healthIconsSeparation = "",
             healthBarX = 0,
             healthBarY = 0,
             healthScaleX = 1,
