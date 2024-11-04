@@ -27,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 _)
         {
-            BossesHelperModule.Session.mapHealthSystemManager ??= this;
+            BossesHelperModule.Session.mapHealthSystemManager = this;
             BossesHelperModule.Session.healthData.isCreated = true;
             BossesHelperModule.Session.healthData.iconSprite = data.String("healthIcons", healthData.iconSprite);
             BossesHelperModule.Session.healthData.startAnim = data.String("healthIconsCreateAnim", healthData.startAnim);
