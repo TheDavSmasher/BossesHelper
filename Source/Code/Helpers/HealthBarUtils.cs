@@ -14,6 +14,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return index >= 0 && index < list.Count ? list[index] : @default;
         }
 
+        public static string String(this EntityData entityData, string key, string defaultValue)
+        {
+            if (entityData.Values != null && entityData.Values.TryGetValue(key, out var value))
+            {
+                if (!string.IsNullOrEmpty((string) value))
+                    return value.ToString();
+            }
+
+            return defaultValue;
+        }
+
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         public class HealthIcon : Entity
