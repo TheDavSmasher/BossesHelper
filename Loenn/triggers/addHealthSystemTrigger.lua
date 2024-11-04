@@ -20,28 +20,26 @@ addHealthSystemTrigger.nodeLimits = {0, 0}
 addHealthSystemTrigger.fieldInformation = {
     healthIcons = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsCreateAnim = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsRemoveAnim = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsSeparation = {
         fieldType = "list",
-        minimumElements = 1
+        elementDefault = "0",
+        elementOptions = {}
     },
     playerHealth = {
         fieldType = "integer",
@@ -70,6 +68,11 @@ addHealthSystemTrigger.fieldInformation = {
         editable = false
     }
 }
+
+function addHealthSystemTrigger.fieldInformation.healthIconsSeparation.elementOptions.validator(string)
+    res = tonumber(string)
+    return res ~= nil and res >= 0
+end
 
 addHealthSystemTrigger.fieldOrder = {
     "x", "y",

@@ -21,28 +21,24 @@ healthSystemManager.nodeLimits = {0, 0}
 healthSystemManager.fieldInformation = {
     healthIcons = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsCreateAnim = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsRemoveAnim = {
         fieldType = "list",
-        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
     },
     healthIconsSeparation = {
         fieldType = "list",
-        minimumElements = 1,
         elementDefault = "0",
         elementOptions = {}
     },
