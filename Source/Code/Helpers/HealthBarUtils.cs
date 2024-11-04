@@ -14,6 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return index >= 0 && index < list.Count ? list[index] : @default;
         }
 
+        private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
+
         public class HealthIcon : Entity
         {
             private readonly Sprite icon;
@@ -66,19 +68,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public class HealthIconList : Entity
         {
+            private readonly bool useSessionValues;
+
             private readonly List<HealthIcon> healthIcons;
 
-            private readonly List<string> icons;
+            private List<string> icons;
 
-            private readonly List<string> createAnims;
+            private List<string> createAnims;
 
-            private readonly List<string> removeAnims;
+            private List<string> removeAnims;
 
-            private readonly List<float> iconSeparations;
+            private List<float> iconSeparations;
 
-            private readonly Vector2 BarScale;
+            private Vector2 BarScale;
 
-            private readonly int Health;
+            private int Health;
 
             private Level level;
 
@@ -102,17 +106,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList(List<string> icons, List<string> createAnims, List<string> removeAnims, List<float> iconSeparations,
-                int health, Vector2 barPosition, Vector2 barScale)
+            public HealthIconList()
             {
+                useSessionValues = true;
+                healthIcons = new List<HealthIcon>();
+            }
+
+            public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
+            {
+                useSessionValues = false;
                 Health = health;
                 Position = barPosition;
                 BarScale = barScale;
                 healthIcons = new List<HealthIcon>();
-                this.icons = icons;
-                this.createAnims = createAnims;
-                this.removeAnims = removeAnims;
-                this.iconSeparations = iconSeparations;
+                this.icons = SeparateList(entityData.Attr("healthIcons"));
+                this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                this.iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
                 for (int i = 0; i < Health; i++)
                 {
                     healthIcons.Add(new HealthIcon(BarScale,
@@ -124,17 +134,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
-                : this(SeparateList(entityData.Attr("healthIcons")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
-                      SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateFloatList(entityData.Attr("healthIconsSeparation")),
-                      health, barPosition, barScale)
-            {
-            }
-
             public override void Added(Scene scene)
             {
                 base.Added(scene);
                 level = scene as Level;
+                if (useSessionValues)
+                {
+                    Health = HealthData.playerHealthVal;
+                    Position = HealthData.healthBarPos;
+                    BarScale = HealthData.healthIconScale;
+                    icons = SeparateList(HealthData.iconSprite);
+                    createAnims = SeparateList(HealthData.startAnim);
+                    removeAnims = SeparateList(HealthData.endAnim);
+                    iconSeparations = SeparateFloatList(HealthData.iconSeparation);
+                }
+            }
+
+            public override void Awake(Scene scene)
+            {
+                base.Awake(scene);
+                DrawHealthBar();
             }
 
             public void DrawHealthBar()
