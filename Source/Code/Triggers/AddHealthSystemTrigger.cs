@@ -9,11 +9,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
     [CustomEntity("BossesHelper/AddHealthSystemTrigger")]
     public class AddHealthSystemTrigger : Trigger
     {
-        private EntityID id;
+        private readonly EntityID id;
 
-        private EntityData data;
-
-        private Vector2 offset;
+        private readonly EntityData data;
 
         private readonly bool onlyOnce;
 
@@ -23,7 +21,6 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             this.id = id;
             onlyOnce = data.Bool("onlyOnce", true);
             this.data = data;
-            this.offset = offset;
         }
 
         public override void OnEnter(Player player)
@@ -36,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         {
             BossesHelperModule.Session.mapHealthSystemManager?.RemoveSelf();
             yield return null;
-            new HealthSystemManager(data, offset);
+            new HealthSystemManager(data, Vector2.Zero);
             SceneAs<Level>().Add(BossesHelperModule.Session.mapHealthSystemManager);
             if (onlyOnce)
             {
