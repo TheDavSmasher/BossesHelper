@@ -391,6 +391,10 @@ Based on the different Type placed for the Bar Type via the placements provided,
 
 - Base Color: The color the solid rectangle will use.
 
+## Visibility Trigger
+
+Due to the fact that a Health Bar can be added while not visible, a Trigger, Boss Health Bar Visible Trigger, is provided to change the Visibility of the Boss Health Bar closest to the trigger's Node.
+
 ## Player Health System
 
 In addition to Bosses, this helper also implements a health System for the player, hooked to the Player's `Die` method. It is implemented with a generalized base for public use. When the Health System is added onto the scene, it starts disabled and must be activated in one of the provided ways explained below.
