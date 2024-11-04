@@ -7,6 +7,7 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.HealthBarUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
+    [Tracked(false)]
     [CustomEntity("BossesHelper/BossHealthBar")]
     public class BossHealthBar : Entity
     {
@@ -48,7 +49,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public BossHealthBar(EntityData data, Vector2 _)
         {
             this.entityData = data;
-            BarPosition = (Position = new Vector2(data.Float("healthBarX"), data.Float("healthBarY")));
+            Position = data.Position;
+            BarPosition = new Vector2(data.Float("healthBarX"), data.Float("healthBarY"));
             BarScale = new Vector2(data.Float("healthScaleX", 1f), data.Float("healthScaleY", 1f));
             barType = data.Enum<BarTypes>("barType", BarTypes.BarLeft);
             Tag = Tags.HUD;
