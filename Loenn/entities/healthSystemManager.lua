@@ -39,7 +39,7 @@ healthSystemManager.fieldInformation = {
     },
     healthIconsSeparation = {
         fieldType = "list",
-        elementDefault = "0",
+        elementDefault = "0.0",
         elementOptions = {}
     },
     playerHealth = {

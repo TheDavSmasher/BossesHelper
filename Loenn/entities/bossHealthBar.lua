@@ -38,7 +38,7 @@ bossHealthBar.fieldInformation = {
     healthIconsSeparation = {
         fieldType = "list",
         minimumElements = 1,
-        elementDefault = "0",
+        elementDefault = "0.0",
         elementOptions = {}
     },
     baseColor = {
