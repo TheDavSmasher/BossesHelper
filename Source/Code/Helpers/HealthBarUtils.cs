@@ -25,6 +25,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return defaultValue;
         }
 
+        public static IEnumerator PlayUntilLoop(this Sprite icon, string anim)
+        {
+            Action<string> onFrameChange = icon.OnFrameChange;
+            bool singleLoop = false;
+            icon.OnLastFrame = (string _) => singleLoop = true;
+            icon.Play(anim);
+            while (!singleLoop)
+            {
+                yield return null;
+            }
+            icon.OnFrameChange = onFrameChange;
+        }
+
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         public class HealthIcon : Entity
@@ -53,7 +66,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private IEnumerator DrawRoutine()
             {
                 if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim)) {
-                    yield return icon.PlayRoutine(startAnim);
+                    yield return icon.PlayUntilLoop(startAnim);
                 }
             }
 
@@ -66,7 +79,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (!string.IsNullOrEmpty(endAnim) && icon.Has(endAnim))
                 {
-                    yield return icon.PlayRoutine(endAnim);
+                    yield return icon.PlayUntilLoop(endAnim);
                 }
                 RemoveSelf();
             }
