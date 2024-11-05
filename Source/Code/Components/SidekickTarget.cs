@@ -5,11 +5,11 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    public class SidekickTarget : Component
+    public class SidekickTarget(Action onLaser, string bossId, Vector2 position, Collider target) : Component(active: true, visible: false)
     {
-        private readonly SidekickTargetCollider sidekickTarget;
+        private readonly SidekickTargetCollider sidekickTarget = new(position, onLaser, target);
 
-        public readonly string BossID;
+        public readonly string BossID = bossId;
 
         public Collider Collider
         {
@@ -33,13 +33,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             {
                 sidekickTarget.Position = value;
             }
-        }
-
-        public SidekickTarget(Action onLaser, string bossId, Vector2 position, Collider target)
-            : base(active: true, visible: false)
-        {
-            BossID = bossId;
-            sidekickTarget = new(position, onLaser, target);
         }
 
         public override void EntityAdded(Scene scene)
