@@ -229,7 +229,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (healthIcons.Count > 0)
                 {
-                    healthIcons[healthIcons.Count - 1].RemoveIcon();
+                    healthIcons.Last().RemoveIcon();
                     healthIcons.RemoveAt(healthIcons.Count - 1);
                 }
                 else
