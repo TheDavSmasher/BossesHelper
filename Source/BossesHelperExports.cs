@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper
             return new EntityChain(entity, chain);
         }
 
-        public static Component GetBossHealthComponent(Func<int> action)
+        public static Component GetBossHealthTrackerComponent(Func<int> action)
         {
             return new BossHealthTracker(action);
         }

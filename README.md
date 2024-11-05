@@ -464,7 +464,7 @@ This Helper includes a few things exported with ModInterop, namely:
 - **GetCurrentPlayerHealth**: Useful to know if a Health System is active on Scene and if so, what the Player's health value is at. Returns -1 if no Health System is active.
 - **RecoverPlayerHealth**: Makes the player recover health points as many as the value given. This can go over the PLayer's default health value.
 - **MakePlayerTakeDamage**: Useful to extend utility from the Health System to set custom parameters to take damage.
-- **GetBossHealthComponent**: Returns a component that allows any entity that can track a number to use the Boss Health Bar entity display for it.
+- **GetBossHealthTrackerComponent**: Returns a component that allows any entity that can track a number to use the Boss Health Bar entity display for it.
   - The integer can represent anything, and can be represented in multiple ways.
 
 The Mod Import Name is `"BossesHelper"`.
