@@ -10,7 +10,7 @@ local barTypeOpts = {
 
 bossHealthBar.name = "BossesHelper/BossHealthBar"
 bossHealthBar.depth = 0
---bossHealthBar.texture = ""
+bossHealthBar.texture = "loenn/BossesHelper/HealthBar"
 bossHealthBar.nodeLimits = {1, 1}
 bossHealthBar.nodeLineRenderType = "line"
 bossHealthBar.fieldInformation = {
