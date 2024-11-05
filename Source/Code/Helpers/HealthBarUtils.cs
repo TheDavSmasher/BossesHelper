@@ -25,19 +25,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return defaultValue;
         }
 
-        public static IEnumerator PlayUntilLoop(this Sprite icon, string anim)
-        {
-            Action<string> onFrameChange = icon.OnFrameChange;
-            bool singleLoop = false;
-            icon.OnLastFrame = (string _) => singleLoop = true;
-            icon.Play(anim);
-            while (!singleLoop)
-            {
-                yield return null;
-            }
-            icon.OnFrameChange = onFrameChange;
-        }
-
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         public class HealthIcon : Entity
@@ -60,28 +47,32 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public void DrawIcon(Vector2 position)
             {
                 Position = position;
-                Add(new Coroutine(DrawRoutine()));
-            }
-
-            private IEnumerator DrawRoutine()
-            {
-                if (!string.IsNullOrEmpty(startAnim) && icon.Has(startAnim)) {
-                    yield return icon.PlayUntilLoop(startAnim);
-                }
+                Add(new Coroutine(IconRoutine(startAnim)));
             }
 
             public void RemoveIcon()
             {
-                Add(new Coroutine(RemoveRoutine()));
+                Add(new Coroutine(IconRoutine(endAnim, true)));
             }
 
-            private IEnumerator RemoveRoutine()
+            private IEnumerator IconRoutine(string anim, bool remove = false)
             {
-                if (!string.IsNullOrEmpty(endAnim) && icon.Has(endAnim))
+                if (!string.IsNullOrEmpty(anim) && icon.Has(anim))
                 {
-                    yield return icon.PlayUntilLoop(endAnim);
+                    Action<string> onFrameChange = icon.OnFrameChange;
+                    bool singleLoop = false;
+                    icon.OnLastFrame = (string _) => singleLoop = true;
+                    icon.Play(anim);
+                    while (!singleLoop)
+                    {
+                        yield return null;
+                    }
+                    icon.OnFrameChange = onFrameChange;
                 }
-                RemoveSelf();
+                if (remove)
+                {
+                    RemoveSelf();
+                }
             }
 
             public override void Render()
@@ -178,11 +169,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Awake(Scene scene)
             {
                 base.Awake(scene);
-                DrawHealthBar();
-            }
-
-            public void DrawHealthBar()
-            {
                 for (int i = 0; i < Health; i++)
                 {
                     level.Add(healthIcons[i]);
@@ -236,11 +222,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     Logger.Log("Health Render", "No Health Icon to remove");
                 }
-            }
-
-            public void ForEach(Action<HealthIcon> action)
-            {
-                healthIcons.ForEach(action);
             }
 
             public void Clear()
