@@ -139,6 +139,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action<bool> removeBoss = removeBoss;
         }
 
+        public struct CustceneDelegates(Action<bool> removeBoss)
+        {
+            public Action<bool> removeBoss = removeBoss;
+        }
+
         private EntityID id;
 
         private readonly string BossID;
@@ -239,7 +244,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks, BossID,
                 new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, BossID, player, Puppet);
+            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, BossID, player, Puppet,
+                new(RemoveBoss));
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID,
                 new(player, Puppet, () => Health, (val) => Health = val, (val) => Health -= val, WaitForAttackToEnd,
                 InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
@@ -338,11 +344,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Boss Event
             if (pattern.IsEvent)
             {
-                AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene);
-                Level.Add(cutscene);
-                while (!cutscene.finished)
+                if (AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene))
                 {
-                    yield return null;
+                    Level.Add(cutscene);
+                    while (!cutscene.finished)
+                    {
+                        yield return null;
+                    }
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified event file.");
                 }
                 if (pattern.GoToPattern == null)
                 {

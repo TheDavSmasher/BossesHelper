@@ -13,6 +13,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private readonly string filepath;
 
+        public BossController.CustceneDelegates CustceneDelegates { get; private set; }
+
         public bool finished;
 
         private IEnumerator Cutscene;
@@ -37,18 +39,27 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossEvent(string filepath, string bossId, Player player, BossPuppet puppet, bool fadeInOnSkip = true, bool endingChapterAfter = false)
+        public BossEvent(string filepath, string bossId, Player player, BossPuppet puppet, BossController.CustceneDelegates delegates,
+            bool fadeInOnSkip = true, bool endingChapterAfter = false)
             : base(fadeInOnSkip, endingChapterAfter)
         {
             this.filepath = filepath;
             finished = false;
+            CustceneDelegates = delegates;
             LoadCutscene(filepath, bossId, player, puppet);
+        }
+
+        private BossEvent(string filepath)
+        {
+            this.filepath = filepath;
+            finished = false;
+            LoadCutscene(filepath, null, null, null);
         }
 
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene", null, null, null);
+            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene");
             Coroutine coroutine = new(bossEvent.Coroutine(null));
             try
             {

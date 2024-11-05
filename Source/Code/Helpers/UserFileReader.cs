@@ -97,13 +97,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source != null ? int.Parse(source.Value) : value;
         }
 
-        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId, Player playerRef, BossPuppet puppetRef)
+        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId,
+            Player playerRef, BossPuppet puppetRef, BossController.CustceneDelegates custceneDelegates)
         {
             if (Everest.Content.TryGet(path, out ModAsset eventFiles))
             {
                 foreach (ModAsset eventFile in eventFiles.Children)
                 {
-                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1), new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef));
+                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
+                        new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
                 }
             }
             else
