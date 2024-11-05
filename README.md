@@ -267,7 +267,7 @@ function onEnd(level, wasSkipped) --optional
 end
 ```
 
-An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, and access to all regular helper functions. An `onEnd(level, wasSkipped)` function is not required but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor. Events, like Cutscenes, are Skippable by default.
+An `onBegin()` function must be provided, which holds the code the cutscene will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, the Event file itself under `cutsceneEntity`, a couple of Delegate functions in `cutsceneEntity.CutsceneDelegates`, and access to all regular helper functions. An `onEnd(level, wasSkipped)` function is not required but is recommended for handling cleanup and cutscene skipping logic. These files follow the same rule as the LuaCutscenes helper from Cruor. Events, like Cutscenes, are Skippable by default.
 
 ### Functions
 

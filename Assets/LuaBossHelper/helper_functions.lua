@@ -975,7 +975,7 @@ end
 
 
 --- Interrupt Delegates
---- The following Delegates will only on the Interruption functions, such as onHit()
+--- The following Delegates will only work on the Interruption functions, such as onHit()
 
 ---Get the Boss' current health value
 ---@return number health The Boss's current health value
@@ -1037,6 +1037,16 @@ function helpers.removeBoss(permanent)
 end
 --End Interrupt Delegates
 
+--- Cutscene Delegates
+--- The following Delegates will only work in Event files
+
+---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
+---@param permanent boolean If the boss should not be loaded again. False will spawn the Boss every time the room is loaded.
+function helpers.removeBossCutscene(permanent)
+    cutsceneEntity.CutsceneDelegates.removeBoss:Invoke(permanent or false)
+end
+
+--- End Cutscene Delegates
 
 --- Additional, non-delegate helper shorthand methods
 --- These can be used anywhere within the Mod.
