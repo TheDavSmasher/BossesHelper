@@ -96,7 +96,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
-            Add(new BossHealthComponent(health));
+            Add(new BossHealthTracker(health));
             if (!string.IsNullOrEmpty(SpriteName))
             {
                 Sprite = GFX.SpriteBank.Create(SpriteName);

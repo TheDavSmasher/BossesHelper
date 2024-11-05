@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper
 
         public static Component GetBossHealthComponent(Func<int> action)
         {
-            return new BossHealthComponent(action);
+            return new BossHealthTracker(action);
         }
 
         public static int GetCurrentPlayerHealth()
