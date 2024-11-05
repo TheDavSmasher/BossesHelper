@@ -7,7 +7,7 @@ using System.Linq;
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
     [Tracked(false)]
-    public class EntityCollider<T> : EntityColliderComponent where T : Entity
+    public class EntityCollider<T> : EntityColliderCast where T : Entity
     {
         public Action<T> OnEntityAction;
 

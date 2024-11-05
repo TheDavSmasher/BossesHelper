@@ -160,7 +160,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             object[] componentArgs = { func, collider };
             object entityCollider = Activator.CreateInstance(componentType, componentArgs);
 
-            parent.Add(entityCollider as EntityColliderComponent);
+            parent.Add(entityCollider as EntityColliderCast);
         }
     }
 }
