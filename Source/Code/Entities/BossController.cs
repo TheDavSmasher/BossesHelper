@@ -7,7 +7,6 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
-using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
