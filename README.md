@@ -12,6 +12,7 @@ This is a helper specifically designed to allow the creation of custom bosses wi
   - [Hitbox Metadata](#hitbox-metadata)
   - [Patterns](#patterns)
   - [Attacks](#attacks)
+    - [Entity Timers and Flaggers](#entity-timers-and-flaggers)
   - [Events](#events)
   - [Functions](#functions)
 - [Helper Objects](#helper-objects)
@@ -252,6 +253,16 @@ end
 ```
 
 An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `bossAttack`, as well as access to all regular helper functions.
+
+#### Entity Timers and Flaggers
+
+One of the Helper functions provided to attacks are Adding Entity Timer or Entity Flaggers. These are shortcut versions for ease of execution of certain delegate methods when the condition is met.
+
+Entity Timers will execute the provided method on the entity one the timer provided reaches 0. Entity Flaggers will execute the provided method when the given Session flag matches the state needed, which defaults to true.
+
+`addEntityWithTimer()` and `addEntityWithFlagger()` will both add the entity to the Level and add with it the attached timer or flagger. If the entity provided is already on scene, it will not be added again. You can still add an additional timer or flagger with this method, although if the entity is already on scene, use the next methods instead, even if these one would do the same thing.
+
+`addTimerToEntity()` and `addFlaggerToEntity()` will attach the timer or flagger to the entity, regardless of if the entity has been added or not. The timer or flagger will not execute until the Entity is added, however. To add the entity, use either `addEntity()` or either of the `addEntityWithTimer()` or `addEntityWithFlagger()`.
 
 ### Events
 

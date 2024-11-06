@@ -7,6 +7,7 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -21,8 +22,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public float Timer { get; set; }
 
-            public string id;
-
             public LuaFunction action;
 
             public readonly bool Done
@@ -33,12 +32,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private EntityTimer(Entity target, float timer, LuaFunction action, string id)
+            private EntityTimer(Entity target, float timer, LuaFunction action)
             {
                 this.target = target;
                 this.Timer = timer;
                 this.action = action;
-                this.id = id;
+            }
+
+            public void Execute()
+            {
+                action.Call(target);
             }
 
             public EntityTimer UpdateTimer()
@@ -52,9 +55,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Timer = 0;
             }
 
-            public static EntityTimer DoActionOnEntityDelay(LuaFunction action, Entity entity, string id, float timer)
+            public static EntityTimer DoActionOnEntityDelay(LuaFunction action, Entity entity, float timer)
             {
-                return new EntityTimer(entity, timer, action, id);
+                return new EntityTimer(entity, timer, action);
             }
         }
 
@@ -87,6 +90,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 this.action = action;
             }
 
+            public void Execute()
+            {
+                action.Call(target);
+            }
+
             public static EntityFlagger DoActionOnEntityOnFlagState(LuaFunction action, Entity entity, string flag,
                 bool state = true, bool resetFlag = true)
             {
@@ -94,8 +102,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public struct AttackDelegates(Player playerRef, BossPuppet puppetRef, Action<Entity> addEntity, Action<Entity, string, LuaFunction, float> addEntityWithTimer,
-            Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger, Action<Entity> destroyEntity, Action destroyAll)
+        public struct AttackDelegates(Player playerRef, BossPuppet puppetRef, Action<Entity> addEntity,
+            Action<Entity, float, LuaFunction> addEntityWithTimer, Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger,
+            Action<Entity, float, LuaFunction> addTimerToEntity, Action<Entity, string, LuaFunction, bool, bool> addFlaggerToEntity,
+            Action<Entity> destroyEntity, Action destroyAll)
         {
             public Player playerRef = playerRef;
 
@@ -103,9 +113,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public Action<Entity> addEntity = addEntity;
 
-            public Action<Entity, string, LuaFunction, float> addEntityWithTimer = addEntityWithTimer;
+            public Action<Entity, float, LuaFunction> addEntityWithTimer = addEntityWithTimer;
 
             public Action<Entity, string, LuaFunction, bool, bool> addEntityWithFlagger = addEntityWithFlagger;
+
+            public Action<Entity, float, LuaFunction> addTimerToEntity = addTimerToEntity;
+
+            public Action<Entity, string, LuaFunction, bool, bool> addFlaggerToEntity = addFlaggerToEntity;
 
             public Action<Entity> destroyEntity = destroyEntity;
 
@@ -172,9 +186,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly List<Entity> activeEntities;
 
-        private readonly Dictionary<string, EntityTimer> activeEntityTimers;
+        private readonly List<EntityTimer> activeEntityTimers;
 
-        private readonly Dictionary<string, EntityFlagger> activeEntityFlaggers;
+        private readonly List<EntityFlagger> activeEntityFlaggers;
 
         private readonly string attacksPath;
 
@@ -203,8 +217,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(currentPattern);
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
-            activeEntityTimers = new Dictionary<string, EntityTimer>();
-            activeEntityFlaggers = new Dictionary<string, EntityFlagger>();
+            activeEntityTimers = new List<EntityTimer>();
+            activeEntityFlaggers = new List<EntityFlagger>();
             FetchSavedPhase();
         }
 
@@ -243,7 +257,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void PopulateAttacksEventsAndFunctions(Player player)
         {
             UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks, BossID,
-                new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, DestroyEntity, DestroyAll));
+                new(player, Puppet, AddEntity, AddEntityWithTimer, AddEntityWithFlagger, AddTimerToEntity, AddFlaggerToEntity, DestroyEntity, DestroyAll));
             UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, BossID, player, Puppet,
                 new(RemoveBoss));
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID,
@@ -287,30 +301,44 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                 }
             }
-            foreach (KeyValuePair<string, EntityTimer> entityTimer in activeEntityTimers)
+            int index = 0;
+            while (index < activeEntityTimers.Count)
             {
-                if (entityTimer.Value.Done && !Level.Entities.ToAdd.Contains(entityTimer.Value.target))
+                EntityTimer timer = activeEntityTimers[index];
+                if (EntityFullyAdded(timer.target) && timer.Done)
                 {
-                    entityTimer.Value.action.Call(entityTimer.Value.target);
-                    activeEntityTimers.Remove(entityTimer.Key);
+                    timer.Execute();
+                    activeEntityTimers.RemoveAt(index);
                 }
                 else
                 {
-                    activeEntityTimers[entityTimer.Key] = entityTimer.Value.UpdateTimer();
+                    activeEntityTimers[index] = timer.UpdateTimer();
+                    index++;
                 }
             }
-            foreach (EntityFlagger entityFlagger in activeEntityFlaggers.Values)
+            index = 0;
+            while (index < activeEntityFlaggers.Count)
             {
-                if (entityFlagger.Ready && !Level.Entities.ToAdd.Contains(entityFlagger.target))
+                EntityFlagger flagger = activeEntityFlaggers[index];
+                if (EntityFullyAdded(flagger.target) && flagger.Ready)
                 {
-                    entityFlagger.action.Call(entityFlagger.target);
-                    if (entityFlagger.resetFlag)
+                    flagger.Execute();
+                    if (flagger.resetFlag)
                     {
-                        Level.Session.SetFlag(entityFlagger.flag, !entityFlagger.stateNeeded);
+                        Level.Session.SetFlag(flagger.flag, !flagger.stateNeeded);
                     }
-                    activeEntityFlaggers.Remove(entityFlagger.flag);
+                    activeEntityFlaggers.RemoveAt(index);
+                }
+                else
+                {
+                    index++;
                 }
             }
+        }
+
+        private bool EntityFullyAdded(Entity entity)
+        {
+            return activeEntities.Contains(entity) && !Level.Entities.ToAdd.Contains(entity);
         }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
@@ -455,31 +483,34 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         //Attack Delegates
         private void AddEntity(Entity entity)
         {
-            Level.Add(entity);
-            activeEntities.Add(entity);
-            entity.Scene = Level;
-        }
-
-        private void AddEntityWithTimer(Entity entity, string id, LuaFunction action, float timer)
-        {
-            if (!activeEntityTimers.ContainsKey(id))
+            if (!activeEntities.Contains(entity))
             {
                 Level.Add(entity);
                 activeEntities.Add(entity);
                 entity.Scene = Level;
-                activeEntityTimers.Add(id, EntityTimer.DoActionOnEntityDelay(action, entity, id, timer));
             }
+        }
+
+        private void AddTimerToEntity(Entity entity, float timer, LuaFunction action)
+        {
+            activeEntityTimers.Add(EntityTimer.DoActionOnEntityDelay(action, entity, timer));
+        }
+
+        private void AddFlaggerToEntity(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
+        {
+            activeEntityFlaggers.Add(EntityFlagger.DoActionOnEntityOnFlagState(action, entity, flag, state, resetFlag));
+        }
+
+        private void AddEntityWithTimer(Entity entity, float timer, LuaFunction action)
+        {
+            AddEntity(entity);
+            AddTimerToEntity(entity, timer, action);
         }
 
         private void AddEntityWithFlagger(Entity entity, string flag, LuaFunction action, bool state = true, bool resetFlag = true)
         {
-            if (!activeEntityFlaggers.ContainsKey(flag))
-            {
-                Level.Add(entity);
-                activeEntities.Add(entity);
-                entity.Scene = Level;
-                activeEntityFlaggers.Add(flag, EntityFlagger.DoActionOnEntityOnFlagState(action, entity, flag, state, resetFlag));
-            }
+            AddEntity(entity);
+            AddFlaggerToEntity(entity, flag, action, state, resetFlag);
         }
 
         private void DestroyEntity(Entity entity)

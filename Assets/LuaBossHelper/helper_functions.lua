@@ -945,20 +945,38 @@ end
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities, with a function delegate on a timer attached.
 ---@param entity Entity The entity to add
----@param name string The name the specific entity and timer will be tracked with. Must be unique
+---@param timer number The amount of time that must pass for the timer to execute.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the DestroyEntity function.
-function helpers.addEntityWithTimer(entity, name, func, timer)
-    bossAttack.addEntityWithTimer:Invoke(entity, name, func or helpers.destroyEntity, timer)
+function helpers.addEntityWithTimer(entity, timer, func)
+    bossAttack.addEntityWithTimer:Invoke(entity, timer, func or helpers.destroyEntity)
 end
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities, with a function delegate on flag activation attached.
 ---@param entity Entity The entity to add
----@param flag string The session flag the entity will use to activate its function. It is also used to track the flagger. Must be unique
+---@param flag string The session flag the entity will use to activate its function.
 ---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the destroyEntity function.
 ---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
 ---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
 function helpers.addEntityWithFlagger(entity, flag, func, state, resetFlag)
     bossAttack.addEntityWithFlagger:Invoke(entity, flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
+end
+
+--- Adds the function delegate on a timer to the entity.
+---@param entity Entity The entity to add the timer to
+---@param timer number The amount of time that must pass for the timer to execute
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the DestroyEntity function.
+function helpers.addTimerToEntity(entity, timer, func)
+    bossAttack.addTimerToEntity:Invoke(entity, timer, func or helpers.destroyEntity)
+end
+
+--- Adds the function delegate on flag activation to the entity.
+---@param entity Entity The entity to add the flagger to
+---@param flag string The session flag the entity will use to activate its function.
+---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will be the same as the entity parameter. Defaults to the destroyEntity function.
+---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
+---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
+function helpers.addFlaggerToEntity(entity, flag, func, state, resetFlag)
+    bossAttack.addFlaggerToEntity:Invoke(entity, flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
