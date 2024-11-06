@@ -256,13 +256,13 @@ An `onBegin()` function must be provided, which holds the code the attack will e
 
 #### Entity Timers and Flaggers
 
-One of the Helper functions provided to attacks are Adding Entity Timer or Entity Flaggers. These are shortcut versions for ease of execution of certain delegate methods when the condition is met.
+Some of the Helper functions provided to attacks are Adding Entity Timer or Entity Flaggers. These are shortcut versions for ease of execution of certain delegate methods when the condition is met.
 
 Entity Timers will execute the provided method on the entity one the timer provided reaches 0. Entity Flaggers will execute the provided method when the given Session flag matches the state needed, which defaults to true.
 
-`addEntityWithTimer()` and `addEntityWithFlagger()` will both add the entity to the Level and add with it the attached timer or flagger. If the entity provided is already on scene, it will not be added again. You can still add an additional timer or flagger with this method, although if the entity is already on scene, use the next methods instead, even if these one would do the same thing.
+`addEntityWithTimer()` and `addEntityWithFlagger()` will both add the entity to the Level and add with it the attached timer or flagger. If the entity provided is already on scene, it will not be added again. You can still add an additional timer or flagger with this method, although if the entity is already on scene, use the next methods instead, even if these ones would do the same thing.
 
-`addTimerToEntity()` and `addFlaggerToEntity()` will attach the timer or flagger to the entity, regardless of if the entity has been added or not. The timer or flagger will not execute until the Entity is added, however. To add the entity, use either `addEntity()` or either of the `addEntityWithTimer()` or `addEntityWithFlagger()`.
+`addTimerToEntity()` and `addFlaggerToEntity()` will attach the timer or flagger to the entity, regardless of if the entity has been added or not. It will not add it or check if it's been added. The timer or flagger will not execute until the Entity is added, however. To add the entity, use either `addEntity()` or either of the `addEntityWithTimer()` or `addEntityWithFlagger()`.
 
 ### Events
 
