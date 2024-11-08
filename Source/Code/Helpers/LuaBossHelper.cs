@@ -137,7 +137,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
         {
-            puppet.Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(func)));
+            puppet.Add(new Coroutine(LuaFunctionToIEnumerator(func)));
         }
 
         public static void AddEntityColliderTo(Entity parent, object baseEntity, LuaFunction func, Collider collider = null)
