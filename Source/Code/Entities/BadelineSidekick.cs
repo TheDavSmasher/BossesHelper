@@ -58,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool CanAttack;
 
-        private bool FreezeOnAttack;
+        private readonly bool FreezeOnAttack;
 
         private readonly float sidekickCooldown;
 
@@ -86,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(DummyHair);
             Add(Dummy);
             Add(Boss);
-            /*Add(Custom);*/
+            //Add(Custom);
             Add(Wave = new SineWave(0.25f, 0f));
             Wave.OnUpdate = (float f) =>
             {
@@ -198,16 +198,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Dummy.Visible = true;
                     DummyHair.Visible = true;
                     Boss.Visible = false;
-                    /*Custom.Visible = false;*/
+                    //Custom.Visible = false;
                     break;
                 case SidekickSprite.Boss:
                     Boss.Visible = true;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
-                    /*Custom.Visible = false;*/
+                    //Custom.Visible = false;
                     break;
                 case SidekickSprite.Custom:
-                    /*Custom.Visible = true;*/
+                    //Custom.Visible = true;
                     Boss.Visible = false;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
