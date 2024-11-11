@@ -29,6 +29,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private float activeTimer;
 
+        public float oldX;
+
         private float angle;
 
         private float beamAlpha;
@@ -62,6 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             sideFadeAlpha = 0f;
             beamAlpha = 0f;
             Vector2 center = ClosestCollider(target.Collider);
+            oldX = center.X;
             int num = ((center.Y <= sidekick.Y + 16f) ? 1 : (-1));
             if (center.X >= sidekick.X)
             {
@@ -88,6 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     followTimer -= Engine.DeltaTime;
                     chargeTimer -= Engine.DeltaTime;
                     Vector2 center = ClosestCollider(Target.Collider);
+                    oldX = center.X;
                     if (followTimer > 0f && center != sidekick.BeamOrigin)
                     {
                         Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), center);

@@ -11,6 +11,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private readonly Follower Follower;
 
+        private SidekickBeam beam;
+
         private float oldX;
 
         private enum SidekickSprite
@@ -113,7 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickTargetCollider target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(BeamOrigin);
             if (target != null)
             {
-                level.CreateAndAdd<SidekickBeam>().Init(this, target);
+                beam = level.CreateAndAdd<SidekickBeam>().Init(this, target);
             }
             yield return 0.9f;
             ActiveSprite.Play("attack2Lock", true);
@@ -155,7 +157,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Leader.GainFollower(Follower);
             }
-            if ((oldX - X) * ActiveSprite.Scale.X > 0)
+            if (beam != null && Boss.Visible)
+            {
+                if ((beam.oldX - X) * Boss.Scale.X < 0)
+                {
+                    Boss.Scale.X *= -1;
+                }
+            }
+            else if ((oldX - X) * ActiveSprite.Scale.X > 0)
             {
                 ActiveSprite.Scale.X *= -1;
                 DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
