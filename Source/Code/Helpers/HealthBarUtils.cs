@@ -25,6 +25,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return defaultValue;
         }
 
+        public static IEnumerator PlayAnim(this Sprite sprite, string anim)
+        {
+            if (!string.IsNullOrEmpty(anim) && sprite.Has(anim))
+            {
+                Action<string> onFrameChange = sprite.OnFrameChange;
+                bool singleLoop = false;
+                sprite.OnLastFrame = (string _) => singleLoop = true;
+                sprite.Play(anim);
+                while (!singleLoop)
+                {
+                    yield return null;
+                }
+                sprite.OnFrameChange = onFrameChange;
+            }
+        }
+
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         public class HealthIcon : Entity
@@ -57,18 +73,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private IEnumerator IconRoutine(string anim, bool remove = false)
             {
-                if (!string.IsNullOrEmpty(anim) && icon.Has(anim))
-                {
-                    Action<string> onFrameChange = icon.OnFrameChange;
-                    bool singleLoop = false;
-                    icon.OnLastFrame = (string _) => singleLoop = true;
-                    icon.Play(anim);
-                    while (!singleLoop)
-                    {
-                        yield return null;
-                    }
-                    icon.OnFrameChange = onFrameChange;
-                }
+                yield return icon.PlayAnim(anim);
                 if (remove)
                 {
                     RemoveSelf();
