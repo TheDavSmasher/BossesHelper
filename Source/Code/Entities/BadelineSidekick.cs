@@ -73,27 +73,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Border = Color.Black,
                 Facing = Facings.Left
             };
-            Boss = GFX.SpriteBank.Create("badeline_boss");
-            Boss.OnFrameChange = (string anim) =>
-            {
-                if (anim == "idle" && Boss.CurrentAnimationFrame == 18 && Boss.Visible)
-                {
-                    Audio.Play("event:/char/badeline/boss_idle_air", Position);
-                }
-            };
-            //Custom = GFX.SpriteBank.Create("badeline_sidekick");
-            //PlayerSprite.CreateFramesMetadata("badeline_sidekick");
             Add(DummyHair);
             Add(Dummy);
-            Add(Boss);
-            //Add(Custom);
+            Add(Boss = GFX.SpriteBank.Create("badeline_boss"));
+            Add(Custom = GFX.SpriteBank.Create("badeline_sidekick"));
             Add(Wave = new SineWave(0.25f, 0f));
             Wave.OnUpdate = (float f) =>
             {
                 ActiveSprite.Position = Vector2.UnitY * f * 2f;
             };
             Add(Light = new VertexLight(new Vector2(0f, -8f), Color.PaleVioletRed, 1f, 20, 60));
-
             Add(Follower = new Follower());
             Follower.PersistentFollow = true;
             AddTag(Tags.Persistent);
@@ -104,17 +93,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             CanAttack = true;
         }
 
-        private IEnumerator Beam()
+        private IEnumerator AttackSequence()
         {
             if (FreezeOnAttack)
             {
                 Follower.MoveTowardsLeader = false;
             }
+            SetActiveSpriteTo(SidekickSprite.Custom);
+            ActiveSprite.Play("normal_to_boss");
+            yield return 0.7f;
             laserSfx.Play("event:/char/badeline/boss_laser_charge");
-            if (ActiveSprite != Boss)
-            {
-                SetActiveSpriteTo(SidekickSprite.Boss);
-            }
+            SetActiveSpriteTo(SidekickSprite.Boss);
             ActiveSprite.Play("attack2Begin", true);
             yield return 0.1f;
             Level level = SceneAs<Level>();
@@ -131,14 +120,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             ActiveSprite.Play("attack2Recoil");
             yield return 0.5f;
             Follower.MoveTowardsLeader = true;
-            yield return Reload();
-        }
-
-        private IEnumerator Reload()
-        {
-            Vanish();
+            SetActiveSpriteTo(SidekickSprite.Custom);
+            ActiveSprite.Play("boss_to_mini");
             yield return sidekickCooldown;
-            Appear();
+            ActiveSprite.Play("mini_to_normal");
+            yield return 0.9f;
+            SetActiveSpriteTo(SidekickSprite.Dummy);
             CanAttack = true;
         }
 
@@ -171,7 +158,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && CanAttack)
             {
                 CanAttack = false;
-                Add(new Coroutine(Beam()));
+                Add(new Coroutine(AttackSequence()));
             }
             oldX = X;
             base.Update();
@@ -198,40 +185,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Dummy.Visible = true;
                     DummyHair.Visible = true;
                     Boss.Visible = false;
-                    //Custom.Visible = false;
+                    Custom.Visible = false;
                     break;
                 case SidekickSprite.Boss:
                     Boss.Visible = true;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
-                    //Custom.Visible = false;
+                    Custom.Visible = false;
                     break;
                 case SidekickSprite.Custom:
-                    //Custom.Visible = true;
+                    Custom.Visible = true;
                     Boss.Visible = false;
                     Dummy.Visible = false;
                     DummyHair.Visible = false;
                     break;
             }
-        }
-
-        public void Appear()
-        {
-            Level level = SceneAs<Level>();
-            level.Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
-            level.Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
-            SetActiveSpriteTo(SidekickSprite.Dummy);
-        }
-
-        public void Vanish()
-        {
-            Level level = SceneAs<Level>();
-            level.Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
-            level.Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
-            //SetActiveSpriteTo(SidekickSprite.Custom);
-            Boss.Visible = false;
-            Dummy.Visible = false;
-            DummyHair.Visible = false;
         }
     }
 }
