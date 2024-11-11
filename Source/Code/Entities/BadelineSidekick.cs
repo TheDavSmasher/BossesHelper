@@ -2,6 +2,7 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using System.Collections;
+using static Celeste.Mod.BossesHelper.Code.Helpers.HealthBarUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -102,8 +103,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Wave.Active = false;
             Dummy.Position = Vector2.Zero;
             SetActiveSpriteTo(SidekickSprite.Custom);
-            ActiveSprite.Play("normal_to_boss");
-            yield return 0.7f;
+            yield return ActiveSprite.PlayAnim("normal_to_boss");
+
             laserSfx.Play("event:/char/badeline/boss_laser_charge");
             SetActiveSpriteTo(SidekickSprite.Boss);
             ActiveSprite.Play("attack2Begin", true);
@@ -121,13 +122,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Audio.Play("event:/char/badeline/boss_laser_fire", Position);
             ActiveSprite.Play("attack2Recoil");
             yield return 0.5f;
+
             Follower.MoveTowardsLeader = true;
             Wave.Active = true;
             SetActiveSpriteTo(SidekickSprite.Custom);
             ActiveSprite.Play("boss_to_mini");
             yield return sidekickCooldown;
-            ActiveSprite.Play("mini_to_normal");
-            yield return 0.9f;
+
+            yield return ActiveSprite.PlayAnim("mini_to_normal");
             SetActiveSpriteTo(SidekickSprite.Dummy);
             CanAttack = true;
         }
