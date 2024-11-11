@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             get
             {
-                return base.Center + Boss.Position + new Vector2(0f, -14f);
+                return base.Center + Boss.Position + new Vector2(0f, -20f);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(Wave = new SineWave(0.25f, 0f));
             Wave.OnUpdate = (float f) =>
             {
-                ActiveSprite.Position = Vector2.UnitY * f * 2f;
+                Dummy.Position = Custom.Position = Boss.Position = Vector2.UnitY * f * 2f;
             };
             Add(Light = new VertexLight(new Vector2(0f, -8f), Color.PaleVioletRed, 1f, 20, 60));
             Add(Follower = new Follower());
@@ -99,6 +99,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Follower.MoveTowardsLeader = false;
             }
+            Wave.Active = false;
+            Dummy.Position = Vector2.Zero;
             SetActiveSpriteTo(SidekickSprite.Custom);
             ActiveSprite.Play("normal_to_boss");
             yield return 0.7f;
@@ -120,6 +122,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             ActiveSprite.Play("attack2Recoil");
             yield return 0.5f;
             Follower.MoveTowardsLeader = true;
+            Wave.Active = true;
             SetActiveSpriteTo(SidekickSprite.Custom);
             ActiveSprite.Play("boss_to_mini");
             yield return sidekickCooldown;
