@@ -65,7 +65,7 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Die -= OnPlayerDie;
     }
 
-    private void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
+    private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
     {
         Session.wasOffscreen = true;
         orig(self, player);
