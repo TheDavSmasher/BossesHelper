@@ -61,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             beamSprite.Play("charge");
             sideFadeAlpha = 0f;
             beamAlpha = 0f;
-            Vector2 center = ClosestCollider(target.Collider, sidekick.BeamOrigin);
+            Vector2 center = ClosestCollider(target.Collider);
             int num = ((center.Y <= sidekick.Y + 16f) ? 1 : (-1));
             if (center.X >= sidekick.X)
             {
@@ -87,7 +87,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     followTimer -= Engine.DeltaTime;
                     chargeTimer -= Engine.DeltaTime;
-                    Vector2 center = ClosestCollider(Target.Collider, sidekick.BeamOrigin);
+                    Vector2 center = ClosestCollider(Target.Collider);
                     if (followTimer > 0f && center != sidekick.BeamOrigin)
                     {
                         Vector2 val = Calc.ClosestPointOnLine(sidekick.BeamOrigin, sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f), center);
@@ -122,7 +122,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private Vector2 ClosestCollider(Collider source, Vector2 origin)
+        private Vector2 ClosestCollider(Collider source)
         {
             if (source is ColliderList list)
             {
