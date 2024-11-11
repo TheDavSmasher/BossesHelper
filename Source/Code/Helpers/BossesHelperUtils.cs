@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-    public static class HealthBarUtils
+    public static class BossesHelperUtils
     {
         public static T ElementAtOrDefault<T>(this IList<T> list, int index, T @default)
         {

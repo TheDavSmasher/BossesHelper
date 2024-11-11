@@ -2,7 +2,7 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using System.Collections;
-using static Celeste.Mod.BossesHelper.Code.Helpers.HealthBarUtils;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
