@@ -943,26 +943,6 @@ function helpers.addEntity(entity)
     bossAttack.addEntity:Invoke(entity)
 end
 
----Returns an EntityTimer Component that will execute the passed function when the timer ends.
----Can be added to any Entity.
----@param timer number The amount of time that must pass for the timer to execute.
----@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
----@return Component timer The Entity Timer that can be added to any Entity.
-function helpers.getEntityTimer(timer, func)
-    return celeste.Mod.BossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
-end
-
----Returns an EntityFlagger Component that will execute the passed function when the given session flag's state matches the required state.
----Can be added to any Entity.
----@param flag string The session flag the entity will use to activate its function.
----@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will the Entity the component is added to. Defaults to the destroyEntity function.
----@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
----@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
----@return Component flagger The Entity Flagger that can be added to any Entity.
-function helpers.getEntityFlagger(flag, func, state, resetFlag)
-    return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
-end
-
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
 ---@param entity Entity The entity to destroy.
 function helpers.destroyEntity(entity)
@@ -974,6 +954,7 @@ function helpers.destroyAll()
     bossAttack.destroyAll:Invoke()
 end
 --End Attack Delegates
+
 
 
 --- Interrupt Delegates
@@ -1039,6 +1020,8 @@ function helpers.removeBoss(permanent)
 end
 --End Interrupt Delegates
 
+
+
 --- Cutscene Delegates
 --- The following Delegates will only work in Event files
 
@@ -1049,6 +1032,8 @@ function helpers.removeBossCutscene(permanent)
 end
 
 --- End Cutscene Delegates
+
+
 
 --- Additional, non-delegate helper shorthand methods
 --- These can be used anywhere within the Mod.
@@ -1214,6 +1199,26 @@ end
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, funcOnPlayer, startCollidable, xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
+end
+
+---Returns an EntityTimer Component that will execute the passed function when the timer ends.
+---Can be added to any Entity.
+---@param timer number The amount of time that must pass for the timer to execute.
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@return Component timer The Entity Timer that can be added to any Entity.
+function helpers.getEntityTimer(timer, func)
+    return celeste.Mod.BossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
+end
+
+---Returns an EntityFlagger Component that will execute the passed function when the given session flag's state matches the required state.
+---Can be added to any Entity.
+---@param flag string The session flag the entity will use to activate its function.
+---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will the Entity the component is added to. Defaults to the destroyEntity function.
+---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
+---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
+---@return Component flagger The Entity Flagger that can be added to any Entity.
+function helpers.getEntityFlagger(flag, func, state, resetFlag)
+    return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 ---Get a new EntityData object
