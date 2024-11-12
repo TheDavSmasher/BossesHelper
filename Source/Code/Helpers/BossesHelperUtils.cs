@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Monocle;
 using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -23,6 +24,35 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
 
             return defaultValue;
+        }
+
+        public class Crc32
+        {
+            private const UInt32 s_generator = 0xEDB88320;
+
+            public Crc32()
+            {
+                m_checksumTable = Enumerable.Range(0, 256).Select(i =>
+                {
+                    var tableEntry = (uint)i;
+                    for (var j = 0; j < 8; ++j)
+                    {
+                        tableEntry = ((tableEntry & 1) != 0)
+                            ? (s_generator ^ (tableEntry >> 1))
+                            : (tableEntry >> 1);
+                    }
+                    return tableEntry;
+                }).ToArray();
+            }
+
+            public int Get(string value)
+            {
+                IEnumerable<char> byteStream = value.ToCharArray();
+                return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
+                            (m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
+            }
+
+            private readonly UInt32[] m_checksumTable;
         }
 
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
