@@ -15,7 +15,7 @@ This is a helper specifically designed to allow the creation of custom bosses wi
     - [Entity Timers and Flaggers](#entity-timers-and-flaggers)
   - [Events](#events)
   - [Functions](#functions)
-- [Helper Objects](#helper-objects)
+- [Helper Objects and Components](#helper-objects-and-components)
 - [Boss Health Bar](#boss-health-bar)
   - [Countdown](#countdown)
   - [Health Icons](#health-icons)
@@ -256,13 +256,11 @@ An `onBegin()` function must be provided, which holds the code the attack will e
 
 #### Entity Timers and Flaggers
 
-Some of the Helper functions provided to attacks are Adding Entity Timer or Entity Flaggers. These are shortcut versions for ease of execution of certain delegate methods when the condition is met.
+Some of the Helper functions provided are getting Entity Timer or Entity Flaggers. These components are shortcut versions for ease of execution of certain delegate methods when the condition is met.
 
-Entity Timers will execute the provided method on the entity one the timer provided reaches 0. Entity Flaggers will execute the provided method when the given Session flag matches the state needed, which defaults to true.
+Entity Timers will execute the provided method on the entity added to once the timer provided reaches 0. Entity Flaggers will execute the provided method when the given Session flag matches the state needed, which defaults to true.
 
-`addEntityWithTimer()` and `addEntityWithFlagger()` will both add the entity to the Level and add with it the attached timer or flagger. If the entity provided is already on scene, it will not be added again. You can still add an additional timer or flagger with this method, although if the entity is already on scene, use the next methods instead, even if these ones would do the same thing.
-
-`addTimerToEntity()` and `addFlaggerToEntity()` will attach the timer or flagger to the entity, regardless of if the entity has been added or not. It will not add it or check if it's been added. The timer or flagger will not execute until the Entity is added, however. To add the entity, use either `addEntity()` or either of the `addEntityWithTimer()` or `addEntityWithFlagger()`.
+`getEntityTimer()` and `getEntityFlagger()` will return the respective Component to your Lua environment, which can then be added to any Entity. If any Component is added before the entity it's added to, it will not update until it is added.
 
 ### Events
 
@@ -320,17 +318,10 @@ The `setup()` function will be called during load time before the scene starts. 
 
 All functions in this file are provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all regular helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
-## Helper Objects
+## Helper Objects and Components
 
 This Helper also adds a few Entities and Components for ease of use or just general usage.
 
-- Entity Chain Component: Can be used to "chain" an entity to another one.
-  - Constructor Parameters:
-    - Entity entity: The Entity this chain will be set on. This is the additional entity.
-    - bool chainPosition: If the chained entity should move around as the chained one moves, essentially moving as one.
-    - bool active: If the Entity should be Active.
-    - bool visible: If the Entity should be Visible.
-  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChainComp(params)`.
 - Attack Actor: A generic Entity that subclasses the Actor class and has movement and collision logic.
   - Constructor Parameters:
     - Vector2 position: Where the Actor will spawn.
@@ -355,12 +346,20 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - float xScale: The Entity's Sprite's X scale. Defaults to 1.
     - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
+- Entity Chain Component: Can be used to "chain" an entity to another one.
+  - Constructor Parameters:
+    - Entity entity: The Entity this chain will be set on. This is the additional entity.
+    - bool chainPosition: If the chained entity should move around as the chained one moves, essentially moving as one.
+    - bool active: If the Entity should be Active.
+    - bool visible: If the Entity should be Visible.
+  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChainComp(params)`.
 - Entity Collider: A Generic Typed Component that can be used to enable/track collisions between the parent entity and the Entity type specified and execute a function.
   - In order to add one to an entity within Lua, call the `addEntityColliderTo()` helper function.
     - The second parameter, the one used to define the type of the Entity it should collide with, like Springs or Spinners, can be either an instance of the entity itself or a string with the absolute path to it, including namespace, but still relative to the `Celeste.` namespace.
       - For Springs, for example, you can provide either a Spring object or the "Spring" name.
       - For Maddie Helping Hand MoreCustomNPC, for example, you can also provide an instance or the "Mod.MaxHelpingHand.Entities.MoreCustomNPC" name.
   - This Component is also created such that it can be used by anything.
+- Entity Flagger: A Component that will execute a function passed
 
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
