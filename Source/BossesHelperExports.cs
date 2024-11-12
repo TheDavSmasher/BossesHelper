@@ -19,6 +19,16 @@ namespace Celeste.Mod.BossesHelper
             return new EntityChain(entity, chain);
         }
 
+        public static Component GetEntityTimerComponent(float timer, Action<Entity> action)
+        {
+            return new EntityTimer(timer, action);
+        }
+
+        public static Component GetEntityFlaggerComponent(string flag, Action<Entity> action, bool stateNeeded = true, bool resetFlag = true)
+        {
+            return new EntityFlagger(flag, action, stateNeeded, resetFlag);
+        }
+
         public static Component GetBossHealthTrackerComponent(Func<int> action)
         {
             return new BossHealthTracker(action);

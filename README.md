@@ -322,6 +322,8 @@ All functions in this file are provided with a reference to the `player`, the Bo
 
 This Helper also adds a few Entities and Components for ease of use or just general usage.
 
+Two accessible entities are included:
+
 - Attack Actor: A generic Entity that subclasses the Actor class and has movement and collision logic.
   - Constructor Parameters:
     - Vector2 position: Where the Actor will spawn.
@@ -346,6 +348,9 @@ This Helper also adds a few Entities and Components for ease of use or just gene
     - float xScale: The Entity's Sprite's X scale. Defaults to 1.
     - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
+
+Four Components are added with this helper for various usages.
+
 - Entity Chain Component: Can be used to "chain" an entity to another one.
   - Constructor Parameters:
     - Entity entity: The Entity this chain will be set on. This is the additional entity.
@@ -359,7 +364,12 @@ This Helper also adds a few Entities and Components for ease of use or just gene
       - For Springs, for example, you can provide either a Spring object or the "Spring" name.
       - For Maddie Helping Hand MoreCustomNPC, for example, you can also provide an instance or the "Mod.MaxHelpingHand.Entities.MoreCustomNPC" name.
   - This Component is also created such that it can be used by anything.
-- Entity Flagger: A Component that will execute a function passed
+- Entity Flagger: A Component that will execute a function passed once the given session flag matches the state needed, and if the flag should be reset after used.
+  - One can be created with the `getEntityFlagger()` helper function.
+  - Must be added manually to the Entity that it will execute on.
+- Entity Timer: A Component that will execute a function passed once the timer runs to completion.
+  - One can be created with the `getEntityTimer()` helper function.
+  - Must be added manually to the Entitty that it will execute on.
 
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
@@ -471,6 +481,8 @@ This Helper includes a few things exported with ModInterop, namely:
 
 - **GetEntityColliderComponent**: Returns an Entity Collider Component ready to be used by any entity with any other entity Type.
 - **GetEntityChainComponent**: Returns an Entity Chain Component to keep two entities's positions tied together.
+- **GetEntityTimerComponent**: Returns an Entity Timer Component to easily execute a function on the entity added once the timer runs to completion.
+- **GetEntityFlaggerComponent**: Returns an Entity Flagger Component to easily execute a function on the entity added to once the flag state matches the needed state.
 - **GetCurrentPlayerHealth**: Useful to know if a Health System is active on Scene and if so, what the Player's health value is at. Returns -1 if no Health System is active.
 - **RecoverPlayerHealth**: Makes the player recover health points as many as the value given. This can go over the PLayer's default health value.
 - **MakePlayerTakeDamage**: Useful to extend utility from the Health System to set custom parameters to take damage.
