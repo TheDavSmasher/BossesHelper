@@ -7,13 +7,14 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
-        private static readonly Random random = new();
+        private Random random;
 
         public struct EntityTimer
         {
@@ -238,6 +239,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level = SceneAs<Level>();
             Level.Add(Puppet);
             PopulatePatterns((scene as Level).LevelOffset);
+            int individualSeed = (new Crc32()).Get(id.Key);
+            if (BossesHelperModule.Instance.TASSeed > 0)
+            {
+                random = new Random(BossesHelperModule.Instance.TASSeed * 37 + individualSeed);
+            }
+            else
+            {
+                random = new Random((int)Math.Floor(Level.TimeActive) * 37 + individualSeed);
+            }
         }
 
         private void PopulatePatterns(Vector2 levelOffset)

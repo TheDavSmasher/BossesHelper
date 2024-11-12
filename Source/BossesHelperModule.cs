@@ -25,6 +25,14 @@ public class BossesHelperModule : EverestModule
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData)Instance._SaveData;
 
+    public int TASSeed;
+
+    [Command("set_boss_seed", "Set the seed Bosses will use for their RNG, added to a deterministic per-entity value.")]
+    public static void SetBossSeed(int value)
+    {
+        Instance.TASSeed = value;
+    }
+
     public BossesHelperModule()
     {
         Instance = this;
