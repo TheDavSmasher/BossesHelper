@@ -27,10 +27,10 @@ public class BossesHelperModule : EverestModule
 
     public int TASSeed;
 
-    [Command("set_boss_seed", "Set the seed Bosses will use for their RNG, added to a deterministic per-entity value.")]
+    [Command("set_boss_seed", "Set the seed Bosses will use for their RNG, added to a deterministic per-entity value. Value 0 makes the seed based on the Active Timer")]
     public static void SetBossSeed(int value)
     {
-        Instance.TASSeed = value;
+        Instance.TASSeed = value >= 0 ? value : Instance.TASSeed;
     }
 
     public BossesHelperModule()
