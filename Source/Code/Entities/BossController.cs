@@ -330,7 +330,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void InterruptPattern()
         {
             currentPattern.Active = false;
-            //activeEntityTimers.ForEach(timer => timer.ExecuteEarly());
             DestroyAll();
         }
 
