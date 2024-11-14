@@ -317,8 +317,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             yield return method.Duration;
         }
 
-        //Delegate methods
-        //Interruption Delegates
+        #region Delegate methods
+        #region Interruption Delegates
         private IEnumerator WaitForAttackToEnd()
         {
             while (isAttacking)
@@ -346,8 +346,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Level.Session.DoNotLoad.Add(id);
             }
         }
+        #endregion
 
-        //Attack Delegates
+        #region Attack Delegates
         private void AddEntity(Entity entity)
         {
             if (!activeEntities.Contains(entity))
@@ -371,5 +372,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();
         }
+        #endregion
+        #endregion
     }
 }
