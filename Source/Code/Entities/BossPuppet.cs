@@ -139,6 +139,68 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        private void KillOnContact(Player player)
+        {
+            player.Die((player.Position - Position).SafeNormalize());
+        }
+
+        private void OnSidekickLaser()
+        {
+            if (bossHitCooldown <= 0)
+            {
+                ResetBossHitCooldown();
+                Add(new Coroutine(bossFunctions.OnLaserCoroutine()));
+            }
+        }
+
+        private void OnPlayerBounce(Player player)
+        {
+            if (bossHitCooldown <= 0)
+            {
+                ResetBossHitCooldown();
+                Audio.Play("event:/game/general/thing_booped", Position);
+                Celeste.Freeze(0.2f);
+                player.Bounce(base.Top + 2f);
+                Add(new Coroutine(bossFunctions.OnBounceCoroutine()));
+            }
+        }
+
+        private void OnPlayerDash(Player player)
+        {
+            if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
+            {
+                ResetBossHitCooldown();
+                Add(new Coroutine(bossFunctions.OnDashCoroutine()));
+            }
+        }
+
+        private void OnPlayerContact(Player player)
+        {
+            if (bossHitCooldown <= 0)
+            {
+                ResetBossHitCooldown();
+                Add(new Coroutine(bossFunctions.OnContactCoroutine()));
+            }
+        }
+
+        public void OnCollideH(CollisionData data)
+        {
+            if (data.Hit != null && data.Hit.OnCollide != null)
+            {
+                data.Hit.OnCollide(data.Direction);
+            }
+            Speed.X = 0;
+        }
+
+        public void OnCollideV(CollisionData data)
+        {
+            if (data.Hit != null && data.Hit.OnCollide != null)
+            {
+                data.Hit.OnCollide(data.Direction);
+            }
+            Speed.Y = 0;
+        }
+
         private Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, float? value)
         {
             if (dictionary == null || dictionary.Count == 0)
@@ -199,6 +261,31 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             return pos > base.X + base.Collider.Width / 4;
         }
 
+        public override void Render()
+        {
+            base.Render();
+            if (Sprite != null)
+            {
+                Sprite.Scale.X = facing;
+            }
+        }
+
+        public void PlayBossAnim(string name)
+        {
+            if (Sprite != null)
+            {
+                if (Sprite.Has(name))
+                {
+                    Sprite.Play(name);
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
+                }
+            }
+        }
+
+        #region Lua Helper Functions
         public void EnableCollisions()
         {
             base.Collidable = true;
@@ -268,30 +355,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public override void Render()
-        {
-            base.Render();
-            if (Sprite != null)
-            {
-                Sprite.Scale.X = facing;
-            }
-        }
-
-        public void PlayBossAnim(string name)
-        {
-            if (Sprite != null)
-            {
-                if (Sprite.Has(name))
-                {
-                    Sprite.Play(name);
-                }
-                else
-                {
-                    Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
-                }
-            }
-        }
-
         public void SetBossHitCooldown(float timer)
         {
             bossHitCooldown = timer;
@@ -322,68 +385,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             (bossCollision as SidekickTarget).Collider = hitboxMetadata.targetCircles?[tag];
         }
 
-        private void KillOnContact(Player player)
-        {
-            player.Die((player.Position - Position).SafeNormalize());
-        }
-
-        private void OnSidekickLaser()
-        {
-            if (bossHitCooldown <= 0)
-            {
-                ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnLaserCoroutine()));
-            }
-        }
-
-        private void OnPlayerBounce(Player player)
-        {
-            if (bossHitCooldown <= 0)
-            {
-                ResetBossHitCooldown();
-                Audio.Play("event:/game/general/thing_booped", Position);
-                Celeste.Freeze(0.2f);
-                player.Bounce(base.Top + 2f);
-                Add(new Coroutine(bossFunctions.OnBounceCoroutine()));
-            }
-        }
-
-        private void OnPlayerDash(Player player)
-        {
-            if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
-            {
-                ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnDashCoroutine()));
-            }
-        }
-
-        private void OnPlayerContact(Player player)
-        {
-            if (bossHitCooldown <= 0)
-            {
-                ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnContactCoroutine()));
-            }
-        }
-
-        public void OnCollideH(CollisionData data)
-        {
-            if (data.Hit != null && data.Hit.OnCollide != null)
-            {
-                data.Hit.OnCollide(data.Direction);
-            }
-            Speed.X = 0;
-        }
-
-        public void OnCollideV(CollisionData data)
-        {
-            if (data.Hit != null && data.Hit.OnCollide != null)
-            {
-                data.Hit.OnCollide(data.Direction);
-            }
-            Speed.Y = 0;
-        }
-
         public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
         {
             Tween.Position(this, target, time, easer);
@@ -408,5 +409,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             Add(tween);
         }
+        #endregion
     }
 }
