@@ -65,8 +65,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private int facing;
 
-        private Level Level;
-
         public const float Gravity = 900f;
 
         public Vector2 Speed;
@@ -123,40 +121,28 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
 
-            if (hitboxMetadata.UseDefaultHitbox)
-            {
-                base.Collider = new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
-            }
-            else
-            {
-                base.Collider = GetMainFromDictionary(hitboxMetadata.baseHitboxes);
-            }
+            base.Collider = hitboxMetadata.UseDefaultHitbox
+                ? new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
+                : GetMainFromDictionary(hitboxMetadata.baseHitboxes);
 
-            Collider Hurtbox = hitboxMetadata.UseDefaultHurtbox ?
-                new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
+            Collider Hurtbox = hitboxMetadata.UseDefaultHurtbox
+                ? new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
                 : GetMainFromDictionary(hitboxMetadata.baseHurtboxes);
 
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
-                    if (hitboxMetadata.UseDefaultBounce)
-                    {
-                        Add(bossCollision = new PlayerCollider(OnPlayerBounce,
-                            new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)));
-                        break;
-                    }
                     Add(bossCollision = new PlayerCollider(OnPlayerBounce,
-                        GetMainFromDictionary(hitboxMetadata.bounceHitboxes)));
+                        hitboxMetadata.UseDefaultBounce
+                        ? new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
+                        : GetMainFromDictionary(hitboxMetadata.bounceHitboxes)
+                    ));
                     break;
                 case HurtModes.SidekickAttack:
-                    if (hitboxMetadata.UseDefaultTarget)
-                    {
-                        Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
-                            new Circle(4f)));
-                        break;
-                    }
                     Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
-                        GetMainFromDictionary(hitboxMetadata.targetCircles)));
+                        hitboxMetadata.UseDefaultTarget
+                        ? new Circle(4f)
+                        : GetMainFromDictionary(hitboxMetadata.targetCircles)));
                     break;
                 case HurtModes.PlayerDash:
                     Add(bossCollision = new PlayerCollider(OnPlayerDash, Hurtbox));
@@ -170,19 +156,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private Collider GetMainFromDictionary(Dictionary<string, Collider> dictionary)
+        private static Collider GetMainFromDictionary(Dictionary<string, Collider> dictionary)
         {
-            if (dictionary.Count > 1)
-            {
-                return dictionary["main"];
-            }
-            return dictionary.Values.First();
-        }
-
-        public override void Added(Scene scene)
-        {
-            base.Added(scene);
-            Level = SceneAs<Level>();
+            return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
         }
 
         public override void Awake(Scene scene)
@@ -198,20 +174,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Update()
         {
             Player entity = base.Scene.Tracker.GetEntity<Player>();
-            if (entity != null)
+            if (entity != null && DynamicPositionOver_Quarter(entity.X))
             {
-                if (DynamicFacing)
-                {
-                    if (facing == -1 && PositionOver_Quarter(entity.X, !MirrorSprite))
-                    {
-                        facing = 1;
-                    }
-                    else if (facing == 1 && PositionOver_Quarter(entity.X, MirrorSprite))
-                    {
-                        facing = -1;
-                    }
-                }
-
+                facing *= -1;
             }
             if (bossHitCooldown > 0)
             {
@@ -230,6 +195,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Return Sprite Scale
             Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
             Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
+        }
+
+        private bool DynamicPositionOver_Quarter(float pos)
+        {
+            if (!DynamicFacing)
+                return false;
+            if (facing == 1 && MirrorSprite || facing == -1 && !MirrorSprite)
+            {
+                return pos < base.X - base.Collider.Width / 4;
+            }
+            return pos > base.X + base.Collider.Width / 4;
         }
 
         public void EnableCollisions()
@@ -299,15 +275,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 timer += Engine.DeltaTime;
                 yield return null;
             }
-        }
-
-        private bool PositionOver_Quarter(float pos, bool left)
-        {
-            if (left)
-            {
-                return pos < base.X - base.Collider.Width / 4;
-            }
-            return pos > base.X + base.Collider.Width / 4;
         }
 
         public override void Render()
