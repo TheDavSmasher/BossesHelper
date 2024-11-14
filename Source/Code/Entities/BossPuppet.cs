@@ -113,19 +113,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
 
-            base.Collider = GetMainOrDefault(hitboxMetadata.baseHitboxes, new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f));
+            base.Collider = GetMainOrDefault(hitboxMetadata.baseHitboxes, Sprite.Height);
 
-            Collider Hurtbox = GetMainOrDefault(hitboxMetadata.baseHurtboxes, new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f));
+            Collider Hurtbox = GetMainOrDefault(hitboxMetadata.baseHurtboxes, Sprite.Height);
 
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
                     Add(bossCollision = new PlayerCollider(OnPlayerBounce,
-                        GetMainOrDefault(hitboxMetadata.bounceHitboxes, new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f))));
+                        GetMainOrDefault(hitboxMetadata.bounceHitboxes, 6f)));
                     break;
                 case HurtModes.SidekickAttack:
                     Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
-                        GetMainOrDefault(hitboxMetadata.targetCircles, new Circle(4f))));
+                        GetMainOrDefault(hitboxMetadata.targetCircles, null)));
                     break;
                 case HurtModes.PlayerDash:
                     Add(bossCollision = new PlayerCollider(OnPlayerDash, Hurtbox));
@@ -139,11 +139,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private static Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, Collider defaultValue)
+        private Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, float? value)
         {
             if (dictionary == null || dictionary.Count == 0)
             {
-                return defaultValue;
+                if (value == null)
+                {
+                    return new Circle(4f);
+                }
+                return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
             return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
         }
