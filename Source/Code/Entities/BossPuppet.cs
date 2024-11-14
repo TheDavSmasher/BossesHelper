@@ -22,14 +22,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Dictionary<string, Collider> bounceHitboxes = bounceHitboxes;
 
             public Dictionary<string, Collider> targetCircles = targetCircles;
-
-            public readonly bool UseDefaultHitbox => baseHitboxes == null || baseHitboxes.Count == 0;
-
-            public readonly bool UseDefaultHurtbox => baseHurtboxes == null || baseHurtboxes.Count == 0;
-
-            public readonly bool UseDefaultBounce => bounceHitboxes == null || bounceHitboxes.Count == 0;
-
-            public readonly bool UseDefaultTarget => targetCircles == null || targetCircles.Count == 0;
         }
 
         private readonly Sprite Sprite;
@@ -121,28 +113,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
 
-            base.Collider = hitboxMetadata.UseDefaultHitbox
-                ? new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
-                : GetMainFromDictionary(hitboxMetadata.baseHitboxes);
+            base.Collider = GetMainOrDefault(hitboxMetadata.baseHitboxes, new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f));
 
-            Collider Hurtbox = hitboxMetadata.UseDefaultHurtbox
-                ? new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
-                : GetMainFromDictionary(hitboxMetadata.baseHurtboxes);
+            Collider Hurtbox = GetMainOrDefault(hitboxMetadata.baseHurtboxes, new Hitbox(Sprite.Width, Sprite.Height, Sprite.Width * -0.5f, Sprite.Height * -0.5f));
 
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
                     Add(bossCollision = new PlayerCollider(OnPlayerBounce,
-                        hitboxMetadata.UseDefaultBounce
-                        ? new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f)
-                        : GetMainFromDictionary(hitboxMetadata.bounceHitboxes)
-                    ));
+                        GetMainOrDefault(hitboxMetadata.bounceHitboxes, new Hitbox(base.Collider.Width, 6f, Sprite.Width * -0.5f, Sprite.Height * -0.5f))));
                     break;
                 case HurtModes.SidekickAttack:
                     Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
-                        hitboxMetadata.UseDefaultTarget
-                        ? new Circle(4f)
-                        : GetMainFromDictionary(hitboxMetadata.targetCircles)));
+                        GetMainOrDefault(hitboxMetadata.targetCircles, new Circle(4f))));
                     break;
                 case HurtModes.PlayerDash:
                     Add(bossCollision = new PlayerCollider(OnPlayerDash, Hurtbox));
@@ -156,8 +139,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private static Collider GetMainFromDictionary(Dictionary<string, Collider> dictionary)
+        private static Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, Collider defaultValue)
         {
+            if (dictionary == null || dictionary.Count == 0)
+            {
+                return defaultValue;
+            }
             return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
         }
 
