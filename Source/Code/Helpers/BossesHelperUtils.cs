@@ -21,7 +21,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (!string.IsNullOrEmpty((string) value))
                     return value.ToString();
             }
-
             return defaultValue;
         }
 
