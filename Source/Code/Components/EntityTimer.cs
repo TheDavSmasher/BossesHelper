@@ -7,7 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 {
     public class EntityTimer(float timer, Action<Entity> action) : Component(active: true, visible: false)
     {
-        public float Timer { get; set; } = timer;
+        public float Timer = timer;
 
         public Action<Entity> action = action;
 

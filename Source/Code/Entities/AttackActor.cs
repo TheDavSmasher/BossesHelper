@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Collision onCollideV;
 
-        public bool onGround { get; private set; }
+        public bool OnGround { get; private set; }
 
         private readonly float maxFall;
 
@@ -46,13 +46,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Update()
         {
             base.Update();
-            onGround = Speed.Y >= 0 && OnGround();
+            OnGround = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
             MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
             //Apply gravity
-            if (!onGround)
+            if (!OnGround)
             {
                 Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
             }
@@ -109,6 +109,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void SetCollisionActive(bool active)
         {
             base.Collidable = active;
+        }
+
+        public void SetEffectiveGravityMult(float mult)
+        {
+            effectiveGravity = mult * Gravity;
         }
     }
 }
