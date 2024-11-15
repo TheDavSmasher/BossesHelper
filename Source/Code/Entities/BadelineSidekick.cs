@@ -1,5 +1,6 @@
 ﻿using System;
 using Monocle;
+using Celeste;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
@@ -98,6 +99,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator AttackSequence()
         {
+            Level level = SceneAs<Level>();
+            SidekickTargetCollider target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(BeamOrigin);
+            if (target == null)
+            {
+                level.Add(new MiniTextbox("Badeline_Sidekick_No_Target"));
+                yield break;
+            }
             if (FreezeOnAttack)
             {
                 Follower.MoveTowardsLeader = false;
@@ -111,12 +119,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SetActiveSpriteTo(SidekickSprite.Boss);
             ActiveSprite.Play("attack2Begin", true);
             yield return 0.1f;
-            Level level = SceneAs<Level>();
-            SidekickTargetCollider target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(BeamOrigin);
-            if (target != null)
-            {
-                beam = level.CreateAndAdd<SidekickBeam>().Init(this, target);
-            }
+            beam = level.CreateAndAdd<SidekickBeam>().Init(this, target);
             yield return 0.9f;
             ActiveSprite.Play("attack2Lock", true);
             yield return 0.5f;
