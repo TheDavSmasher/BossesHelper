@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private float DistanceBetween(Vector2 start, Vector2 end)
+        private static float DistanceBetween(Vector2 start, Vector2 end)
         {
             var dx = start.X - end.X;
             var dy = start.X - end.Y;
