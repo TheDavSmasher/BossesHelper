@@ -5,21 +5,13 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/BossHealthBarVisibleTrigger")]
-    public class BossHealthBarVisibleTrigger : Trigger
+    public class BossHealthBarVisibleTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
     {
-        private readonly bool state;
+        private readonly bool state = data.Bool("visible");
 
-        private readonly bool onlyOnce;
+        private readonly bool onlyOnce = data.Bool("onlyOnce");
 
-        private readonly Vector2 node;
-
-        public BossHealthBarVisibleTrigger(EntityData data, Vector2 offset)
-            : base(data, offset)
-        {
-            state = data.Bool("visible");
-            onlyOnce = data.Bool("onlyOnce");
-            node = data.Nodes[0];
-        }
+        private readonly Vector2 node = data.Nodes[0];
 
         public override void OnEnter(Player player)
         {

@@ -7,21 +7,13 @@ using Monocle;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/AddHealthSystemTrigger")]
-    public class AddHealthSystemTrigger : Trigger
+    public class AddHealthSystemTrigger(EntityData data, Vector2 offset, EntityID id) : Trigger(data, offset)
     {
-        private readonly EntityID id;
+        private readonly EntityID id = id;
 
-        private readonly EntityData data;
+        private readonly EntityData data = data;
 
-        private readonly bool onlyOnce;
-
-        public AddHealthSystemTrigger(EntityData data, Vector2 offset, EntityID id)
-            : base(data, offset)
-        {
-            this.id = id;
-            onlyOnce = data.Bool("onlyOnce", true);
-            this.data = data;
-        }
+        private readonly bool onlyOnce = data.Bool("onlyOnce", true);
 
         public override void OnEnter(Player player)
         {

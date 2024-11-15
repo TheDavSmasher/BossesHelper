@@ -5,15 +5,9 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/HealthEnableTrigger")]
-    public class HealthEnablerTrigger : Trigger
+    public class HealthEnablerTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
     {
-        private readonly bool enableState;
-
-        public HealthEnablerTrigger(EntityData data, Vector2 offset)
-            : base(data, offset)
-        {
-            enableState = data.Bool("enableState");
-        }
+        private readonly bool enableState = data.Bool("enableState");
 
         public override void OnEnter(Player player)
         {

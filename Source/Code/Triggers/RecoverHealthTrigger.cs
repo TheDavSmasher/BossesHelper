@@ -5,24 +5,15 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/RecoverHealthTrigger")]
-    public class RecoverHealthTrigger : Trigger
+    public class RecoverHealthTrigger(EntityData data, Vector2 offset, EntityID id) : Trigger(data, offset)
     {
-        private readonly EntityID entityID;
+        private readonly EntityID entityID = id;
 
-        private readonly int healAmount;
+        private readonly int healAmount = data.Int("healAmount", 1);
 
-        private readonly bool onlyOnce;
+        private readonly bool onlyOnce = data.Bool("onlyOnce", true);
 
-        private readonly bool permanent;
-
-        public RecoverHealthTrigger(EntityData data, Vector2 offset, EntityID id)
-            : base(data, offset)
-        {
-            entityID = id;
-            healAmount = data.Int("healAmount", 1);
-            onlyOnce = data.Bool("onlyOnce", true);
-            permanent = data.Bool("permanent");
-        }
+        private readonly bool permanent = data.Bool("permanent");
 
         public override void OnEnter(Player player)
         {
