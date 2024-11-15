@@ -139,6 +139,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        private Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, float? value)
+        {
+            if (dictionary == null || dictionary.Count == 0)
+            {
+                if (value == null)
+                {
+                    return new Circle(4f);
+                }
+                return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+            }
+            return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
+        }
+
+        #region Collision Methods
         private void KillOnContact(Player player)
         {
             player.Die((player.Position - Position).SafeNormalize());
@@ -200,19 +214,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             Speed.Y = 0;
         }
-
-        private Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, float? value)
-        {
-            if (dictionary == null || dictionary.Count == 0)
-            {
-                if (value == null)
-                {
-                    return new Circle(4f);
-                }
-                return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
-            }
-            return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
-        }
+        #endregion
 
         public override void Awake(Scene scene)
         {
