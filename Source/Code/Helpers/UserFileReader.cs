@@ -4,11 +4,14 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
+using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class UserFileReader
     {
+        #region XML Files
+        #region XML Reading
         public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut, Vector2 offset)
         {
             string path = CleanPath(filepath, ".xml");
@@ -79,67 +82,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             else
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
-            }
-        }
-
-        private static float? GetValueOrDefaultNullF(XmlAttribute source, float? value = null)
-        {
-            return source != null ? float.Parse(source.Value) : value;
-        }
-
-        private static int? GetValueOrDefaultNullI(XmlAttribute source, int? value = null)
-        {
-            return source != null ? int.Parse(source.Value) : value;
-        }
-
-        private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
-        {
-            return source != null ? int.Parse(source.Value) : value;
-        }
-
-        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId,
-            Player playerRef, BossPuppet puppetRef, BossController.CustceneDelegates custceneDelegates)
-        {
-            if (Everest.Content.TryGet(path, out ModAsset eventFiles))
-            {
-                foreach (ModAsset eventFile in eventFiles.Children)
-                {
-                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
-                        new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
-                }
-            }
-            else
-            {
-                Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
-            }
-        }
-
-        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, string bossId, BossController.AttackDelegates delegates)
-        {
-            if (Everest.Content.TryGet(path, out ModAsset attackFiles))
-            {
-                foreach (ModAsset attackFile in attackFiles.Children)
-                {
-                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
-                }
-            }
-            else
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
-            }
-        }
-
-        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, BossController.OnHitDelegates delegates)
-        {
-            string path = CleanPath(filepath, ".lua");
-            if (Everest.Content.TryGet(path, out ModAsset onHitFile))
-            {
-                functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
-            }
-            else
-            {
-                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
-                functions = null;
             }
         }
 
@@ -243,6 +185,28 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetCircles);
         }
+        #endregion
+
+        #region XML Helper Functions
+        private static float GetValueOrDefaultFloat(XmlAttribute source, float defaultVal = 0f)
+        {
+            return source != null ? float.Parse(source.Value) : defaultVal;
+        }
+
+        private static float? GetValueOrDefaultNullF(XmlAttribute source, float? value = null)
+        {
+            return source != null ? float.Parse(source.Value) : value;
+        }
+
+        private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
+        {
+            return source != null ? int.Parse(source.Value) : value;
+        }
+
+        private static int? GetValueOrDefaultNullI(XmlAttribute source, int? value = null)
+        {
+            return source != null ? int.Parse(source.Value) : value;
+        }
 
         private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)
         {
@@ -255,16 +219,61 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return new Circle(GetValueOrDefaultFloat(source["radius"], defaultRadius), GetValueOrDefaultFloat(source["xOffset"]), GetValueOrDefaultFloat(source["yOffset"]));
         }
 
-        private static float GetValueOrDefaultFloat(XmlAttribute source, float defaultVal = 0f)
-        {
-            return source != null ? float.Parse(source.Value) : defaultVal;
-        }
-
         private static string GetTagOrMain(XmlNode source)
         {
             XmlAttribute tag = source.Attributes["tag"];
             return tag != null ? tag.Value : "main";
         }
+        #endregion
+        #endregion
+
+        #region Lua Files
+        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId,
+            Player playerRef, BossPuppet puppetRef, BossController.CustceneDelegates custceneDelegates)
+        {
+            if (Everest.Content.TryGet(path, out ModAsset eventFiles))
+            {
+                foreach (ModAsset eventFile in eventFiles.Children)
+                {
+                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
+                        new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
+                }
+            }
+            else
+            {
+                Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
+            }
+        }
+
+        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, string bossId, BossController.AttackDelegates delegates)
+        {
+            if (Everest.Content.TryGet(path, out ModAsset attackFiles))
+            {
+                foreach (ModAsset attackFile in attackFiles.Children)
+                {
+                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
+                }
+            }
+            else
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
+            }
+        }
+
+        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, BossController.OnHitDelegates delegates)
+        {
+            string path = CleanPath(filepath, ".lua");
+            if (Everest.Content.TryGet(path, out ModAsset onHitFile))
+            {
+                functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
+            }
+            else
+            {
+                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
+                functions = null;
+            }
+        }
+        #endregion
 
         private static string CleanPath(string path, string extension)
         {
