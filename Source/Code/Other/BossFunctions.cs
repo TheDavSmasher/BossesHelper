@@ -4,6 +4,7 @@ using NLua;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 
 namespace Celeste.Mod.BossesHelper.Code.Other
@@ -19,8 +20,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         private LuaFunction OnBounceLua;
 
         private LuaFunction OnLaserLua;
-
-        private readonly string filepath;
 
         public BossController.OnHitDelegates Delegates { get; private set; }
 
@@ -48,33 +47,28 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossFunctions(string filepath, string bossId, BossController.OnHitDelegates delegates)
         {
-            this.filepath = filepath;
             Delegates = delegates;
             LoadMethods(filepath, bossId, delegates.playerRef, delegates.puppetRef);
         }
 
         public IEnumerator OnContactCoroutine()
         {
-            if (OnContactLua != null)
-                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnContactLua);
+            yield return OnContactLua?.LuaFunctionToIEnumerator();
         }
 
         public IEnumerator OnDashCoroutine()
         {
-            if (OnDashLua != null)
-                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnDashLua);
+            yield return OnDashLua?.LuaFunctionToIEnumerator();
         }
 
         public IEnumerator OnBounceCoroutine()
         {
-            if (OnBounceLua != null)
-                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnBounceLua);
+            yield return OnBounceLua?.LuaFunctionToIEnumerator();
         }
 
         public IEnumerator OnLaserCoroutine()
         {
-            if (OnLaserLua != null)
-                yield return LuaBossHelper.LuaFunctionToIEnumerator(OnLaserLua);
+            yield return OnLaserLua?.LuaFunctionToIEnumerator();
         }
     }
 }

@@ -20,10 +20,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Stream stream = file?.Stream;
             if (stream != null)
             {
-                using (StreamReader streamReader = new(stream))
-                {
-                    return streamReader.ReadToEnd();
-                }
+                using StreamReader streamReader = new(stream);
+                return streamReader.ReadToEnd();
             }
             return null;
         }
@@ -65,7 +63,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static IEnumerator LuaFunctionToIEnumerator(LuaFunction func)
+        public static IEnumerator LuaFunctionToIEnumerator(this LuaFunction func)
         {
             LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaCoroutine;
             while (routine != null && SafeMoveNext(routine))

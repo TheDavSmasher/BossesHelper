@@ -11,8 +11,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossEvent : CutsceneEntity
     {
-        private readonly string filepath;
-
         public BossController.CustceneDelegates CustceneDelegates { get; private set; }
 
         public bool finished;
@@ -43,7 +41,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             bool fadeInOnSkip = true, bool endingChapterAfter = false)
             : base(fadeInOnSkip, endingChapterAfter)
         {
-            this.filepath = filepath;
             finished = false;
             CustceneDelegates = delegates;
             LoadCutscene(filepath, bossId, player, puppet);
@@ -51,7 +48,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private BossEvent(string filepath)
         {
-            this.filepath = filepath;
             finished = false;
             LoadCutscene(filepath, null, null, null);
         }

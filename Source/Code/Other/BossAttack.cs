@@ -11,8 +11,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private LuaFunction attackFunction;
 
-        private readonly string filepath;
-
         public BossController.AttackDelegates Delegates { get; private set; }
 
         private void LoadAttacks(string filename, string bossId, Player player, BossPuppet puppet)
@@ -34,7 +32,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public BossAttack(string filepath, string bossId, BossController.AttackDelegates allDelegates)
         {
-            this.filepath = filepath;
             Delegates = allDelegates;
             LoadAttacks(filepath, bossId, allDelegates.playerRef, allDelegates.puppetRef);
         }
