@@ -60,8 +60,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         if (attributes.Count > 2)
                         {
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                                GetValueOrDefaultInt(attributes["x"]), GetValueOrDefaultInt(attributes["y"]),
-                                GetValueOrDefaultInt(attributes["width"]), GetValueOrDefaultInt(attributes["height"]),
+                                GetValueOrDefaultFloat(attributes["x"]), GetValueOrDefaultFloat(attributes["y"]),
+                                GetValueOrDefaultFloat(attributes["width"]), GetValueOrDefaultFloat(attributes["height"]),
                                 GetValueOrDefaultNullI(attributes["goto"]), offset));
                         }
                         else if (attributes.Count != 0)

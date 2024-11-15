@@ -212,7 +212,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
             return Patterns[currentPatternIndex].FinishMode == BossPattern.FinishModes.PlayerPositionWithin
-                && Patterns[currentPatternIndex].PlayerPositionTrigger.Contains((int)entityPos.X, (int)entityPos.Y);
+                && Patterns[currentPatternIndex].PlayerPositionTrigger.Collide(entityPos);
         }
 
         private void StartAttackPattern(int goTo = -1)

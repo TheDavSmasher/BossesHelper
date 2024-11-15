@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
@@ -26,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public int? GoToPattern { get; private set; }
 
-        public Rectangle PlayerPositionTrigger { get; private set; }
+        public Hitbox PlayerPositionTrigger { get; private set; }
 
         public readonly bool RandomPattern;
 
@@ -42,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        private BossPattern(Method[] patternLoop, Rectangle trigger, Method[] prePattern = null, FinishModes finishMode = FinishModes.ContinueLoop, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
+        private BossPattern(Method[] patternLoop, Hitbox trigger = null, Method[] prePattern = null, FinishModes finishMode = FinishModes.ContinueLoop, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
         {
             FinishMode = finishMode;
             IterationCount = count;
@@ -55,27 +56,27 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public BossPattern(string eventName, int? goTo)
-            : this(patternLoop: [new Method(eventName, null)], trigger: Rectangle.Empty, finishMode: FinishModes.LoopCountGoTo, count: 0, goTo: goTo, isEvent: true)
+            : this(patternLoop: [new Method(eventName, null)], finishMode: FinishModes.LoopCountGoTo, count: 0, goTo: goTo, isEvent: true)
         {
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, trigger: Rectangle.Empty)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder)
         {
         }
 
-        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int x, int y, int width, int height, int? goTo, Vector2 offset)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.PlayerPositionWithin, trigger: new Rectangle(x + (int)offset.X, y + (int)offset.Y, width, height), goTo: goTo)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, float x, float y, float width, float height, int? goTo, Vector2 offset)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.PlayerPositionWithin, trigger: new Hitbox(x + offset.X, y + offset.Y, width, height), goTo: goTo)
         {
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int? goTo)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, trigger: Rectangle.Empty, finishMode: FinishModes.LoopCountGoTo, count: count, goTo: goTo)
+            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.LoopCountGoTo, count: count, goTo: goTo)
         {
         }
 
         public BossPattern(Method[] randomPattern)
-            : this(patternLoop: randomPattern, trigger: Rectangle.Empty, random: true)
+            : this(patternLoop: randomPattern, random: true)
         {
         }
     }
