@@ -24,6 +24,7 @@ This is a helper specifically designed to allow the creation of custom bosses wi
   - [Setup Entries](#setup-entries)
   - [Health Bar Entries](#health-bar-entries)
   - [Health System Triggers](#health-system-triggers)
+- [TASing](#tasing)
 - [Disclaimer](#disclaimer)
 
 ## Boss Setup
@@ -490,6 +491,10 @@ This Helper includes a few things exported with ModInterop, namely:
   - The integer can represent anything, and can be represented in multiple ways.
 
 The Mod Import Name is `"BossesHelper"`.
+
+## TASing
+
+Due to the high TAS nature of Celeste, the way RNG is handled for random patterns can be changed. RNG is always seeded, but what the seed is depends on what is desired. The normal way the Boss seeds its RNG is based on Active Time plus a crc32 hash of the Boss's Entity ID key. However, a command line command is provided with the helper: `set_boss_seed`. This command-line command will override the Active Time part of the RNG seed, still added to the crc32 hash of the Boss's Entity ID key, which is deterministic. If you've used this command and want to go back to the Active Time seeding method, use the command and set the seed to 0, which will make the Boss use Active Time once again.
 
 ## Disclaimer
 
