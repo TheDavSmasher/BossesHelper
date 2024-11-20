@@ -579,7 +579,7 @@ end
 -- @string[opt] prefix Overrides the global class name prefix.
 -- @treturn {#Monocle.Entity...} Tracked entities of given class.
 function helpers.getAllEntities(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.getAllEntities(name, prefix or classNamePrefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first entity by class name.
@@ -921,6 +921,13 @@ function helpers.enablePause()
     engine.Scene.PauseLock = false
 end
 
+--- End Base Lua Cutscenes Helper functions
+
+
+
+
+--- Start Bosses Helper functions
+
 --- Bosses Helper Attack specific functions and helper methods for the player
 --- These will not work on Events and are not accessible even by direct call
 --- Since no reference to the Controller is given, these function delegates are necessary
@@ -1037,6 +1044,69 @@ end
 
 --- Additional, non-delegate helper shorthand methods
 --- These can be used anywhere within the Mod.
+
+
+--- Gets all tracked components by class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix.
+--- @return Component[] components Tracked components of given class.
+function helpers.getComponents(name, prefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
+end
+
+--- Gets the first tracked component by class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix.
+--- @return Component component First tracked component of given class.
+function helpers.getComponent(name, prefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
+end
+
+--- Gets all components by class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix.
+--- @return Component[] components All components of given class on scene.
+function helpers.getAllComponents(name, prefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
+end
+
+--- Gets the first component by class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix.
+--- @return Component component First component of given class.
+function helpers.getFirstComponent(name, prefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
+end
+
+--- Gets all components by class name added to an entity of given class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param entity string Class name of the entity, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix for the Component class.
+--- @param entityPre? string Overrides the global class name prefix for the Entity class.
+--- @return Component[] components All components of given class on scene attached to the entity type.
+function helpers.getAllComponentsOnType(name, entity, prefix, entityPre)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+end
+
+--- Gets the first component by class name added to an entity of the given class name.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param entity string Class name of the entity, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix for the Component class.
+--- @param entityPre? string Overrides the global class name prefix for the Entity class.
+--- @return Component component First component of given class attached to the entity type.
+function helpers.getFirstComponentOnType(name, entity, prefix, entityPre)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+end
+
+--- Checks if the entity given has a component of the given class name.
+--- @param entity Entity The entity to check.
+--- @param name string Class name of the component, relative to "Celeste." by default.
+--- @param prefix? string Overrides the global class name prefix.
+--- @return boolean componentFound If the Entity does have a Component of the type specified.
+function helpers.entityHasComponent(entity, name, prefix)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
+end
+
 
 --- Enable the Boss' Collision checks, including collisions with solids.
 function helpers.enableCollisions()
