@@ -27,6 +27,12 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             return false;
         }
 
+        public override void Added(Entity entity)
+        {
+            base.Added(entity);
+            Collider.Entity = entity;
+        }
+
         public void OnLaser()
         {
             onLaser?.Invoke();
@@ -38,14 +44,14 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             {
                 if (Collider is Circle single)
                 {
-                    Draw.Circle(single.AbsolutePosition, single.Radius, Color.AliceBlue, 10);
+                    Draw.Circle(single.AbsolutePosition + Entity.Position, single.Radius, Color.AliceBlue, 10);
                 }
                 if (Collider is ColliderList colliderList)
                 {
                     foreach (Collider collider in colliderList.colliders)
                     {
                         Circle target = collider as Circle;
-                        Draw.Circle(target.AbsolutePosition, target.Radius, Color.AliceBlue, 10);
+                        Draw.Circle(target.AbsolutePosition + Entity.Position, target.Radius, Color.AliceBlue, 10);
                     }
                 }
             }
