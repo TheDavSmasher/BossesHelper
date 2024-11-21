@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
 
-        private float damageCooldown;
+        public float damageCooldown;
 
         private readonly float baseCooldown;
 
@@ -179,6 +179,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 damageCooldown -= Engine.DeltaTime;
             }
+        }
+
+        public void GiveIFrames(float time)
+        {
+            damageCooldown += time;
         }
     }
 }
