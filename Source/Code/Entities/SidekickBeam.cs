@@ -4,6 +4,7 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Celeste.Mod.BossesHelper.Code.Components;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -54,7 +55,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Depth = -1000000;
         }
 
-        public SidekickBeam Init(BadelineSidekick sidekick, SidekickTargetCollider target)
+        public SidekickBeam Init(BadelineSidekick sidekick, SidekickTarget target)
         {
             this.sidekick = sidekick;
             chargeTimer = 1.4f;
@@ -81,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Update();
             Level level = SceneAs<Level>();
-            SidekickTargetCollider Target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(Center);
+            SidekickTarget Target = level.Tracker.GetNearestComponent<SidekickTarget>(Center);
             beamAlpha = Calc.Approach(beamAlpha, 1f, 2f * Engine.DeltaTime);
             if (chargeTimer > 0f)
             {
@@ -185,10 +186,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Vector2 vector = sidekick.BeamOrigin + Calc.AngleToVector(angle, 12f);
             Vector2 vector2 = sidekick.BeamOrigin + Calc.AngleToVector(angle, 2000f);
             Vector2 vector3 = (vector2 - vector).Perpendicular().SafeNormalize(2f);
-            SidekickTargetCollider target = base.Scene.CollideFirst<SidekickTargetCollider>(vector + vector3, vector2 + vector3);
-            target ??= base.Scene.CollideFirst<SidekickTargetCollider>(vector - vector3, vector2 - vector3);
-            target ??= base.Scene.CollideFirst<SidekickTargetCollider>(vector, vector2);
+            SidekickTarget target = CollideFirstComponent(vector + vector3, vector2 + vector3);
+            target ??= CollideFirstComponent(vector - vector3, vector2 - vector3);
+            target ??= CollideFirstComponent(vector, vector2);
             target?.OnLaser();
+        }
+
+        private SidekickTarget CollideFirstComponent(Vector2 from, Vector2 to)
+        {
+            List<Component> targets = base.Scene.Tracker.GetComponents<SidekickTarget>();
+            foreach (Component target in targets)
+            {
+                if ((target as SidekickTarget).CollideCheck(from, to))
+                {
+                    return target as SidekickTarget;
+                }
+            }
+            return null;
         }
 
         public override void Render()
