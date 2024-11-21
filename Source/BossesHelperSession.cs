@@ -14,6 +14,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public bool alreadyFlying;
 
+    public float damageCooldown;
+
     public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
     {
         public int bossHealthAt = bossHealthAt;

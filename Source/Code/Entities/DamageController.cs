@@ -14,8 +14,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
 
-        public float damageCooldown;
-
         private readonly float baseCooldown;
 
         public int health;
@@ -64,12 +62,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
         {
-            if (damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
+            if (BossesHelperModule.Session.damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
                 level.InCutscene || amount <= 0)
             {
                 return;
             }
-            damageCooldown = baseCooldown;
+            BossesHelperModule.Session.damageCooldown = baseCooldown;
             health -= amount;
             Player entity = Engine.Scene.Tracker.GetEntity<Player>();
             if (entity == null || entity.StateMachine.State == Player.StCassetteFly)
@@ -146,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private IEnumerator PlayerInvincible(Player player)
         {
             int times = 2;
-            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, damageCooldown, start: true);
+            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, BossesHelperModule.Session.damageCooldown, start: true);
             Add(tween);
             tween.OnUpdate = delegate
             {
@@ -170,20 +168,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             tween.Stop();
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (damageCooldown > 0)
-            {
-                damageCooldown -= Engine.DeltaTime;
-            }
-        }
-
-        public void GiveIFrames(float time)
-        {
-            damageCooldown += time;
         }
     }
 }

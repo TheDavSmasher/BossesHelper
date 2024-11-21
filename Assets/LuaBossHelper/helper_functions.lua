@@ -1389,10 +1389,7 @@ end
 ---Gives additional time where the player is invincible to taking damage.
 ---@param time number The time to add to the invincible timer.
 function helpers.giveInvincibleFrames(time)
-    local controller = celeste.Mod.BossesHelper.BossesHelperModule.Session.mapDamageController
-    if controller then
-        controller.damageCooldown = time + controller.damageCooldown
-    end
+    celeste.Mod.BossesHelper.BossesHelperModule.GiveIFrames(time)
 end
 
 ---Add an EntityCollider Component to the specified entity, meant to collide with the given type of Entities, and execute a function.
