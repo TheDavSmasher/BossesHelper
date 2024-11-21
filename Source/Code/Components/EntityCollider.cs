@@ -7,9 +7,13 @@ using System.Linq;
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
     [Tracked(false)]
-    public class EntityCollider<T>(Action<T> onEntityAction, Collider collider = null) : EntityColliderCast(typeof(T).Name, collider) where T : Entity
+    public class EntityCollider<T>(Action<T> onEntityAction, Collider collider = null) : Component(active: true, visible: false) where T : Entity
     {
         public Action<T> OnEntityAction = onEntityAction;
+
+        public readonly string entityType = typeof(T).Name;
+
+        public Collider Collider = collider;
 
         public EntityCollider(LuaFunction onEntityLua, Collider collider = null)
             : this((T entity) => onEntityLua.Call(entity), collider)

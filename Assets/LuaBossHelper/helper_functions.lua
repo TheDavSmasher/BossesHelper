@@ -1392,15 +1392,15 @@ function helpers.giveInvincibleFrames(time)
     celeste.Mod.BossesHelper.BossesHelperModule.GiveIFrames(time)
 end
 
----Add an EntityCollider Component to the specified entity, meant to collide with the given type of Entities, and execute a function.
+---Gets an EntityCollider Component meant to collide with the given type of Entities, and execute a function.
 ---The Type can be provided by an entity of the Type desired, or a string containing the full path to the Entity class name, excluding the "Celeste." prefix.
 ---Examples would be "Spring", "Mod.BossesHelper.Code.Helper.Entities.AttackEntity", or similar.
----@param parent Entity The entity to add the EntityCollider Component to.
 ---@param type string|Entity The entity type to collide with. Accepts an entity of the type desired or the full name of the class as a string.
 ---@param func fun(entity) The function that will execute when the collision check returns true.
 ---@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
-function helpers.addEntityColliderTo(parent, type, func, collider)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddEntityColliderTo(parent, type, func, collider)
+---@return Component entityCollider The typed instance of the Entity Collider component.
+function helpers.getEntityCollider(type, func, collider)
+    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetEntityCollider(type, func, collider)
 end
 
 return helpers

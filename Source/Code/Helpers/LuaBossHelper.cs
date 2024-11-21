@@ -138,7 +138,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             puppet.Add(new Coroutine(LuaFunctionToIEnumerator(func)));
         }
 
-        public static void AddEntityColliderTo(Entity parent, object baseEntity, LuaFunction func, Collider collider = null)
+        public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
         {
             Type baseType;
             if (baseEntity is string val)
@@ -151,14 +151,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             else
             {
-                return;
+                return null;
             }
 
-            Type componentType = typeof(EntityCollider<>).MakeGenericType(baseType);
-            object[] componentArgs = { func, collider };
-            object entityCollider = Activator.CreateInstance(componentType, componentArgs);
-
-            parent.Add(entityCollider as EntityColliderCast);
+            return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [ func, collider ]);
         }
     }
 }
