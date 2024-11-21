@@ -1400,7 +1400,7 @@ end
 ---@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
 ---@return Component entityCollider The typed instance of the Entity Collider component.
 function helpers.getEntityCollider(type, func, collider)
-    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetEntityCollider(type, func, collider)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntityCollider(type, func, collider)
 end
 
 return helpers

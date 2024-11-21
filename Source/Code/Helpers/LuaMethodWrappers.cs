@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
+using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -400,6 +401,37 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 level.Wipe?.Cancel();
             };
+        }
+
+        public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
+        {
+            try
+            {
+                Type baseType;
+                if (baseEntity is string val)
+                {
+                    baseType = LuaMethodWrappers.GetTypeFromString(val);
+                }
+                else if (baseEntity is Entity entity)
+                {
+                    baseType = entity.GetType();
+                }
+                else
+                {
+                    return null;
+                }
+
+                return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [func, collider]);
+            }
+            catch (ArgumentNullException)
+            {
+                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested entity type does not exist");
+            }
+            catch (Exception arg)
+            {
+                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+            }
+            return null;
         }
     }
 }

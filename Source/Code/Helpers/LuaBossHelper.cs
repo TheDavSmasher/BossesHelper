@@ -1,5 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Components;
-using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
 using NLua;
 using System;
@@ -136,25 +135,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
         {
             puppet.Add(new Coroutine(LuaFunctionToIEnumerator(func)));
-        }
-
-        public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
-        {
-            Type baseType;
-            if (baseEntity is string val)
-            {
-                baseType = LuaMethodWrappers.GetTypeFromString(val);
-            }
-            else if (baseEntity is Entity entity)
-            {
-                baseType = entity.GetType();
-            }
-            else
-            {
-                return null;
-            }
-
-            return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [ func, collider ]);
         }
     }
 }
