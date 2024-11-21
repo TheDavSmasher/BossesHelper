@@ -56,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (Exception e)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to resume coroutine");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to resume coroutine");
                 Logger.LogDetailed(e);
                 return false;
             }

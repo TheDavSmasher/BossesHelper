@@ -50,15 +50,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get entity: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get entity: Requested type does not exist");
             }
             catch (TargetInvocationException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entity: '{type}' is not trackable");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entity: '{type}' is not trackable");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entity: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entity: {arg}");
             }
             return null;
         }
@@ -76,15 +76,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get entities: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get entities: Requested type does not exist");
             }
             catch (TargetInvocationException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entities: '{type}' is not trackable");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entities: '{type}' is not trackable");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entities: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entities: {arg}");
             }
             return null;
         }
@@ -102,11 +102,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get entities: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get entities: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entity: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entity: {arg}");
             }
             return null;
         }
@@ -124,11 +124,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get entities: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get entities: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get entity: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get entity: {arg}");
             }
             return null;
         }
@@ -146,15 +146,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
             }
             catch (TargetInvocationException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: '{type}' is not trackable");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: '{type}' is not trackable");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return null;
         }
@@ -172,15 +172,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get components: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get components: Requested type does not exist");
             }
             catch (TargetInvocationException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get components: '{type}' is not trackable");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get components: '{type}' is not trackable");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get components: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get components: {arg}");
             }
             return null;
         }
@@ -209,11 +209,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return null;
         }
@@ -248,11 +248,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get components: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get components: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get components: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get components: {arg}");
             }
             return null;
         }
@@ -278,11 +278,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return null;
         }
@@ -314,11 +314,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get components: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get components: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get components: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get components: {arg}");
             }
             return null;
         }
@@ -336,11 +336,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return false;
         }
@@ -425,11 +425,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (ArgumentNullException)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", "Failed to get component: Requested entity type does not exist");
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested entity type does not exist");
             }
             catch (Exception arg)
             {
-                Logger.Log(LogLevel.Error, "Lua Cutscenes", $"Failed to get component: {arg}");
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return null;
         }
