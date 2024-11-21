@@ -65,7 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Collision onCollideV;
 
-        public bool onGround { get; private set; }
+        public bool Grounded { get; private set; }
 
         private readonly float maxFall;
 
@@ -124,7 +124,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         GetMainOrDefault(hitboxMetadata.bounceHitboxes, 6f)));
                     break;
                 case HurtModes.SidekickAttack:
-                    Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID, Position,
+                    Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID,
                         GetMainOrDefault(hitboxMetadata.targetCircles, null)));
                     break;
                 case HurtModes.PlayerDash:
@@ -237,13 +237,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
-            onGround = Speed.Y >= 0 && OnGround();
+            Grounded = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
             MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
             //Apply gravity
-            if (!onGround)
+            if (!Grounded)
             {
                 Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
             }
