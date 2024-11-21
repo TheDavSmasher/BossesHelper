@@ -135,13 +135,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 List<float> distances = new();
                 foreach (Collider collider in colliders)
                 {
-                    distances.Add(DistanceBetween(sidekick.BeamOrigin, collider.AbsolutePosition));
+                    distances.Add(DistanceBetween(sidekick.BeamOrigin, collider.AbsolutePosition + source.Entity.Position));
                 }
-                return colliders[distances.IndexOf(distances.Min())].AbsolutePosition;
+                return colliders[distances.IndexOf(distances.Min())].AbsolutePosition + source.Entity.Position;
             }
             else
             {
-                return source.AbsolutePosition;
+                return source.AbsolutePosition + source.Entity.Position;
             }
         }
 
