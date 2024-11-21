@@ -3,6 +3,7 @@ using Monocle;
 using Celeste;
 using Microsoft.Xna.Framework;
 using System.Collections;
+using Celeste.Mod.BossesHelper.Code.Components;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
@@ -100,7 +101,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private IEnumerator AttackSequence()
         {
             Level level = SceneAs<Level>();
-            SidekickTargetCollider target = level.Tracker.GetNearestEntity<SidekickTargetCollider>(BeamOrigin);
+            SidekickTarget target = level.Tracker.GetNearestComponent<SidekickTarget>(BeamOrigin);
             if (target == null)
             {
                 level.Add(new MiniTextbox("Badeline_Sidekick_No_Target"));
@@ -143,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Level level = SceneAs<Level>();
-            if (level.Tracker.GetEntities<SidekickTargetCollider>().Count == 0)
+            if (level.Tracker.GetComponents<SidekickTarget>().Count == 0)
             {
                 RemoveSelf();
                 return;
