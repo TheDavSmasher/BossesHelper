@@ -59,6 +59,7 @@ public class BossesHelperModule : EverestModule
             On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
         }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
+        On.Celeste.Level.Update += UpdateDamageCooldownTimer;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish += ApplyUserCrush;
         On.Celeste.Player.Die += OnPlayerDie;
@@ -68,6 +69,7 @@ public class BossesHelperModule : EverestModule
     {
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
+        On.Celeste.Level.Update -= UpdateDamageCooldownTimer;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish -= ApplyUserCrush;
         On.Celeste.Player.Die -= OnPlayerDie;
@@ -106,6 +108,15 @@ public class BossesHelperModule : EverestModule
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
             Session.lastSafePosition = Session.lastSpawnPoint = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
+        }
+    }
+
+    private void UpdateDamageCooldownTimer(On.Celeste.Level.orig_Update orig, Level self)
+    {
+        orig(self);
+        if (Session.damageCooldown > 0)
+        {
+            Session.damageCooldown -= Engine.DeltaTime;
         }
     }
 
@@ -190,13 +201,17 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
+        if (BossesHelperModule.Session.damageCooldown > 0 && !always)
+        {
+            return null;
+        }
         if (Session.mapDamageController == null || Session.mapDamageController.health <= 0)
         {
             return orig(self, dir, always, register);
         }
         if (always)
         {
-            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health);
+            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
             return orig(self, dir, always, register);
         }
         float? offscreemAtY = GetFromY(self.SceneAs<Level>(), self);
@@ -265,5 +280,10 @@ public class BossesHelperModule : EverestModule
         EntityData entityData = new EntityData();
         entityData.Values = new Dictionary<string, object>();
         return entityData;
+    }
+
+    public static void GiveIFrames(float time)
+    {
+        Session.damageCooldown += time;
     }
 }
