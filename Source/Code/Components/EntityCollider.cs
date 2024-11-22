@@ -25,28 +25,27 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public override void Update()
         {
             base.Update();
+            if (OnEntityAction == null) return;
+
+            Collider collider = base.Entity.Collider;
+            if (Collider != null)
+            {
+                base.Entity.Collider = Collider;
+            }
+
             List<T> list = isTracked ?
                 base.Scene.Tracker.GetEntities<T>().Cast<T>().ToList() :
                 base.Scene.Entities.FindAll<T>();
 
             foreach (T entity in list)
             {
-                if (OnEntityAction != null)
+                if (Entity.CollideCheck(entity))
                 {
-                    Collider collider = base.Entity.Collider;
-                    if (Collider != null)
-                    {
-                        base.Entity.Collider = Collider;
-                    }
-
-                    if (Entity.CollideCheck(entity))
-                    {
-                        OnEntityAction(entity);
-                    }
-
-                    base.Entity.Collider = collider;
+                    OnEntityAction(entity);
                 }
             }
+
+            base.Entity.Collider = collider;
         }
     }
 }
