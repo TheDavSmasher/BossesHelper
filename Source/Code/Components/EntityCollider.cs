@@ -13,11 +13,18 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public Collider Collider = collider;
 
-        private readonly bool isTracked = Engine.Scene.Tracker.IsEntityTracked<T>();
-
         public EntityCollider(LuaFunction onEntityLua, Collider collider = null)
             : this((T entity) => onEntityLua.Call(entity), collider)
         {
+        }
+
+        public override void Added(Entity entity)
+        {
+            base.Added(entity);
+            if (!Engine.Scene.Tracker.IsEntityTracked<T>())
+            {
+                BossesHelperModule.AddEntityToTracker(typeof(T));
+            }
         }
 
         public override void Update()
@@ -31,20 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
                 base.Entity.Collider = Collider;
             }
 
-            if (isTracked)
-            {
-                Entity.CollideDo(OnEntityAction);
-            }
-            else
-            {
-                foreach (T entity in base.Scene.Entities.FindAll<T>())
-                {
-                    if (Entity.CollideCheck(entity))
-                    {
-                        OnEntityAction(entity);
-                    }
-                }
-            }
+            Entity.CollideDo(OnEntityAction);
 
             base.Entity.Collider = collider;
         }
