@@ -33,9 +33,9 @@ namespace Celeste.Mod.BossesHelper.Code.Components
                 base.Entity.Collider = Collider;
             }
 
-            List<T> list = isTracked ?
-                base.Scene.Tracker.GetEntities<T>().Cast<T>().ToList() :
-                base.Scene.Entities.FindAll<T>();
+            List<T> list = isTracked
+                ? base.Scene.Tracker.GetEntities<T>().Cast<T>().ToList()
+                : base.Scene.Entities.FindAll<T>();
 
             foreach (T entity in list)
             {
