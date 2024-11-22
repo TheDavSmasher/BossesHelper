@@ -23,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             base.Added(entity);
             if (!Engine.Scene.Tracker.IsComponentTracked<T>())
             {
-                BossesHelperModule.AddEntityToTracker(typeof(T));
+                BossesHelperModule.AddComponentToTracker(typeof(T));
             }
         }
 
