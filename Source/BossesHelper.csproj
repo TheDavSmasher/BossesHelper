@@ -34,9 +34,6 @@
         <PackageReference Include="YamlDotNet" Version="16.1.3" />
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
-        <Reference Include="VortexHelper">
-          <HintPath>..\..\..\..\..\..\..\..\Users\David Higueros\Documents\Other Documents\.Celeste DLLs\VortexHelper\Code\bin\VortexHelper.dll</HintPath>
-        </Reference>
     </ItemGroup>
 
     <ItemGroup>
