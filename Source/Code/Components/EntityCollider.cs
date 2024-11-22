@@ -1,8 +1,6 @@
 ﻿using Monocle;
 using NLua;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -33,15 +31,18 @@ namespace Celeste.Mod.BossesHelper.Code.Components
                 base.Entity.Collider = Collider;
             }
 
-            List<T> list = isTracked
-                ? base.Scene.Tracker.GetEntities<T>().Cast<T>().ToList()
-                : base.Scene.Entities.FindAll<T>();
-
-            foreach (T entity in list)
+            if (isTracked)
             {
-                if (Entity.CollideCheck(entity))
+                Entity.CollideDo(OnEntityAction);
+            }
+            else
+            {
+                foreach (T entity in base.Scene.Entities.FindAll<T>())
                 {
-                    OnEntityAction(entity);
+                    if (Entity.CollideCheck(entity))
+                    {
+                        OnEntityAction(entity);
+                    }
                 }
             }
 
