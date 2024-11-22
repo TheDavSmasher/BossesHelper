@@ -201,7 +201,7 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        if (BossesHelperModule.Session.damageCooldown > 0 && !always)
+        if (Session.damageCooldown > 0 && !always)
         {
             return null;
         }
