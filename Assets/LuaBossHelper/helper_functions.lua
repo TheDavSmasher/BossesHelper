@@ -1403,4 +1403,14 @@ function helpers.getEntityCollider(type, func, collider)
     return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntityCollider(type, func, collider)
 end
 
+---Gets an EntityColliderByComponent Component meant to collide with entities that contain the given Component type, and execute a function.
+---The Type can be provided by a component of the Type desired, or a string containing the full path to the Component class name, excluding the "Celeste." prefix.
+---@param type string|Component The component type to collide with. Accepts a component of the type desired or the full name of the class as a string.
+---@param func fun(entity) The function that will execute when the collision check returns true.
+---@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
+---@return Component entityColliderByComponent The typed instance of the Entity Collider By Component component.
+function helpers.getEntityColliderByComponent(type, func, collider)
+    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntityColliderByComponent(type, func, collider)
+end
+
 return helpers

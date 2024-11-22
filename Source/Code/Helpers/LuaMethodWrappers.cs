@@ -410,7 +410,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Type baseType;
                 if (baseEntity is string val)
                 {
-                    baseType = LuaMethodWrappers.GetTypeFromString(val);
+                    baseType = GetTypeFromString(val);
                 }
                 else if (baseEntity is Entity entity)
                 {
@@ -426,6 +426,37 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             catch (ArgumentNullException)
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested entity type does not exist");
+            }
+            catch (Exception arg)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
+            }
+            return null;
+        }
+
+        public static object GetEntityColliderByComponent(object baseComponent, LuaFunction func, Collider collider = null)
+        {
+            try
+            {
+                Type baseType;
+                if (baseComponent is string val)
+                {
+                    baseType = GetTypeFromString(val);
+                }
+                else if (baseComponent is Component component)
+                {
+                    baseType = component.GetType();
+                }
+                else
+                {
+                    return null;
+                }
+
+                return Activator.CreateInstance(typeof(EntityColliderByComponent<>).MakeGenericType(baseType), [func, collider]);
+            }
+            catch (ArgumentNullException)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested component type does not exist");
             }
             catch (Exception arg)
             {
