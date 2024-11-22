@@ -6,6 +6,7 @@ using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -274,6 +275,75 @@ public class BossesHelperModule : EverestModule
             return level.Bounds.Bottom;
         return null;
     }
+
+    #region Everest PR
+    public static void AddEntityToTracker(Type type, params Type[] subTypes)
+    {
+        Tracker.StoredEntityTypes.Add(type);
+        if (!Tracker.TrackedEntityTypes.TryGetValue(type, out List<Type> value))
+        {
+            Tracker.TrackedEntityTypes[type] = new List<Type> { type };
+        }
+        else if (!value.Contains(type))
+        {
+            value.Add(type);
+        }
+        foreach (Type subType in subTypes)
+        {
+            if (!Tracker.TrackedEntityTypes.TryGetValue(subType, out List<Type> subvalue))
+            {
+                Tracker.TrackedEntityTypes[subType] = new List<Type> { type };
+            }
+            else if (!subvalue.Contains(type))
+            {
+                subvalue.Add(type);
+            }
+        }
+        Dictionary<Type, List<Entity>> entities = Engine.Scene?.Tracker.Entities;
+        if (entities != null && !entities.ContainsKey(type))
+        {
+            entities[type] = Engine.Scene.Entities.Where((Entity e) => e.GetType() == type).ToList();
+        }
+    }
+
+    public static void AddComponentToTracker(Type type, params Type[] subTypes)
+    {
+        Tracker.StoredComponentTypes.Add(type);
+        if (!Tracker.TrackedComponentTypes.TryGetValue(type, out List<Type> value))
+        {
+            Tracker.TrackedComponentTypes[type] = new List<Type> { type };
+        }
+        else if (!value.Contains(type))
+        {
+            value.Add(type);
+        }
+        foreach (Type subType in subTypes)
+        {
+            if (!Tracker.TrackedComponentTypes.TryGetValue(subType, out List<Type> subvalue))
+            {
+                Tracker.TrackedComponentTypes[subType] = new List<Type> { type };
+            }
+            else if (!subvalue.Contains(type))
+            {
+                subvalue.Add(type);
+            }
+        }
+        Dictionary<Type, List<Component>> components = Engine.Scene?.Tracker.Components;
+        if (components != null && !components.ContainsKey(type))
+        {
+            List<Component> list = new List<Component>();
+            foreach (Entity entity in Engine.Scene.Entities)
+            {
+                var component = entity.Components.FirstOrDefault((c) => c.GetType() == type);
+                if (component != null)
+                {
+                    list.Add(component);
+                }
+            }
+            components[type] = list;
+        }
+    }
+    #endregion
 
     public static EntityData MakeEntityData()
     {
