@@ -20,11 +20,11 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Added(Entity entity)
         {
-            base.Added(entity);
             if (!Engine.Scene.Tracker.IsEntityTracked<T>())
             {
                 BossesHelperModule.AddEntityToTracker(typeof(T));
             }
+            base.Added(entity);
         }
 
         public override void Update()
