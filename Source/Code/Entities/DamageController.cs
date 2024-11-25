@@ -169,5 +169,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
         }
+
+        public override void Removed(Scene scene)
+        {
+            base.Removed(scene);
+            BossesHelperModule.Session.mapDamageController = null;
+        }
     }
 }
