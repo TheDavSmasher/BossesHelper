@@ -91,14 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void EnableHealthSystem()
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
-            Level level = SceneAs<Level>();
-            if (level != null)
-            {
-                BossesHelperModule.Session.mapHealthBar ??= new();
-                BossesHelperModule.Session.mapDamageController ??= new();
-                level.Add(BossesHelperModule.Session.mapHealthBar);
-                level.Add(BossesHelperModule.Session.mapDamageController);
-            }
+            SceneAs<Level>()?.Add(BossesHelperModule.Session.mapHealthBar ??= new(), BossesHelperModule.Session.mapDamageController ??= new());
         }
     }
 }
