@@ -29,7 +29,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            base.Update();
             if (OnEntityAction == null) return;
 
             Collider collider = base.Entity.Collider;

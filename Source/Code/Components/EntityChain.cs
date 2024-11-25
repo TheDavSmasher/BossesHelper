@@ -10,7 +10,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            base.Update();
             if (chainedPosition)
             {
                 chained.Position = Entity.Position + chained.Position;
