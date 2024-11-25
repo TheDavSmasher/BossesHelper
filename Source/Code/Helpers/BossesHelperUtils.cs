@@ -79,9 +79,24 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly string endAnim;
 
+            private bool oldVisible;
+
+            public new bool Visible
+            {
+                get
+                {
+                    return icon.Visible;
+                }
+                set
+                {
+                    oldVisible = value;
+                }
+            }
+
             public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
             {
                 Add(icon = GFX.SpriteBank.Create(iconSprite));
+                oldVisible = icon.Visible;
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
@@ -111,7 +126,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Render()
             {
                 base.Render();
-                icon.Visible = !Scene.Paused;
+                if (Scene.Paused)
+                {
+                    icon.Visible = false;
+                }
+                else
+                {
+                    icon.Visible = oldVisible;
+                }
             }
         }
 
