@@ -24,8 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            if (Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity)
-                && Level.Session.GetFlag(flag) == stateNeeded)
+            if (Level.Session.GetFlag(flag) == stateNeeded && Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity))
             {
                 action.Invoke(Entity);
                 if (resetFlag)

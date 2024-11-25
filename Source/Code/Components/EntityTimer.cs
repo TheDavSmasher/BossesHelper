@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            if (Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity) && Timer <= 0)
+            if (Timer <= 0 && Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity))
             {
                 action.Invoke(Entity);
                 RemoveSelf();
