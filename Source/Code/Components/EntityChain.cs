@@ -1,4 +1,5 @@
 ﻿using Monocle;
+using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -8,11 +9,19 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public bool chainedPosition = chainPosition;
 
+        public Vector2 positionOffset;
+
+        public override void Added(Entity entity)
+        {
+            base.Added(entity);
+            positionOffset = chained.Position - Entity.Position;
+        }
+
         public override void Update()
         {
             if (chainedPosition)
             {
-                chained.Position = Entity.Position + chained.Position;
+                chained.Position = Entity.Position + positionOffset;
             }
         }
 
