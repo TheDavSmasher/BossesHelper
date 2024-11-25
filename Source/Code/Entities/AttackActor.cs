@@ -45,7 +45,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Update()
         {
-            base.Update();
             Grounded = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
