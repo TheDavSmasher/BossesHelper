@@ -189,7 +189,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickTarget target = CollideFirstComponent(vector + vector3, vector2 + vector3);
             target ??= CollideFirstComponent(vector - vector3, vector2 - vector3);
             target ??= CollideFirstComponent(vector, vector2);
-            target?.OnLaser();
+            target?.OnLaser?.Invoke();
         }
 
         private SidekickTarget CollideFirstComponent(Vector2 from, Vector2 to)

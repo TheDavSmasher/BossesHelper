@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public readonly string BossID = bossId;
 
-        private readonly Action onLaser = onLaser;
+        public readonly Action OnLaser = onLaser;
 
         public Collider Collider = target;
 
@@ -31,11 +31,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         {
             base.Added(entity);
             Collider.Entity = entity;
-        }
-
-        public void OnLaser()
-        {
-            onLaser?.Invoke();
         }
 
         public override void DebugRender(Camera camera)
