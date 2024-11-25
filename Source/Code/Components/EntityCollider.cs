@@ -1,6 +1,7 @@
 ﻿using Monocle;
 using NLua;
 using System;
+using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -40,6 +41,17 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             Entity.CollideDo(OnEntityAction);
 
             base.Entity.Collider = collider;
+        }
+
+        public override void DebugRender(Camera camera)
+        {
+            if (Collider != null)
+            {
+                Collider collider = base.Entity.Collider;
+                base.Entity.Collider = Collider;
+                Collider.Render(camera, Color.HotPink);
+                base.Entity.Collider = collider;
+            }
         }
     }
 }
