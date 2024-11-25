@@ -1,6 +1,5 @@
 ﻿using NLua;
 using Monocle;
-using System.Linq;
 using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
@@ -11,8 +10,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public Action<Entity> action = action;
 
-        private Level Level => Entity.SceneAs<Level>();
-
         public EntityTimer(float timer, LuaFunction action)
             : this(timer, (e) => action.Call(e))
         {
@@ -20,7 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            if (Timer <= 0 && Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity))
+            if (Timer <= 0)
             {
                 action.Invoke(Entity);
                 RemoveSelf();

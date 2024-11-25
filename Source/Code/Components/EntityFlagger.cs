@@ -1,6 +1,5 @@
 ﻿using NLua;
 using Monocle;
-using System.Linq;
 using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
@@ -14,8 +13,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public bool resetFlag = resetFlag;
 
         public Action<Entity> action = action;
-        
-        private Level Level => Entity.SceneAs<Level>();
 
         public EntityFlagger(string flag, LuaFunction action, bool stateNeeded, bool resetFlag)
             : this(flag, (e) => action.Call(e), stateNeeded, resetFlag)
@@ -24,12 +21,12 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void Update()
         {
-            if (Level.Session.GetFlag(flag) == stateNeeded && Level.Entities.Contains(Entity) && !Level.Entities.ToAdd.Contains(Entity))
+            if (SceneAs<Level>().Session.GetFlag(flag) == stateNeeded)
             {
                 action.Invoke(Entity);
                 if (resetFlag)
                 {
-                    Level.Session.SetFlag(flag, !stateNeeded);
+                    SceneAs<Level>().Session.SetFlag(flag, !stateNeeded);
                 }
                 RemoveSelf();
             }
