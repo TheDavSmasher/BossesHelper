@@ -60,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void TakeDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
+        public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
         {
             if (BossesHelperModule.Session.damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
                 level.InCutscene || amount <= 0)
@@ -83,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
                     if (BossesHelperModule.Session.healthData.playerStagger && stagger)
-                        Add(new Coroutine(PlayerStagger(entity, origin)));
+                        Add(new Coroutine(PlayerStagger(entity, direction)));
                     if (BossesHelperModule.Session.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
                     if (onDamage != null)
@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             else
             {
-                entity.Die(origin);
+                entity.Die(direction);
             }
             if (BossesHelperModule.Session.mapHealthBar != null)
             {
