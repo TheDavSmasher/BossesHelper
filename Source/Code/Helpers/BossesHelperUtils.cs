@@ -125,7 +125,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Render()
             {
-                base.Render();
                 if (Scene.Paused)
                 {
                     icon.Visible = false;
@@ -134,6 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     icon.Visible = oldVisible;
                 }
+                base.Render();
             }
         }
 
@@ -322,8 +322,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Render()
             {
-                base.Render();
                 ActiveFont.Draw(bossHealth.Invoke().ToString(), Position, new Vector2(0.5f, 0.5f), barScale, color);
+                base.Render();
+                Visible = !Scene.Paused;
             }
         }
 
@@ -388,6 +389,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Draw.Rect(Collider, color);
                 base.Render();
+                Visible = !Scene.Paused;
             }
         }
 
