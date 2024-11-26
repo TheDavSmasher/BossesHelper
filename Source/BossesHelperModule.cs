@@ -162,11 +162,7 @@ public class BossesHelperModule : EverestModule
         }
         if (!self.TrySquishWiggle(data))
         {
-            bool evenIfInvincible = false;
-            if (data.Pusher != null && data.Pusher.SquishEvenInAssistMode)
-            {
-                evenIfInvincible = true;
-            }
+            bool evenIfInvincible = data.Pusher != null && data.Pusher.SquishEvenInAssistMode;
 
             if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
             {
