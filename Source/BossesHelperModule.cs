@@ -60,7 +60,6 @@ public class BossesHelperModule : EverestModule
             On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
         }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
-        On.Celeste.Level.Update += UpdateDamageCooldownTimer;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish += ApplyUserCrush;
         On.Celeste.Player.Die += OnPlayerDie;
@@ -70,7 +69,6 @@ public class BossesHelperModule : EverestModule
     {
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
-        On.Celeste.Level.Update -= UpdateDamageCooldownTimer;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         On.Celeste.Player.OnSquish -= ApplyUserCrush;
         On.Celeste.Player.Die -= OnPlayerDie;
@@ -112,15 +110,6 @@ public class BossesHelperModule : EverestModule
         }
     }
 
-    private void UpdateDamageCooldownTimer(On.Celeste.Level.orig_Update orig, Level self)
-    {
-        orig(self);
-        if (Session.damageCooldown > 0)
-        {
-            Session.damageCooldown -= Engine.DeltaTime;
-        }
-    }
-
     public static void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
@@ -136,6 +125,10 @@ public class BossesHelperModule : EverestModule
         if (currentSpawn != null && Session.lastSpawnPoint != currentSpawn)
         {
             Session.lastSafePosition = Session.lastSpawnPoint = (Vector2) currentSpawn;
+        }
+        if (Session.damageCooldown > 0)
+        {
+            Session.damageCooldown -= Engine.DeltaTime;
         }
     }
 
