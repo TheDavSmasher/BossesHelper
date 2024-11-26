@@ -188,9 +188,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region XML Helper Functions
-        private static float GetValueOrDefaultFloat(XmlAttribute source, float defaultVal = 0f)
+        private static float GetValueOrDefaultFloat(XmlAttribute source, float value = 0f)
         {
-            return source != null ? float.Parse(source.Value) : defaultVal;
+            return source != null ? float.Parse(source.Value) : value;
         }
 
         private static float? GetValueOrDefaultNullF(XmlAttribute source, float? value = null)
