@@ -125,7 +125,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return new ColliderList(colliders.ToArray());
         }
 
-        private static LuaTable GetEmptyTable()
+        public static LuaTable GetEmptyTable()
         {
             return Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
         }

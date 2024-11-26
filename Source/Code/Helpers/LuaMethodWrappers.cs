@@ -297,7 +297,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             try
             {
                 MethodInfo entityComponents = componentsGetAll.MakeGenericMethod(type);
-                LuaTable luaTable = Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
+                LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
                 foreach (Entity entity in Engine.Scene.Entities)
                 {
