@@ -9,9 +9,14 @@ namespace Celeste.Mod.BossesHelper
     [ModExportName("BossesHelper")]
     public static class BossesHelperExports
     {
-        public static Component GetEntityColliderComponent<T>(Action<T> onCollide) where T : Entity
+        public static Component GetEntityColliderComponent<T>(Action<T> onCollide, Collider collider = null) where T : Entity
         {
-            return new EntityCollider<T>(onCollide);
+            return new EntityCollider<T>(onCollide, collider);
+        }
+
+        public static Component GetEntityColliderByComponentComponent<T>(Action<T> onCollide, Collider collider = null) where T : Component
+        {
+            return new EntityColliderByComponent<T>(onCollide, collider);
         }
 
         public static Component GetEntityChainComponent(Entity entity, bool chain)
