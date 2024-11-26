@@ -27,8 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static LuaTable DictionaryToLuaTable(IDictionary<object, object> dict)
         {
-            Lua context = Everest.LuaLoader.Context;
-            LuaTable luaTable = context.DoString("return {}").FirstOrDefault() as LuaTable;
+            LuaTable luaTable = GetEmptyTable();
             foreach (KeyValuePair<object, object> item in dict)
             {
                 luaTable[item.Key] = item.Value;
@@ -38,8 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static LuaTable ListToLuaTable(IList list)
         {
-            Lua context = Everest.LuaLoader.Context;
-            LuaTable luaTable = context.DoString("return {}").FirstOrDefault() as LuaTable;
+            LuaTable luaTable = GetEmptyTable();
             int num = 1;
             foreach (object item in list)
             {
@@ -125,6 +123,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
             return new ColliderList(colliders.ToArray());
+        }
+
+        private static LuaTable GetEmptyTable()
+        {
+            return Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
         }
 
         public static void DoMethodAfterDelay(LuaFunction func, float delay)
