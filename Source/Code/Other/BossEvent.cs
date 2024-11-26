@@ -11,7 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossEvent : CutsceneEntity
     {
-        public BossController.CustceneDelegates CustceneDelegates { get; private set; }
+        public readonly BossController.CustceneDelegates CustceneDelegates;
 
         public bool finished;
 

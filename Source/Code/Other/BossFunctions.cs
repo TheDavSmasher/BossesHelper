@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private LuaFunction OnLaserLua;
 
-        public BossController.OnHitDelegates Delegates { get; private set; }
+        public readonly BossController.OnHitDelegates Delegates;
 
         private void LoadMethods(string filename, string bossId, Player player, BossPuppet puppet)
         {

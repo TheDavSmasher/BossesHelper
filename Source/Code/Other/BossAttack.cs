@@ -11,7 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         private LuaFunction attackFunction;
 
-        public BossController.AttackDelegates Delegates { get; private set; }
+        public readonly BossController.AttackDelegates Delegates;
 
         private void LoadAttacks(string filename, string bossId, Player player, BossPuppet puppet)
         {

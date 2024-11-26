@@ -21,19 +21,19 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public readonly bool IsEvent;
 
-        public FinishModes FinishMode { get; private set; }
+        public readonly FinishModes FinishMode;
 
-        public int? IterationCount { get; private set; }
+        public readonly int? IterationCount;
 
-        public int? GoToPattern { get; private set; }
+        public readonly int? GoToPattern;
 
-        public Hitbox PlayerPositionTrigger { get; private set; }
+        public readonly Hitbox PlayerPositionTrigger;
 
         public readonly bool RandomPattern;
 
-        public Method[] PrePatternMethods { get; private set; }
+        public readonly Method[] PrePatternMethods;
 
-        public Method[] StatePatternOrder { get; private set; }
+        public readonly Method[] StatePatternOrder;
 
         public string FirstAction
         {
