@@ -403,7 +403,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             };
         }
 
-        public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
+        /*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
         {
             try
             {
@@ -463,6 +463,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
             }
             return null;
-        }
+        }*/
     }
 }
