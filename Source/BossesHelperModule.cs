@@ -6,7 +6,7 @@ using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
-using System.Linq;
+using MonoMod.Cil;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -61,7 +61,7 @@ public class BossesHelperModule : EverestModule
         }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
-        On.Celeste.Player.OnSquish += ApplyUserCrush;
+        IL.Celeste.Player.OnSquish += ILOnSquish;
         On.Celeste.Player.Die += OnPlayerDie;
     }
 
@@ -70,7 +70,7 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
-        On.Celeste.Player.OnSquish -= ApplyUserCrush;
+        IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
     }
 
@@ -132,62 +132,49 @@ public class BossesHelperModule : EverestModule
         }
     }
 
-    public static void ApplyUserCrush(On.Celeste.Player.orig_OnSquish orig, Player self, CollisionData data)
+    public static void ILOnSquish(ILContext il)
     {
-        if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
+        ILCursor dieCursor = new ILCursor(il);
+        while (dieCursor.TryGotoNext(MoveType.After, instr => instr.MatchCallvirt<Player>("Die")))
         {
-            orig(self, data);
-            return;
-        }
-        bool ducked = false;
-        if (!self.Ducking && self.StateMachine.State != 1)
-        {
-            ducked = true;
-            self.Ducking = true;
-            data.Pusher.Collidable = true;
-            if (!self.CollideCheck<Solid>())
+            ILCursor argCursor = new ILCursor(dieCursor);
+            if (argCursor.TryGotoPrev(MoveType.After, instr => instr.MatchLdarg0()))
             {
-                data.Pusher.Collidable = false;
-                return;
+                //KillOnCrush(self, data, evenIfInvincible);
+                argCursor.EmitLdarg1();
+                argCursor.EmitLdloc2();
+                argCursor.EmitDelegate(KillOnCrush);
+                argCursor.EmitLdarg0();
             }
-            Vector2 position = self.Position;
-            self.Position = data.TargetPosition;
-            if (!self.CollideCheck<Solid>())
-            {
-                data.Pusher.Collidable = false;
-                return;
-            }
-            self.Position = position;
-            data.Pusher.Collidable = false;
-        }
-        if (!self.TrySquishWiggle(data))
-        {
-            bool evenIfInvincible = data.Pusher != null && data.Pusher.SquishEvenInAssistMode;
-
-            if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
-            {
-                PlayerTakesDamage(Vector2.Zero);
-                if (!self.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
-                {
-                    if (!self.TrySquishWiggle(data, self.level.Bounds.Width, self.level.Bounds.Height))
-                        self.Die(Vector2.Zero, evenIfInvincible);
-                }
-            }
-            else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
-            {
-                PlayerTakesDamage(Vector2.Zero);
-                data.Pusher.Add(new SolidOnInvinciblePlayer());
-            }
-            else //CrushEffect.InstantDeath
-            {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
-            }
-        }
-        else if (ducked && self.CanUnDuck)
-        {
-            self.Ducking = false;
         }
     }
+
+    public static void KillOnCrush(Player self, CollisionData data, bool evenIfInvincible)
+    {
+        Logger.Log(LogLevel.Error, "Bosses Helper", "Entered IL delegate KillOnCrush");
+        if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
+        {
+            return;
+        }
+        if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
+        {
+            PlayerTakesDamage(Vector2.Zero);
+            if (!self.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height) &&
+                !self.TrySquishWiggle(data, self.level.Bounds.Width, self.level.Bounds.Height))
+            {
+                return;
+            }
+        }
+        else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
+        {
+            PlayerTakesDamage(Vector2.Zero);
+            data.Pusher.Add(new SolidOnInvinciblePlayer());
+        }
+        else //CrushEffect.InstantDeath
+        {
+            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+        }
+    }    
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
