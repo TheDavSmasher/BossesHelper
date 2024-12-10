@@ -180,24 +180,15 @@ public class BossesHelperModule : EverestModule
     {
         if (always)
         {
-            if (Session.mapDamageController != null)
-            {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
-            }
+            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
             return orig(self, dir, always, register);
         }
         if (Session.mapDamageController != null && Session.mapDamageController.health <= 0)
-        {
             return orig(self, dir, always, register);
-        }
         if (Session.damageCooldown > 0)
-        {
             return null;
-        }
         if (Session.mapDamageController == null)
-        {
             return orig(self, dir, always, register);
-        }
 
         float? offscreemAtY = GetFromY(self.SceneAs<Level>(), self);
         if (offscreemAtY != null)
