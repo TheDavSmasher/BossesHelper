@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -403,6 +402,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             };
         }
 
+        #region Entity Collider Creator
         /*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
         {
             try
@@ -464,5 +464,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             return null;
         }*/
+        #endregion
     }
 }
