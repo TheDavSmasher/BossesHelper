@@ -138,13 +138,13 @@ public class BossesHelperModule : EverestModule
         while (dieCursor.TryGotoNext(MoveType.After, instr => instr.MatchCallvirt<Player>("Die")))
         {
             ILCursor argCursor = new ILCursor(dieCursor);
-            if (argCursor.TryGotoPrev(MoveType.After, instr => instr.MatchLdarg0()))
+            if (argCursor.TryGotoPrev(MoveType.AfterLabel, instr => instr.MatchLdarg0()))
             {
                 //KillOnCrush(self, data, evenIfInvincible);
+                argCursor.EmitLdarg0();
                 argCursor.EmitLdarg1();
                 argCursor.EmitLdloc2();
                 argCursor.EmitDelegate(KillOnCrush);
-                argCursor.EmitLdarg0();
             }
         }
     }
