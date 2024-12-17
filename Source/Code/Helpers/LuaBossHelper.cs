@@ -99,10 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     {
                         return Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
                     }
-                    else
-                    {
-                        Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
-                    }
+                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
                 }
                 catch (Exception e)
                 {
