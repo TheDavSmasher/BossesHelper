@@ -202,8 +202,12 @@ public class BossesHelperModule : EverestModule
     {
         if (always)
         {
-            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
-            return null;
+            if (Session.mapDamageController != null)
+            {
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                return null;
+            }            
+            return orig(self, dir, always, register);
         }
         if (Session.mapDamageController != null && Session.mapDamageController.health <= 0)
             return orig(self, dir, always, register);
