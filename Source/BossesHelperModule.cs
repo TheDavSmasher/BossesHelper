@@ -174,27 +174,25 @@ public class BossesHelperModule : EverestModule
     private static bool KillOffscreen(Player player)
     {
         float? offscreemAtY = GetFromY(player.SceneAs<Level>(), player);
-        if (offscreemAtY != null)
+        if (offscreemAtY == null)
+            return false;
+        switch (Session.healthData.playerOffscreen)
         {
-            switch (Session.healthData.playerOffscreen)
-            {
-                case HealthSystemManager.OffscreenEffect.BounceUp:
-                    PlayerTakesDamage(Vector2.Zero, stagger: false);
-                    player.Play("event:/game/general/assist_screenbottom");
-                    player.Bounce((float)offscreemAtY);
-                    break;
-                case HealthSystemManager.OffscreenEffect.BubbleBack:
-                    PlayerTakesDamage(Vector2.Zero, stagger: false);
-                    if (!Session.alreadyFlying)
-                        player.Add(new Coroutine(PlayerFlyBack(player)));
-                    break;
-                default: //OffscreenEffect.InstantDeath
-                    PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
-                    break;
-            }
-            return true;
+            case HealthSystemManager.OffscreenEffect.BounceUp:
+                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                player.Play("event:/game/general/assist_screenbottom");
+                player.Bounce((float)offscreemAtY);
+                break;
+            case HealthSystemManager.OffscreenEffect.BubbleBack:
+                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                if (!Session.alreadyFlying)
+                    player.Add(new Coroutine(PlayerFlyBack(player)));
+                break;
+            default: //OffscreenEffect.InstantDeath
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                break;
         }
-        return false;
+        return true;
     }
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
