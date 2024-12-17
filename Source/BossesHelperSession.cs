@@ -82,5 +82,5 @@ public class BossesHelperSession : EverestModuleSession
     public DamageController mapDamageController;
 
     [YamlIgnore]
-    public DamageHealthBar mapHealthBar;
+    public PlayerHealthBar mapHealthBar;
 }

@@ -4,7 +4,7 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    public class DamageHealthBar : Entity
+    public class PlayerHealthBar : Entity
     {
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
@@ -22,7 +22,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HealthIconList healthIcons;
 
-        internal DamageHealthBar()
+        internal PlayerHealthBar()
         {
             healthIcons = new();
             Tag = Tags.HUD;
