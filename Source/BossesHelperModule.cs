@@ -152,23 +152,22 @@ public class BossesHelperModule : EverestModule
     public static void KillOnCrush(Player player, CollisionData data, bool evenIfInvincible)
     {
         if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
-        {
             return;
-        }
-        if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.PushOut)
+        switch (Session.healthData.playerOnCrush)
         {
-            PlayerTakesDamage(Vector2.Zero);
-            if (!player.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
-                player.TrySquishWiggle(data, player.level.Bounds.Width, player.level.Bounds.Height);
-        }
-        else if (Session.healthData.playerOnCrush == HealthSystemManager.CrushEffect.InvincibleSolid && !evenIfInvincible)
-        {
-            PlayerTakesDamage(Vector2.Zero);
-            data.Pusher.Add(new SolidOnInvinciblePlayer());
-        }
-        else //CrushEffect.InstantDeath
-        {
-            PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+            case HealthSystemManager.CrushEffect.PushOut:
+                PlayerTakesDamage(Vector2.Zero);
+                if (!player.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
+                    player.TrySquishWiggle(data, player.level.Bounds.Width, player.level.Bounds.Height);
+                break;
+            case HealthSystemManager.CrushEffect.InvincibleSolid:
+                if (evenIfInvincible) break;
+                PlayerTakesDamage(Vector2.Zero);
+                data.Pusher.Add(new SolidOnInvinciblePlayer());
+                break;
+            default: //CrushEffect.InstantDeath
+                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                break;
         }
     }
 
@@ -177,21 +176,21 @@ public class BossesHelperModule : EverestModule
         float? offscreemAtY = GetFromY(player.SceneAs<Level>(), player);
         if (offscreemAtY != null)
         {
-            if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.BounceUp)
+            switch (Session.healthData.playerOffscreen)
             {
-                PlayerTakesDamage(Vector2.Zero, stagger: false);
-                player.Play("event:/game/general/assist_screenbottom");
-                player.Bounce((float)offscreemAtY);
-            }
-            else if (Session.healthData.playerOffscreen == HealthSystemManager.OffscreenEffect.BubbleBack)
-            {
-                PlayerTakesDamage(Vector2.Zero, stagger: false);
-                if (!Session.alreadyFlying)
-                    player.Add(new Coroutine(PlayerFlyBack(player)));
-            }
-            else //OffscreenEffect.InstantDeath
-            {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                case HealthSystemManager.OffscreenEffect.BounceUp:
+                    PlayerTakesDamage(Vector2.Zero, stagger: false);
+                    player.Play("event:/game/general/assist_screenbottom");
+                    player.Bounce((float)offscreemAtY);
+                    break;
+                case HealthSystemManager.OffscreenEffect.BubbleBack:
+                    PlayerTakesDamage(Vector2.Zero, stagger: false);
+                    if (!Session.alreadyFlying)
+                        player.Add(new Coroutine(PlayerFlyBack(player)));
+                    break;
+                default: //OffscreenEffect.InstantDeath
+                    PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                    break;
             }
             return true;
         }
