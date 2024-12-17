@@ -43,7 +43,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        private BossPattern(Method[] patternLoop, Hitbox trigger = null, Method[] prePattern = null, FinishModes finishMode = FinishModes.ContinueLoop, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
+        private BossPattern(Method[] patternLoop, Method[] prePattern = null, FinishModes finishMode = FinishModes.ContinueLoop,
+            Hitbox trigger = null, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
         {
             FinishMode = finishMode;
             IterationCount = count;
@@ -56,27 +57,29 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public BossPattern(string eventName, int? goTo)
-            : this(patternLoop: [new Method(eventName, null)], finishMode: FinishModes.LoopCountGoTo, count: 0, goTo: goTo, isEvent: true)
+            : this([new Method(eventName, null)], finishMode: FinishModes.LoopCountGoTo, count: 0, goTo: goTo, isEvent: true)
         {
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder)
+            : this(statePatternOrder, prePattern: prePatternMethods)
         {
         }
 
-        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, float x, float y, float width, float height, int? goTo, Vector2 offset)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.PlayerPositionWithin, trigger: new Hitbox(x + offset.X, y + offset.Y, width, height), goTo: goTo)
+        public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods,
+            float x, float y, float width, float height, int? goTo, Vector2 offset)
+            : this(statePatternOrder, prePatternMethods, FinishModes.PlayerPositionWithin,
+                  new Hitbox(x + offset.X, y + offset.Y, width, height), goTo: goTo)
         {
         }
 
         public BossPattern(Method[] statePatternOrder, Method[] prePatternMethods, int count, int? goTo)
-            : this(prePattern: prePatternMethods, patternLoop: statePatternOrder, finishMode: FinishModes.LoopCountGoTo, count: count, goTo: goTo)
+            : this(statePatternOrder, prePatternMethods, FinishModes.LoopCountGoTo, count: count, goTo: goTo)
         {
         }
 
-        public BossPattern(Method[] randomPattern)
-            : this(patternLoop: randomPattern, random: true)
+        public BossPattern(Method[] randomPatternLoop)
+            : this(randomPatternLoop, random: true)
         {
         }
     }
