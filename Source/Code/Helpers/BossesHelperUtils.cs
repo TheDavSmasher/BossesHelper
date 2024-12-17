@@ -9,6 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public static class BossesHelperUtils
     {
+        #region Extensions
         public static T ElementAtOrDefault<T>(this IList<T> list, int index, T @default)
         {
             return index >= 0 && index < list.Count ? list[index] : @default;
@@ -22,35 +23,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     return value.ToString();
             }
             return defaultValue;
-        }
-
-        public class Crc32
-        {
-            private const UInt32 s_generator = 0xEDB88320;
-
-            public Crc32()
-            {
-                m_checksumTable = Enumerable.Range(0, 256).Select(i =>
-                {
-                    var tableEntry = (uint)i;
-                    for (var j = 0; j < 8; ++j)
-                    {
-                        tableEntry = ((tableEntry & 1) != 0)
-                            ? (s_generator ^ (tableEntry >> 1))
-                            : (tableEntry >> 1);
-                    }
-                    return tableEntry;
-                }).ToArray();
-            }
-
-            public int Get(string value)
-            {
-                IEnumerable<char> byteStream = value.ToCharArray();
-                return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
-                            (m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
-            }
-
-            private readonly UInt32[] m_checksumTable;
         }
 
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
@@ -68,7 +40,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 sprite.OnFrameChange = onFrameChange;
             }
         }
+        #endregion
 
+        #region Health Displays
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
         public class HealthIcon : Entity
@@ -392,7 +366,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Visible = !Scene.Paused;
             }
         }
+        #endregion
 
+        #region Helpers
         public static List<string> SeparateList(string listString)
         {
             return listString.Replace(" ", string.Empty).Split([',']).ToList();
@@ -402,5 +378,35 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             return listString.Replace(" ", string.Empty).Split([',']).Select(float.Parse).ToList();
         }
+
+        public class Crc32
+        {
+            private const UInt32 s_generator = 0xEDB88320;
+
+            public Crc32()
+            {
+                m_checksumTable = Enumerable.Range(0, 256).Select(i =>
+                {
+                    var tableEntry = (uint)i;
+                    for (var j = 0; j < 8; ++j)
+                    {
+                        tableEntry = ((tableEntry & 1) != 0)
+                            ? (s_generator ^ (tableEntry >> 1))
+                            : (tableEntry >> 1);
+                    }
+                    return tableEntry;
+                }).ToArray();
+            }
+
+            public int Get(string value)
+            {
+                IEnumerable<char> byteStream = value.ToCharArray();
+                return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
+                            (m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
+            }
+
+            private readonly UInt32[] m_checksumTable;
+        }
+        #endregion
     }
 }
