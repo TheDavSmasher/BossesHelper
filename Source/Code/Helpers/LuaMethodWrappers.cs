@@ -230,7 +230,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 IList entities = ((bool)entityIsTracked.MakeGenericMethod(entity).Invoke(Engine.Scene.Tracker, null)
                     ? getEntitiesMethodInfo.MakeGenericMethod(entity).Invoke(Engine.Scene.Tracker, null)
                     : entitiesFindAll.MakeGenericMethod(entity).Invoke(Engine.Scene.Entities, null)) as IList;
-                LuaTable luaTable = Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
+                LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
                 foreach (object entityEntity in entities)
                 {
