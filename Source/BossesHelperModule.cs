@@ -90,16 +90,12 @@ public class BossesHelperModule : EverestModule
         }
         orig(self, intro, fromLoader);
         if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
-        {
             return;
-        }
-        if (Session.healthData.globalController)
+        if (Session.healthData.globalController &&
+            (intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth || intro == Player.IntroTypes.Respawn))
         {
-            if ((intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth) || intro == Player.IntroTypes.Respawn)
-            {
-                Session.mapDamageController.health = Session.healthData.playerHealthVal;
-                Session.mapHealthBar.healthIcons.RefillHealth();
-            }
+            Session.mapDamageController.health = Session.healthData.playerHealthVal;
+            Session.mapHealthBar.healthIcons.RefillHealth();
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
         if (entity != null)
@@ -114,22 +110,15 @@ public class BossesHelperModule : EverestModule
     {
         orig(self);
         if (self.OnSafeGround)
-        {
             Session.lastSafePosition = self.Position;
-        }
         if (self.StateMachine.State != Player.StCassetteFly)
-        {
             Session.alreadyFlying = false;
-        }
+
         Vector2? currentSpawn = self.SceneAs<Level>().Session.RespawnPoint;
         if (currentSpawn != null && Session.lastSpawnPoint != currentSpawn)
-        {
             Session.lastSafePosition = Session.lastSpawnPoint = (Vector2) currentSpawn;
-        }
         if (Session.damageCooldown > 0)
-        {
             Session.damageCooldown -= Engine.DeltaTime;
-        }
     }
 
     public static void ILOnSquish(ILContext il)
@@ -235,9 +224,7 @@ public class BossesHelperModule : EverestModule
     private static float? GetFromY(Level level, Player player)
     {
         if (!Session.wasOffscreen)
-        {
             return null;
-        }
         Rectangle camera = new((int)level.Camera.Left, (int)level.Camera.Top, 320, 180);
         if (level.CameraLockMode != Level.CameraLockModes.None)
         {
