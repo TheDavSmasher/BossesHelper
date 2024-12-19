@@ -102,7 +102,7 @@ public class BossesHelperModule : EverestModule
         {
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
-            Session.lastSafePosition = Session.lastSpawnPoint = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
+            Session.SafeSpawn = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
         }
     }
 
@@ -116,7 +116,7 @@ public class BossesHelperModule : EverestModule
 
         Vector2? currentSpawn = self.SceneAs<Level>().Session.RespawnPoint;
         if (currentSpawn != null && Session.lastSpawnPoint != currentSpawn)
-            Session.lastSafePosition = Session.lastSpawnPoint = (Vector2) currentSpawn;
+            Session.SafeSpawn = (Vector2) currentSpawn;
         if (Session.damageCooldown > 0)
             Session.damageCooldown -= Engine.DeltaTime;
     }
