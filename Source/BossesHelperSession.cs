@@ -12,6 +12,10 @@ public class BossesHelperSession : EverestModuleSession
 
     public Vector2 lastSpawnPoint;
 
+    public string savePointLevel;
+
+    public Vector2 savePointSpawn;
+
     public bool alreadyFlying;
 
     public float damageCooldown;
