@@ -14,7 +14,7 @@ public class BossesHelperSession : EverestModuleSession
 
     public string savePointLevel;
 
-    public Vector2 savePointSpawn;
+    public Vector2? savePointSpawn;
 
     public bool alreadyFlying;
 
