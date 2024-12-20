@@ -7,6 +7,8 @@ using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
 using MonoMod.Cil;
+using System.Reflection;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -33,6 +35,8 @@ public class BossesHelperModule : EverestModule
     {
         Instance.TASSeed = value >= 0 ? value : Instance.TASSeed;
     }
+
+    private ILHook levelExitRoutineHook;
 
     public BossesHelperModule()
     {
@@ -63,6 +67,10 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish += ILOnSquish;
         On.Celeste.Player.Die += OnPlayerDie;
+        On.Celeste.Player.Die += ReturnToSavePoint;
+        levelExitRoutineHook = new ILHook(
+            typeof(LevelExit).GetMethod("Routine", BindingFlags.NonPublic | BindingFlags.Instance).GetStateMachineTarget(),
+            ILLevelLoadSpawn);
     }
 
     public override void Unload()
@@ -72,6 +80,9 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
+        On.Celeste.Player.Die -= ReturnToSavePoint;
+        levelExitRoutineHook?.Dispose();
+        levelExitRoutineHook = null;
     }
 
     private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
@@ -205,6 +216,44 @@ public class BossesHelperModule : EverestModule
         if (!KillOffscreen(self))
             PlayerTakesDamage(dir);
         return null;
+    }
+
+    public static void ILLevelLoadSpawn(ILContext il)
+    {
+        ILCursor levelLoaderCursor = new ILCursor(il);
+        while (levelLoaderCursor.TryGotoNext(MoveType.After, instr => instr.MatchStfld<LevelLoader>("PlayerIntroOverride")))
+        {
+            levelLoaderCursor.EmitLdloc3();
+            levelLoaderCursor.EmitDelegate(ChangeLevelLoader);
+        }
+    }
+
+    private static void ChangeLevelLoader(LevelLoader loader)
+    {
+        if (Session.savePointSet)
+        {
+            loader.startPosition ??= Session.savePointSpawn;
+            loader.PlayerIntroTypeOverride = Session.savePointSpawnType;
+        }
+    }
+
+    public static PlayerDeadBody ReturnToSavePoint(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
+    {
+        PlayerDeadBody deadPlayer = orig(self, direction, evenIfInvincible, registerDeathInStats);
+        if (deadPlayer != null)
+        {
+            if (!deadPlayer.HasGolden && Session.savePointSet)
+            {
+                deadPlayer.DeathAction = () =>
+                {
+                    Engine.Scene = new LevelExit(LevelExit.Mode.GoldenBerryRestart, deadPlayer.player.level.Session)
+                    {
+                        GoldenStrawberryEntryLevel = Session.savePointLevel
+                    };
+                };
+            }
+        }
+        return deadPlayer;
     }
 
     private static IEnumerator PlayerFlyBack(Player player)
