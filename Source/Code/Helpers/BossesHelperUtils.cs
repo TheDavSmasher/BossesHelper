@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return index >= 0 && index < list.Count ? list[index] : @default;
         }
 
-        public static string String(this EntityData entityData, string key, string defaultValue)
+        public static string String(this EntityData entityData, string key, string defaultValue = null)
         {
             if (entityData.Values != null && entityData.Values.TryGetValue(key, out var value))
             {
