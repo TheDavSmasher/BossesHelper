@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             if (entityData.Values != null && entityData.Values.TryGetValue(key, out var value))
             {
-                if (!string.IsNullOrEmpty((string) value))
+                if (!string.IsNullOrEmpty((string) value) && !string.IsNullOrWhiteSpace((string) value))
                     return value.ToString();
             }
             return defaultValue;
