@@ -32,6 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.savePointLevel = ID.Level;
             BossesHelperModule.Session.savePointSpawn = spawnPoint;
             BossesHelperModule.Session.savePointSpawnType = spawnType;
+            BossesHelperModule.Session.savePointSet = true;
         }
     }
 }

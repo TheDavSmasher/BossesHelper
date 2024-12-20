@@ -12,6 +12,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public Vector2 lastSpawnPoint;
 
+    public bool savePointSet;
+
     public string savePointLevel;
 
     public Vector2 savePointSpawn;
