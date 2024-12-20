@@ -16,6 +16,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public Vector2 savePointSpawn;
 
+    public Player.IntroTypes savePointSpawnType;
+
     public Vector2 SafeSpawn
     {
         set
