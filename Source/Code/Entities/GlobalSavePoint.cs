@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -22,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             this.ID = id;
             spawnPoint = entityData.Nodes[0];
             spawnType = entityData.Enum("respawnType", Player.IntroTypes.Respawn);
-            string spriteName = entityData.Attr("savePointSprite");
+            string spriteName = entityData.String("savePointSprite");
             if (!string.IsNullOrEmpty(spriteName))
             {
                 savePointSprite = GFX.SpriteBank.Create(spriteName);
