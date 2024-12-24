@@ -30,17 +30,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     {
                         foreach (XmlNode action in patternNode.ChildNodes)
                         {
-                            for (int i = 0; i < GetValueOrDefaultInt(action.Attributes["weight"], 1); i++)
+                            for (int i = 0; i < action.GetValueOrDefaultInt("weight", 1); i++)
                             {
-                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNullF(action.Attributes["wait"])));
+                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, action.GetValueOrDefaultNullF("wait")));
                             }
                         }
                         targetOut.Add(new BossPattern(methodList.ToArray()));
                     }
                     else if (patternNode.LocalName.ToLower().Equals("event"))
                     {
-                        XmlAttributeCollection attributes = patternNode.Attributes;
-                        targetOut.Add(new BossPattern(attributes["file"].Value, GetValueOrDefaultNullI(attributes["goto"])));
+                        targetOut.Add(new BossPattern(patternNode.Attributes["file"].Value, patternNode.GetValueOrDefaultNullI("goto")));
                     }
                     else
                     {
@@ -61,18 +60,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                 methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null));
                             }
                         }
-                        XmlAttributeCollection attributes = patternNode.Attributes;
-                        if (attributes.Count > 2)
+                        if (patternNode.Attributes.Count > 2)
                         {
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                                GetValueOrDefaultFloat(attributes["x"]), GetValueOrDefaultFloat(attributes["y"]),
-                                GetValueOrDefaultFloat(attributes["width"]), GetValueOrDefaultFloat(attributes["height"]),
-                                GetValueOrDefaultNullI(attributes["goto"]), offset));
+                                patternNode.GetValueOrDefaultFloat("x"), patternNode.GetValueOrDefaultFloat("y"),
+                                patternNode.GetValueOrDefaultFloat("width"), patternNode.GetValueOrDefaultFloat("height"),
+                                patternNode.GetValueOrDefaultNullI("goto"), offset));
                         }
-                        else if (attributes.Count != 0)
+                        else if (patternNode.Attributes.Count != 0)
                         {
                             targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                                GetValueOrDefaultInt(attributes["repeat"]), GetValueOrDefaultNullI(attributes["goto"])));
+                                patternNode.GetValueOrDefaultInt("repeat"), patternNode.GetValueOrDefaultNullI("goto")));
                         }
                         else
                         {
@@ -115,14 +113,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             {
                                 if (baseHitbox.LocalName.ToLower().Equals("circle"))
                                 {
-                                    baseHitboxes.Add(GetCircleFromXml(baseHitbox.Attributes, 4f));
+                                    baseHitboxes.Add(GetCircleFromXml(baseHitbox, 4f));
                                 }
                                 else
                                 {
-                                    baseHitboxes.Add(GetHitboxFromXml(baseHitbox.Attributes, 8f, 8f));
+                                    baseHitboxes.Add(GetHitboxFromXml(baseHitbox, 8f, 8f));
                                 }
                             }
-                            baseHitboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHitboxes.ToArray()));
+                            baseHitboxOptions.Add(hitboxNode.GetStringOrDefault(), new ColliderList(baseHitboxes.ToArray()));
                             break;
                         case "hurtboxes":
                             baseHurtboxOptions ??= new();
@@ -131,56 +129,56 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             {
                                 if (baseHurtbox.LocalName.ToLower().Equals("circle"))
                                 {
-                                    baseHurtboxes.Add(GetCircleFromXml(baseHurtbox.Attributes, 4f));
+                                    baseHurtboxes.Add(GetCircleFromXml(baseHurtbox, 4f));
                                 }
                                 else
                                 {
-                                    baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox.Attributes, 8f, 8f));
+                                    baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox, 8f, 8f));
                                 }
                             }
-                            baseHurtboxOptions.Add(GetTagOrMain(hitboxNode), new ColliderList(baseHurtboxes.ToArray()));
+                            baseHurtboxOptions.Add(hitboxNode.GetStringOrDefault(), new ColliderList(baseHurtboxes.ToArray()));
                             break;
                         case "bouncebox":
                             bounceHitboxes ??= new();
-                            string tag = GetTagOrMain(hitboxNode);
+                            string tag = hitboxNode.GetStringOrDefault();
                             if (bounceHitboxes.ContainsKey(tag))
                             {
                                 if (bounceHitboxes[tag] is ColliderList list)
                                 {
                                     List<Collider> currentColliders = new(list.colliders)
                                     {
-                                        GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f)
+                                        GetHitboxFromXml(hitboxNode, 8f, 6f)
                                     };
                                     bounceHitboxes[tag] = new ColliderList(currentColliders.ToArray());
                                 }
                                 else
                                 {
-                                    bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                                    bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode, 8f, 6f));
                                 }
                                 break;
                             }
-                            bounceHitboxes.Add(tag, GetHitboxFromXml(hitboxNode.Attributes, 8f, 6f));
+                            bounceHitboxes.Add(tag, GetHitboxFromXml(hitboxNode, 8f, 6f));
                             break;
                         case "target":
                             targetCircles ??= new();
-                            string tag_t = GetTagOrMain(hitboxNode);
+                            string tag_t = hitboxNode.GetStringOrDefault();
                             if (targetCircles.ContainsKey(tag_t))
                             {
                                 if (targetCircles[tag_t] is ColliderList list)
                                 {
                                     List<Collider> currentColliders = new(list.colliders)
                                     {
-                                        GetCircleFromXml(hitboxNode.Attributes, 4f)
+                                        GetCircleFromXml(hitboxNode, 4f)
                                     };
                                     targetCircles[tag_t] = new ColliderList(currentColliders.ToArray());
                                 }
                                 else
                                 {
-                                    targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode.Attributes, 4f));
+                                    targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode, 4f));
                                 }
                                 break;
                             }
-                            targetCircles.Add(tag_t, GetCircleFromXml(hitboxNode.Attributes, 4f));
+                            targetCircles.Add(tag_t, GetCircleFromXml(hitboxNode, 4f));
                             break;
                     }
                 }
@@ -194,41 +192,45 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region XML Helper Functions
-        private static float GetValueOrDefaultFloat(XmlAttribute source, float value = 0f)
+        private static float GetValueOrDefaultFloat(this XmlNode source, string tag, float value = 0f)
         {
-            return source != null ? float.Parse(source.Value) : value;
+            XmlAttribute attribute = source.Attributes[tag];
+            return attribute != null ? float.Parse(attribute.Value) : value;
         }
 
-        private static float? GetValueOrDefaultNullF(XmlAttribute source, float? value = null)
+        private static float? GetValueOrDefaultNullF(this XmlNode source, string tag, float? value = null)
         {
-            return source != null ? float.Parse(source.Value) : value;
+            XmlAttribute attribute = source.Attributes[tag];
+            return attribute != null ? float.Parse(attribute.Value) : value;
         }
 
-        private static int GetValueOrDefaultInt(XmlAttribute source, int value = 0)
+        private static int GetValueOrDefaultInt(this XmlNode source, string tag, int value = 0)
         {
-            return source != null ? int.Parse(source.Value) : value;
+            XmlAttribute attribute = source.Attributes[tag];
+            return attribute != null ? int.Parse(attribute.Value) : value;
         }
 
-        private static int? GetValueOrDefaultNullI(XmlAttribute source, int? value = null)
+        private static int? GetValueOrDefaultNullI(this XmlNode source, string tag, int? value = null)
         {
-            return source != null ? int.Parse(source.Value) : value;
+            XmlAttribute attribute = source.Attributes[tag];
+            return attribute != null ? int.Parse(attribute.Value) : value;
         }
 
-        private static Hitbox GetHitboxFromXml(XmlAttributeCollection source, float defaultWidth, float defaultHeight)
+        private static string GetStringOrDefault(this XmlNode source, string tag = "tag", string value = "main")
         {
-            return new Hitbox(GetValueOrDefaultFloat(source["width"], defaultWidth), GetValueOrDefaultFloat(source["height"], defaultHeight),
-                GetValueOrDefaultFloat(source["xOffset"]), GetValueOrDefaultFloat(source["yOffset"]));
+            XmlAttribute attribute = source.Attributes[tag];
+            return attribute != null ? attribute.Value : value;
         }
 
-        private static Circle GetCircleFromXml(XmlAttributeCollection source, float defaultRadius)
+        private static Hitbox GetHitboxFromXml(XmlNode source, float defaultWidth, float defaultHeight)
         {
-            return new Circle(GetValueOrDefaultFloat(source["radius"], defaultRadius), GetValueOrDefaultFloat(source["xOffset"]), GetValueOrDefaultFloat(source["yOffset"]));
+            return new Hitbox(source.GetValueOrDefaultFloat("width", defaultWidth), source.GetValueOrDefaultFloat("height", defaultHeight),
+                source.GetValueOrDefaultFloat("xOffset"), source.GetValueOrDefaultFloat("yOffset"));
         }
 
-        private static string GetTagOrMain(XmlNode source)
+        private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)
         {
-            XmlAttribute tag = source.Attributes["tag"];
-            return tag != null ? tag.Value : "main";
+            return new Circle(source.GetValueOrDefaultFloat("radius", defaultRadius), source.GetValueOrDefaultFloat("xOffset"), source.GetValueOrDefaultFloat("yOffset"));
         }
         #endregion
         #endregion
