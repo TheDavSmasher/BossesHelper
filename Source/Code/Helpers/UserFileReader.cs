@@ -34,6 +34,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     continue;
                 }
 
+                int? goTo = patternNode.GetValueOrDefaultNullI("goto");
+                Hitbox trigger = GetHitboxFromXml(patternNode, offset);
+                int? count = patternNode.GetValueOrDefaultNullI("repeat");
+                int? minCount = patternNode.GetValueOrDefaultNullI("minRepeat") ?? count;
+
                 if (patternNode.LocalName.ToLower().Equals("random"))
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)
@@ -41,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
                             action.GetValueOrDefaultNullF("wait")), action.GetValueOrDefaultInt("weight", 1)));
                     }
-                    targetOut.Add(new BossPattern(methodList.ToArray()));
+                    targetOut.Add(new BossPattern(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
                     continue;
                 }
 
@@ -62,16 +67,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                     }
                 }
-                int? goTo = patternNode.GetValueOrDefaultNullI("goto");
-                if (goTo != null)
-                {
-                    targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        GetHitboxFromXml(patternNode, offset), (ulong)patternNode.GetValueOrDefaultInt("repeat"), goTo));
-                }
-                else
-                {
-                    targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray()));
-                }
+
+                targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo));
             }
         }
 
