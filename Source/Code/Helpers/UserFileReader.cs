@@ -4,7 +4,6 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
-using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
