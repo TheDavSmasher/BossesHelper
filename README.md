@@ -249,6 +249,7 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
   - If `repeat` is provided but `minRepeat` is not, `minRepeat` will default to the value of `repeat`.
   - The opposite is also true, `repeat` defaulting to `minRepeat` if `minRepeat` is provided but `repeat` is not.
   - If both are provided, the Pattern will loop at least until `minRepeat` and at most until `repeat` loops, with a 50% chance of ending at every loop.
+  - If `minRepeat` is larger than `repeat`, only the `repeat` will take effect.
 - If attributes `width`, `height`, `x`, and `y` are provided, these attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, the Pattern's loop will end.
   - The coordinates for the `x` and `y` attributes are room coordinates.
   - If either `width` or `height` are missing, the Hitbox will not be created.

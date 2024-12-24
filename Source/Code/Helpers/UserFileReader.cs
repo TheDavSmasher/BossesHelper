@@ -39,6 +39,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 int? count = patternNode.GetValueOrDefaultNullI("repeat");
                 int? minCount = patternNode.GetValueOrDefaultNullI("minRepeat") ?? count;
                 count ??= minCount;
+                if (minCount > count)
+                    minCount = count;
 
                 if (patternNode.LocalName.ToLower().Equals("random"))
                 {
