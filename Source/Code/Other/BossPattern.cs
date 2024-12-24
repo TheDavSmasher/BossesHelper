@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public readonly bool IsEvent;
 
-        public readonly int? IterationCount;
+        public readonly ulong IterationCount;
 
         public readonly int? GoToPattern;
 
@@ -35,7 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public BossPattern(Method[] patternLoop, Method[] prePattern = null, Hitbox trigger = null,
-            int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
+            ulong count = ulong.MaxValue, int? goTo = null, bool random = false, bool isEvent = false)
         {
             IterationCount = count;
             GoToPattern = goTo;

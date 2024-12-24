@@ -65,7 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     > 2 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
                         GetHitboxFromXml(patternNode, offset), goTo: patternNode.GetValueOrDefaultNullI("goto")),
                     > 0 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        count: patternNode.GetValueOrDefaultInt("repeat"), goTo: patternNode.GetValueOrDefaultNullI("goto")),
+                        count: (ulong)patternNode.GetValueOrDefaultInt("repeat"), goTo: patternNode.GetValueOrDefaultNullI("goto")),
                     _ => new BossPattern(methodList.ToArray(), preLoopList?.ToArray())
                 });
             }

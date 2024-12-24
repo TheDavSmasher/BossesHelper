@@ -275,7 +275,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     yield return PerformMethod(method);
                 }
             }
-            int loop = 0;
+            ulong loop = 0;
             int currentAction = 0;
             while (true)
             {
