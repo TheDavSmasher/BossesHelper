@@ -63,11 +63,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 targetOut.Add(patternNode.Attributes.Count switch
                 {
                     > 2 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        patternNode.GetValueOrDefaultFloat("x"), patternNode.GetValueOrDefaultFloat("y"),
-                        patternNode.GetValueOrDefaultFloat("width"), patternNode.GetValueOrDefaultFloat("height"),
-                        patternNode.GetValueOrDefaultNullI("goto"), offset),
+                        GetHitboxFromXml(patternNode, offset), goTo: patternNode.GetValueOrDefaultNullI("goto")),
                     > 0 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        patternNode.GetValueOrDefaultInt("repeat"), patternNode.GetValueOrDefaultNullI("goto")),
+                        count: patternNode.GetValueOrDefaultInt("repeat"), goTo: patternNode.GetValueOrDefaultNullI("goto")),
                     _ => new BossPattern(methodList.ToArray(), preLoopList?.ToArray())
                 });
             }
@@ -182,6 +180,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             return new Hitbox(source.GetValueOrDefaultFloat("width", defaultWidth), source.GetValueOrDefaultFloat("height", defaultHeight),
                 source.GetValueOrDefaultFloat("xOffset"), source.GetValueOrDefaultFloat("yOffset"));
+        }
+
+        private static Hitbox GetHitboxFromXml(XmlNode source, Vector2 offset)
+        {
+            return new Hitbox(source.GetValueOrDefaultFloat("width"), source.GetValueOrDefaultFloat("height"),
+                source.GetValueOrDefaultFloat("x") + offset.X, source.GetValueOrDefaultFloat("y") + offset.Y);
         }
 
         private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)

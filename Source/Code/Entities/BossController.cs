@@ -211,8 +211,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
-            return Patterns[currentPatternIndex].FinishMode == BossPattern.FinishModes.PlayerPositionWithin
-                && Patterns[currentPatternIndex].PlayerPositionTrigger.Collide(entityPos);
+            Hitbox positionTrigger = Patterns[currentPatternIndex].PlayerPositionTrigger;
+            return positionTrigger != null && positionTrigger.Collide(entityPos);
         }
 
         private void StartAttackPattern(int goTo = -1)
@@ -284,7 +284,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     loop++;
                     currentAction = 0;
                 }
-                if (pattern.FinishMode == BossPattern.FinishModes.LoopCountGoTo && loop > pattern.IterationCount)
+                if (loop > pattern.IterationCount)
                 {
                     if (pattern.GoToPattern == null)
                     {
