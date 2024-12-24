@@ -180,8 +180,23 @@ This XML file uses the format of the following example:
         <Wait time="2.6"/>
     </Pattern>
 
+    <!--Deterministic Bounded Loops Pattern-->
+    <Pattern minRepeat="2" repeat="4" goto="3">
+        <Attack file="fourth"/>
+        <Wait time="1"/>
+        <Attack file="fifth"/>
+        <Wait time="4"/>
+    </Pattern>
+
     <!--Deterministic Looping Until Player is in a Given Position Pattern-->
-    <Pattern x="20" y="20" width="100" height="100" goto="1">
+    <Pattern width="100" height="100" x="20" y="20" goto="1">
+        <Attack file="first"/>
+        <Wait time="3.6"/>
+        <Attack file="third"/>
+        <Wait time="4.5"/>
+    </Pattern>
+
+    <Pattern width="50" height="50" goto="4">
         <Attack file="first"/>
         <Wait time="3.6"/>
         <Attack file="third"/>
@@ -200,6 +215,22 @@ This XML file uses the format of the following example:
         <Attack file="third" wait="2"/>
         <Attack file="fourth" wait="0.6"/>
     </Random>
+
+    <!--Random Bounded Attacks Pattern-->
+    <Random minRepeat="3" repeat="10">
+        <Attack file="first" wait="2"/>
+        <Attack file="second" wait="1"/>
+        <Attack file="third" wait="2"/>
+        <Attack file="fourth" wait="0.6"/>
+    </Random>
+
+    <!--Random Looping Until Player is in a Given Position/Limited Attacks Pattern-->
+    <Random width="20" height="100" x="20" repeat="7" goto="4">
+        <Attack file="first" wait="2"/>
+        <Attack file="second" wait="1"/>
+        <Attack file="third" wait="2"/>
+        <Attack file="fourth" wait="0.6"/>
+    </Random>
 </Patterns>
 ```
 
@@ -211,21 +242,27 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 
 - If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted when the Boss is collided with.
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
-- If a `repeat` attribute is provided alongside a `goto` attribute, the Pattern will loop however many times as specified in `repeat`. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends.
-  - Only providing `goto` with no `repeat` is the same as providing `repeat` with value 0.
-  - Only providing `repeat` with no `goto` will make it so goTo pattern is the one directly below the current one.
-- Alternatively, alongside a `goto` attribute, attributes `x`, `y`, `width`, and `height` can be provided. These attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, it will go to the given pattern once the current action ends.
+  - Not providing this attribute alongside any others will make it so goTo pattern is the one directly below the current one, or the next one in order. 
+- If a `repeat` attribute is provided, the Pattern will loop however many times as specified in `repeat`. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends.
+  - Not providing this attribute alongside any others is the same as providing `repeat` with value 0.
+- If a `minRepeat` attribute is provided, it acts the same way as the `repeat` attribute does, except that once this attribute's value loop count is met, a random chance of the pattern ending at every loop exists.
+  - If `repeat` is provided but `minRepeat` is not, `minRepeat` will default to the value of `repeat`.
+  - The opposite is also true, `repeat` defaulting to `minRepeat` if `minRepeat` is provided but `repeat` is not.
+  - If both are provided, the Pattern will loop at least until `minRepeat` and at most until `repeat` loops, with a 50% chance of ending at every loop.
+- If attributes `width`, `height`, `x`, and `y` are provided, these attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, the Pattern's loop will end.
   - The coordinates for the `x` and `y` attributes are room coordinates.
+  - If either `width` or `height` are missing, the Hitbox will not be created.
+  - If `x` or `y` are missing, they will default to 0.
 
-`Random` nodes take no attributes.
+`Random` nodes can take the exact same attributes as `Pattern` nodes, with some differences. The main difference is that `repeat` and `minRepeat` doesn't count the number of loops, but of individual attack execution, or attack nodes used.
 
 `Event` nodes can take up to two attributes.
 
 - A `file` attribute is required, and must match the name of a `.lua` file inside the Events subdirectory provided.
 - A `goto` attribute may be provided if the Event should go to a specific pattern after the Cutscene ends.
-  - Not providing this attribute will start the next available pattern after this one.
+  - Not providing this attribute will start the next available pattern after this one, much like `Pattern` or `Random` nodes.
 
-`Pattern` nodes can have any number of nodes inside them.
+`Pattern` nodes can have any number of the following node types inside them.
 
 - `Wait` nodes signify the Boss will not do anything during the specified `time` attribute.
 - `Attack` nodes signify the Boss will perform the attack found inside the file matching the `file` attribute.
@@ -235,9 +272,9 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 
 The `file` attribute of both `Attack` and `Event` nodes **must not** contain the `.lua` extension.
 
-`Random` nodes can also have any number of nodes inside them.
+`Random` nodes can also have any number of the following node types inside them.
 
-- `Attack` nodes signify the Boss will perform the attack found inside the file matching the `file` attribute, and then will do nothing during the time provided in the `wait` attribute.
+- `Attack` nodes signify the Boss will perform the attack found inside the file matching the `file` attribute, and then will do nothing during the time provided in the `wait` attribute. Both attributes are required.
 
 `Random` nodes take no `Wait` nodes because otherwise attacks would execute back to back with no pause in between them, or execute multiple waits back to back. Therefore, each node inside this one has to provide its own post-execution wait time.
 
