@@ -30,7 +30,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     {
                         foreach (XmlNode action in patternNode.ChildNodes)
                         {
-                            methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNullF(action.Attributes["wait"])));
+                            for (int i = 0; i < GetValueOrDefaultInt(action.Attributes["weight"], 1); i++)
+                            {
+                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, GetValueOrDefaultNullF(action.Attributes["wait"])));
+                            }
                         }
                         targetOut.Add(new BossPattern(methodList.ToArray()));
                     }
