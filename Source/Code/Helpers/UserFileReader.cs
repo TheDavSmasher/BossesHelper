@@ -5,6 +5,7 @@ using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
 using System.Linq;
+using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -47,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
                         methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
-                            action.GetValueOrDefaultNullF("wait")), action.GetValueOrDefaultInt("weight", 1)));
+                            action.GetValueOrDefaultNullF("wait")), Math.Max(action.GetValueOrDefaultInt("weight"), 1)));
                     }
                     targetOut.Add(new BossPattern(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
                     continue;

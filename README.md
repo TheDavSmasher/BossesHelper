@@ -242,7 +242,7 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 
 - If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted when the Boss is collided with.
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
-  - Not providing this attribute alongside any others will make it so goTo pattern is the one directly below the current one, or the next one in order. 
+  - Not providing this attribute alongside any others will make it so goTo pattern is the one directly below the current one, or the next one in order.
 - If a `repeat` attribute is provided, the Pattern will loop however many times as specified in `repeat`. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends.
   - Not providing this attribute alongside any others is the same as providing `repeat` with value 0.
 - If a `minRepeat` attribute is provided, it acts the same way as the `repeat` attribute does, except that once this attribute's value loop count is met, a random chance of the pattern ending at every loop exists.
@@ -276,6 +276,8 @@ The `file` attribute of both `Attack` and `Event` nodes **must not** contain the
 `Random` nodes can also have any number of the following node types inside them.
 
 - `Attack` nodes signify the Boss will perform the attack found inside the file matching the `file` attribute, and then will do nothing during the time provided in the `wait` attribute. Both attributes are required.
+  - A `weight` attribute can also be provided. If one is given, that number of copies of the same Attack node will be included in the list that the random selector chooses a node from. Higher weights will make a given node more likely to be chosen.
+    - Not providing this attribute is the same as providing it with a value of 1.
 
 `Random` nodes take no `Wait` nodes because otherwise attacks would execute back to back with no pause in between them, or execute multiple waits back to back. Therefore, each node inside this one has to provide its own post-execution wait time.
 
