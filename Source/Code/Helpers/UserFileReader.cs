@@ -251,9 +251,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
         #endregion
 
+        #region Other Helper Functions
         private static string CleanPath(string path, string extension)
         {
             return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
         }
+
+        private static int LCM(int a, int b)
+        {
+            return (a / GFC(a, b)) * b;
+        }
+
+        private static int GFC(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+        #endregion
     }
 }

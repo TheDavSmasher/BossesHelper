@@ -258,13 +258,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 StartAttackPattern((int)pattern.GoToPattern);
             }
+            int currentAction = 0;
             //Random Pattern
             if (pattern.RandomPattern)
             {
                 while (true)
                 {
+                    if ((ulong)currentAction >= pattern.IterationCount)
+                    {
+                        if (pattern.GoToPattern == null)
+                            StartNextAttackPattern();
+                        StartAttackPattern((int)pattern.GoToPattern);
+                    }
                     int nextAttack = random.Next() % pattern.StatePatternOrder.Length;
                     yield return PerformMethod(pattern.StatePatternOrder[nextAttack]);
+                    currentAction++;
                 }
             }
             //Deterministic Pattern
@@ -276,7 +284,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             ulong loop = 0;
-            int currentAction = 0;
             while (true)
             {
                 if (currentAction >= pattern.StatePatternOrder.Length)
@@ -287,9 +294,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (loop > pattern.IterationCount)
                 {
                     if (pattern.GoToPattern == null)
-                    {
                         StartNextAttackPattern();
-                    }
                     StartAttackPattern((int)pattern.GoToPattern);
                 }
 
