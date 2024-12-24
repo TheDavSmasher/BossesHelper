@@ -4,6 +4,7 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -14,74 +15,61 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut, Vector2 offset)
         {
             string path = CleanPath(filepath, ".xml");
-            if (Everest.Content.TryGet(path, out ModAsset xml))
-            {
-                XmlDocument document = new XmlDocument();
-                document.Load(xml.Stream);
-                XmlNodeList patternsList = document.SelectSingleNode("Patterns").ChildNodes;
-                foreach (XmlNode patternNode in patternsList)
-                {
-                    List<BossPattern.Method> methodList = new();
-                    if (patternNode.NodeType == XmlNodeType.Comment)
-                    {
-                        continue;
-                    }
-                    if (patternNode.LocalName.ToLower().Equals("random"))
-                    {
-                        foreach (XmlNode action in patternNode.ChildNodes)
-                        {
-                            for (int i = 0; i < action.GetValueOrDefaultInt("weight", 1); i++)
-                            {
-                                methodList.Add(new BossPattern.Method(action.GetValue("file"), action.GetValueOrDefaultNullF("wait")));
-                            }
-                        }
-                        targetOut.Add(new BossPattern(methodList.ToArray()));
-                    }
-                    else if (patternNode.LocalName.ToLower().Equals("event"))
-                    {
-                        targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
-                    }
-                    else
-                    {
-                        List<BossPattern.Method> preLoopList = null;
-                        foreach (XmlNode action in patternNode.ChildNodes)
-                        {
-                            if (action.LocalName.ToLower().Equals("wait"))
-                            {
-                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.GetValue("time"))));
-                            }
-                            else if (action.LocalName.ToLower().Equals("loop"))
-                            {
-                                preLoopList = new(methodList);
-                                methodList.Clear();
-                            }
-                            else
-                            {
-                                methodList.Add(new BossPattern.Method(action.GetValue("file"), null));
-                            }
-                        }
-                        if (patternNode.Attributes.Count > 2)
-                        {
-                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                                patternNode.GetValueOrDefaultFloat("x"), patternNode.GetValueOrDefaultFloat("y"),
-                                patternNode.GetValueOrDefaultFloat("width"), patternNode.GetValueOrDefaultFloat("height"),
-                                patternNode.GetValueOrDefaultNullI("goto"), offset));
-                        }
-                        else if (patternNode.Attributes.Count != 0)
-                        {
-                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                                patternNode.GetValueOrDefaultInt("repeat"), patternNode.GetValueOrDefaultNullI("goto")));
-                        }
-                        else
-                        {
-                            targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray()));
-                        }
-                    }
-                }
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
+                return;
+            }
+            XmlDocument document = new XmlDocument();
+            document.Load(xml.Stream);
+            XmlNodeList patternsList = document.SelectSingleNode("Patterns").ChildNodes;
+            foreach (XmlNode patternNode in patternsList)
+            {
+                if (patternNode.NodeType == XmlNodeType.Comment) continue;
+
+                List<BossPattern.Method> methodList = new();
+                switch (patternNode.LocalName.ToLower())
+                {
+                    case "random":
+                        foreach (XmlNode action in patternNode.ChildNodes)
+                        {
+                            methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
+                                action.GetValueOrDefaultNullF("wait")), action.GetValueOrDefaultInt("weight", 1)));
+                        }
+                        targetOut.Add(new BossPattern(methodList.ToArray()));
+                        continue;
+                    case "event":
+                        targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
+                        continue;
+                }
+
+                List<BossPattern.Method> preLoopList = null;
+                foreach (XmlNode action in patternNode.ChildNodes)
+                {
+                    switch (action.LocalName.ToLower())
+                    {
+                        case "wait":
+                            methodList.Add(new BossPattern.Method("wait", float.Parse(action.GetValue("time"))));
+                            break;
+                        case "loop":
+                            preLoopList = new(methodList);
+                            methodList.Clear();
+                            break;
+                        default:
+                            methodList.Add(new BossPattern.Method(action.GetValue("file"), null));
+                            break;
+                    }
+                }
+                targetOut.Add(patternNode.Attributes.Count switch
+                {
+                    > 2 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
+                        patternNode.GetValueOrDefaultFloat("x"), patternNode.GetValueOrDefaultFloat("y"),
+                        patternNode.GetValueOrDefaultFloat("width"), patternNode.GetValueOrDefaultFloat("height"),
+                        patternNode.GetValueOrDefaultNullI("goto"), offset),
+                    > 0 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
+                        patternNode.GetValueOrDefaultInt("repeat"), patternNode.GetValueOrDefaultNullI("goto")),
+                    _ => new BossPattern(methodList.ToArray(), preLoopList?.ToArray())
+                });
             }
         }
 
