@@ -32,14 +32,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         {
                             for (int i = 0; i < action.GetValueOrDefaultInt("weight", 1); i++)
                             {
-                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, action.GetValueOrDefaultNullF("wait")));
+                                methodList.Add(new BossPattern.Method(action.GetValue("file"), action.GetValueOrDefaultNullF("wait")));
                             }
                         }
                         targetOut.Add(new BossPattern(methodList.ToArray()));
                     }
                     else if (patternNode.LocalName.ToLower().Equals("event"))
                     {
-                        targetOut.Add(new BossPattern(patternNode.Attributes["file"].Value, patternNode.GetValueOrDefaultNullI("goto")));
+                        targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
                     }
                     else
                     {
@@ -48,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         {
                             if (action.LocalName.ToLower().Equals("wait"))
                             {
-                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.Attributes["time"].Value)));
+                                methodList.Add(new BossPattern.Method("wait", float.Parse(action.GetValue("time"))));
                             }
                             else if (action.LocalName.ToLower().Equals("loop"))
                             {
@@ -57,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             }
                             else
                             {
-                                methodList.Add(new BossPattern.Method(action.Attributes["file"].Value, null));
+                                methodList.Add(new BossPattern.Method(action.GetValue("file"), null));
                             }
                         }
                         if (patternNode.Attributes.Count > 2)
@@ -120,7 +120,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     baseHitboxes.Add(GetHitboxFromXml(baseHitbox, 8f, 8f));
                                 }
                             }
-                            baseHitboxOptions.Add(hitboxNode.GetStringOrDefault(), new ColliderList(baseHitboxes.ToArray()));
+                            baseHitboxOptions.Add(hitboxNode.GetTagOrMain(), new ColliderList(baseHitboxes.ToArray()));
                             break;
                         case "hurtboxes":
                             baseHurtboxOptions ??= new();
@@ -136,11 +136,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                                     baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox, 8f, 8f));
                                 }
                             }
-                            baseHurtboxOptions.Add(hitboxNode.GetStringOrDefault(), new ColliderList(baseHurtboxes.ToArray()));
+                            baseHurtboxOptions.Add(hitboxNode.GetTagOrMain(), new ColliderList(baseHurtboxes.ToArray()));
                             break;
                         case "bouncebox":
                             bounceHitboxes ??= new();
-                            string tag = hitboxNode.GetStringOrDefault();
+                            string tag = hitboxNode.GetTagOrMain();
                             if (bounceHitboxes.ContainsKey(tag))
                             {
                                 if (bounceHitboxes[tag] is ColliderList list)
@@ -161,7 +161,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                         case "target":
                             targetCircles ??= new();
-                            string tag_t = hitboxNode.GetStringOrDefault();
+                            string tag_t = hitboxNode.GetTagOrMain();
                             if (targetCircles.ContainsKey(tag_t))
                             {
                                 if (targetCircles[tag_t] is ColliderList list)
@@ -216,10 +216,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return attribute != null ? int.Parse(attribute.Value) : value;
         }
 
-        private static string GetStringOrDefault(this XmlNode source, string tag = "tag", string value = "main")
+        private static string GetTagOrMain(this XmlNode source)
         {
-            XmlAttribute attribute = source.Attributes[tag];
-            return attribute != null ? attribute.Value : value;
+            XmlAttribute attribute = source.Attributes["tag"];
+            return attribute != null ? attribute.Value : "main";
+        }
+
+        private static string GetValue(this XmlNode source, string tag)
+        {
+            return source.Attributes[tag].Value;
         }
 
         private static Hitbox GetHitboxFromXml(XmlNode source, float defaultWidth, float defaultHeight)
