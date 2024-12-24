@@ -13,8 +13,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         public readonly BossController.CustceneDelegates CustceneDelegates;
 
-        public bool finished;
-
         private IEnumerator Cutscene;
 
         private LuaFunction endMethod;
@@ -41,14 +39,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             bool fadeInOnSkip = true, bool endingChapterAfter = false)
             : base(fadeInOnSkip, endingChapterAfter)
         {
-            finished = false;
             CustceneDelegates = delegates;
             LoadCutscene(filepath, bossId, player, puppet);
         }
 
         private BossEvent(string filepath)
         {
-            finished = false;
             LoadCutscene(filepath, null, null, null);
         }
 
@@ -88,7 +84,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public override void OnEnd(Level level)
         {
-            finished = true;
             try
             {
                 endMethod?.Call(level, WasSkipped);

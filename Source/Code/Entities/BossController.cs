@@ -243,7 +243,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene))
                 {
                     Level.Add(cutscene);
-                    while (!cutscene.finished)
+                    while (!cutscene.Running)
                     {
                         yield return null;
                     }
