@@ -28,19 +28,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (patternNode.NodeType == XmlNodeType.Comment) continue;
 
                 List<BossPattern.Method> methodList = new();
-                switch (patternNode.LocalName.ToLower())
+                if (patternNode.LocalName.ToLower().Equals("event"))
                 {
-                    case "random":
-                        foreach (XmlNode action in patternNode.ChildNodes)
-                        {
-                            methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
-                                action.GetValueOrDefaultNullF("wait")), action.GetValueOrDefaultInt("weight", 1)));
-                        }
-                        targetOut.Add(new BossPattern(methodList.ToArray()));
-                        continue;
-                    case "event":
-                        targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
-                        continue;
+                    targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
+                    continue;
+                }
+
+                if (patternNode.LocalName.ToLower().Equals("random"))
+                {
+                    foreach (XmlNode action in patternNode.ChildNodes)
+                    {
+                        methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
+                            action.GetValueOrDefaultNullF("wait")), action.GetValueOrDefaultInt("weight", 1)));
+                    }
+                    targetOut.Add(new BossPattern(methodList.ToArray()));
+                    continue;
                 }
 
                 List<BossPattern.Method> preLoopList = null;
@@ -60,14 +62,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             break;
                     }
                 }
-                targetOut.Add(patternNode.Attributes.Count switch
+                int? goTo = patternNode.GetValueOrDefaultNullI("goto");
+                if (goTo != null)
                 {
-                    > 2 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        GetHitboxFromXml(patternNode, offset), goTo: patternNode.GetValueOrDefaultNullI("goto")),
-                    > 0 => new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
-                        count: (ulong)patternNode.GetValueOrDefaultInt("repeat"), goTo: patternNode.GetValueOrDefaultNullI("goto")),
-                    _ => new BossPattern(methodList.ToArray(), preLoopList?.ToArray())
-                });
+                    targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(),
+                        GetHitboxFromXml(patternNode, offset), (ulong)patternNode.GetValueOrDefaultInt("repeat"), goTo));
+                }
+                else
+                {
+                    targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray()));
+                }
             }
         }
 
@@ -184,8 +188,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static Hitbox GetHitboxFromXml(XmlNode source, Vector2 offset)
         {
-            return new Hitbox(source.GetValueOrDefaultFloat("width"), source.GetValueOrDefaultFloat("height"),
-                source.GetValueOrDefaultFloat("x") + offset.X, source.GetValueOrDefaultFloat("y") + offset.Y);
+            float width = source.GetValueOrDefaultFloat("width");
+            float height = source.GetValueOrDefaultFloat("height");
+            if (width <= 0 || height <= 0)
+                return null;
+            return new Hitbox(width, height, source.GetValueOrDefaultFloat("x") + offset.X,
+                source.GetValueOrDefaultFloat("y") + offset.Y);
         }
 
         private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)
