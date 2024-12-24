@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Monocle;
+﻿using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public class BossPattern
+    public class BossPattern(BossPattern.Method[] patternLoop, BossPattern.Method[] prePattern = null, Hitbox trigger = null,
+        int? minCount = null, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
     {
         public struct Method(string name, float? duration)
         {
@@ -12,19 +12,21 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public float? Duration = duration;
         }
 
-        public readonly bool IsEvent;
+        public readonly bool IsEvent = isEvent;
 
-        public readonly ulong IterationCount;
+        public readonly int? MinRandomIter = minCount;
 
-        public readonly int? GoToPattern;
+        public readonly int? IterationCount = count;
 
-        public readonly Hitbox PlayerPositionTrigger;
+        public readonly int? GoToPattern = goTo;
 
-        public readonly bool RandomPattern;
+        public readonly Hitbox PlayerPositionTrigger = trigger;
 
-        public readonly Method[] PrePatternMethods;
+        public readonly bool RandomPattern = random;
 
-        public readonly Method[] StatePatternOrder;
+        public readonly Method[] PrePatternMethods = prePattern;
+
+        public readonly Method[] StatePatternOrder = patternLoop;
 
         public string FirstAction
         {
@@ -34,20 +36,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossPattern(Method[] patternLoop, Method[] prePattern = null, Hitbox trigger = null,
-            ulong count = ulong.MaxValue, int? goTo = null, bool random = false, bool isEvent = false)
-        {
-            IterationCount = count;
-            GoToPattern = goTo;
-            PlayerPositionTrigger = trigger;
-            RandomPattern = random;
-            IsEvent = isEvent;
-            PrePatternMethods = prePattern;
-            StatePatternOrder = patternLoop;
-        }
-
         public BossPattern(string eventName, int? goTo)
-            : this([new Method(eventName, null)], count: 0, goTo: goTo, isEvent: true)
+            : this([new Method(eventName, null)], goTo: goTo, isEvent: true)
         {
         }
     }
