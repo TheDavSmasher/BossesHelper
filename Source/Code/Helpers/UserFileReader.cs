@@ -75,105 +75,68 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
         {
+            static Collider GetAllColliders(XmlNode source)
+            {
+                List<Collider> baseOptions = new();
+                foreach (XmlElement baseOption in source.ChildNodes)
+                {
+                    baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
+                        ? GetCircleFromXml(baseOption, 4f) : GetHitboxFromXml(baseOption, 8f, 8f));
+                }
+                return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
+            }
+
+            static void InsertNewCollider(Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
+            {
+                if (!baseOptions.ContainsKey(tag))
+                {
+                    baseOptions.Add(tag, newCollider);
+                    return;
+                }
+                baseOptions[tag] = baseOptions[tag] is ColliderList list
+                    ? new ColliderList([.. list.colliders, newCollider])
+                    : new ColliderList(baseOptions[tag], newCollider);
+            }
+
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
             Dictionary<string, Collider> bounceHitboxes = null;
             Dictionary<string, Collider> targetCircles = null;
 
             string path = CleanPath(filepath, ".xml");
-            if (Everest.Content.TryGet(path, out ModAsset xml))
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(xml.Stream);
-                XmlNodeList hitboxList = doc.SelectSingleNode("HitboxMetadata").ChildNodes;
-                foreach (XmlNode hitboxNode in hitboxList)
-                {
-                    if (hitboxNode.NodeType == XmlNodeType.Comment)
-                    {
-                        continue;
-                    }
-                    switch (hitboxNode.LocalName.ToLower())
-                    {
-                        case "hitboxes":
-                            baseHitboxOptions ??= new();
-                            List<Collider> baseHitboxes = new();
-                            foreach (XmlElement baseHitbox in hitboxNode.ChildNodes)
-                            {
-                                if (baseHitbox.LocalName.ToLower().Equals("circle"))
-                                {
-                                    baseHitboxes.Add(GetCircleFromXml(baseHitbox, 4f));
-                                }
-                                else
-                                {
-                                    baseHitboxes.Add(GetHitboxFromXml(baseHitbox, 8f, 8f));
-                                }
-                            }
-                            baseHitboxOptions.Add(hitboxNode.GetTagOrMain(), new ColliderList(baseHitboxes.ToArray()));
-                            break;
-                        case "hurtboxes":
-                            baseHurtboxOptions ??= new();
-                            List<Collider> baseHurtboxes = new();
-                            foreach (XmlNode baseHurtbox in hitboxNode.ChildNodes)
-                            {
-                                if (baseHurtbox.LocalName.ToLower().Equals("circle"))
-                                {
-                                    baseHurtboxes.Add(GetCircleFromXml(baseHurtbox, 4f));
-                                }
-                                else
-                                {
-                                    baseHurtboxes.Add(GetHitboxFromXml(baseHurtbox, 8f, 8f));
-                                }
-                            }
-                            baseHurtboxOptions.Add(hitboxNode.GetTagOrMain(), new ColliderList(baseHurtboxes.ToArray()));
-                            break;
-                        case "bouncebox":
-                            bounceHitboxes ??= new();
-                            string tag = hitboxNode.GetTagOrMain();
-                            if (bounceHitboxes.ContainsKey(tag))
-                            {
-                                if (bounceHitboxes[tag] is ColliderList list)
-                                {
-                                    List<Collider> currentColliders = new(list.colliders)
-                                    {
-                                        GetHitboxFromXml(hitboxNode, 8f, 6f)
-                                    };
-                                    bounceHitboxes[tag] = new ColliderList(currentColliders.ToArray());
-                                }
-                                else
-                                {
-                                    bounceHitboxes[tag] = new ColliderList(bounceHitboxes[tag], GetHitboxFromXml(hitboxNode, 8f, 6f));
-                                }
-                                break;
-                            }
-                            bounceHitboxes.Add(tag, GetHitboxFromXml(hitboxNode, 8f, 6f));
-                            break;
-                        case "target":
-                            targetCircles ??= new();
-                            string tag_t = hitboxNode.GetTagOrMain();
-                            if (targetCircles.ContainsKey(tag_t))
-                            {
-                                if (targetCircles[tag_t] is ColliderList list)
-                                {
-                                    List<Collider> currentColliders = new(list.colliders)
-                                    {
-                                        GetCircleFromXml(hitboxNode, 4f)
-                                    };
-                                    targetCircles[tag_t] = new ColliderList(currentColliders.ToArray());
-                                }
-                                else
-                                {
-                                    targetCircles[tag_t] = new ColliderList(targetCircles[tag_t], GetCircleFromXml(hitboxNode, 4f));
-                                }
-                                break;
-                            }
-                            targetCircles.Add(tag_t, GetCircleFromXml(hitboxNode, 4f));
-                            break;
-                    }
-                }
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
                 Logger.Log(LogLevel.Warn, "Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
+                dataHolder = default;
+                return;
+            }
+            XmlDocument doc = new XmlDocument();
+            doc.Load(xml.Stream);
+            XmlNodeList hitboxList = doc.SelectSingleNode("HitboxMetadata").ChildNodes;
+            foreach (XmlNode hitboxNode in hitboxList)
+            {
+                if (hitboxNode.NodeType == XmlNodeType.Comment) continue;
+
+                string tag = hitboxNode.GetTagOrMain();
+                switch (hitboxNode.LocalName.ToLower())
+                {
+                    case "hitboxes":
+                        baseHitboxOptions ??= new();
+                        baseHitboxOptions.Add(hitboxNode.GetTagOrMain(), GetAllColliders(hitboxNode));
+                        break;
+                    case "hurtboxes":
+                        baseHurtboxOptions ??= new();
+                        baseHurtboxOptions.Add(hitboxNode.GetTagOrMain(), GetAllColliders(hitboxNode));
+                        break;
+                    case "bouncebox":
+                        bounceHitboxes ??= new();
+                        InsertNewCollider(bounceHitboxes, tag, GetHitboxFromXml(hitboxNode, 8f, 6f));
+                        break;
+                    case "target":
+                        targetCircles ??= new();
+                        InsertNewCollider(targetCircles, tag, GetCircleFromXml(hitboxNode, 4f));
+                        break;
+                }
             }
             dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetCircles);
         }
