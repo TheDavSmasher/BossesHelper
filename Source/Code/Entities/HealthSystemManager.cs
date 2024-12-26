@@ -25,10 +25,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        public HealthSystemManager(EntityData data, Vector2 _)
+        public HealthSystemManager(EntityData data, Vector2 _) : this()
         {
-            BossesHelperModule.Session.mapHealthSystemManager = this;
-            BossesHelperModule.Session.healthData.isCreated = true;
             BossesHelperModule.Session.healthData.iconSprite = data.String("healthIcons", HealthData.iconSprite);
             BossesHelperModule.Session.healthData.startAnim = data.String("healthIconsCreateAnim", HealthData.startAnim);
             BossesHelperModule.Session.healthData.endAnim = data.String("healthIconsRemoveAnim", HealthData.endAnim);
@@ -54,9 +52,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 AddTag(Tags.Global);
         }
 
-        public HealthSystemManager() //Will only be called if already created prior but is currently null
+        public HealthSystemManager()
         {
             BossesHelperModule.Session.mapHealthSystemManager = this;
+            BossesHelperModule.Session.healthData.isCreated = true;
         }
 
         public override void Added(Scene scene)
