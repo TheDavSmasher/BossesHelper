@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void Interact(Player player)
         {
-            
+            Changer.Update();
         }
     }
 }
