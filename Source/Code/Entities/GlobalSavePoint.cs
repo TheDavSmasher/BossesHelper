@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -9,20 +10,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/PlayerSavePoint")]
     public class GlobalSavePoint : Entity
     {
-        public EntityID ID;
+        private readonly GlobalSavePointChanger Changer;
 
-        public Vector2 spawnPoint;
-
-        public Player.IntroTypes spawnType;
-
-        public Sprite savePointSprite;
+        private readonly Sprite savePointSprite;
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset, EntityID id)
             : base(entityData.Position + offset)
         {
-            this.ID = id;
-            spawnPoint = entityData.Nodes[0];
-            spawnType = entityData.Enum("respawnType", Player.IntroTypes.Respawn);
+            Add(Changer = new(id.Level, entityData.Nodes[0], entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
             string spriteName = entityData.String("savePointSprite");
             if (!string.IsNullOrEmpty(spriteName))
             {
@@ -33,10 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void Interact(Player player)
         {
-            BossesHelperModule.Session.savePointLevel = ID.Level;
-            BossesHelperModule.Session.savePointSpawn = spawnPoint;
-            BossesHelperModule.Session.savePointSpawnType = spawnType;
-            BossesHelperModule.Session.savePointSet = true;
+            
         }
     }
 }
