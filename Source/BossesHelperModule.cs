@@ -8,7 +8,7 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
 using MonoMod.Cil;
 using System.Reflection;
-using MonoMod.Utils;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -35,8 +35,6 @@ public class BossesHelperModule : EverestModule
     {
         Instance.TASSeed = value >= 0 ? value : Instance.TASSeed;
     }
-
-    private ILHook levelExitRoutineHook;
 
     public BossesHelperModule()
     {
@@ -68,9 +66,8 @@ public class BossesHelperModule : EverestModule
         IL.Celeste.Player.OnSquish += ILOnSquish;
         On.Celeste.Player.Die += OnPlayerDie;
         On.Celeste.Player.Die += ReturnToSavePoint;
-        levelExitRoutineHook = new ILHook(
-            typeof(LevelExit).GetMethod("Routine", BindingFlags.NonPublic | BindingFlags.Instance).GetStateMachineTarget(),
-            ILLevelLoadSpawn);
+        ILHookHelper.GenerateHookOn(typeof(LevelExit), "Routine", ILLevelLoadSpawn,
+            BindingFlags.NonPublic | BindingFlags.Instance, true);
     }
 
     public override void Unload()
@@ -81,8 +78,7 @@ public class BossesHelperModule : EverestModule
         IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
         On.Celeste.Player.Die -= ReturnToSavePoint;
-        levelExitRoutineHook?.Dispose();
-        levelExitRoutineHook = null;
+        ILHookHelper.DisposeAll();
     }
 
     private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
@@ -114,6 +110,11 @@ public class BossesHelperModule : EverestModule
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
             Session.SafeSpawn = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
+            if (self.Session.StartedFromBeginning)
+            {
+                Session.savePointLevel = self.Session.LevelData.Name;
+                Session.savePointSpawn = Session.lastSpawnPoint;
+            }
         }
     }
 
