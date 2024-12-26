@@ -1,6 +1,9 @@
 ﻿using Monocle;
 using System;
 using Microsoft.Xna.Framework;
+using System.Reflection;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+using MonoMod.Cil;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -34,6 +37,25 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             BossesHelperModule.Session.savePointSpawnType = spawnType;
             BossesHelperModule.Session.savePointSet = true;
             Active = false;
+        }
+
+        public void AddToEntityOnMethod<T>(T entity, string method,
+            BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
+        {
+            entity.Add(this);
+            ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
+        }
+
+        private static void AddUpdateDelegate(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.EmitLdarg0();
+            cursor.EmitDelegate(UpdateSavePointChanger);
+        }
+
+        private static void UpdateSavePointChanger(Entity entity)
+        {
+            entity.Components.Get<GlobalSavePointChanger>()?.Update();
         }
     }
 }
