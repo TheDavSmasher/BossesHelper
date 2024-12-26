@@ -90,10 +90,12 @@ public class BossesHelperModule : EverestModule
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
     {
-        if (fromLoader && Session.healthData.isCreated)
+        if (fromLoader)
         {
-            Session.mapHealthSystemManager ??= new();
-            self.Add(Session.mapHealthSystemManager);
+            if (Session.healthData.isCreated)
+                self.Add(Session.mapHealthSystemManager ??= new());
+            if (Session.safeGroundBlockerCreated)
+                self.Add(Session.mapUpdateSafeBlocker ??= new());
         }
         orig(self, intro, fromLoader);
         if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
@@ -121,7 +123,7 @@ public class BossesHelperModule : EverestModule
     public static void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-        if (self.OnSafeGround)
+        if (self.OnSafeGround && Session.mapUpdateSafeBlocker == null)
             Session.lastSafePosition = self.Position;
         if (self.StateMachine.State != Player.StCassetteFly)
             Session.alreadyFlying = false;
