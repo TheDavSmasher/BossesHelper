@@ -3,6 +3,7 @@ using Monocle;
 using MonoMod.ModInterop;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Components;
+using System.Reflection;
 
 namespace Celeste.Mod.BossesHelper
 {
@@ -12,6 +13,14 @@ namespace Celeste.Mod.BossesHelper
         public static Component GetGlobalSavePointChangerComponent(object levelNameSource, Vector2 spawnPoint, Player.IntroTypes introType = Player.IntroTypes.Respawn)
         {
             return new GlobalSavePointChanger(levelNameSource, spawnPoint, introType);
+        }
+
+        public static void CreateGlobalSavePointOnEntityOnMethod<T>(T entity, Vector2 offset, string method,
+            Player.IntroTypes spawnType = Player.IntroTypes.Respawn, BindingFlags flags = BindingFlags.Default,
+            bool stateMethod = false) where T : Entity
+        {
+            new GlobalSavePointChanger(entity, entity.Position + offset, spawnType)
+                .AddToEntityOnMethod(entity, method, flags, stateMethod);
         }
 
         public static Component GetEntityChainComponent(Entity entity, bool chain)
