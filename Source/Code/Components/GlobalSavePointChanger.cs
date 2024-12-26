@@ -18,9 +18,9 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         {
             return source switch
             {
-                string s => s,
                 EntityID id => id.Level,
-                Session session => session.LevelData.Name,
+                LevelData ld => ld.Name,
+                Session session => session.Level,
                 Scene sc => LevelName((sc as Level).Session),
                 Entity e => LevelName(e.Scene),
                 _ => throw new Exception("Object type cannot be used to get a Level Name.")
