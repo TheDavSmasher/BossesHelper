@@ -14,12 +14,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void GenerateHookOn(Type classType, string method,
             ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
         {
+            string key = classType.Name + ":" + method;
+            if (createdILHooks.ContainsKey(key)) return;
             MethodInfo methodInfo = classType.GetMethod(method, flags);
             if (stateMethod)
             {
                 methodInfo = methodInfo.GetStateMachineTarget();
             }
-            string key = classType.Name + ":" + method;
             createdILHooks.Add(key, new ILHook(methodInfo, action));
         }
 
