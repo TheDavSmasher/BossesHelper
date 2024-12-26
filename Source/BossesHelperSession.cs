@@ -6,19 +6,12 @@ namespace Celeste.Mod.BossesHelper;
 
 public class BossesHelperSession : EverestModuleSession
 {
+    #region Health System
     public bool wasOffscreen;
 
     public Vector2 lastSafePosition;
 
     public Vector2 lastSpawnPoint;
-
-    public bool savePointSet;
-
-    public string savePointLevel;
-
-    public Vector2 savePointSpawn;
-
-    public Player.IntroTypes savePointSpawnType;
 
     public Vector2 SafeSpawn
     {
@@ -32,17 +25,6 @@ public class BossesHelperSession : EverestModuleSession
     public bool alreadyFlying;
 
     public float damageCooldown;
-
-    public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
-    {
-        public int bossHealthAt = bossHealthAt;
-
-        public bool startImmediately = startImmediately;
-
-        public int startWithPatternIndex = startIndex;
-    }
-
-    public BossPhase BossPhaseSaved { get; set; }
 
     public struct HealthSystemData
     {
@@ -100,4 +82,35 @@ public class BossesHelperSession : EverestModuleSession
 
     [YamlIgnore]
     public PlayerHealthBar mapHealthBar;
+
+    public bool safeGroundBlockerCreated;
+
+    public bool globalSafeGroundBlocker;
+
+    [YamlIgnore]
+    public UpdateSafeBlocker mapUpdateSafeBlocker;
+    #endregion
+
+    #region Boss Phase
+    public struct BossPhase(int bossHealthAt, bool startImmediately, int startIndex)
+    {
+        public int bossHealthAt = bossHealthAt;
+
+        public bool startImmediately = startImmediately;
+
+        public int startWithPatternIndex = startIndex;
+    }
+
+    public BossPhase BossPhaseSaved { get; set; }
+    #endregion
+
+    #region Global Save Point
+    public bool savePointSet;
+
+    public string savePointLevel;
+
+    public Vector2 savePointSpawn;
+
+    public Player.IntroTypes savePointSpawnType;
+    #endregion
 }
