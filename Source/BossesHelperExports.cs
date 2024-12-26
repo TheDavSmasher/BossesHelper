@@ -9,6 +9,11 @@ namespace Celeste.Mod.BossesHelper
     [ModExportName("BossesHelper")]
     public static class BossesHelperExports
     {
+        public static Component GetGlobalSavePointChangerComponent(object levelNameSource, Vector2 spawnPoint, Player.IntroTypes introType = Player.IntroTypes.Respawn)
+        {
+            return new GlobalSavePointChanger(levelNameSource, spawnPoint, introType);
+        }
+
         public static Component GetEntityChainComponent(Entity entity, bool chain)
         {
             return new EntityChain(entity, chain);
