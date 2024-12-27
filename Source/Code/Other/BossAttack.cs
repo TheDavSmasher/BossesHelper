@@ -4,6 +4,7 @@ using NLua;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
@@ -23,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "bossAttack", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getAttackData", dict);
+            LuaFunction[] array = LoadLuaFile(filename, "getAttackData", dict);
             if (array != null)
             {
                 attackFunction = array.ElementAtOrDefault(0);
@@ -38,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public IEnumerator Coroutine()
         {
-            yield return LuaBossHelper.LuaFunctionToIEnumerator(attackFunction);
+            yield return attackFunction.LuaFunctionToIEnumerator();
         }
     }
 }
