@@ -45,6 +45,15 @@ entities.BossesHelper/BossHealthBar.attributes.description.healthScaleY=The Y sc
 entities.BossesHelper/BossHealthBar.attributes.description.startVisible=If the Health Bar should start being visible when the Health Bar gets added.
 entities.BossesHelper/BossHealthBar.attributes.description.baseColor=The color the display will use, such as the color of the Number type or the fill of the Bar type rectangle.
 
+entities.BossesHelper/PlayerSavePoint.attributes.description.luaFile=An optional Lua file that will execute whenever the player interacts with the Save Point. Can be a Coroutine.
+entities.BossesHelper/PlayerSavePoint.attributes.description.savePointSprite=The sprite the Save Point should use.
+entities.BossesHelper/PlayerSavePoint.attributes.description.respawnType=The intro type the player should use when loading back in to the Save Point.\n-Use Old Value: whichever value the last save point used for this field will be used here too.
+
+entities.BossesHelper/UpdateSafeUnblocker.attributes.description.onlyOnce=If the unblocker should only remove an active Blocker once per level session.
+
+entities.BossesHelper/UpdateSafeBlocker.attributes.name.isGlobal=Global Blocker
+entities.BossesHelper/UpdateSafeBlocker.attributes.description.isGlobal=If the blocker should be active globally.\nFalse will remove it when entering a new room.
+
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIcons=The sprite each health icon marker should use per hit point.\nMultiple sprites may be provided, up to the Health Value.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIconsCreateAnim=Animation used when regaining a hit point icon.\nMultiple animation may be provided, up to the Health Value. Each sprite provided will use the animations given here, in order.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
