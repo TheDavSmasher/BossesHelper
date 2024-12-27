@@ -8,16 +8,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     [CustomEntity("BossesHelper/PlayerSavePoint")]
-    public class GlobalSavePoint : Entity
+    public class GlobalSavePoint : Actor
     {
         private readonly GlobalSavePointChanger Changer;
 
         private readonly Sprite savePointSprite;
 
-        public GlobalSavePoint(EntityData entityData, Vector2 offset, EntityID id)
+        public GlobalSavePoint(EntityData entityData, Vector2 offset)
             : base(entityData.Position + offset)
         {
-            Add(Changer = new(id.Level, entityData.Nodes[0], entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
+            Add(Changer = new(entityData.Level, entityData.Nodes[0], entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
             string spriteName = entityData.String("savePointSprite");
             if (!string.IsNullOrEmpty(spriteName))
             {
