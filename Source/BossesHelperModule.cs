@@ -236,7 +236,7 @@ public class BossesHelperModule : EverestModule
     {
         if (Session.savePointSet)
         {
-            loader.startPosition ??= Session.savePointSpawn;
+            loader.startPosition = Session.savePointSpawn;
             loader.PlayerIntroTypeOverride = Session.savePointSpawnType;
         }
     }
