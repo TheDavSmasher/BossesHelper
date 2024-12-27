@@ -17,7 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public AutoSavePointSet(EntityData data, Vector2 _, EntityID id)
         {
             ID = id;
-            spawnType = data.Enum<Player.IntroTypes>("spawnType");
+            spawnType = data.Enum<Player.IntroTypes>("respawnType");
         }
 
         public override void Awake(Scene scene)

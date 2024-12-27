@@ -54,6 +54,8 @@ entities.BossesHelper/UpdateSafeUnblocker.attributes.description.onlyOnce=If the
 entities.BossesHelper/UpdateSafeBlocker.attributes.name.isGlobal=Global Blocker
 entities.BossesHelper/UpdateSafeBlocker.attributes.description.isGlobal=If the blocker should be active globally.\nFalse will remove it when entering a new room.
 
+entities.BossesHelper/AutoSavePointSet.attributes.description.respawnType=The intro type the player should use when loading back in to the Save Point.
+
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIcons=The sprite each health icon marker should use per hit point.\nMultiple sprites may be provided, up to the Health Value.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.healthIconsCreateAnim=Animation used when regaining a hit point icon.\nMultiple animation may be provided, up to the Health Value. Each sprite provided will use the animations given here, in order.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
