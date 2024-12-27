@@ -82,6 +82,19 @@ local function prepareFunction(env, func)
     end
 end
 
+local function prepareSavePoint(env, func)
+    local success, onTalk = pcall(func)
+
+    if success then
+        onTalk = onTalk or env.onTalk
+        
+        return onTalk
+    else
+        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load on save point function in Lua: " .. onTalk)
+        return success
+    end
+end
+
 function cutsceneHelper.setFuncAsCoroutine(func)
     return func and celesteMod.LuaCoroutine({value = coroutine.create(func), resume = threadProxyResume})
 end
@@ -138,6 +151,10 @@ end
 
 function cutsceneHelper.getFunctionData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareFunction)
+end
+
+function cutsceneHelper.getSavePointData(filename, data)
+    return cutsceneHelper.getLuaData(filename, data, prepareSavePoint)
 end
 
 return cutsceneHelper

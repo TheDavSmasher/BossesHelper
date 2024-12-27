@@ -18,7 +18,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private readonly GlobalSavePointChanger Changer;
 
-        private readonly Sprite savePointSprite;
+        public readonly Sprite Sprite;
 
         private readonly TalkComponent talker;
 
@@ -47,8 +47,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             string spriteName = entityData.String("savePointSprite");
             if (!string.IsNullOrEmpty(spriteName))
             {
-                Add(savePointSprite = GFX.SpriteBank.Create(spriteName));
-                talker = new TalkComponent(new Rectangle(), Changer.spawnPoint + offset - Position, OnTalk)
+                Add(Sprite = GFX.SpriteBank.Create(spriteName));
+                talker = new TalkComponent(new Rectangle(0, 0, Sprite.width, 8), Changer.spawnPoint + offset - Position, OnTalk)
                 {
                     Enabled = true,
                     PlayerMustBeFacing = false
