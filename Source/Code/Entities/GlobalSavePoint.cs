@@ -21,8 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             string spriteName = entityData.String("savePointSprite");
             if (!string.IsNullOrEmpty(spriteName))
             {
-                savePointSprite = GFX.SpriteBank.Create(spriteName);
-                Add(savePointSprite);
+                Add(savePointSprite = GFX.SpriteBank.Create(spriteName));
             }
         }
 
