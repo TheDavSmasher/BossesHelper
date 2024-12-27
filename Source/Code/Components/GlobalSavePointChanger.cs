@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         public readonly string spawnLevel = LevelName(level);
 
-        public readonly Vector2 spawnPoint = spawnPoint;
+        public Vector2 spawnPoint = spawnPoint;
 
         public readonly Player.IntroTypes spawnType = spawnType;
 
@@ -28,6 +28,16 @@ namespace Celeste.Mod.BossesHelper.Code.Components
                 Entity e => LevelName(e.Scene),
                 _ => throw new Exception("Object type cannot be used to get a Level Name.")
             };
+        }
+
+        public override void EntityAdded(Scene scene)
+        {
+            base.EntityAdded(scene);
+            Vector2 newSpawn = SceneAs<Level>().GetSpawnPoint(spawnPoint);
+            if (BossesHelperUtils.DistanceBetween(spawnPoint, newSpawn) <= 80)
+            {
+                spawnPoint = newSpawn;
+            }
         }
 
         public override void Update()
