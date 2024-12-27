@@ -5,7 +5,7 @@ using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    [CustomEntity("BossesHelper/AutoSavePointSet ")]
+    [CustomEntity("BossesHelper/AutoSavePointSet")]
     public class AutoSavePointSet : Entity
     {
         private readonly EntityID ID;
