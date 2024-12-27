@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly Sprite Sprite;
 
-        private readonly TalkComponent talker;
+        private TalkComponent talker;
 
         private readonly string filepath;
 
@@ -48,18 +48,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!string.IsNullOrEmpty(spriteName))
             {
                 Add(Sprite = GFX.SpriteBank.Create(spriteName));
-                talker = new TalkComponent(new Rectangle(0, 0, Sprite.width, 8), Changer.spawnPoint + offset - Position, OnTalk)
-                {
-                    Enabled = true,
-                    PlayerMustBeFacing = false
-                };
-                Add(talker);
             }
         }
 
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
+            talker = new TalkComponent(new Rectangle(0, 0, Sprite.width, 8), Changer.spawnPoint - Position, OnTalk)
+            {
+                Enabled = true,
+                PlayerMustBeFacing = false
+            };
+            Add(talker);
             if ((scene as Level).Tracker.GetEntity<Player>() is Player player)
                 this.ReadSavePointFunction(filepath, player);
         }
