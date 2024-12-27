@@ -250,6 +250,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 functions = null;
             }
         }
+
+        public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
+        {
+            string path = CleanPath(filepath, ".lua");
+            if (Everest.Content.TryGet(path, out ModAsset file))
+            {
+                savePoint.LoadFunction(file.PathVirtual, playerRef);
+            }
+            else
+            {
+                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for Save Point.");
+            }
+        }
         #endregion
 
         #region Other Helper Functions
