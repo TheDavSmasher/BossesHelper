@@ -31,13 +31,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
+                { "savePoint", this },
+                { "spawnPoint", Changer.spawnPoint },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filename, "getAttackData", dict);
-            if (array != null)
-            {
-                onInteract = array.ElementAtOrDefault(0);
-            }
+            LuaFunction[] array = LoadLuaFile(filename, "getSavePointData", dict);
+            onInteract = array?.ElementAtOrDefault(0);
         }
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset)
@@ -73,8 +72,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator SaveRoutine(Player player)
         {
-            if (onInteract != null)
-                yield return onInteract.LuaFunctionToIEnumerator();
+            yield return onInteract?.LuaFunctionToIEnumerator();
             player.StateMachine.State = Player.StNormal;
         }
     }
