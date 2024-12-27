@@ -142,8 +142,12 @@ This XML file uses the format of the following example:
 
 ```xml
 <Patterns>
+    <!--The following patterns are only examples of how to set this up.
+    Most have comments to detail certain aspects of them.
+    Explanation is found below.-->
+
     <!--Deterministic Looping Pattern-->
-    <Pattern>
+    <Pattern> <!--This is pattern 0-->
         <Wait time="2"/>
         <Attack file="third"/>
         <Wait time="2"/>
@@ -151,7 +155,7 @@ This XML file uses the format of the following example:
     </Pattern>
 
     <!--Deterministic Looping Pattern with Pre-Loop Actions-->
-    <Pattern>
+    <Pattern> <!--This is pattern 1-->
         <Wait time="2"/>
         <Attack file="start"/>
         <Loop/>
@@ -160,7 +164,7 @@ This XML file uses the format of the following example:
     </Pattern>
 
     <!--Deterministic Limited Loops Pattern-->
-    <Pattern repeat="4" goto="3">
+    <Pattern repeat="4" goto="3"> <!--This is pattern 3-->
         <Attack file="fourth"/>
         <Wait time="4"/>
         <Attack file="first"/>
@@ -211,9 +215,9 @@ This XML file uses the format of the following example:
     <!--Random order Pattern-->
     <Random>
         <Attack file="first" wait="2"/>
-        <Attack file="second" wait="1"/>
+        <Attack file="second" wait="1" weight="3"/>
         <Attack file="third" wait="2"/>
-        <Attack file="fourth" wait="0.6"/>
+        <Attack file="fourth" wait="0.6" weight="2"/>
     </Random>
 
     <!--Random Bounded Attacks Pattern-->
