@@ -208,60 +208,53 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId,
             Player playerRef, BossPuppet puppetRef, BossController.CustceneDelegates custceneDelegates)
         {
-            if (Everest.Content.TryGet(path, out ModAsset eventFiles))
-            {
-                foreach (ModAsset eventFile in eventFiles.Children)
-                {
-                    events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
-                        new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
-                }
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset eventFiles))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
+                return;
+            }
+            foreach (ModAsset eventFile in eventFiles.Children)
+            {
+                events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
+                    new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
             }
         }
 
         public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, string bossId, BossController.AttackDelegates delegates)
         {
-            if (Everest.Content.TryGet(path, out ModAsset attackFiles))
-            {
-                foreach (ModAsset attackFile in attackFiles.Children)
-                {
-                    attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
-                }
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset attackFiles))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
+                return;
+            }
+            foreach (ModAsset attackFile in attackFiles.Children)
+            {
+                attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
             }
         }
 
         public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, BossController.OnHitDelegates delegates)
         {
             string path = CleanPath(filepath, ".lua");
-            if (Everest.Content.TryGet(path, out ModAsset onHitFile))
-            {
-                functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
                 functions = null;
+                return;
             }
+            functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
         {
             string path = CleanPath(filepath, ".lua");
-            if (Everest.Content.TryGet(path, out ModAsset file))
-            {
-                savePoint.LoadFunction(file.PathVirtual, playerRef);
-            }
-            else
+            if (!Everest.Content.TryGet(path, out ModAsset file))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for Save Point.");
+                return;
+                
             }
+            savePoint.LoadFunction(file.PathVirtual, playerRef);
         }
         #endregion
 
