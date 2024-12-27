@@ -369,6 +369,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Helpers
+        public static float DistanceBetween(Vector2 start, Vector2 end)
+        {
+            var dx = start.X - end.X;
+            var dy = start.X - end.Y;
+            return (float)Math.Sqrt(dx * dx + dy * dy);
+        }
+
         public static List<string> SeparateList(string listString)
         {
             return listString.Replace(" ", string.Empty).Split([',']).ToList();

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Celeste.Mod.BossesHelper.Code.Components;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -143,13 +144,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 return source.AbsolutePosition + source.Entity.Position;
             }
-        }
-
-        private static float DistanceBetween(Vector2 start, Vector2 end)
-        {
-            var dx = start.X - end.X;
-            var dy = start.X - end.Y;
-            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
         private void DissipateParticles()
