@@ -26,7 +26,8 @@ autoSavePointSet.fieldInformation = {
 autoSavePointSet.placements = {
     name = "Auto Save Point Set",
     data = {
-        respawnType = "Respawn"
+        respawnType = "Respawn",
+        onlyOnce = true
     }
 }
 

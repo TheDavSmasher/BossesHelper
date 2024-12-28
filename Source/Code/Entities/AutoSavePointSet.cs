@@ -14,6 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Vector2? spawnPosition;
 
+        private readonly bool onlyOnce;
+
         private GlobalSavePointChanger Changer;
 
         public AutoSavePointSet(EntityData data, Vector2 _, EntityID id)
@@ -23,6 +25,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (data.FirstNodeNullable() is Vector2 spawn)
             {
                 spawnPosition = spawn;
+            }
+            onlyOnce = data.Bool("onlyOnce");
         }
 
         public override void Awake(Scene scene)
@@ -44,7 +48,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            (scene as Level).Session.DoNotLoad.Add(ID);
+            if (onlyOnce)
+                (scene as Level).Session.DoNotLoad.Add(ID);
         }
     }
 }
