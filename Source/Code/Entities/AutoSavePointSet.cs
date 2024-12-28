@@ -26,7 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Session session = (scene as Level).Session;
             if (session.RespawnPoint is Vector2 spawn)
             {
-                Add(Changer = new(ID.Level, spawn, spawnType));
+                Add(Changer = new(ID, spawn, spawnType));
                 Changer.Update();
             }
             RemoveSelf();
