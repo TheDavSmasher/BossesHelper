@@ -200,7 +200,6 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        PlayerDeadBody playerDeadBody = orig(self, dir, always, register);
         if (always)
         {
             if (Session.mapDamageController != null)
@@ -208,14 +207,14 @@ public class BossesHelperModule : EverestModule
                 PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
                 return null;
             }            
-            return playerDeadBody;
+            return orig(self, dir, always, register);
         }
         if (Session.mapDamageController != null && Session.mapDamageController.health <= 0)
-            return playerDeadBody;
+            return orig(self, dir, always, register);
         if (Session.damageCooldown > 0)
             return null;
         if (Session.mapDamageController == null)
-            return playerDeadBody;
+            return orig(self, dir, always, register);
 
         if (!KillOffscreen(self))
             PlayerTakesDamage(dir);
