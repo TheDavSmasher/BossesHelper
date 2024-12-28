@@ -12,23 +12,32 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Player.IntroTypes spawnType;
 
+        private readonly Vector2? spawnPosition;
+
         private GlobalSavePointChanger Changer;
 
         public AutoSavePointSet(EntityData data, Vector2 _, EntityID id)
         {
             ID = id;
             spawnType = data.Enum<Player.IntroTypes>("respawnType");
+            if (data.FirstNodeNullable() is Vector2 spawn)
+            {
+                spawnPosition = spawn;
         }
 
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
             Session session = (scene as Level).Session;
-            if (session.RespawnPoint is Vector2 spawn)
+            if (spawnPosition is Vector2 node)
+            {
+                Add(Changer = new(ID, node, spawnType));
+            }
+            else if (session.RespawnPoint is Vector2 spawn)
             {
                 Add(Changer = new(ID, spawn, spawnType));
-                Changer.Update();
             }
+            Changer?.Update();
             RemoveSelf();
         }
 

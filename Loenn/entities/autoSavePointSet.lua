@@ -16,6 +16,7 @@ local respawnOpts = {
 autoSavePointSet.name = "BossesHelper/AutoSavePointSet"
 autoSavePointSet.depth = 0
 --autoSavePointSet.texture = ""
+autoSavePointSet.nodeLimits = {0, 1}
 autoSavePointSet.fieldInformation = {
     respawnType = {
         options = respawnOpts,
