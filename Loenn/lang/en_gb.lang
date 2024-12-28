@@ -79,3 +79,7 @@ triggers.BossesHelper/AddHealthSystemTrigger.attributes.description.startVisible
 triggers.BossesHelper/RecoverHealthTrigger.attributes.description.healAmount=The number of hit points the player will recover.
 triggers.BossesHelper/RecoverHealthTrigger.attributes.description.onlyOnce=If the trigger should remove itself after being used.
 triggers.BossesHelper/RecoverHealthTrigger.attributes.description.permanent=If the trigger should not load again once used, even on respawn.
+
+triggers.BossesHelper/SavePointSetTrigger.attributes.description.respawnType=The intro type the player should use when loading back in to the Save Point.
+triggers.BossesHelper/SavePointSetTrigger.attributes.description.flagTrigger=The flag this trigger should match to activate.\nIf left empty, simply entering the trigger will activate it.
+triggers.BossesHelper/SavePointSetTrigger.attributes.description.invertFlag=If the flag state should be false to activate the trigger.\nFalse will keep the default flag behaviour.
