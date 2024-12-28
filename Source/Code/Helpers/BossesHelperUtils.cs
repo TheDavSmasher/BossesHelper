@@ -372,7 +372,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static float DistanceBetween(Vector2 start, Vector2 end)
         {
             var dx = start.X - end.X;
-            var dy = start.X - end.Y;
+            var dy = start.Y - end.Y;
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
