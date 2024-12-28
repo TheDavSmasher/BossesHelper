@@ -225,7 +225,7 @@ public class BossesHelperModule : EverestModule
     public static void ILLevelLoadSpawn(ILContext il)
     {
         ILCursor levelLoaderCursor = new ILCursor(il);
-        while (levelLoaderCursor.TryGotoNext(MoveType.After, instr => instr.MatchStfld<LevelLoader>("PlayerIntroOverride")))
+        while (levelLoaderCursor.TryGotoNext(MoveType.After, instr => instr.MatchStfld<LevelLoader>("PlayerIntroTypeOverride")))
         {
             levelLoaderCursor.EmitLdloc3();
             levelLoaderCursor.EmitDelegate(ChangeLevelLoader);
