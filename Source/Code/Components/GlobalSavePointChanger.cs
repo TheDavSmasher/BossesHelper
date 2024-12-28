@@ -30,9 +30,9 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             };
         }
 
-        public override void EntityAdded(Scene scene)
+        public override void Added(Entity entity)
         {
-            base.EntityAdded(scene);
+            base.Added(entity);
             Vector2 newSpawn = SceneAs<Level>().GetSpawnPoint(spawnPoint);
             if (BossesHelperUtils.DistanceBetween(spawnPoint, newSpawn) <= 80)
             {
