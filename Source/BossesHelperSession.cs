@@ -74,6 +74,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public HealthSystemData healthData;
 
+    public int currentPlayerHealth;
+
     [YamlIgnore]
     public HealthSystemManager mapHealthSystemManager;
 

@@ -103,7 +103,7 @@ public class BossesHelperModule : EverestModule
         if (Session.healthData.globalController &&
             (intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth || intro == Player.IntroTypes.Respawn))
         {
-            Session.mapDamageController.health = Session.healthData.playerHealthVal;
+            Session.currentPlayerHealth = Session.healthData.playerHealthVal;
             Session.mapHealthBar.healthIcons.RefillHealth();
         }
         Player entity = Engine.Scene.Tracker.GetEntity<Player>();
@@ -169,7 +169,7 @@ public class BossesHelperModule : EverestModule
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             default: //CrushEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
                 break;
         }
     }
@@ -192,7 +192,7 @@ public class BossesHelperModule : EverestModule
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
             default: //OffscreenEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
                 break;
         }
         return true;
@@ -204,12 +204,12 @@ public class BossesHelperModule : EverestModule
         {
             if (Session.mapDamageController != null)
             {
-                PlayerTakesDamage(Vector2.Zero, Session.mapDamageController.health, ignoreCooldown: true);
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
                 return null;
             }            
             return orig(self, dir, always, register);
         }
-        if (Session.mapDamageController != null && Session.mapDamageController.health <= 0)
+        if (Session.mapDamageController != null && Session.currentPlayerHealth <= 0)
             return orig(self, dir, always, register);
         if (Session.damageCooldown > 0)
             return null;

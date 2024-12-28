@@ -16,8 +16,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly float baseCooldown;
 
-        public int health;
-
         private Level level;
 
         private LuaFunction onDamage;
@@ -27,7 +25,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
             baseCooldown = BossesHelperModule.Session.healthData.damageCooldown;
-            health = BossesHelperModule.Session.healthData.playerHealthVal;
         }
 
         public override void Added(Scene scene)
@@ -68,13 +65,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 return;
             }
             BossesHelperModule.Session.damageCooldown = baseCooldown;
-            health -= amount;
+            BossesHelperModule.Session.currentPlayerHealth -= amount;
             Player entity = Engine.Scene.Tracker.GetEntity<Player>();
             if (entity == null || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
-            if (health > 0)
+            if (BossesHelperModule.Session.currentPlayerHealth > 0)
             {
                 if (!silent)
                 {
@@ -109,7 +106,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void RecoverHealth(int amount = 1)
         {
-            health += amount;
+            BossesHelperModule.Session.currentPlayerHealth += amount;
             for (int i = 0; i < amount; i++)
             {
                 BossesHelperModule.Session.mapHealthBar.healthIcons.IncreaseHealth(i);

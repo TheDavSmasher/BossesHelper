@@ -185,7 +185,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 level = scene as Level;
                 if (useSessionValues)
                 {
-                    Health = HealthData.playerHealthVal;
+                    Health = BossesHelperModule.Session.currentPlayerHealth;
                     Position = HealthData.healthBarPos;
                     BarScale = HealthData.healthIconScale;
                     icons = SeparateList(HealthData.iconSprite);

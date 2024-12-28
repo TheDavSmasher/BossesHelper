@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper
         public static int GetCurrentPlayerHealth()
         {
             if (BossesHelperModule.Session.mapDamageController != null)
-                return BossesHelperModule.Session.mapDamageController.health;
+                return BossesHelperModule.Session.currentPlayerHealth;
             return -1;
         }
 
