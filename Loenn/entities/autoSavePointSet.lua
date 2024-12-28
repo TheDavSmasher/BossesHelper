@@ -23,7 +23,7 @@ autoSavePointSet.fieldInformation = {
     }
 }
 autoSavePointSet.placements = {
-    name = "Auth Save Point Set",
+    name = "Auto Save Point Set",
     data = {
         respawnType = "Respawn"
     }
