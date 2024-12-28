@@ -243,6 +243,7 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody ReturnToSavePoint(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
     {
+        Session session = self.level.Session;
         PlayerDeadBody deadPlayer = orig(self, direction, evenIfInvincible, registerDeathInStats);
         if (deadPlayer != null)
         {
@@ -250,7 +251,7 @@ public class BossesHelperModule : EverestModule
             {
                 deadPlayer.DeathAction = () =>
                 {
-                    Engine.Scene = new LevelExit(LevelExit.Mode.GoldenBerryRestart, deadPlayer.player.level.Session)
+                    Engine.Scene = new LevelExit(LevelExit.Mode.GoldenBerryRestart, session)
                     {
                         GoldenStrawberryEntryLevel = Session.savePointLevel
                     };
