@@ -101,7 +101,8 @@ public class BossesHelperModule : EverestModule
         if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
             return;
         if (Session.healthData.globalController &&
-            (intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth || intro == Player.IntroTypes.Respawn))
+            (intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth ||
+            intro == Player.IntroTypes.Respawn && !fromLoader))
         {
             Session.currentPlayerHealth = Session.healthData.playerHealthVal;
             Session.mapHealthBar.healthIcons.RefillHealth();

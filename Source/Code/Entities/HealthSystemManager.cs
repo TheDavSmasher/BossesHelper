@@ -36,8 +36,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.healthIconScale = iconScale;
             BossesHelperModule.Session.healthData.iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation);
             BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
-            BossesHelperModule.Session.healthData.globalHealth = data.Bool("globalHealth");
+            BossesHelperModule.Session.healthData.globalHealth = HealthData.globalController ? data.Bool("globalHealth") : false;
             BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal);
+            ResetCurrentHealth(!HealthData.isCreated);
             BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown);
             BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", HealthData.playerOnCrush);
             BossesHelperModule.Session.healthData.playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", HealthData.playerOffscreen);
@@ -48,14 +49,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.playerStagger = data.Bool("playerStagger", true);
             BossesHelperModule.Session.healthData.activateFlag = data.String("activationFlag", HealthData.activateFlag);
             BossesHelperModule.Session.healthData.isEnabled = false;
+            BossesHelperModule.Session.healthData.isCreated = true;
             if (BossesHelperModule.Session.healthData.globalController)
                 AddTag(Tags.Global);
         }
 
         public HealthSystemManager()
         {
+            ResetCurrentHealth(HealthData.isCreated && !HealthData.globalHealth);
             BossesHelperModule.Session.mapHealthSystemManager = this;
-            BossesHelperModule.Session.healthData.isCreated = true;
         }
 
         public override void Added(Scene scene)
@@ -91,6 +93,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
             SceneAs<Level>()?.Add(BossesHelperModule.Session.mapHealthBar ??= new(), BossesHelperModule.Session.mapDamageController ??= new());
+        }
+
+        private static void ResetCurrentHealth(bool reset)
+        {
+            if (reset)
+            {
+                BossesHelperModule.Session.currentPlayerHealth = BossesHelperModule.Session.healthData.playerHealthVal;
+            }
         }
     }
 }
