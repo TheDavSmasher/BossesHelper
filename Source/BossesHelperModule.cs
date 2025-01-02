@@ -28,6 +28,8 @@ public class BossesHelperModule : EverestModule
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData)Instance._SaveData;
 
+    private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
+
     public int TASSeed;
 
     [Command("set_boss_seed", "Set the seed Bosses will use for their RNG, added to a deterministic per-entity value. Value 0 makes the seed based on the Active Timer")]
@@ -87,7 +89,7 @@ public class BossesHelperModule : EverestModule
     {
         if (fromLoader)
         {
-            if (Session.healthData.isCreated)
+            if (HealthData.isCreated)
                 self.Add(Session.mapHealthSystemManager ??= new());
             if (Session.safeGroundBlockerCreated)
                 self.Add(Session.mapUpdateSafeBlocker ??= new());
@@ -106,13 +108,13 @@ public class BossesHelperModule : EverestModule
                 Session.travelingToSavePoint = false;
             }
         }
-        if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
+        if (Session.mapHealthSystemManager == null || !HealthData.isEnabled)
             return;
-        if (Session.healthData.globalController &&
-            (intro == Player.IntroTypes.Transition && !Session.healthData.globalHealth ||
+        if (HealthData.globalController &&
+            (intro == Player.IntroTypes.Transition && !HealthData.globalHealth ||
             intro == Player.IntroTypes.Respawn && !fromLoader))
         {
-            Session.currentPlayerHealth = Session.healthData.playerHealthVal;
+            Session.currentPlayerHealth = HealthData.playerHealthVal;
             Session.mapHealthBar.healthIcons.RefillHealth();
         }
     }
@@ -153,7 +155,7 @@ public class BossesHelperModule : EverestModule
     {
         if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
             return;
-        switch (Session.healthData.playerOnCrush)
+        switch (HealthData.playerOnCrush)
         {
             case HealthSystemManager.CrushEffect.PushOut:
                 PlayerTakesDamage(Vector2.Zero);
@@ -176,7 +178,7 @@ public class BossesHelperModule : EverestModule
         float? offscreemAtY = GetFromY(player.SceneAs<Level>(), player);
         if (offscreemAtY == null)
             return false;
-        switch (Session.healthData.playerOffscreen)
+        switch (HealthData.playerOffscreen)
         {
             case HealthSystemManager.OffscreenEffect.BounceUp:
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
