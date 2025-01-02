@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using NLua;
 using System.Linq;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -49,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     { "player", player },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 };
-                LuaFunction[] array = LuaBossHelper.LoadLuaFile(Filepath, "getFunctionData", dict);
+                LuaFunction[] array = LoadLuaFile(Filepath, "getFunctionData", dict);
                 if (array != null)
                 {
                     onDamage = array.ElementAtOrDefault(0);
@@ -84,7 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     if (BossesHelperModule.Session.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
                     if (onDamage != null)
-                        Add(new Coroutine(LuaBossHelper.LuaFunctionToIEnumerator(onDamage)));
+                        Add(new Coroutine(onDamage.ToIEnumerator()));
                 }
             }
             else

@@ -60,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static IEnumerator LuaFunctionToIEnumerator(this LuaFunction func)
+        public static IEnumerator ToIEnumerator(this LuaFunction func)
         {
             LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaCoroutine;
             while (routine != null && SafeMoveNext(routine))
@@ -134,7 +134,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
         {
-            puppet.Add(new Coroutine(LuaFunctionToIEnumerator(func)));
+            puppet.Add(new Coroutine(func.ToIEnumerator()));
         }
     }
 }

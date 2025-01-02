@@ -53,22 +53,22 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public IEnumerator OnContactCoroutine()
         {
-            yield return OnContactLua?.LuaFunctionToIEnumerator();
+            yield return OnContactLua?.ToIEnumerator();
         }
 
         public IEnumerator OnDashCoroutine()
         {
-            yield return OnDashLua?.LuaFunctionToIEnumerator();
+            yield return OnDashLua?.ToIEnumerator();
         }
 
         public IEnumerator OnBounceCoroutine()
         {
-            yield return OnBounceLua?.LuaFunctionToIEnumerator();
+            yield return OnBounceLua?.ToIEnumerator();
         }
 
         public IEnumerator OnLaserCoroutine()
         {
-            yield return OnLaserLua?.LuaFunctionToIEnumerator();
+            yield return OnLaserLua?.ToIEnumerator();
         }
     }
 }

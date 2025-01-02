@@ -72,7 +72,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator SaveRoutine(Player player)
         {
-            yield return onInteract?.LuaFunctionToIEnumerator();
+            yield return onInteract?.ToIEnumerator();
             player.StateMachine.State = Player.StNormal;
         }
     }

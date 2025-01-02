@@ -6,6 +6,7 @@ using NLua;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
@@ -27,10 +28,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getCutsceneData", dict);
+            LuaFunction[] array = LoadLuaFile(filename, "getCutsceneData", dict);
             if (array != null)
             {
-                Cutscene = LuaBossHelper.LuaFunctionToIEnumerator(array.ElementAtOrDefault(0));
+                Cutscene = array.ElementAtOrDefault(0)?.ToIEnumerator();
                 endMethod = array.ElementAtOrDefault(1);
             }
         }

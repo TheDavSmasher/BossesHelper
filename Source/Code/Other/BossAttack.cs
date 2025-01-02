@@ -36,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public IEnumerator Coroutine()
         {
-            yield return attackFunction.LuaFunctionToIEnumerator();
+            yield return attackFunction.ToIEnumerator();
         }
     }
 }
