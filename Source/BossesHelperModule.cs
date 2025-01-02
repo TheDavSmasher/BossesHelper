@@ -199,20 +199,21 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
+        bool damageTracked = Session.mapDamageController != null;
         if (always)
         {
-            if (Session.mapDamageController != null)
+            if (damageTracked)
             {
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
                 return null;
             }            
             return orig(self, dir, always, register);
         }
-        if (Session.mapDamageController != null && Session.currentPlayerHealth <= 0)
+        if (damageTracked && Session.currentPlayerHealth <= 0)
             return orig(self, dir, always, register);
         if (Session.damageCooldown > 0)
             return null;
-        if (Session.mapDamageController == null)
+        if (!damageTracked)
             return orig(self, dir, always, register);
 
         if (!KillOffscreen(self))
