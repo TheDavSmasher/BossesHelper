@@ -16,8 +16,14 @@
         <Reference Private="false" />
     </ItemDefinitionGroup>
     <ItemGroup>
+      <Compile Remove="Audio\**" />
+      <Compile Remove="Code\Effects\**" />
       <Compile Remove="Loenn\**" />
+      <EmbeddedResource Remove="Audio\**" />
+      <EmbeddedResource Remove="Code\Effects\**" />
       <EmbeddedResource Remove="Loenn\**" />
+      <None Remove="Audio\**" />
+      <None Remove="Code\Effects\**" />
       <None Remove="Loenn\**" />
     </ItemGroup>
 
@@ -34,11 +40,6 @@
         <PackageReference Include="YamlDotNet" Version="16.1.3" />
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll" Private="false" />
         <Reference Include="$(CelestePrefix)\FNA.dll" Private="false" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Code\Effects\" />
-      <Folder Include="Audio\" />
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build" Inputs="$(OutputPath)\$(AssemblyName).dll;$(OutputPath)\$(AssemblyName).pdb" Outputs="..\bin\$(AssemblyName).dll;..\bin\$(AssemblyName).pdb">
