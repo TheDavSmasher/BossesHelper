@@ -7,6 +7,7 @@ using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
 using MonoMod.Cil;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -74,6 +75,7 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
+        ILHookHelper.DisposeAll();
     }
 
     private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
