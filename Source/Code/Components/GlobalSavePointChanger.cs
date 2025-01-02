@@ -8,10 +8,10 @@ using MonoMod.Cil;
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
     [Tracked(false)]
-    public class GlobalSavePointChanger(object level, Vector2 spawnPoint, Player.IntroTypes spawnType = Player.IntroTypes.Respawn)
+    public class GlobalSavePointChanger(object levelNameSrc, Vector2 spawnPoint, Player.IntroTypes spawnType = Player.IntroTypes.Respawn)
         : Component(active: false, visible: false)
     {
-        public readonly string spawnLevel = LevelName(level);
+        public readonly string spawnLevel = LevelName(levelNameSrc);
 
         public Vector2 spawnPoint = spawnPoint;
 
@@ -59,13 +59,14 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         private static void AddUpdateDelegate(ILContext il)
         {
             ILCursor cursor = new(il);
+            //this.Get<GlobalSavePointChanger>()?.Update();
             cursor.EmitLdarg0();
             cursor.EmitDelegate(UpdateSavePointChanger);
         }
 
         private static void UpdateSavePointChanger(Entity entity)
         {
-            entity.Components.Get<GlobalSavePointChanger>()?.Update();
+            entity.Get<GlobalSavePointChanger>()?.Update();
         }
     }
 }
