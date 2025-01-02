@@ -91,10 +91,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             if (!string.IsNullOrEmpty(filename))
             {
-                LuaTable luaTable = DictionaryToLuaTable(passedVals);
                 try
                 {
-                    object[] array = (cutsceneHelper[command] as LuaFunction).Call(filename, luaTable);
+                    object[] array = (cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals));
                     if (array != null)
                     {
                         return Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
