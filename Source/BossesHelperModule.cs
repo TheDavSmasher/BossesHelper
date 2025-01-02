@@ -101,7 +101,7 @@ public class BossesHelperModule : EverestModule
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
             Session.SafeSpawn = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
-            if (Session.savePointSet && !Session.travelingToSavePoint)
+            if (Session.savePointSet && !Session.travelingToSavePoint && intro == Player.IntroTypes.Respawn)
             {
                 Session.travelingToSavePoint = true;
                 self.TeleportTo(entity, Session.savePointLevel, Session.savePointSpawnType, Session.savePointSpawn);
