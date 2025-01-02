@@ -109,6 +109,8 @@ public class BossesHelperSession : EverestModuleSession
     #region Global Save Point
     public bool savePointSet;
 
+    public bool travelingToSavePoint;
+
     public string savePointLevel;
 
     public Vector2 savePointSpawn;

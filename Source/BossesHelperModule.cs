@@ -93,6 +93,19 @@ public class BossesHelperModule : EverestModule
                 self.Add(Session.mapUpdateSafeBlocker ??= new());
         }
         orig(self, intro, fromLoader);
+        Player entity = Engine.Scene.Tracker.GetEntity<Player>();
+        if (entity != null)
+        {
+            entity.Sprite.Visible = true;
+            entity.Hair.Visible = true;
+            Session.SafeSpawn = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
+            if (Session.savePointSet && !Session.travelingToSavePoint)
+            {
+                Session.travelingToSavePoint = true;
+                self.TeleportTo(entity, Session.savePointLevel, Session.savePointSpawnType, Session.savePointSpawn);
+                Session.travelingToSavePoint = false;
+            }
+        }
         if (Session.mapHealthSystemManager == null || !Session.healthData.isEnabled)
             return;
         if (Session.healthData.globalController &&
@@ -101,18 +114,6 @@ public class BossesHelperModule : EverestModule
         {
             Session.currentPlayerHealth = Session.healthData.playerHealthVal;
             Session.mapHealthBar.healthIcons.RefillHealth();
-        }
-        Player entity = Engine.Scene.Tracker.GetEntity<Player>();
-        if (entity != null)
-        {
-            entity.Sprite.Visible = true;
-            entity.Hair.Visible = true;
-            Session.SafeSpawn = entity.SceneAs<Level>().Session.RespawnPoint ?? entity.Position;
-            if (self.Session.StartedFromBeginning)
-            {
-                Session.savePointLevel = self.Session.LevelData.Name;
-                Session.savePointSpawn = Session.lastSpawnPoint;
-            }
         }
     }
 
