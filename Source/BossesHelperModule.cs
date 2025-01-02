@@ -7,8 +7,6 @@ using Monocle;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
 using MonoMod.Cil;
-using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -126,10 +124,8 @@ public class BossesHelperModule : EverestModule
             Session.lastSafePosition = self.Position;
         if (self.StateMachine.State != Player.StCassetteFly)
             Session.alreadyFlying = false;
-
-        Vector2? currentSpawn = self.SceneAs<Level>().Session.RespawnPoint;
-        if (currentSpawn != null && Session.lastSpawnPoint != currentSpawn)
-            Session.SafeSpawn = (Vector2) currentSpawn;
+        if (self.SceneAs<Level>().Session.RespawnPoint is Vector2 spawn && Session.lastSpawnPoint != spawn)
+            Session.SafeSpawn = spawn;
         if (Session.damageCooldown > 0)
             Session.damageCooldown -= Engine.DeltaTime;
     }
