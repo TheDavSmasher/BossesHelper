@@ -65,9 +65,6 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish += ILOnSquish;
         On.Celeste.Player.Die += OnPlayerDie;
-        On.Celeste.Player.Die += ReturnToSavePoint;
-        ILHookHelper.GenerateHookOn(typeof(LevelExit), "Routine", ILLevelLoadSpawn,
-            BindingFlags.NonPublic | BindingFlags.Instance, true);
     }
 
     public override void Unload()
@@ -77,8 +74,6 @@ public class BossesHelperModule : EverestModule
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
-        On.Celeste.Player.Die -= ReturnToSavePoint;
-        ILHookHelper.DisposeAll();
     }
 
     private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
@@ -220,45 +215,6 @@ public class BossesHelperModule : EverestModule
         if (!KillOffscreen(self))
             PlayerTakesDamage(dir);
         return null;
-    }
-
-    public static void ILLevelLoadSpawn(ILContext il)
-    {
-        ILCursor levelLoaderCursor = new ILCursor(il);
-        while (levelLoaderCursor.TryGotoNext(MoveType.After, instr => instr.MatchStfld<LevelLoader>("PlayerIntroTypeOverride")))
-        {
-            levelLoaderCursor.EmitLdloc3();
-            levelLoaderCursor.EmitDelegate(ChangeLevelLoader);
-        }
-    }
-
-    private static void ChangeLevelLoader(LevelLoader loader)
-    {
-        if (Session.savePointSet)
-        {
-            loader.startPosition = Session.savePointSpawn;
-            loader.PlayerIntroTypeOverride = Session.savePointSpawnType;
-        }
-    }
-
-    public static PlayerDeadBody ReturnToSavePoint(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
-    {
-        Session session = self.level.Session;
-        PlayerDeadBody deadPlayer = orig(self, direction, evenIfInvincible, registerDeathInStats);
-        if (deadPlayer != null)
-        {
-            if (!deadPlayer.HasGolden && Session.savePointSet)
-            {
-                deadPlayer.DeathAction = () =>
-                {
-                    Engine.Scene = new LevelExit(LevelExit.Mode.GoldenBerryRestart, session)
-                    {
-                        GoldenStrawberryEntryLevel = Session.savePointLevel
-                    };
-                };
-            }
-        }
-        return deadPlayer;
     }
 
     private static IEnumerator PlayerFlyBack(Player player)
