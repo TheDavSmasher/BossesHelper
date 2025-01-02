@@ -18,14 +18,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private GlobalSavePointChanger Changer;
 
-        public AutoSavePointSet(EntityData data, Vector2 offset, EntityID id)
+        public AutoSavePointSet(EntityData data, Vector2 _, EntityID id)
             : base()
         {
             ID = id;
             spawnType = data.Enum<Player.IntroTypes>("respawnType");
             if (data.FirstNodeNullable() is Vector2 spawn)
             {
-                spawnPosition = spawn + offset;
+                spawnPosition = spawn;
             }
             onlyOnce = data.Bool("onlyOnce");
         }

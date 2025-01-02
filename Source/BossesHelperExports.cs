@@ -15,11 +15,11 @@ namespace Celeste.Mod.BossesHelper
             return new GlobalSavePointChanger(levelNameSource, spawnPoint, introType);
         }
 
-        public static void CreateGlobalSavePointOnEntityOnMethod<T>(T entity, Vector2 offset, string method,
+        public static void CreateGlobalSavePointOnEntityOnMethod<T>(T entity, Vector2 spawnPoint, string method,
             Player.IntroTypes spawnType = Player.IntroTypes.Respawn, BindingFlags flags = BindingFlags.Default,
             bool stateMethod = false) where T : Entity
         {
-            new GlobalSavePointChanger(entity, entity.Position + offset, spawnType)
+            new GlobalSavePointChanger(entity, spawnPoint, spawnType)
                 .AddToEntityOnMethod(entity, method, flags, stateMethod);
         }
 
