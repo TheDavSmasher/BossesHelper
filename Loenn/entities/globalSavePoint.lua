@@ -23,6 +23,11 @@ globalSavePoint.fieldInformation = {
     respawnType = {
         options = respawnOpts,
         editable = false
+    },
+    luaFile = {
+        fieldType = "path",
+        allowedExtensions = {"lua"},
+        allowMissingPath = false
     }
 }
 globalSavePoint.fieldOrder = {}

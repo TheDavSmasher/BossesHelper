@@ -37,12 +37,37 @@ bossMasterController.fieldInformation = {
     },
     sidekickCooldown = {
         fieldType = "number"
+    },
+    hitboxMetadataPath = {
+        fieldType = "path",
+        allowedExtensions = {"xml"},
+        allowMissingPath = false
+    },
+    patternsPath = {
+        fieldType = "path",
+        allowedExtensions = {"xml"},
+        allowMissingPath = false
+    },
+    functionsPath = {
+        fieldType = "path",
+        allowedExtensions = {"lua"},
+        allowMissingPath = false
+    },
+    attacksPath = {
+        fieldType = "path",
+        allowFolders = true,
+        allowFiles = false
+    },
+    eventsPath = {
+        fieldType = "path",
+        allowFolders = true,
+        allowFiles = false
     }
 }
 
 bossMasterController.fieldOrder = {
     "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "sidekickCooldown",
-    "hitboxMetadataPath", "attacksPath", "eventsPath", "patternsPath", "functionsPath", "__Boss_pad",
+    "hitboxMetadataPath", "patternsPath", "attacksPath", "eventsPath", "functionsPath", "__Boss_pad",
     "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "sidekickFreeze"
 }
 

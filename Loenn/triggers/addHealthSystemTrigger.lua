@@ -77,6 +77,11 @@ addHealthSystemTrigger.fieldInformation = {
     offscreenEffect = {
         options = offscreenModeOpts,
         editable = false
+    },
+    onDamageFunction = {
+        fieldType = "path",
+        allowedExtensions = {"lua"},
+        allowMissingPath = false
     }
 }
 
