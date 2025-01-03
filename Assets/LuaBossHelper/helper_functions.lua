@@ -1394,7 +1394,7 @@ end
 ---Return a Lua function as a C# delegate
 ---@param func function Function to return as a delegate
 ---@return Action Action The delegate that will call the function when invoked
-function helpers.FunctionToAction(func)
+function helpers.functionToAction(func)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToAction(func)
 end
 
