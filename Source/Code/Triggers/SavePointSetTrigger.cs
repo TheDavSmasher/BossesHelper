@@ -61,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
                 return;
             }
             bool flagSet = player.SceneAs<Level>().Session.GetFlag(flagTrigger);
-            if (!flagSet && invertFlag || flagSet && !invertFlag)
+            if (flagSet ^ invertFlag)
             {
                 Changer?.Update();
                 RemoveSelf();
