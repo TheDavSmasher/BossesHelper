@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Update()
         {
             base.Update();
-            if (!HealthData.isEnabled && !string.IsNullOrEmpty(HealthData.activateFlag) && SceneAs<Level>().Session.GetFlag(HealthData.activateFlag))
+            if (!HealthData.isEnabled && SceneAs<Level>().Session.GetFlag(HealthData.activateFlag))
                 EnableHealthSystem();
         }
 
