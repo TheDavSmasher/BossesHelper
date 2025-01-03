@@ -11,6 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class LuaMethodWrappers
     {
+        #region Method Infos
         private static readonly MethodInfo getEntityMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetEntity");
 
         private static readonly MethodInfo getEntitiesMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetEntities");
@@ -30,12 +31,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 
         private static readonly MethodInfo entityIsTracked = Engine.Scene.Tracker.GetType().GetMethod("IsEntityTracked");
+        #endregion
 
         public static Type GetTypeFromString(string name, string prefix = "Celeste.")
         {
             return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name);
         }
 
+        #region Entities
         public static object GetEntity(string name, string prefix = "Celeste.")
         {
             return GetEntity(GetTypeFromString(name, prefix));
@@ -131,7 +134,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             return null;
         }
+        #endregion
 
+        #region Components
         public static object GetComponent(string name, string prefix = "Celeste.")
         {
             return GetComponent(GetTypeFromString(name, prefix));
@@ -343,6 +348,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             return false;
         }
+        #endregion
 
         public static void TeleportTo(Scene scene, Player player, string room, Player.IntroTypes introType = Player.IntroTypes.Transition, Vector2? nearestSpawn = null)
         {
