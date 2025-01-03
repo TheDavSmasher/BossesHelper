@@ -78,6 +78,7 @@ public class BossesHelperModule : EverestModule
         ILHookHelper.DisposeAll();
     }
 
+    #region Method Hooks
     private static void PlayerDiedWhileEnforceBounds(On.Celeste.Level.orig_EnforceBounds orig, Level self, Player player)
     {
         Session.wasOffscreen = true;
@@ -149,6 +150,32 @@ public class BossesHelperModule : EverestModule
         }
     }
 
+    public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
+    {
+        bool damageTracked = Session.mapDamageController != null;
+        if (always)
+        {
+            if (damageTracked)
+            {
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
+                return null;
+            }            
+            return orig(self, dir, always, register);
+        }
+        if (damageTracked && Session.currentPlayerHealth <= 0)
+            return orig(self, dir, always, register);
+        if (Session.damageCooldown > 0)
+            return null;
+        if (!damageTracked)
+            return orig(self, dir, always, register);
+
+        if (!KillOffscreen(self))
+            PlayerTakesDamage(dir);
+        return null;
+    }
+    #endregion
+
+    #region Hook Helper Methods
     public static void KillOnCrush(Player player, CollisionData data, bool evenIfInvincible)
     {
         if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
@@ -195,30 +222,6 @@ public class BossesHelperModule : EverestModule
         return true;
     }
 
-    public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
-    {
-        bool damageTracked = Session.mapDamageController != null;
-        if (always)
-        {
-            if (damageTracked)
-            {
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
-                return null;
-            }            
-            return orig(self, dir, always, register);
-        }
-        if (damageTracked && Session.currentPlayerHealth <= 0)
-            return orig(self, dir, always, register);
-        if (Session.damageCooldown > 0)
-            return null;
-        if (!damageTracked)
-            return orig(self, dir, always, register);
-
-        if (!KillOffscreen(self))
-            PlayerTakesDamage(dir);
-        return null;
-    }
-
     private static IEnumerator PlayerFlyBack(Player player)
     {
         Session.alreadyFlying = true;
@@ -251,6 +254,7 @@ public class BossesHelperModule : EverestModule
             return level.Bounds.Bottom;
         return null;
     }
+    #endregion
 
     public static EntityData MakeEntityData()
     {
