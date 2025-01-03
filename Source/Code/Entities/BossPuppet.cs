@@ -65,7 +65,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Collision onCollideV;
 
-        public bool Grounded { get; private set; }
+        public bool Grounded
+        {
+            get
+            {
+                return Speed.Y >= 0 && OnGround();
+            }
+        }
 
         private readonly float maxFall;
 
@@ -144,9 +150,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (dictionary == null || dictionary.Count == 0)
             {
                 if (value == null)
-                {
                     return new Circle(4f);
-                }
                 return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
             return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
@@ -236,7 +240,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 bossHitCooldown -= Engine.DeltaTime;
             }
-            Grounded = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
             MoveH(Speed.X * Engine.DeltaTime, onCollideH);
