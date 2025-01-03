@@ -160,40 +160,39 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnSidekickLaser()
         {
-            if (bossHitCooldown <= 0)
-            {
-                ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnLaserCoroutine()));
-            }
+            OnDamage(BossFunctions.DamageSource.Laser);
         }
 
         private void OnPlayerBounce(Player player)
         {
+            OnDamage(BossFunctions.DamageSource.Bounce);
             if (bossHitCooldown <= 0)
             {
-                ResetBossHitCooldown();
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
                 player.Bounce(base.Top + 2f);
-                Add(new Coroutine(bossFunctions.OnBounceCoroutine()));
             }
         }
 
         private void OnPlayerDash(Player player)
         {
-            if (bossHitCooldown <= 0 && player.DashAttacking && player.Speed != Vector2.Zero)
+            if (player.DashAttacking && player.Speed != Vector2.Zero)
             {
-                ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnDashCoroutine()));
+                OnDamage(BossFunctions.DamageSource.Dash);
             }
         }
 
-        private void OnPlayerContact(Player player)
+        private void OnPlayerContact(Player _)
+        {
+            OnDamage(BossFunctions.DamageSource.Contact);
+        }
+
+        private void OnDamage(BossFunctions.DamageSource source)
         {
             if (bossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(new Coroutine(bossFunctions.OnContactCoroutine()));
+                Add(bossFunctions.OnDamageCoroutine(source));
             }
         }
 

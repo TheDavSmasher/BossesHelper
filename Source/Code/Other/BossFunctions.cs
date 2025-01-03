@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Monocle;
 using NLua;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +12,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     internal class BossFunctions
     {
-        private LuaFunction OnHitLua;
+        public enum DamageSource
+        {
+            Contact,
+            Dash,
+            Bounce,
+            Laser
+        }
 
         private LuaFunction OnContactLua;
 
@@ -33,10 +40,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "boss", Delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LuaBossHelper.LoadLuaFile(filename, "getInterruptData", dict);
+            LuaFunction[] array = LoadLuaFile(filename, "getInterruptData", dict);
             if (array != null)
             {
-                OnHitLua = array.ElementAtOrDefault(0);
+                LuaFunction OnHitLua = array.ElementAtOrDefault(0);
                 OnContactLua = array.ElementAtOrDefault(1) ?? OnHitLua;
                 OnDashLua = array.ElementAtOrDefault(2) ?? OnHitLua;
                 OnBounceLua = array.ElementAtOrDefault(3) ?? OnHitLua;
@@ -51,24 +58,21 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             LoadMethods(filepath, bossId, delegates.playerRef, delegates.puppetRef);
         }
 
-        public IEnumerator OnContactCoroutine()
+        public Coroutine OnDamageCoroutine(DamageSource source)
         {
-            yield return OnContactLua?.ToIEnumerator();
+            return new Coroutine(OnDamage(source));
         }
 
-        public IEnumerator OnDashCoroutine()
+        private IEnumerator OnDamage(DamageSource source)
         {
-            yield return OnDashLua?.ToIEnumerator();
-        }
-
-        public IEnumerator OnBounceCoroutine()
-        {
-            yield return OnBounceLua?.ToIEnumerator();
-        }
-
-        public IEnumerator OnLaserCoroutine()
-        {
-            yield return OnLaserLua?.ToIEnumerator();
+            yield return (source switch
+            {
+                DamageSource.Contact => OnContactLua,
+                DamageSource.Dash => OnDashLua,
+                DamageSource.Bounce => OnBounceLua,
+                DamageSource.Laser => OnLaserLua,
+                _ => null
+            })?.ToIEnumerator();
         }
     }
 }
