@@ -40,6 +40,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 sprite.OnFrameChange = onFrameChange;
             }
         }
+
+        public static bool TryPlay(this Sprite sprite, string anim)
+        {
+            if (!sprite.Has(anim)) return false;
+            sprite.Play(anim);
+            return true;
+        }
         #endregion
 
         #region Health Displays
