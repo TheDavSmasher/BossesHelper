@@ -152,7 +152,7 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        bool damageTracked = Session.mapDamageController != null;
+        bool damageTracked = Session.mapHealthSystemManager != null && HealthData.isEnabled;
         if (always)
         {
             if (damageTracked)
@@ -178,7 +178,7 @@ public class BossesHelperModule : EverestModule
     #region Hook Helper Methods
     public static void KillOnCrush(Player player, CollisionData data, bool evenIfInvincible)
     {
-        if (Session.mapHealthSystemManager == null || !Session.mapHealthSystemManager.Active)
+        if (Session.mapHealthSystemManager == null || !HealthData.isEnabled)
             return;
         switch (HealthData.playerOnCrush)
         {
