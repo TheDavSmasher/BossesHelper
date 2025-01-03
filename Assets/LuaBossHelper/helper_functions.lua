@@ -939,6 +939,7 @@ end
 ---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
 ---@alias EntityData EntityData An Everest EntityData object.
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
+---@alias Action Action A C# Action, a delegate void object.
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 
 --- Attack Delegates
@@ -1107,7 +1108,6 @@ function helpers.entityHasComponent(entity, name, prefix)
     return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
 
-
 --- Enable the Boss' Collision checks, including collisions with solids.
 function helpers.enableCollisions()
     puppet:EnableCollisions()
@@ -1221,7 +1221,6 @@ end
 function helpers.getHitbox(width, height, x, y)
     return monocle.Hitbox(width, height, x or 0, y or 0)
 end
-
 
 ---Create a new Circle Collider
 ---@param radius number The radius of the collider.
@@ -1392,25 +1391,11 @@ function helpers.giveInvincibleFrames(time)
     celeste.Mod.BossesHelper.BossesHelperModule.GiveIFrames(time)
 end
 
----Gets an EntityCollider Component meant to collide with the given type of Entities, and execute a function.
----The Type can be provided by an entity of the Type desired, or a string containing the full path to the Entity class name, excluding the "Celeste." prefix.
----Examples would be "Spring", "Mod.BossesHelper.Code.Helper.Entities.AttackEntity", or similar.
----@param type string|Entity The entity type to collide with. Accepts an entity of the type desired or the full name of the class as a string.
----@param func fun(entity) The function that will execute when the collision check returns true.
----@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
----@return Component entityCollider The typed instance of the Entity Collider component.
-function helpers.getEntityCollider(type, func, collider)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntityCollider(type, func, collider)
-end
-
----Gets an EntityColliderByComponent Component meant to collide with entities that contain the given Component type, and execute a function.
----The Type can be provided by a component of the Type desired, or a string containing the full path to the Component class name, excluding the "Celeste." prefix.
----@param type string|Component The component type to collide with. Accepts a component of the type desired or the full name of the class as a string.
----@param func fun(entity) The function that will execute when the collision check returns true.
----@param collider? Collider The collider it should use for collisions. If null, it'll use the Entity's base Collider.
----@return Component entityColliderByComponent The typed instance of the Entity Collider By Component component.
-function helpers.getEntityColliderByComponent(type, func, collider)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntityColliderByComponent(type, func, collider)
+---Return a Lua function as a C# delegate
+---@param func function Function to return as a delegate
+---@return Action Action The delegate that will call the function when invoked
+function helpers.FunctionToAction(func)
+    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToAction(func)
 end
 
 return helpers
