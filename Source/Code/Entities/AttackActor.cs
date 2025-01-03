@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
 
@@ -85,11 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void PlayAnim(string anim)
         {
-            if (sprite.Has(anim))
-            {
-                sprite.Play(anim);
-            }
-            else
+            if (!sprite.TryPlay(anim))
             {
                 Logger.Log(LogLevel.Warn, "BossesHelper/AttackEntity", "Animation specified does not exist!");
             }

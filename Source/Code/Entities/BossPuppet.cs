@@ -259,9 +259,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!DynamicFacing)
                 return false;
             if (facing == 1 && MirrorSprite || facing == -1 && !MirrorSprite)
-            {
                 return pos < base.X - base.Collider.Width / 4;
-            }
             return pos > base.X + base.Collider.Width / 4;
         }
 
@@ -276,16 +274,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void PlayBossAnim(string name)
         {
-            if (Sprite != null)
+            if (Sprite != null && !Sprite.TryPlay(name))
             {
-                if (Sprite.Has(name))
-                {
-                    Sprite.Play(name);
-                }
-                else
-                {
-                    Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
-                }
+                Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
             }
         }
 
