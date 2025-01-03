@@ -65,6 +65,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Collision onCollideV;
 
+        private readonly Dictionary<string, object> storedObjects;
+
         public bool Grounded
         {
             get
@@ -91,6 +93,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
             bossHitCooldown = 0f;
+            storedObjects = new Dictionary<string, object>();
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));
             if (!string.IsNullOrEmpty(SpriteName))
@@ -403,6 +406,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.Y = start + (target - start) * t.Eased;
             };
             Add(tween);
+        }
+
+        public void StoreObject(string key, object toStore)
+        {
+            if (!storedObjects.ContainsKey(key))
+                storedObjects.Add(key, toStore);
+        }
+
+        public object GetStoredObject(string key)
+        {
+            return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
+        }
+
+        public void DeleteStoredObject(string key)
+        {
+            storedObjects.Remove(key);
         }
         #endregion
     }

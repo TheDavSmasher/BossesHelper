@@ -1369,6 +1369,26 @@ function helpers.speedYTweenTo(target, time, easer, invert)
     puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
 end
 
+---Store any object within the Boss under a specific key, to be retreived later.
+---@param key string The key to store the object with. Must be unique, or the object will not be stored.
+---@param object any The object to store
+function helpers.storeObjectInBoss(key, object)
+    puppet:StoreObject(key, object)
+end
+
+---Return an item that was stored within the Boss by key.
+---@param key string The key the object is stored under.
+---@return unknown|nil object The object stored, or nil if key is not found.
+function helpers.getStoredObjectFromBoss(key)
+    return puppet:GetStoredObject(key)
+end
+
+---Remove the object stored under the specified key from the Boss' stored objects.
+---@param key string The key the object is stored under.
+function helpers.deleteStoredObjectFromBoss(key)
+    puppet:DeleteStoredObject(key)
+end
+
 ---Add a function that will run in the background.
 ---@param func function The function that will run in the background. Will run to completion or loop as defined.
 function helpers.addConstantBackgroundCoroutine(func)
