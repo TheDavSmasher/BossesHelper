@@ -75,6 +75,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        public Collider Hurtbox { get; private set; }
+
+        public Collider Bouncebox { get; private set; }
+
+        public Collider Target { get; private set; }
+
         private readonly float maxFall;
 
         private float effectiveGravity;
@@ -124,17 +130,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             base.Collider = GetMainOrDefault(hitboxMetadata.baseHitboxes, Sprite.Height);
 
-            Collider Hurtbox = GetMainOrDefault(hitboxMetadata.baseHurtboxes, Sprite.Height);
+            Hurtbox = GetMainOrDefault(hitboxMetadata.baseHurtboxes, Sprite.Height);
 
             switch (HurtMode)
             {
                 case HurtModes.HeadBonk:
                     Add(bossCollision = new PlayerCollider(OnPlayerBounce,
-                        GetMainOrDefault(hitboxMetadata.bounceHitboxes, 6f)));
+                        Bouncebox = GetMainOrDefault(hitboxMetadata.bounceHitboxes, 6f)));
                     break;
                 case HurtModes.SidekickAttack:
                     Add(bossCollision = new SidekickTarget(OnSidekickLaser, bossID,
-                        GetMainOrDefault(hitboxMetadata.targetCircles, null)));
+                        Target = GetMainOrDefault(hitboxMetadata.targetCircles, null)));
                     break;
                 case HurtModes.PlayerDash:
                     Add(bossCollision = new PlayerCollider(OnPlayerDash, Hurtbox));
@@ -150,13 +156,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Collider GetMainOrDefault(Dictionary<string, Collider> dictionary, float? value)
         {
-            if (dictionary == null || dictionary.Count == 0)
+            return GetTagOrDefault(dictionary, "main", value);
+        }
+
+        private Collider GetTagOrDefault(Dictionary<string, Collider> dictionary, string key, float? value)
+        {
+            if (dictionary == null || dictionary.Count == 0 || !dictionary.ContainsKey(key))
             {
                 if (value == null)
                     return new Circle(4f);
                 return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
             }
-            return (dictionary.Count > 1) ? dictionary["main"] : dictionary.Values.First();
+            return (dictionary.Count > 1) ? dictionary[key] : dictionary.Values.First();
         }
 
         #region Collision Methods
@@ -365,22 +376,34 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void ChangeHitboxOption(string tag)
         {
-            base.Collider = hitboxMetadata.baseHitboxes?[tag];
+            base.Collider = GetTagOrDefault(hitboxMetadata.baseHitboxes, tag, Sprite.Height);
         }
 
         public void ChangeHurtboxOption(string tag)
         {
-            (bossCollision as PlayerCollider).Collider = hitboxMetadata.baseHurtboxes?[tag];
+            Hurtbox = GetTagOrDefault(hitboxMetadata.baseHurtboxes, tag, Sprite.Height);
+            if (bossCollision is PlayerCollider collider)
+            {
+                collider.Collider = Hurtbox;
+            }
         }
 
         public void ChangeBounceboxOption(string tag)
         {
-            (bossCollision as PlayerCollider).Collider = hitboxMetadata.bounceHitboxes?[tag];
+            Bouncebox = GetTagOrDefault(hitboxMetadata.bounceHitboxes, tag, 6f);
+            if (bossCollision is PlayerCollider collider)
+            {
+                collider.Collider = Bouncebox;
+            }
         }
 
         public void ChangeTargetOption(string tag)
         {
-            (bossCollision as SidekickTarget).Collider = hitboxMetadata.targetCircles?[tag];
+            Target = GetTagOrDefault(hitboxMetadata.targetCircles, tag, null);
+            if (bossCollision is SidekickTarget target)
+            {
+                target.Collider = Target;
+            }
         }
 
         public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
