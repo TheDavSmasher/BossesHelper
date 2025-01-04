@@ -1247,11 +1247,11 @@ end
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
----@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
+---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
-function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, funcOnPlayer, startCollidable, xScale, yScale)
+function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
 end
 
@@ -1261,11 +1261,11 @@ end
 ---@param spriteName string The sprite the entity will use.
 ---@param gravMult? number The multiplier to the Gravity constant the Actor should use.
 ---@param maxFall? number The fastest the Boss will fall naturally due to gravity.
----@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
+---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
-function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, funcOnPlayer, startCollidable, xScale, yScale)
+function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, funcOnPlayer,  xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
