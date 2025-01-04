@@ -24,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Dictionary<string, Collider> targetCircles = targetCircles;
         }
 
-        private readonly Sprite Sprite;
+        public Sprite Sprite { get; private set; }
 
         private HitboxMedatata hitboxMetadata;
 
@@ -53,7 +53,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly float bossHitCooldownBase;
 
-        private float bossHitCooldown;
+        public float BossHitCooldown { get; private set; }
 
         private int facing;
 
@@ -99,7 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             freezeSidekickOnAttack = data.Bool("sidekickFreeze");
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
-            bossHitCooldown = 0f;
+            BossHitCooldown = 0f;
             storedObjects = new Dictionary<string, object>();
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));
@@ -108,8 +108,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             onCollideH = OnCollideH;
             onCollideV = OnCollideV;
             facing = MirrorSprite ? -1 : 1;
-            if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite))
+            if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite sprite))
             {
+                Sprite = sprite;
                 Sprite.Scale = Vector2.One;
                 SetHitboxesAndColliders(data.Attr("bossID"));
                 Add(Sprite);
@@ -183,7 +184,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void OnPlayerBounce(Player player)
         {
             OnDamage(BossFunctions.DamageSource.Bounce);
-            if (bossHitCooldown <= 0)
+            if (BossHitCooldown <= 0)
             {
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
@@ -206,7 +207,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnDamage(BossFunctions.DamageSource source)
         {
-            if (bossHitCooldown <= 0)
+            if (BossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
                 Add(bossFunctions.OnDamageCoroutine(source));
@@ -249,9 +250,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 facing *= -1;
             }
-            if (bossHitCooldown > 0)
+            if (BossHitCooldown > 0)
             {
-                bossHitCooldown -= Engine.DeltaTime;
+                BossHitCooldown -= Engine.DeltaTime;
             }
             base.Update();
             //Move based on speed
@@ -371,12 +372,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void SetBossHitCooldown(float timer)
         {
-            bossHitCooldown = timer;
+            BossHitCooldown = timer;
         }
 
         public void ResetBossHitCooldown()
         {
-            bossHitCooldown = bossHitCooldownBase;
+            BossHitCooldown = bossHitCooldownBase;
         }
 
         public void ChangeHitboxOption(string tag)
