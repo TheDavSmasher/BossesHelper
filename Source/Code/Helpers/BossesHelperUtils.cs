@@ -49,7 +49,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static bool TryCreate(this SpriteBank spriteBank, string id, out Sprite sprite)
         {
-            sprite = new Sprite();
             try
             {
                 sprite = spriteBank.SpriteData[id].Create();
@@ -57,6 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             catch (Exception)
             {
+                sprite = new Sprite();
                 return false;
             }
         }
