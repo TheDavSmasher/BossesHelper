@@ -47,6 +47,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             sprite.Play(anim);
             return true;
         }
+
+        public static bool TryCreate(this SpriteBank spriteBank, string id, out Sprite sprite)
+        {
+            sprite = null;
+            try
+            {
+                sprite = spriteBank.SpriteData[id].Create();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Health Displays
