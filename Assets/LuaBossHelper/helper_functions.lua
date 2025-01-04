@@ -1240,7 +1240,7 @@ function helpers.getColliderList(...)
 end
 
 local function killPlayer(entity, player)
-    helpers.die(player.Position - entity.Position, false, true)
+    helpers.die(player.Position - entity.Position)
 end
 
 ---Create and return a basic entity to use in attacks.
