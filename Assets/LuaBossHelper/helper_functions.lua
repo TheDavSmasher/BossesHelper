@@ -59,54 +59,6 @@ local function getClassAndField(full)
     return class, field
 end
 
-local function getEaserByName(name, invert)
-    local ease = require("#monocle.ease")
-    local typ = type(name)
-    if (typ ~= "string") then
-        return nil
-    end
-    local value = string.lower(name)
-    local easers = {
-        linear = ease.Linear,
-        sinein = ease.SineIn,
-        sineout = ease.SineOut,
-        sineinout = ease.SineInOut,
-        quadin = ease.QuadIn,
-        quadout = ease.QuadOut,
-        quadinout = ease.QuadInOut,
-        cubein = ease.CubeIn,
-        cubeout = ease.CubeOut,
-        cubeinout = ease.CubeInOut,
-        quintin = ease.QuintIn,
-        quintout = ease.QuintOut,
-        QuintInOut = ease.QuintInOut,
-        expoin = ease.ExpoIn,
-        expoout = ease.ExpoOut,
-        expoinout = ease.ExpoInOut,
-        backin = ease.BackIn,
-        backout = ease.BackOut,
-        backinout = ease.BackInOut,
-        bigbackin = ease.BigBackIn,
-        bigbackout = ease.BigBackOut,
-        bigbackinout = ease.BigBackInOut,
-        elasticin = ease.ElasticIn,
-        elasticout = ease.ElasticOut,
-        elasticinout = ease.ElasticInOut,
-        bouncein = ease.BounceIn,
-        bounceout = ease.BounceOut,
-        bounceinout = ease.BounceInOut,
-        default = nil
-    }
-    if easers[value] then
-        if invert or false then
-            return ease.Invert(easers[value])
-        end
-        return easers[value]
-    else
-        return easers["default"]
-    end
-end
-
 --- Set the prefix for getting Celeste classes.
 -- By default this is "Celeste.".
 -- @string prefix The new prefix.
@@ -941,6 +893,54 @@ end
 ---@alias Action Action A C# Action, a delegate void object.
 ---@alias Func Func A C# Func, a delegate object object.
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
+
+local function getEaserByName(name, invert)
+    local ease = require("#monocle.ease")
+    local typ = type(name)
+    if (typ ~= "string") then
+        return nil
+    end
+    local value = string.lower(name)
+    local easers = {
+        linear = ease.Linear,
+        sinein = ease.SineIn,
+        sineout = ease.SineOut,
+        sineinout = ease.SineInOut,
+        quadin = ease.QuadIn,
+        quadout = ease.QuadOut,
+        quadinout = ease.QuadInOut,
+        cubein = ease.CubeIn,
+        cubeout = ease.CubeOut,
+        cubeinout = ease.CubeInOut,
+        quintin = ease.QuintIn,
+        quintout = ease.QuintOut,
+        QuintInOut = ease.QuintInOut,
+        expoin = ease.ExpoIn,
+        expoout = ease.ExpoOut,
+        expoinout = ease.ExpoInOut,
+        backin = ease.BackIn,
+        backout = ease.BackOut,
+        backinout = ease.BackInOut,
+        bigbackin = ease.BigBackIn,
+        bigbackout = ease.BigBackOut,
+        bigbackinout = ease.BigBackInOut,
+        elasticin = ease.ElasticIn,
+        elasticout = ease.ElasticOut,
+        elasticinout = ease.ElasticInOut,
+        bouncein = ease.BounceIn,
+        bounceout = ease.BounceOut,
+        bounceinout = ease.BounceInOut,
+        default = nil
+    }
+    if easers[value] then
+        if invert or false then
+            return ease.Invert(easers[value])
+        end
+        return easers[value]
+    else
+        return easers["default"]
+    end
+end
 
 --#region Delegates
 
