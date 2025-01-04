@@ -27,12 +27,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
         {
-            if (!string.IsNullOrEmpty(anim) && sprite.Has(anim))
+            if (!sprite.TryPlay(anim))
             {
                 Action<string> onFrameChange = sprite.OnFrameChange;
                 bool singleLoop = false;
                 sprite.OnLastFrame = (string _) => singleLoop = true;
-                sprite.Play(anim);
                 while (!singleLoop)
                 {
                     yield return null;
