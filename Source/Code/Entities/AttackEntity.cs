@@ -16,9 +16,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Collider = attackbox;
             base.Collidable = startCollidable;
-            sprite = GFX.SpriteBank.Create(spriteName);
-            sprite.Scale = new Vector2(xScale, yScale);
-            Add(sprite);
+            if (GFX.SpriteBank.TryCreate(spriteName, out sprite))
+            {
+                sprite.Scale = new Vector2(xScale, yScale);
+                Add(sprite);
+            }
             onCollide = onPlayer;
             Add(new PlayerCollider(OnPlayer));
         }

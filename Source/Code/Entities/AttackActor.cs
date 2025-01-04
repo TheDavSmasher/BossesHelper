@@ -35,9 +35,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Collidable = startCollidable;
             effectiveGravity = gravMult * Gravity;
             this.maxFall = maxFall;
-            sprite = GFX.SpriteBank.Create(spriteName);
-            sprite.Scale = new Vector2(xScale, yScale);
-            Add(sprite);
+            if (GFX.SpriteBank.TryCreate(spriteName, out sprite))
+            {
+                sprite.Scale = new Vector2(xScale, yScale);
+                Add(sprite);
+            }
             onCollideH = OnCollideH;
             onCollideV = OnCollideV;
             onCollide = onPlayer;

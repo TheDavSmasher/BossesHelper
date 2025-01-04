@@ -89,7 +89,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet(EntityData data, Vector2 offset, Func<int> health) : base(data.Position + offset)
         {
-            string SpriteName = data.Attr("bossSprite");
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
@@ -102,20 +101,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             storedObjects = new Dictionary<string, object>();
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));
-            if (!string.IsNullOrEmpty(SpriteName))
+            onCollideH = OnCollideH;
+            onCollideV = OnCollideV;
+            facing = MirrorSprite ? -1 : 1;
+            if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite))
             {
-                Sprite = GFX.SpriteBank.Create(SpriteName);
                 Sprite.Scale = Vector2.One;
                 SetHitboxesAndColliders(data.Attr("bossID"));
-                onCollideH = OnCollideH;
-                onCollideV = OnCollideV;
-                facing = MirrorSprite ? -1 : 1;
                 Add(Sprite);
                 PlayBossAnim("idle");
-                if (data.Bool("killOnContact"))
-                {
-                    Add(new PlayerCollider(KillOnContact));
-                }
+            }
+            if (data.Bool("killOnContact"))
+            {
+                Add(new PlayerCollider(KillOnContact));
             }
         }
 
@@ -264,8 +262,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
             }
             //Return Sprite Scale
-            Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
-            Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
+            if (Sprite != null)
+            {
+                Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
+                Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
+            }
         }
 
         private bool DynamicPositionOver_Quarter(float pos)

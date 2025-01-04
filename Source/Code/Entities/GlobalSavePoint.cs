@@ -45,10 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(Changer = new(entityData.Level, entityData.Nodes.First(), entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
             filepath = entityData.String("luaFile");
             string spriteName = entityData.String("savePointSprite");
-            if (!string.IsNullOrEmpty(spriteName))
-            {
-                Add(Sprite = GFX.SpriteBank.Create(spriteName));
-            }
+            GFX.SpriteBank.TryCreate(spriteName, out Sprite);
         }
 
         public override void Awake(Scene scene)
