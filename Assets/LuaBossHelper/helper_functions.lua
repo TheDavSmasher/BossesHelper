@@ -940,6 +940,7 @@ end
 ---@alias EntityData EntityData An Everest EntityData object.
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
 ---@alias Action Action A C# Action, a delegate void object.
+---@alias Func Func A C# Func, a delegate object object.
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 
 --- Attack Delegates
@@ -1416,6 +1417,13 @@ end
 ---@return Action Action The delegate that will call the function when invoked
 function helpers.functionToAction(func)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToAction(func)
+end
+
+---Return a Lua function as a C# delegate
+---@param func function Function to return as a delegate
+---@return Func Action The delegate that will call the function when invoked
+function helpers.functionToFunc(func)
+    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToFunc(func)
 end
 
 return helpers
