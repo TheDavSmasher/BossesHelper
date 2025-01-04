@@ -1147,23 +1147,26 @@ end
 ---Set the Boss' x speed to the given value, kept constant during the given time.
 ---@param value number The value to set the Boss' speed x component to.
 ---@param time number The time to hold the value for.
+---@return number time The time given from the Tween
 function helpers.setXSpeedDuring(value, time)
-    puppet:SetXSpeedDuring(value, time)
+    return puppet:SetXSpeedDuring(value, time)
 end
 
 ---Set the Boss' y speed to the given value, kept constant during the given time.
 ---@param value number The value to set the Boss' speed y component to.
 ---@param time number The time to hold the value for.
+---@return number time The time given from the Tween
 function helpers.setYSpeedDuring(value, time)
-    puppet:SetYSpeedDuring(value, time)
+    return puppet:SetYSpeedDuring(value, time)
 end
 
 ---Set the Boss' speed to the given values, kept constant during the given time.
 ---@param x number The value to set the Boss' speed x component to.
 ---@param y number The value to set the Boss' speed y component to.
 ---@param time number The time to hold the values for.
+---@return number time The time given from the Tween
 function helpers.setSpeedDuring(x, y, time)
-    puppet:SetSpeedDuring(x, y, time)
+    return puppet:SetSpeedDuring(x, y, time)
 end
 
 ---Plan an animation on the Boss' given sprite
@@ -1326,8 +1329,9 @@ end
 ---@param time number The time the Boss will take to reach the target.
 ---@param easer? string|Easer The easer to apply to the motion. Defaults to nil.
 ---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    puppet:PositionTween(target, time, getEaserByName(easer, invert) or easer)
+    return puppet:PositionTween(target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed.
@@ -1336,8 +1340,9 @@ end
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
 ---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
-    puppet:SpeedXTween(start, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedXTween(start, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' y speed.
@@ -1346,8 +1351,9 @@ end
 ---@param time number The time the Boss will take to reach the target y speed.
 ---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
 ---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
-    puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current x speed value.
@@ -1355,8 +1361,9 @@ end
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
 ---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
-    puppet:SpeedXTween(puppet.Speed.X, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedXTween(puppet.Speed.X, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
@@ -1364,8 +1371,9 @@ end
 ---@param time number The time the Boss will take to reach the target y speed.
 ---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
 ---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
-    puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
 end
 
 ---Store any object within the Boss under a specific key, to be retreived later.

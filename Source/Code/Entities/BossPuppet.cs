@@ -328,20 +328,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Speed.X = x;
         }
 
-        public void SetXSpeedDuring(float speed, float time)
+        public float SetXSpeedDuring(float speed, float time)
         {
             Add(new Coroutine(KeepXSpeed(speed, time)));
+            return time;
         }
 
-        public void SetYSpeedDuring(float speed, float time)
+        public float SetYSpeedDuring(float speed, float time)
         {
             Add(new Coroutine(KeepYSpeed(speed, time)));
+            return time;
         }
 
-        public void SetSpeedDuring(float x, float y, float time)
+        public float SetSpeedDuring(float x, float y, float time)
         {
             SetXSpeedDuring(x, time);
             SetYSpeedDuring(y, time);
+            return time;
         }
 
         private IEnumerator KeepXSpeed(float speed, float time)
@@ -408,12 +411,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
+        public float PositionTween(Vector2 target, float time, Ease.Easer easer = null)
         {
             Tween.Position(this, target, time, easer);
+            return time;
         }
 
-        public void SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
+        public float SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
         {
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
             tween.OnUpdate = delegate (Tween t)
@@ -421,9 +425,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.X = start + (target - start) * t.Eased;
             };
             Add(tween);
+            return time;
         }
 
-        public void SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
+        public float SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
         {
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
             tween.OnUpdate = delegate (Tween t)
@@ -431,6 +436,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Speed.Y = start + (target - start) * t.Eased;
             };
             Add(tween);
+            return time;
         }
 
         public void StoreObject(string key, object toStore)
