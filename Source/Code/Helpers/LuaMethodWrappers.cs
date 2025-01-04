@@ -11,26 +11,30 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     internal static class LuaMethodWrappers
     {
+        private static Tracker Tracker => Engine.Scene.Tracker;
+
+        private static EntityList Entities => Engine.Scene.Entities;
+
         #region Method Infos
-        private static readonly MethodInfo getEntityMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetEntity");
+        private static readonly MethodInfo getEntityMethodInfo = Tracker.GetType().GetMethod("GetEntity");
 
-        private static readonly MethodInfo getEntitiesMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetEntities");
+        private static readonly MethodInfo getEntitiesMethodInfo = Tracker.GetType().GetMethod("GetEntities");
 
-        private static readonly MethodInfo entitiesFindFirstMethodInfo = Engine.Scene.Entities.GetType().GetMethod("FindFirst");
+        private static readonly MethodInfo entitiesFindFirstMethodInfo = Entities.GetType().GetMethod("FindFirst");
 
-        private static readonly MethodInfo entitiesFindAll = Engine.Scene.Entities.GetType().GetMethod("FindAll");
+        private static readonly MethodInfo entitiesFindAll = Entities.GetType().GetMethod("FindAll");
 
 
-        private static readonly MethodInfo getComponentMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetComponent");
+        private static readonly MethodInfo getComponentMethodInfo = Tracker.GetType().GetMethod("GetComponent");
 
-        private static readonly MethodInfo getComponentsMethodInfo = Engine.Scene.Tracker.GetType().GetMethod("GetComponents");
+        private static readonly MethodInfo getComponentsMethodInfo = Tracker.GetType().GetMethod("GetComponents");
 
         private static readonly MethodInfo componentsGetFirst = typeof(ComponentList).GetMethod("Get");
 
         private static readonly MethodInfo componentsGetAll = typeof(ComponentList).GetMethod("GetAll");
 
 
-        private static readonly MethodInfo entityIsTracked = Engine.Scene.Tracker.GetType().GetMethod("IsEntityTracked");
+        private static readonly MethodInfo entityIsTracked = Tracker.GetType().GetMethod("IsEntityTracked");
         #endregion
 
         public static Type GetTypeFromString(string name, string prefix = "Celeste.")
@@ -53,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(getEntityMethodInfo, type, Engine.Scene.Tracker);
+                return CallGenericOn(getEntityMethodInfo, type, Tracker);
             }
             catch (ArgumentNullException)
             {
@@ -79,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(getEntitiesMethodInfo, type, Engine.Scene.Tracker) as IList);
+                return LuaBossHelper.ListToLuaTable(CallGenericOn(getEntitiesMethodInfo, type, Tracker) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -105,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(entitiesFindFirstMethodInfo, type, Engine.Scene.Entities);
+                return CallGenericOn(entitiesFindFirstMethodInfo, type, Entities);
             }
             catch (ArgumentNullException)
             {
@@ -127,7 +131,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(entitiesFindAll, type, Engine.Scene.Entities) as IList);
+                return LuaBossHelper.ListToLuaTable(CallGenericOn(entitiesFindAll, type, Entities) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -151,7 +155,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(getComponentMethodInfo, type, Engine.Scene.Tracker);
+                return CallGenericOn(getComponentMethodInfo, type, Tracker);
             }
             catch (ArgumentNullException)
             {
@@ -177,7 +181,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(getComponentsMethodInfo, type, Engine.Scene.Tracker) as IList);
+                return LuaBossHelper.ListToLuaTable(CallGenericOn(getComponentsMethodInfo, type, Tracker) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -199,16 +203,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return GetFirstComponentOnType(GetTypeFromString(name, prefix), GetTypeFromString(entity, entityPre));
         }
 
-        public static object GetFirstComponentOnType(Type type, Type entity)
+        public static object GetFirstComponentOnType(Type type, Type entityType)
         {
             try
             {
-                IList entities = ((bool) CallGenericOn(entityIsTracked, entity, Engine.Scene.Tracker)
-                    ? CallGenericOn(getEntitiesMethodInfo, entity, Engine.Scene.Tracker)
-                    : CallGenericOn(entitiesFindAll, entity, Engine.Scene.Entities)) as IList;
-                foreach (Entity entityEntity in entities)
+                IList entities = ((bool) CallGenericOn(entityIsTracked, entityType, Tracker)
+                    ? CallGenericOn(getEntitiesMethodInfo, entityType, Tracker)
+                    : CallGenericOn(entitiesFindAll, entityType, Entities)) as IList;
+                foreach (Entity entity in entities)
                 {
-                    if (GetComponentFromEntity(entityEntity, type) is object res)
+                    if (GetComponentFromEntity(entity, type) is object res)
                         return res;
                 }
             }
@@ -228,18 +232,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return GetAllComponentsOnType(GetTypeFromString(name, prefix), GetTypeFromString(entity, entityPre));
         }
 
-        public static LuaTable GetAllComponentsOnType(Type type, Type entity)
+        public static LuaTable GetAllComponentsOnType(Type type, Type entityType)
         {
             try
             {
-                IList entities = ((bool)CallGenericOn(entityIsTracked, entity, Engine.Scene.Tracker)
-                    ? CallGenericOn(getEntitiesMethodInfo, entity, Engine.Scene.Tracker)
-                    : CallGenericOn(entitiesFindAll, entity, Engine.Scene.Entities)) as IList;
+                IList entities = ((bool)CallGenericOn(entityIsTracked, entityType, Tracker)
+                    ? CallGenericOn(getEntitiesMethodInfo, entityType, Tracker)
+                    : CallGenericOn(entitiesFindAll, entityType, Entities)) as IList;
                 LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
-                foreach (Entity entityEntity in entities)
+                foreach (Entity entity in entities)
                 {
-                    foreach (object item in GetComponentsFromEntity(entityEntity, type))
+                    foreach (object item in GetComponentsFromEntity(entity, type))
                     {
                         luaTable[num++] = item;
                     }
@@ -266,9 +270,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                foreach (Entity entityEntity in Engine.Scene.Entities)
+                foreach (Entity entity in Entities)
                 {
-                    if (GetComponentFromEntity(entityEntity, type) is object res)
+                    if (GetComponentFromEntity(entity, type) is object res)
                         return res;
                 }
             }
@@ -294,7 +298,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
-                foreach (Entity entity in Engine.Scene.Entities)
+                foreach (Entity entity in Entities)
                 {
                     foreach (object item in GetComponentsFromEntity(entity, type))
                     {
