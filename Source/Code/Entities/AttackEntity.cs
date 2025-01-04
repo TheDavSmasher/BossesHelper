@@ -33,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnPlayer(Player player)
         {
-            onCollide.Call(player, this);
+            onCollide.Call(this, player);
         }
 
         public void SetCollisionActive(bool active)

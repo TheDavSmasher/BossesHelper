@@ -1239,17 +1239,15 @@ function helpers.getColliderList(...)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
 end
 
-local function killPlayer(player, entity)
-    if player and not player.Dead then
-        player:Die(vector2(player.Position - entity.Position), false, true)
-    end
+local function killPlayer(entity, player)
+    helpers.die(player.Position - entity.Position, false, true)
 end
 
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
----@param funcOnPlayer? fun(player, self) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
@@ -1263,7 +1261,7 @@ end
 ---@param spriteName string The sprite the entity will use.
 ---@param gravMult? number The multiplier to the Gravity constant the Actor should use.
 ---@param maxFall? number The fastest the Boss will fall naturally due to gravity.
----@param funcOnPlayer? fun(player, self) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
