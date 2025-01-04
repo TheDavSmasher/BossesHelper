@@ -87,6 +87,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string metadataPath;
 
+        public bool killOnContact;
+
         public BossPuppet(EntityData data, Vector2 offset, Func<int> health) : base(data.Position + offset)
         {
             DynamicFacing = data.Bool("dynamicFacing");
@@ -101,6 +103,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             storedObjects = new Dictionary<string, object>();
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));
+            killOnContact = data.Bool("killOnContact");
+            Add(new PlayerCollider(KillOnContact));
             onCollideH = OnCollideH;
             onCollideV = OnCollideV;
             facing = MirrorSprite ? -1 : 1;
@@ -110,10 +114,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 SetHitboxesAndColliders(data.Attr("bossID"));
                 Add(Sprite);
                 PlayBossAnim("idle");
-            }
-            if (data.Bool("killOnContact"))
-            {
-                Add(new PlayerCollider(KillOnContact));
             }
         }
 
@@ -171,7 +171,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         #region Collision Methods
         private void KillOnContact(Player player)
         {
-            player.Die((player.Position - Position).SafeNormalize());
+            if (killOnContact)
+                player.Die((player.Position - Position).SafeNormalize());
         }
 
         private void OnSidekickLaser()
