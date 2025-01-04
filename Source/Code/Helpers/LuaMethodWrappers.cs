@@ -198,17 +198,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                MethodInfo entityComponent = componentsGetFirst.MakeGenericMethod(type);
                 IList entities = ((bool)entityIsTracked.MakeGenericMethod(entity).Invoke(Engine.Scene.Tracker, null)
                     ? getEntitiesMethodInfo.MakeGenericMethod(entity).Invoke(Engine.Scene.Tracker, null)
                     : entitiesFindAll.MakeGenericMethod(entity).Invoke(Engine.Scene.Entities, null)) as IList;
-                foreach (object entityEntity in entities)
+                foreach (Entity entityEntity in entities)
                 {
-                    object res = entityComponent.Invoke((entityEntity as Entity).Components, null);
-                    if (res != null)
-                    {
+                    if (GetComponentFromEntity(entityEntity, type) is object res)
                         return res;
-                    }
                 }
             }
             catch (ArgumentNullException)
@@ -237,15 +233,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     : entitiesFindAll.MakeGenericMethod(entity).Invoke(Engine.Scene.Entities, null)) as IList;
                 LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
-                foreach (object entityEntity in entities)
+                foreach (Entity entityEntity in entities)
                 {
-                    IList list = entityComponents.Invoke((entityEntity as Entity).Components, null) as IList;
-                    if (list.Count > 0)
+                    foreach (object item in GetComponentsFromEntity(entityEntity, type))
                     {
-                        foreach (object item in list)
-                        {
-                            luaTable[num++] = item;
-                        }
+                        luaTable[num++] = item;
                     }
                 }
                 return luaTable;
@@ -270,14 +262,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                MethodInfo entityComponent = componentsGetFirst.MakeGenericMethod(type);
-                foreach (object entityEntity in Engine.Scene.Entities)
+                foreach (Entity entityEntity in Engine.Scene.Entities)
                 {
-                    object res = entityComponent.Invoke((entityEntity as Entity).Components, null);
-                    if (res != null)
-                    {
+                    if (GetComponentFromEntity(entityEntity, type) is object res)
                         return res;
-                    }
                 }
             }
             catch (ArgumentNullException)
@@ -300,21 +288,60 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                MethodInfo entityComponents = componentsGetAll.MakeGenericMethod(type);
                 LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
                 foreach (Entity entity in Engine.Scene.Entities)
                 {
-                    IList list = entityComponents.Invoke(entity.Components, null) as IList;
-                    if (list.Count > 0)
+                    foreach (object item in GetComponentsFromEntity(entity, type))
                     {
-                        foreach (object item in list)
-                        {
-                            luaTable[num++] = item;
-                        }
+                        luaTable[num++] = item;
                     }
                 }
                 return luaTable;
+            }
+            catch (ArgumentNullException)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get components: Requested type does not exist");
+            }
+            catch (Exception arg)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get components: {arg}");
+            }
+            return null;
+        }
+
+        public static object GetComponentFromEntity(Entity entity, string name, string prefix = "Celeste.")
+        {
+            return GetComponentFromEntity(entity, GetTypeFromString(name, prefix));
+        }
+
+        public static object GetComponentFromEntity(Entity entity, Type type)
+        {
+            try
+            {
+                return componentsGetFirst.MakeGenericMethod(type).Invoke(entity.Components, null);
+            }
+            catch (ArgumentNullException)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
+            }
+            catch (Exception arg)
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
+            }
+            return null;
+        }
+
+        public static LuaTable GetComponentsFromEntity(Entity entity, string name, string prefix = "Celeste.")
+        {
+            return GetComponentsFromEntity(entity, GetTypeFromString(name, prefix));
+        }
+
+        public static LuaTable GetComponentsFromEntity(Entity entity, Type type)
+        {
+            try
+            {
+                return LuaBossHelper.ListToLuaTable(componentsGetAll.MakeGenericMethod(type).Invoke(entity.Components, null) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -334,19 +361,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static bool EntityHasComponent(Entity entity, Type type)
         {
-            try
-            {
-                return componentsGetFirst.MakeGenericMethod(type).Invoke(entity.Components, null) != null;
-            }
-            catch (ArgumentNullException)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested type does not exist");
-            }
-            catch (Exception arg)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
-            }
-            return false;
+            return GetComponentFromEntity(entity, type) != null;
         }
         #endregion
 
