@@ -1169,6 +1169,27 @@ function helpers.setSpeedDuring(x, y, time)
     return puppet:SetSpeedDuring(x, y, time)
 end
 
+---Keep the Boss' current x speed constant during the given time.
+---@param time number The time to hold the value for.
+---@return number time The time given from the Tween
+function helpers.keepXSpeedDuring(time)
+    return puppet:SetXSpeedDuring(puppet.Speed.X, time)
+end
+
+---Keep the Boss' current y speed constant during the given time.
+---@param time number The time to hold the value for.
+---@return number time The time given from the Tween
+function helpers.keepYSpeedDuring(time)
+    return puppet:SetYSpeedDuring(puppet.Speed.Y, time)
+end
+
+---Keep the Boss' current speed constant during the given time.
+---@param time number The time to hold the values for.
+---@return number time The time given from the Tween
+function helpers.keepSpeedDuring(time)
+    return puppet:SetSpeedDuring(puppet.Speed.X, puppet.Speed.Y, time)
+end
+
 ---Plan an animation on the Boss' given sprite
 ---@param anim string The animation to play
 function helpers.playPuppetAnim(anim)
