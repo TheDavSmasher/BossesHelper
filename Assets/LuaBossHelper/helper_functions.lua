@@ -1379,7 +1379,7 @@ end
 
 ---Return an item that was stored within the Boss by key.
 ---@param key string The key the object is stored under.
----@return unknown|nil object The object stored, or nil if key is not found.
+---@return nil|any object The object stored, or nil if key is not found.
 function helpers.getStoredObjectFromBoss(key)
     return puppet:GetStoredObject(key)
 end
@@ -1390,10 +1390,22 @@ function helpers.deleteStoredObjectFromBoss(key)
     puppet:DeleteStoredObject(key)
 end
 
+---Wrap a function in another function to call the inner one with parameters but the outer one without.
+---@param func function The function to wrap.
+---@param ... any The parameters to call func with.
+---@return function function Function that will wrap the passed function with the arguements passed.
+local function callFunc(func, ...)
+    local args = {...}
+    return function ()
+        func(table.unpack(args))
+    end
+end
+
 ---Add a function that will run in the background.
----@param func function The function that will run in the background. Will run to completion or loop as defined.
-function helpers.addConstantBackgroundCoroutine(func)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, func)
+---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
+---@param ... any Parameters to pass to the wrapped function, if any
+function helpers.addConstantBackgroundCoroutine(func, ...)
+    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, select("#", ...) > 0 and callFunc(func, ...) or func)
 end
 
 ---Get the Player's current health value on the active Health System
