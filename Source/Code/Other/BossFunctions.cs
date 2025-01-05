@@ -39,14 +39,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "boss", delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filepath, "getInterruptData", dict);
-            if (array != null)
+            if (LoadLuaFile(filepath, "getInterruptData", dict) is LuaFunction[] array)
             {
-                LuaFunction OnHitLua = array.ElementAtOrDefault(0);
-                OnContactLua = array.ElementAtOrDefault(1) ?? OnHitLua;
-                OnDashLua = array.ElementAtOrDefault(2) ?? OnHitLua;
-                OnBounceLua = array.ElementAtOrDefault(3) ?? OnHitLua;
-                OnLaserLua = array.ElementAtOrDefault(4) ?? OnHitLua;
+                LuaFunction OnHitLua = array.FirstOrDefault();
+                OnContactLua = array.ElementAtOrDefault(1, OnHitLua);
+                OnDashLua = array.ElementAtOrDefault(2, OnHitLua);
+                OnBounceLua = array.ElementAtOrDefault(3, OnHitLua);
+                OnLaserLua = array.ElementAtOrDefault(4, OnHitLua);
                 array.ElementAtOrDefault(5)?.Call();
             }
         }

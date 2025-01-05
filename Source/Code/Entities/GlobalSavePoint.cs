@@ -35,8 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 { "spawnPoint", Changer.spawnPoint },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filename, "getSavePointData", dict);
-            onInteract = array?.ElementAtOrDefault(0);
+            onInteract = LoadLuaFile(filename, "getSavePointData", dict)?.ElementAtOrDefault(0);
         }
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset)

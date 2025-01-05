@@ -31,8 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filepath, "getCutsceneData", dict);
-            if (array != null)
+            if (LoadLuaFile(filepath, "getCutsceneData", dict) is LuaFunction[] array)
             {
                 Cutscene = array.ElementAtOrDefault(0)?.ToIEnumerator();
                 endMethod = array.ElementAtOrDefault(1);
