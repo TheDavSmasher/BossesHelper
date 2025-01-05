@@ -13,8 +13,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static void ReadPatternFileInto(string filepath, ref List<BossPattern> targetOut, Vector2 offset)
+        public static void ReadPatternFileInto(string filepath, out List<BossPattern> targetOut, Vector2 offset)
         {
+            targetOut = new List<BossPattern>();
             string path = CleanPath(filepath, ".xml");
             if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
@@ -202,9 +203,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static void ReadEventFilesInto(string path, ref Dictionary<string, BossEvent> events, string bossId,
+        public static void ReadEventFilesInto(string path, out Dictionary<string, BossEvent> events, string bossId,
             Player playerRef, BossPuppet puppetRef, BossController.CustceneDelegates custceneDelegates)
         {
+            events = new Dictionary<string, BossEvent>();
             if (!Everest.Content.TryGet(path, out ModAsset eventFiles))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
@@ -218,8 +220,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadAttackFilesInto(string path, ref Dictionary<string, BossAttack> attacks, string bossId, BossController.AttackDelegates delegates)
+        public static void ReadAttackFilesInto(string path, out Dictionary<string, BossAttack> attacks, string bossId,
+            Player playerRef, BossPuppet puppetRef, BossController.AttackDelegates delegates)
         {
+            attacks = new Dictionary<string, BossAttack>();
             if (!Everest.Content.TryGet(path, out ModAsset attackFiles))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
@@ -228,12 +232,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             foreach (ModAsset attackFile in attackFiles.Children)
             {
                 if(!attacks.TryAdd(attackFile.PathVirtual.Substring(path.Length + 1),
-                    new BossAttack(attackFile.PathVirtual, bossId, delegates)))
+                    new BossAttack(attackFile.PathVirtual, bossId, playerRef, puppetRef, delegates)))
                     Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.");
             }
         }
 
-        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, BossController.OnHitDelegates delegates)
+        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions, string bossId, 
+            Player playerRef, BossPuppet puppetRef, BossController.OnHitDelegates delegates)
         {
             string path = CleanPath(filepath, ".lua");
             if (!Everest.Content.TryGet(path, out ModAsset onHitFile))
@@ -242,7 +247,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 functions = null;
                 return;
             }
-            functions = new BossFunctions(onHitFile.PathVirtual, bossId, delegates);
+            functions = new BossFunctions(onHitFile.PathVirtual, bossId, playerRef, puppetRef, delegates);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
