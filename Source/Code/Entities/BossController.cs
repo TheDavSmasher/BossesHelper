@@ -269,7 +269,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     loop++;
                     currentAction = 0;
                 }
-                if (loop >= pattern.MinRandomIter && (loop >= pattern.IterationCount || random.Next() % 2 == 1))
+                if (loop > pattern.MinRandomIter && (loop > pattern.IterationCount || random.Next() % 2 == 1))
                 {
                     if (pattern.GoToPattern is int next)
                         StartAttackPattern(next);
