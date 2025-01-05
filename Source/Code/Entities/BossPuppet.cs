@@ -302,16 +302,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         #region Lua Helper Functions
-        public void EnableCollisions()
-        {
-            base.Collidable = true;
-        }
-
-        public void DisableCollisions()
-        {
-            base.Collidable = false;
-        }
-
         public void SetGravityMult(float mult)
         {
             effectiveGravity = Gravity * mult;

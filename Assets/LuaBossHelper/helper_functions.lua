@@ -1193,12 +1193,12 @@ end
 
 --- Enable the Boss' Collision checks, including collisions with solids.
 function helpers.enableCollisions()
-    puppet:EnableCollisions()
+    puppet.Collidable = true
 end
 
 --- Disable the Boss' Collision checks, including collisions with solids.
 function helpers.disableCollisions()
-    puppet:DisableCollisions()
+    puppet.Collidable = false
 end
 
 ---Set the Boss' hit cooldown to the given value
