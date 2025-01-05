@@ -197,17 +197,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    if (Patterns[currentPatternIndex].GoToPattern == null)
-                    {
-                        StartNextAttackPattern();
-                    }
+                    if (Patterns[currentPatternIndex].GoToPattern is int next)
+                        StartAttackPattern(next);
                     else
-                    {
-                        StartAttackPattern((int)Patterns[currentPatternIndex].GoToPattern);
+                        StartNextAttackPattern();
                     }
                 }
             }
-        }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
@@ -252,12 +248,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified event file.");
                 }
-                if (pattern.GoToPattern == null)
-                {
+                if (pattern.GoToPattern is int next)
+                    StartAttackPattern(next);
+                else
                     StartNextAttackPattern();
+                yield return null;
                 }
-                StartAttackPattern((int)pattern.GoToPattern);
-            }
             int currentAction = 0;
             //Random Pattern
             if (pattern.RandomPattern)
@@ -271,9 +267,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     if (pattern.IterationCount == null) continue;
                     if (currentAction > pattern.MinRandomIter && (currentAction > pattern.IterationCount || random.Next() % 2 == 1))
                     {
-                        if (pattern.GoToPattern == null)
+                        if (pattern.GoToPattern is int next)
+                            StartAttackPattern(next);
+                        else
                             StartNextAttackPattern();
-                        StartAttackPattern((int)pattern.GoToPattern);
+                        yield return null;
                     }
                 }
             }
@@ -295,9 +293,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 if (loop >= pattern.MinRandomIter && (loop >= pattern.IterationCount || random.Next() % 2 == 1))
                 {
-                    if (pattern.GoToPattern == null)
+                    if (pattern.GoToPattern is int next)
+                        StartAttackPattern(next);
+                    else
                         StartNextAttackPattern();
-                    StartAttackPattern((int)pattern.GoToPattern);
+                    yield return null;
                 }
 
                 yield return PerformMethod(pattern.StatePatternOrder[currentAction]);
