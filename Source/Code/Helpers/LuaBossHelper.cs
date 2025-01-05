@@ -77,14 +77,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             yield return null;
         }
 
-        public static Action<object[]> LuaFunctionToAction(LuaFunction func)
+        public delegate void ParamAction(params object[] args);
+
+        public static ParamAction LuaFunctionToAction(LuaFunction func)
         {
-            return (object[] args) => func.Call(args);
+            return (params object[] args) => func.Call(args);
         }
 
-        public static Func<object[], object> LuaFunctionToFunc(LuaFunction func)
+        public delegate object ParamFunc(params object[] args);
+
+        public static ParamFunc LuaFunctionToFunc(LuaFunction func)
         {
-            return (object[] args) => func.Call(args).First();
+            return (params object[] args) => func.Call(args).First();
         }
 
         public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
