@@ -10,28 +10,21 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossAttack
     {
-        private LuaFunction attackFunction;
+        private readonly LuaFunction attackFunction;
 
-        public readonly BossController.AttackDelegates Delegates;
-
-        private void LoadAttacks(string filename, string bossId, Player player, BossPuppet puppet)
+        public BossAttack(string filepath, string bossId, Player player,
+            BossPuppet puppet, BossController.AttackDelegates delegates)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
                 { "bossID", bossId },
                 { "puppet", puppet },
-                { "bossAttack", Delegates },
+                { "bossAttack", delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filename, "getAttackData", dict);
+            LuaFunction[] array = LoadLuaFile(filepath, "getAttackData", dict);
             attackFunction = array?.ElementAtOrDefault(0);
-        }
-
-        public BossAttack(string filepath, string bossId, BossController.AttackDelegates allDelegates)
-        {
-            Delegates = allDelegates;
-            LoadAttacks(filepath, bossId, allDelegates.playerRef, allDelegates.puppetRef);
         }
 
         public IEnumerator Coroutine()
