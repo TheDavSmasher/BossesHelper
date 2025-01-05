@@ -1288,8 +1288,11 @@ end
 ---@return function function Function that will wrap the passed function with the arguements passed.
 local function callFunc(func, ...)
     local args = {...}
+    if select("#", ...) < 1 then
+        return func
+    end
     return function ()
-        func(table.unpack(args))
+        return func(table.unpack(args))
     end
 end
 
@@ -1297,7 +1300,7 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, select("#", ...) > 0 and callFunc(func, ...) or func)
+    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, ...))
 end
 
 local function killPlayer(entity, player)
