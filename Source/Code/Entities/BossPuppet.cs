@@ -116,6 +116,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Add(Sprite);
                 PlayBossAnim("idle");
             }
+            else
+            {
+                Sprite = sprite;
+            }
         }
 
         internal void SetPuppetFunctions(BossFunctions functions)
