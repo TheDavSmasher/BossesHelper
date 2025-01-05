@@ -133,8 +133,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            //Logger.Log(LogLevel.Info, "Bosses Helper", "Controller Awake");
-            //Logger.Log(LogLevel.Info, "Stack Trace", new System.Diagnostics.StackTrace().ToString());
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndFunctions(player);
         }
