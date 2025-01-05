@@ -91,11 +91,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             static void InsertNewCollider(Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
             {
-                if (!baseOptions.ContainsKey(tag))
-                {
-                    baseOptions.Add(tag, newCollider);
+                if (!baseOptions.TryAdd(tag, newCollider))
                     return;
-                }
                 baseOptions[tag] = baseOptions[tag] is ColliderList list
                     ? new ColliderList([.. list.colliders, newCollider])
                     : new ColliderList(baseOptions[tag], newCollider);
@@ -215,8 +212,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             foreach (ModAsset eventFile in eventFiles.Children)
             {
-                events.Add(eventFile.PathVirtual.Substring(path.Length + 1),
-                    new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates));
+                if (!events.TryAdd(eventFile.PathVirtual.Substring(path.Length + 1),
+                    new BossEvent(eventFile.PathVirtual, bossId, playerRef, puppetRef, custceneDelegates)))
+                    Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.");
             }
         }
 
@@ -229,7 +227,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             foreach (ModAsset attackFile in attackFiles.Children)
             {
-                attacks.Add(attackFile.PathVirtual.Substring(path.Length + 1), new BossAttack(attackFile.PathVirtual, bossId, delegates));
+                if(!attacks.TryAdd(attackFile.PathVirtual.Substring(path.Length + 1),
+                    new BossAttack(attackFile.PathVirtual, bossId, delegates)))
+                    Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.");
             }
         }
 
