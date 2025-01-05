@@ -156,6 +156,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
+            //Logger.Log(LogLevel.Info, "Bosses Helper", "Controller Awake");
+            //Logger.Log(LogLevel.Info, "Stack Trace", new System.Diagnostics.StackTrace().ToString());
             Player player = scene.Tracker.GetEntity<Player>();
             PopulateAttacksEventsAndFunctions(player);
         }
@@ -201,9 +203,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         StartAttackPattern(next);
                     else
                         StartNextAttackPattern();
-                    }
                 }
             }
+        }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
@@ -239,10 +241,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene))
                 {
                     Level.Add(cutscene);
-                    while (!cutscene.Running)
+                    do
                     {
                         yield return null;
-                    }
+                    } 
+                    while (cutscene.Running) ;
                 }
                 else
                 {
@@ -253,7 +256,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 else
                     StartNextAttackPattern();
                 yield return null;
-                }
+            }
             int currentAction = 0;
             //Random Pattern
             if (pattern.RandomPattern)
