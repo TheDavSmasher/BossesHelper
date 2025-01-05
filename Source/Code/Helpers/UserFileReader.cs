@@ -257,7 +257,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for Save Point.");
                 return;
-                
             }
             savePoint.LoadFunction(file.PathVirtual, playerRef);
         }
