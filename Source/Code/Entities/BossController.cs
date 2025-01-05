@@ -15,13 +15,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private Random random;
 
-        public struct AttackDelegates(Player playerRef, BossPuppet puppetRef,
-            Action<Entity> addEntity, Action<Entity> destroyEntity, Action destroyAll)
+        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity> destroyEntity, Action destroyAll)
         {
-            public Player playerRef = playerRef;
-
-            public BossPuppet puppetRef = puppetRef;
-
             public Action<Entity> addEntity = addEntity;
 
             public Action<Entity> destroyEntity = destroyEntity;
@@ -29,14 +24,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action destroyAll = destroyAll;
         }
 
-        public struct OnHitDelegates(Player playerRef, BossPuppet puppetRef, Func<int> getHealth, Action<int> setHealth,
-            Action<int> decreaseHealth, Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern,
+        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
+            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern,
             Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action<bool> removeBoss)
         {
-            public Player playerRef = playerRef;
-
-            public BossPuppet puppetRef = puppetRef;
-
             public Func<int> getHealth = getHealth;
 
             public Action<int> setHealth = setHealth;
@@ -109,8 +100,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             functionsPath = data.Attr("functionsPath");
             patternsPath = data.Attr("patternsPath");
             isAttacking = false;
-            AllAttacks = new Dictionary<string, BossAttack>();
-            AllEvents = new Dictionary<string, BossEvent>();
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
@@ -152,12 +141,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndFunctions(Player player)
         {
-            UserFileReader.ReadAttackFilesInto(attacksPath, ref AllAttacks, BossID,
-                new(player, Puppet, AddEntity, DestroyEntity, DestroyAll));
-            UserFileReader.ReadEventFilesInto(eventsPath, ref AllEvents, BossID, player, Puppet,
+            UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, BossID, player, Puppet,
+                new(AddEntity, DestroyEntity, DestroyAll));
+            UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, BossID, player, Puppet,
                 new(RemoveBoss));
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID,
-                new(player, Puppet, () => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd,
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID, player, Puppet,
+                new(() => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd,
                 InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
             Puppet.SetPuppetFunctions(bossReactions);
         }
