@@ -137,14 +137,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level.Add(Puppet);
             PopulatePatterns((scene as Level).LevelOffset);
             int individualSeed = (new Crc32()).Get(id.Key);
-            if (BossesHelperModule.Instance.TASSeed > 0)
-            {
-                random = new Random(BossesHelperModule.Instance.TASSeed * 37 + individualSeed);
-            }
-            else
-            {
-                random = new Random((int)Math.Floor(Level.TimeActive) * 37 + individualSeed);
-            }
+            int generalSeed = BossesHelperModule.Instance.TASSeed > 0
+                ? BossesHelperModule.Instance.TASSeed : (int)Math.Floor(Level.TimeActive);
+            random = new Random(generalSeed * 37 + individualSeed);
         }
 
         private void PopulatePatterns(Vector2 levelOffset)
