@@ -14,12 +14,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
     {
         public readonly BossController.CustceneDelegates CustceneDelegates;
 
-        private IEnumerator Cutscene;
+        private readonly IEnumerator Cutscene;
 
-        private LuaFunction endMethod;
+        private readonly LuaFunction endMethod;
 
-        private void LoadCutscene(string filename, string bossId, Player player, BossPuppet puppet)
+        public BossEvent(string filepath, string bossId = null, Player player = null,
+            BossPuppet puppet = null, BossController.CustceneDelegates delegates = default)
+            : base(fadeInOnSkip: true, endingChapterAfter: false)
         {
+            CustceneDelegates = delegates;
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
@@ -28,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filename, "getCutsceneData", dict);
+            LuaFunction[] array = LoadLuaFile(filepath, "getCutsceneData", dict);
             if (array != null)
             {
                 Cutscene = array.ElementAtOrDefault(0)?.ToIEnumerator();
@@ -36,33 +39,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossEvent(string filepath, string bossId, Player player, BossPuppet puppet, BossController.CustceneDelegates delegates,
-            bool fadeInOnSkip = true, bool endingChapterAfter = false)
-            : base(fadeInOnSkip, endingChapterAfter)
-        {
-            CustceneDelegates = delegates;
-            LoadCutscene(filepath, bossId, player, puppet);
-        }
-
-        private BossEvent(string filepath)
-        {
-            LoadCutscene(filepath, null, null, null);
-        }
-
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-            BossEvent bossEvent = new("Assets/LuaBossHelper/warmup_cutscene");
-            Coroutine coroutine = new(bossEvent.Coroutine(null));
-            try
+            Coroutine coroutine = new(new BossEvent("Assets/LuaBossHelper/warmup_cutscene").Coroutine(null));
+            while (!coroutine.Finished)
             {
-                while (!coroutine.Finished)
-                {
-                    coroutine.Update();
-                }
-            }
-            catch
-            {
+                coroutine.Update();
             }
         }
 
