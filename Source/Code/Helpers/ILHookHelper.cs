@@ -17,6 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             string key = classType.Name + ":" + method;
             if (createdILHooks.ContainsKey(key)) return;
             MethodInfo methodInfo = classType.GetMethod(method, flags);
+            if (methodInfo == null) return;
             if (stateMethod)
             {
                 methodInfo = methodInfo.GetStateMachineTarget();
