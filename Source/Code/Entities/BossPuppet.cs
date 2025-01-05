@@ -81,6 +81,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Collider Target { get; private set; }
 
+        public bool SolidCollidable { get; set; }
+
         private readonly float maxFall;
 
         private float effectiveGravity;
@@ -260,8 +262,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             base.Update();
             //Move based on speed
-            MoveH(Speed.X * Engine.DeltaTime, onCollideH);
-            MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+            if (SolidCollidable)
+            {
+                MoveH(Speed.X * Engine.DeltaTime, onCollideH);
+                MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+            }
+            else
+            {
+                NaiveMove(Speed * Engine.DeltaTime);
+            }
             //Apply gravity
             if (!Grounded)
             {

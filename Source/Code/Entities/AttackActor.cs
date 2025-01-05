@@ -51,8 +51,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Grounded = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
-            MoveH(Speed.X * Engine.DeltaTime, onCollideH);
-            MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+            if (SolidCollidable)
+            {
+                MoveH(Speed.X * Engine.DeltaTime, onCollideH);
+                MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+            }
+            else
+            {
+                NaiveMove(Speed * Engine.DeltaTime);
+            }
             //Apply gravity
             if (!Grounded)
             {
@@ -62,10 +69,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void OnCollideH(CollisionData data)
         {
-            if (!SolidCollidable)
-            {
-                return;
-            }
             if (data.Hit != null && data.Hit.OnCollide != null)
             {
                 data.Hit.OnCollide(data.Direction);
@@ -75,10 +78,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void OnCollideV(CollisionData data)
         {
-            if (!SolidCollidable)
-            {
-                return;
-            }
             if (data.Hit != null && data.Hit.OnCollide != null)
             {
                 data.Hit.OnCollide(data.Direction);
