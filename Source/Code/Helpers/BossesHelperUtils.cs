@@ -89,7 +89,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
             {
-                Add(icon = GFX.SpriteBank.Create(iconSprite));
+                GFX.SpriteBank.TryCreate(iconSprite, out icon);
+                Add(icon);
                 oldVisible = icon.Visible;
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
@@ -236,9 +237,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public void IncreaseHealth(int i)
             {
                 HealthIcon healthIcon = new HealthIcon(BarScale,
-                    icons.ElementAtOrDefault(i, icons.Last()),
-                    createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                    removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                    icons.ElementAtOrDefault(i, icons.LastOrDefault()),
+                    createAnims.ElementAtOrDefault(i, createAnims.LastOrDefault()),
+                    removeAnims.ElementAtOrDefault(i, removeAnims.LastOrDefault())
                 );
                 healthIcons.Add(healthIcon);
                 level.Add(healthIcon);
