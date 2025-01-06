@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
@@ -56,20 +57,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 PlayerMustBeFacing = false
             };
             Add(talker);
-            if ((scene as Level).Tracker.GetEntity<Player>() is Player player)
+            if (scene.GetPlayer() is Player player)
                 this.ReadSavePointFunction(filepath, player);
         }
 
-        public void OnTalk(Player player)
+        public void OnTalk(Player _)
         {
             Changer.Update();
-            Add(new Coroutine(SaveRoutine(player)));
+            Add(new Coroutine(SaveRoutine()));
         }
 
-        private IEnumerator SaveRoutine(Player player)
+        private IEnumerator SaveRoutine()
         {
             yield return onInteract?.ToIEnumerator();
-            player.StateMachine.State = Player.StNormal;
         }
     }
 }
