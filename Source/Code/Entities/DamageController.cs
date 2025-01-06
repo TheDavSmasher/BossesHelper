@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             BSession.damageCooldown = baseCooldown;
             BSession.currentPlayerHealth -= amount;
-            if (Engine.Scene.GetPlayer() is not { } entity || entity.StateMachine.State == Player.StCassetteFly)
+            if (Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
