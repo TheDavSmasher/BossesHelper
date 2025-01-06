@@ -244,7 +244,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player player = scene.Tracker.GetEntity<Player>();
+            Player player = scene.GetPlayer();
             if (HurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
@@ -253,8 +253,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Update()
         {
-            Player entity = base.Scene.Tracker.GetEntity<Player>();
-            if (entity != null && DynamicPositionOver_Quarter(entity.X))
+            if (Scene.GetPlayer() is Player entity && DynamicPositionOver_Quarter(entity.X))
             {
                 facing *= -1;
             }

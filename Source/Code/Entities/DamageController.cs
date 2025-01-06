@@ -39,8 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player player = level.Tracker.GetEntity<Player>();
-            LoadFunction(player);
+            LoadFunction(level.GetPlayer());
         }
 
         private void LoadFunction(Player player)
@@ -69,8 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             BSession.damageCooldown = baseCooldown;
             BSession.currentPlayerHealth -= amount;
-            Player entity = Engine.Scene.Tracker.GetEntity<Player>();
-            if (entity == null || entity.StateMachine.State == Player.StCassetteFly)
+            if (Engine.Scene.GetPlayer() is not { } entity || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }

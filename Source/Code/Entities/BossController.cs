@@ -133,7 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player player = scene.Tracker.GetEntity<Player>();
+            Player player = scene.GetPlayer();
             PopulateAttacksEventsAndFunctions(player);
         }
 
@@ -159,8 +159,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Update()
         {
             base.Update();
-            Player entity = base.Scene.Tracker.GetEntity<Player>();
-            if (entity != null)
+            if (Scene.GetPlayer() is Player entity)
             {
                 if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately))
                 {
