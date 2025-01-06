@@ -256,7 +256,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 float sum = iconSeparations[0];
                 for (int i = 1; i < index; i++)
                 {
-                    sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.Last());
+                    sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.LastOrDefault());
                 }
                 return sum;
             }
