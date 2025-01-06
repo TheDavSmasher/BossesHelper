@@ -265,6 +265,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region Other Helper Functions
         private static string CleanPath(string path, string extension)
         {
+            if (path == null) return "";
             return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
         }
 
