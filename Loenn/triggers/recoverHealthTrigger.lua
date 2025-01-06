@@ -5,8 +5,10 @@ recoverHealthTrigger.depth = 0
 recoverHealthTrigger.nodeLimits = {0, 0}
 recoverHealthTrigger.fieldInformation = {
     healAmount = {
-        fieldType = number,
-        minimumValue = 1
+        validator = function (string)
+            res = tonumber(string)
+            return res == nil or res > 0 and string:find("%.") == nil
+        end
     }
 }
 recoverHealthTrigger.placements = {
