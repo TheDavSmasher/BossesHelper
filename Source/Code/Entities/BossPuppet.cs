@@ -102,6 +102,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
             BossHitCooldown = 0f;
+            SolidCollidable = data.Bool("startSolidCollidable");
+            base.Collidable = data.Bool("startCollidable");
             storedObjects = new Dictionary<string, object>();
             HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));

@@ -15,6 +15,8 @@ entities.BossesHelper/BossController.attributes.description.maxFall=The fastest 
 entities.BossesHelper/BossController.attributes.description.baseGravityMultiplier=The multiplier applied to gravity the boss will start with. Can be changed mid-fight in code.
 entities.BossesHelper/BossController.attributes.description.sidekickFreeze=If Badeline Sidekick should freeze on the spot where the laser input is pressed.\nFalse will make her follow the player even while shooting, which makes hitting harder unless the player stops moving.\nUnused if not using the Sidekick Attack hurt mode.
 entities.BossesHelper/BossController.attributes.description.sidekickCooldown=How long Badeline Sidekick will take to reload her laser attack.\nUnused if not using the Sidekick Attack hurt mode.
+entities.BossesHelper/BossController.attributes.description.startCollidable=If the Boss should start being un-collidable from other entities.
+entities.BossesHelper/BossController.attributes.description.startSolidCollidable=If the Boss should start already ignoring solids.
 
 entities.BossesHelper/HealthSystemManager.attributes.description.activationFlag=The flag the controller will use to activate.\nLeave empty if activated through code or an Enable Health Trigger.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.
 entities.BossesHelper/HealthSystemManager.attributes.description.healthIcons=The sprite each health icon marker should use per hit point.\nMultiple sprites may be provided, up to the Health Value.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.\nIf left empty, it will use the value of the pre-existing Health System Manager, if any.

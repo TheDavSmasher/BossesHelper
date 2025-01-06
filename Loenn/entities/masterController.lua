@@ -72,13 +72,13 @@ function bossMasterController.fieldOrder(entity)
         return {
             "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "sidekickCooldown",
             "hitboxMetadataPath", "patternsPath", "attacksPath", "eventsPath", "functionsPath", "__Boss_pad",
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "sidekickFreeze"
+            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "startCollidable", "startSolidCollidable", "sidekickFreeze"
         }
     else
         return {
             "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "__Boss_pad",
             "hitboxMetadataPath", "patternsPath", "attacksPath", "eventsPath", "functionsPath", "__Boss_pad_",
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately"
+            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "startCollidable", "startSolidCollidable"
         }
     end
 end
@@ -102,7 +102,9 @@ bossMasterController.placements = {
             dynamicFacing = true,
             mirrorSprite = false,
             killOnContact = false,
-            startAttackingImmediately = false
+            startAttackingImmediately = false,
+            startCollidable = true,
+            startSolidCollidable = true
         }
     },
     {
@@ -125,6 +127,8 @@ bossMasterController.placements = {
             mirrorSprite = false,
             killOnContact = false,
             startAttackingImmediately = false,
+            startCollidable = true,
+            startSolidCollidable = true,
             sidekickFreeze = false
         }
     }
