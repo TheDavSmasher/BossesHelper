@@ -30,7 +30,7 @@ globalSavePoint.fieldInformation = {
         allowMissingPath = false
     }
 }
-globalSavePoint.fieldOrder = {}
+--globalSavePoint.fieldOrder = {}
 globalSavePoint.placements = {
     name = "Player Save Point",
     data = {
