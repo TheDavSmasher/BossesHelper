@@ -15,6 +15,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
 
+        private static BossesHelperSession BSession => BossesHelperModule.Session;
+
         private readonly float baseCooldown;
 
         private Level level;
@@ -23,9 +25,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal DamageController()
         {
-            if (BossesHelperModule.Session.healthData.globalController)
+            if (BSession.healthData.globalController)
                 AddTag(Tags.Global);
-            baseCooldown = BossesHelperModule.Session.healthData.damageCooldown;
+            baseCooldown = BSession.healthData.damageCooldown;
         }
 
         public override void Added(Scene scene)
@@ -60,19 +62,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
         {
-            if (BossesHelperModule.Session.damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
+            if (BSession.damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
                 level.InCutscene || amount <= 0)
             {
                 return;
             }
-            BossesHelperModule.Session.damageCooldown = baseCooldown;
-            BossesHelperModule.Session.currentPlayerHealth -= amount;
+            BSession.damageCooldown = baseCooldown;
+            BSession.currentPlayerHealth -= amount;
             Player entity = Engine.Scene.Tracker.GetEntity<Player>();
             if (entity == null || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
-            if (BossesHelperModule.Session.currentPlayerHealth > 0)
+            if (BSession.currentPlayerHealth > 0)
             {
                 if (!silent)
                 {
@@ -80,9 +82,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
                     level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
-                    if (BossesHelperModule.Session.healthData.playerStagger && stagger)
+                    if (BSession.healthData.playerStagger && stagger)
                         Add(new Coroutine(PlayerStagger(entity, direction)));
-                    if (BossesHelperModule.Session.healthData.playerBlink)
+                    if (BSession.healthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible(entity)));
                     if (onDamage != null)
                         Add(new Coroutine(onDamage.ToIEnumerator()));
@@ -92,11 +94,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-            if (BossesHelperModule.Session.mapHealthBar != null)
+            if (BSession.mapHealthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    BossesHelperModule.Session.mapHealthBar.healthIcons.DecreaseHealth();
+                    BSession.mapHealthBar.healthIcons.DecreaseHealth();
                 }
             }
             else
@@ -107,10 +109,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void RecoverHealth(int amount = 1)
         {
-            BossesHelperModule.Session.currentPlayerHealth += amount;
-            for (int i = 0; i < amount; i++)
+            BSession.currentPlayerHealth += amount;
+            int count = BSession.mapHealthBar.healthIcons.Count;
+            for (int i = count; i < count + amount; i++)
             {
-                BossesHelperModule.Session.mapHealthBar.healthIcons.IncreaseHealth(i);
+                BSession.mapHealthBar.healthIcons.IncreaseHealth(i);
             }
         }
 
@@ -142,7 +145,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private IEnumerator PlayerInvincible(Player player)
         {
             int times = 2;
-            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, BossesHelperModule.Session.damageCooldown, start: true);
+            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, BSession.damageCooldown, start: true);
             Add(tween);
             tween.OnUpdate = delegate
             {
@@ -171,7 +174,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            BossesHelperModule.Session.mapDamageController = null;
+            BSession.mapDamageController = null;
         }
     }
 }
