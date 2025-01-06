@@ -27,17 +27,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
         {
-            if (!sprite.TryPlay(anim))
+            bool singleLoop = false;
+            void waitUntilDone(string _) => singleLoop = true;
+            sprite.OnLastFrame += waitUntilDone;
+            if (sprite.TryPlay(anim))
             {
-                Action<string> onFrameChange = sprite.OnFrameChange;
-                bool singleLoop = false;
-                sprite.OnLastFrame = (string _) => singleLoop = true;
                 while (!singleLoop)
                 {
                     yield return null;
                 }
-                sprite.OnFrameChange = onFrameChange;
             }
+            sprite.OnLastFrame -= waitUntilDone;
         }
 
         public static bool TryPlay(this Sprite sprite, string anim)
