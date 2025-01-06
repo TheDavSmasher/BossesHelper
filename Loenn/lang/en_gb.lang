@@ -47,6 +47,11 @@ entities.BossesHelper/BossHealthBar.attributes.description.healthScaleY=The Y sc
 entities.BossesHelper/BossHealthBar.attributes.description.startVisible=If the Health Bar should start being visible when the Health Bar gets added.
 entities.BossesHelper/BossHealthBar.attributes.description.baseColor=The color the display will use, such as the color of the Number type or the fill of the Bar type rectangle.
 
+entities.BossesHelper/PlayerSavePoint.attributes.description.rectWidth=The width of the Talker hitbox that the Player can interact with.
+entities.BossesHelper/PlayerSavePoint.attributes.description.rectXOffset=The x offset of the Talker hitbox, relative to entity Position.
+entities.BossesHelper/PlayerSavePoint.attributes.description.rectYOffset=The y offset of the Talker hitbox, relative to entity Position.
+entities.BossesHelper/PlayerSavePoint.attributes.description.talkerXOffset=The x offset of the Talker icon, relative to entity Position.
+entities.BossesHelper/PlayerSavePoint.attributes.description.talkerYOffset=The y offset of the Talker icon, relative to entity Position.
 entities.BossesHelper/PlayerSavePoint.attributes.description.luaFile=An optional Lua file that will execute whenever the player interacts with the Save Point. Can be a Coroutine.
 entities.BossesHelper/PlayerSavePoint.attributes.description.savePointSprite=The sprite the Save Point should use.
 entities.BossesHelper/PlayerSavePoint.attributes.description.respawnType=The intro type the player should use when loading back in to the Save Point.\n-Use Old Value: whichever value the last save point used for this field will be used here too.
