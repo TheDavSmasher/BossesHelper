@@ -425,10 +425,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public float SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
         {
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-            tween.OnUpdate = delegate (Tween t)
-            {
-                Speed.X = start + (target - start) * t.Eased;
-            };
+            tween.OnUpdate = (Tween t) => Speed.X = start + (target - start) * t.Eased;
             Add(tween);
             return time;
         }
@@ -436,11 +433,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public float SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
         {
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-            tween.OnUpdate = delegate (Tween t)
-            {
-                Speed.Y = start + (target - start) * t.Eased;
-            };
+            tween.OnUpdate = (Tween t) => Speed.Y = start + (target - start) * t.Eased;
             Add(tween);
+            return time;
+        }
+
+        public float SpeedTween(float xStart, float yStart, float xTarget, float yTarget, float time, Ease.Easer easer = null)
+        {
+            SpeedXTween(xStart, xTarget, time, easer);
+            SpeedYTween(yStart, yTarget, time, easer);
             return time;
         }
 
