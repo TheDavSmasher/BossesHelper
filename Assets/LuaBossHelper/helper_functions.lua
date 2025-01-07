@@ -1167,6 +1167,19 @@ function helpers.speedYTween(start, target, time, easer, invert)
     return puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
 end
 
+---Create a new Tween for the Boss' speed.
+---@param xStart number The initial value of the Tween, which the Boss' speed x component will set to at the start.
+---@param xTarget number The value the Boss' speed x component will slowly change to.
+---@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
+---@param yTarget number The value the Boss' speed y component will slowly change to.
+---@param time number The time the Boss will take to reach the target x speed.
+---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
+function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, invert)
+    return puppet:SpeedTween(xStart, yStart, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
+end
+
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
@@ -1185,6 +1198,17 @@ end
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
     return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
+end
+
+---Create a new Tween for the Boss'  speed from its current x speed value.
+---@param xTarget number The value the Boss' speed x component will slowly change to.
+---@param yTarget number The value the Boss' speed y component will slowly change to.
+---@param time number The time the Boss will take to reach the target x speed.
+---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param invert? boolean If the easer should be inverted
+---@return number time The time given from the Tween
+function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
+    return puppet:SpeedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
 end
 
 --#endregion
