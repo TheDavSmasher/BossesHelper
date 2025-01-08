@@ -27,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static Player GetPlayer(this Scene scene)
         {
-            return (scene as Level).Tracker.GetEntity<Player>();
+            return scene?.Tracker?.GetEntity<Player>();
         }
 
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
