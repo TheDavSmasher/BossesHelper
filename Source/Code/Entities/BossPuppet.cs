@@ -81,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Collider Target { get; private set; }
 
-        public bool SolidCollidable { get; set; }
+        public bool SolidCollidable;
 
         private readonly float maxFall;
 
