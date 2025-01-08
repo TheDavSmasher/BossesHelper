@@ -96,8 +96,7 @@ public class BossesHelperModule : EverestModule
                 self.Add(Session.mapUpdateSafeBlocker ??= new());
         }
         orig(self, intro, fromLoader);
-        Player entity = Engine.Scene.Tracker.GetEntity<Player>();
-        if (entity != null)
+        if (Engine.Scene.GetPlayer() is Player entity)
         {
             entity.Sprite.Visible = true;
             entity.Hair.Visible = true;
