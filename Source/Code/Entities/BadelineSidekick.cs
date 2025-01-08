@@ -149,15 +149,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 RemoveSelf();
                 return;
             }
-            Player entity = level.GetPlayer();
-            entity?.Leader.GainFollower(Follower);
+            level.GetPlayer()?.Leader.GainFollower(Follower);
         }
 
         public override void Update()
         {
             Level level = SceneAs<Level>();
-            Player entity = level.GetPlayer();
-            if (entity != null && (Follower.Leader == null || Follower.Leader.Entity != entity))
+            if (level.GetPlayer() is Player entity && (Follower.Leader == null || Follower.Leader.Entity != entity))
             {
                 entity.Leader.GainFollower(Follower);
             }

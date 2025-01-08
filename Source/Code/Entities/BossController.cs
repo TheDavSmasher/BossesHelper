@@ -133,8 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player player = scene.GetPlayer();
-            PopulateAttacksEventsAndFunctions(player);
+            PopulateAttacksEventsAndFunctions(scene.GetPlayer());
         }
 
         private void PopulateAttacksEventsAndFunctions(Player player)
