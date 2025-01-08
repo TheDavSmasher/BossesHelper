@@ -520,6 +520,41 @@ Alongside the Controller, the Health System comes with three triggers.
 - Health Bar Visible Trigger: This can be used to toggle the Visible state of all the icons of the Health Bar.
 - Recover Health Trigger: This can be used as a quick simple way to recover some hit points for the player. `Only Once` will remove the trigger once entered, and `Permanent` will make it so that the trigger doesn't load again.
 
+### Miscellaneous Additions
+
+Due to the fact that the Player's last Safe Ground is updated every frame the player is standing on safe ground, FlyBack from falling offscreen with the BubbleBack Offscreen mode will return at all times to that last point, regardless of where it is. A new entity is added, called `Update Safe Blocker`, which prevents the player's last safe ground from being updated. Changing spawnpoint will still, however, update this, because save points are considered universal safe ground for the purposes of this.
+
+A `Update Safe Unblocker` is also added that will remove any active Blockers.
+
+## Global Save Point
+
+This helper now includes a Global Save Point entity alongside a Global Save Point Changer component. This Global Save Point functionality is similar to a save point in a Metroidvania or Souls-like game, where even in different rooms, upon death, will spawn back at the last saved spot.
+
+The Entity containes the following entries:
+
+- Respawn Type: The intro type the player should use when spawning back into the Save Point.
+  - Use Old Value will make it so the same intro type as the previously saved-at Save Point will be used.
+- Lua File: An Optional Lua file that can be provided for additional logic and functionality when interacting with the Save Point.
+- Save Point Sprite: The sprite this Save Point should use.
+
+The node provided with the placement will try to find the closest Spawn Point to it and use that spawn point. If there's no spawn point set within 10 tiles (80 px) of the node, the node itself will be used as the spawn point.
+
+An additional entity and trigger are provided for more automatic save points.
+
+- Auto Save Point Set: This entity acts the same way a Global Save Point would work, except the save point is set immediately upon being added upon the scene. This entity is useful for map start save points or points where save points should be set without the player's direct input.
+
+- Save Point Set Trigger: This will set a save point in the same way an Auto Save Point Set trigger would, but whenever the player enters it instead of instantly when added onto a scene.
+
+### Global Save Point Changer Component
+
+Within this Component is where the main logic and data storage lies. As such, it is added as an export so any entity can become a Save Point.
+
+This component, if used for entities that the mod being used on has full control over and can write code in them, can be used by simply creating one, adding it, and, when desired to be activated, such as being interacted with, the component's `Update` method (or setting `Active` to true) will trigger the Save Point Change. The logic is contained in the `Update` method so, even without having the type of the Component, it can still be activated. Also because of this, its state is naturally inactive, and calling `Update` will also inactivate it once done.
+
+When this component is wanted for other, cross-mod entities, special steps must be taken. A second export is given, `CreateGlobalSavePointOnEntityOnMethod`. This export is responsible for creating the Component, adding it to the Entity passed, and creating an IL Hook on the entity's method specified. The purpose of the IL Hook is so any method call within the given entity can be used to activate this change. This hook only inserts a single call to a delegate that will call `Update` on the first Global Save Point Changer component the entity has, if any. This way, entities such as the Lobby benches or the Metroid inspired teleporters or any other entity can become a Global Save Point.
+
+**Disclaimer**: Other bugs were fixed in the general helper and the IL Hook has not been tested fully. Expect this to be done by next update.
+
 ## Bosses Helper API
 
 This Helper includes a few things exported with ModInterop, namely:
@@ -533,6 +568,11 @@ This Helper includes a few things exported with ModInterop, namely:
 - **MakePlayerTakeDamage**: Useful to extend utility from the Health System to set custom parameters to take damage.
 - **GetBossHealthTrackerComponent**: Returns a component that allows any entity that can track a number to use the Boss Health Bar entity display for it.
   - The integer can represent anything, and can be represented in multiple ways.
+- **GetGlobalSavePointChangerComponent**: Returns a Global Save Point Changer Component.
+  - If added to an entity your mod cannot edit, it **must** be added with the **CreateGlobalSavePointOnEntityOnMethod** export, so the IL Hook can be applied.
+  - If added to an entity your mode is able to edit, to activate its Save Point Changing method, call the Component's `Update` method or make it `Active`. Each change or usage should do this. The component starts inactive, and calling Update will force it to be inactive. The logic is kept in `Update` so it can be called without having it be its specific type when handled.
+- **CreateGlobalSavePointOnEntityOnMethod**: Creates and adds a Global Save Point Changer component on the entity provided, and creates an IL hook on that entity's method that will trigger the Save Point update.
+  - As of current release, this IL hook has not been fully tested, but many other bugs have been fixed that an update release was needed.
 
 The Mod Import Name is `"BossesHelper"`.
 
