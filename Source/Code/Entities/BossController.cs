@@ -254,7 +254,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Deterministic Pattern
             if (pattern.PrePatternMethods != null)
             {
-                foreach (BossPattern.Method method in pattern.PrePatternMethods)
+                foreach (Method method in pattern.PrePatternMethods)
                 {
                     yield return PerformMethod(method);
                 }
@@ -282,7 +282,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private IEnumerator PerformMethod(BossPattern.Method method)
+        private IEnumerator PerformMethod(Method method)
         {
             if (!method.ActionName.ToLower().Equals("wait"))
             {

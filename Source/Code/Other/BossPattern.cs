@@ -2,16 +2,16 @@
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public class BossPattern(BossPattern.Method[] patternLoop, BossPattern.Method[] prePattern = null, Hitbox trigger = null,
+    public struct Method(string name, float? duration)
+    {
+        public string ActionName = name;
+
+        public float? Duration = duration;
+    }
+
+    public class BossPattern(Method[] patternLoop, Method[] prePattern = null, Hitbox trigger = null,
         int? minCount = null, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
     {
-        public struct Method(string name, float? duration)
-        {
-            public string ActionName = name;
-
-            public float? Duration = duration;
-        }
-
         public readonly bool IsEvent = isEvent;
 
         public readonly int? MinRandomIter = minCount;
@@ -24,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public readonly bool RandomPattern = random;
 
-        public readonly Method[] PrePatternMethods = prePattern;
+        public readonly Method[] PrePatternMethods = prePattern ?? [];
 
         public readonly Method[] StatePatternOrder = patternLoop;
 

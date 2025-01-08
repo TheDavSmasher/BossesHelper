@@ -29,7 +29,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (patternNode.NodeType == XmlNodeType.Comment) continue;
 
-                List<BossPattern.Method> methodList = new();
+                List<Method> methodList = new();
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
                     targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
@@ -48,27 +48,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
-                        methodList.AddRange(Enumerable.Repeat(new BossPattern.Method(action.GetValue("file"),
+                        methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
                             action.GetValueOrDefaultNullF("wait")), Math.Max(action.GetValueOrDefaultInt("weight"), 1)));
                     }
                     targetOut.Add(new BossPattern(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
                     continue;
                 }
 
-                List<BossPattern.Method> preLoopList = null;
+                List<Method> preLoopList = null;
                 foreach (XmlNode action in patternNode.ChildNodes)
                 {
                     switch (action.LocalName.ToLower())
                     {
                         case "wait":
-                            methodList.Add(new BossPattern.Method("wait", float.Parse(action.GetValue("time"))));
+                            methodList.Add(new Method("wait", float.Parse(action.GetValue("time"))));
                             break;
                         case "loop":
                             preLoopList = new(methodList);
                             methodList.Clear();
                             break;
                         default:
-                            methodList.Add(new BossPattern.Method(action.GetValue("file"), null));
+                            methodList.Add(new Method(action.GetValue("file"), null));
                             break;
                     }
                 }
