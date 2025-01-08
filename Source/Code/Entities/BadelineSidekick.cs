@@ -159,18 +159,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Leader.GainFollower(Follower);
             }
-            if (beam != null && Boss.Visible)
-            {
-                if ((beam.oldX - X) * Boss.Scale.X < 0)
-                {
-                    Boss.Scale.X *= -1;
-                }
-            }
-            else if ((oldX - X) * ActiveSprite.Scale.X > 0)
-            {
-                ActiveSprite.Scale.X *= -1;
-                DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
-            }
             if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && CanAttack)
             {
                 CanAttack = false;
@@ -185,6 +173,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             Vector2 renderPosition = ActiveSprite.RenderPosition;
             ActiveSprite.RenderPosition = ActiveSprite.RenderPosition.Floor();
+            if (beam != null)
+            {
+                if ((beam.oldX - X) * Boss.Scale.X < 0)
+                {
+                    Boss.Scale.X *= -1;
+                }
+            }
+            else if ((oldX - X) * ActiveSprite.Scale.X > 0)
+            {
+                ActiveSprite.Scale.X *= -1;
+                DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
+            }
             base.Render();
             ActiveSprite.RenderPosition = renderPosition;
         }
