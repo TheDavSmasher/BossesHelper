@@ -143,8 +143,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, BossID, player, Puppet,
                 new(RemoveBoss));
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID, player, Puppet,
-                new(() => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd,
-                InterruptPattern, () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
+                new(() => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd, InterruptPattern,
+                () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
             Puppet.SetPuppetFunctions(bossReactions);
         }
 
