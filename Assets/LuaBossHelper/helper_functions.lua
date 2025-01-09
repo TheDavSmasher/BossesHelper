@@ -1017,7 +1017,7 @@ end
 
 ---Start the next action pattern in index order.
 function helpers.startNextAttackPattern()
-    helpers.StartAttackPattern(helpers.GetCurrentPatternID() + 1)
+    helpers.startAttackPattern(helpers.getCurrentPatternID() + 1)
 end
 
 ---Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
