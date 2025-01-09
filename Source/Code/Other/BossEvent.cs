@@ -12,7 +12,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 {
     public class BossEvent : CutsceneEntity
     {
-        public readonly BossController.CustceneDelegates CustceneDelegates;
+        public readonly BossController.CustceneDelegates CutsceneDelegates;
 
         private readonly IEnumerator Cutscene;
 
@@ -22,7 +22,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             BossPuppet puppet = null, BossController.CustceneDelegates delegates = default)
             : base(fadeInOnSkip: true, endingChapterAfter: false)
         {
-            CustceneDelegates = delegates;
+            CutsceneDelegates = delegates;
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
