@@ -182,8 +182,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
-            Hitbox positionTrigger = Patterns[currentPatternIndex].PlayerPositionTrigger;
-            return positionTrigger != null && positionTrigger.Collide(entityPos);
+            return Patterns[currentPatternIndex].PlayerPositionTrigger is Hitbox positionTrigger 
+                && positionTrigger.Collide(entityPos);
         }
 
         private void StartAttackPattern(int goTo = -1)
