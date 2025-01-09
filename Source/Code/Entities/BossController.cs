@@ -15,17 +15,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private Random random;
 
-        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity> destroyEntity, Action destroyAll)
+        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity> destroyEntity,
+            Action destroyAll, Func<int> random)
         {
             public Action<Entity> addEntity = addEntity;
 
             public Action<Entity> destroyEntity = destroyEntity;
 
             public Action destroyAll = destroyAll;
+
+            public Func<int> random = random;
         }
 
         public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
-            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern,
+            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern, Func<int> random,
             Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action<bool> removeBoss)
         {
             public Func<int> getHealth = getHealth;
@@ -39,6 +42,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public Action interruptPattern = interruptPattern;
 
             public Func<int> currentPattern = currentPattern;
+
+            public Func<int> random = random;
 
             public Action<int> startAttackPattern = startAttackPattern;
 
@@ -139,12 +144,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void PopulateAttacksEventsAndFunctions(Player player)
         {
             UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, BossID, player, Puppet,
-                new(AddEntity, DestroyEntity, DestroyAll));
+                new(AddEntity, DestroyEntity, DestroyAll, random.Next));
             UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, BossID, player, Puppet,
                 new(RemoveBoss));
             UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID, player, Puppet,
                 new(() => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd, InterruptPattern,
-                () => currentPatternIndex, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
+                () => currentPatternIndex, random.Next, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
             Puppet.SetPuppetFunctions(bossReactions);
         }
 
