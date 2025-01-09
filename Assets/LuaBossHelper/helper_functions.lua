@@ -951,6 +951,10 @@ end
 
 --- The following Delegates will only work on Attack files.
 
+function helpers.bossSeededRandom()
+    return bossAttack.random:Invoke()
+end
+
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
 ---@param entity Entity The entity to add
 function helpers.addEntity(entity)
@@ -974,6 +978,10 @@ end
 --#region Interrupt Delegates
 
 --- The following Delegates will only work on the Interruption functions, such as onHit()
+
+function helpers.seededRandom()
+    return boss.random:Invoke()
+end
 
 ---Get the Boss' current health value
 ---@return number health The Boss's current health value
@@ -1035,7 +1043,6 @@ function helpers.removeBoss(permanent)
 end
 
 --#endregion
-
 
 --#region Cutscene Delegates
 
