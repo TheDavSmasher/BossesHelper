@@ -8,15 +8,14 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public class BossAttack(string filepath, string bossId, Player player,
-        BossPuppet puppet, BossController.AttackDelegates delegates)
+    public class BossAttack(string filepath, Player player, BossController controller)
     {
         private readonly LuaFunction attackFunction = LoadLuaFile(filepath, "getAttackData", new Dictionary<object, object>
             {
                 { "player", player },
-                { "bossID", bossId },
-                { "puppet", puppet },
-                { "boss", delegates },
+                { "bossID", controller.BossID },
+                { "puppet", controller.Puppet },
+                { "boss", controller },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             }
         )?.FirstOrDefault();

@@ -15,55 +15,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private Random random;
 
-        public struct AttackDelegates(Action<Entity> addEntity, Action<Entity> destroyEntity,
-            Action destroyAll, Func<int> random)
-        {
-            public Action<Entity> addEntity = addEntity;
-
-            public Action<Entity> destroyEntity = destroyEntity;
-
-            public Action destroyAll = destroyAll;
-
-            public Func<int> random = random;
-        }
-
-        public struct OnHitDelegates(Func<int> getHealth, Action<int> setHealth, Action<int> decreaseHealth,
-            Func<IEnumerator> waitForAttack, Action interruptPattern, Func<int> currentPattern, Func<int> random,
-            Action<int> startAttackPattern, Action<int, int, bool> savePhaseChangeToSession, Action<bool> removeBoss)
-        {
-            public Func<int> getHealth = getHealth;
-
-            public Action<int> setHealth = setHealth;
-
-            public Action<int> decreaseHealth = decreaseHealth;
-
-            public Func<IEnumerator> waitForAttack = waitForAttack;
-
-            public Action interruptPattern = interruptPattern;
-
-            public Func<int> currentPattern = currentPattern;
-
-            public Func<int> random = random;
-
-            public Action<int> startAttackPattern = startAttackPattern;
-
-            public Action<int, int, bool> savePhaseChangeToSession = savePhaseChangeToSession;
-
-            public Action<bool> removeBoss = removeBoss;
-        }
-
-        public struct CustceneDelegates(Action<bool> removeBoss)
-        {
-            public Action<bool> removeBoss = removeBoss;
-        }
-
         private EntityID id;
 
-        private readonly string BossID;
+        public string BossID { get; private set; }
 
         private Level Level;
 
-        private readonly BossPuppet Puppet;
+        public BossPuppet Puppet { get; private set; }
 
         private Dictionary<string, BossAttack> AllAttacks;
 
@@ -143,13 +101,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void PopulateAttacksEventsAndFunctions(Player player)
         {
-            UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, BossID, player, Puppet,
-                new(AddEntity, DestroyEntity, DestroyAll, random.Next));
-            UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, BossID, player, Puppet,
-                new(RemoveBoss));
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, BossID, player, Puppet,
-                new(() => Health, (val) => Health = val, DecreaseHealth, WaitForAttackToEnd, InterruptPattern,
-                () => currentPatternIndex, random.Next, StartAttackPattern, SavePhaseChangeInSession, RemoveBoss));
+            UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, player, this);
+            UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, player, this);
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, player, this);
             Puppet.SetPuppetFunctions(bossReactions);
         }
 
@@ -307,7 +261,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         #region Delegate methods
         #region Interruption Delegates
-        private IEnumerator WaitForAttackToEnd()
+        public IEnumerator WaitForAttackToEnd()
         {
             while (isAttacking)
             {
@@ -315,18 +269,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private void InterruptPattern()
+        public void InterruptPattern()
         {
             currentPattern.Active = false;
             DestroyAll();
         }
 
-        private void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
+        public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
         {
             BossesHelperModule.Session.BossPhaseSaved = new(health, startImmediately, patternIndex);
         }
 
-        private void RemoveBoss(bool permanent)
+        public void RemoveBoss(bool permanent)
         {
             RemoveSelf();
             if (permanent)
@@ -335,14 +289,29 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private void DecreaseHealth(int val = 1)
+        public int GetCurrentPatternIndex()
+        {
+            return currentPatternIndex;
+        }
+
+        public int GetHealth()
+        {
+            return Health;
+        }
+
+        public void SetHealth(int val)
+        {
+            Health = val;
+        }
+
+        public void DecreaseHealth(int val = 1)
         {
             Health -= val;
         }
         #endregion
 
         #region Attack Delegates
-        private void AddEntity(Entity entity)
+        public void AddEntity(Entity entity)
         {
             if (!activeEntities.Contains(entity))
             {
@@ -352,7 +321,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private void DestroyEntity(Entity entity)
+        public void DestroyEntity(Entity entity)
         {
             if (activeEntities.Remove(entity))
             {
@@ -360,7 +329,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private void DestroyAll()
+        public void DestroyAll()
         {
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();

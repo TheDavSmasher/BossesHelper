@@ -16,16 +16,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly LuaFunction endMethod;
 
-        public BossEvent(string filepath, string bossId = null, Player player = null,
-            BossPuppet puppet = null, BossController.CustceneDelegates delegates = default)
+        public BossEvent(string filepath, Player player = null, BossController controller = null)
             : base(fadeInOnSkip: true, endingChapterAfter: false)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
-                { "bossID", bossId },
-                { "puppet", puppet },
-                { "boss", delegates },
+                { "bossID", controller.BossID },
+                { "puppet", controller.Puppet },
+                { "boss", controller },
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };

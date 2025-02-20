@@ -28,15 +28,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly LuaFunction OnLaserLua;
 
-        public BossFunctions(string filepath, string bossId, Player player,
-            BossPuppet puppet, BossController.OnHitDelegates delegates)
+        public BossFunctions(string filepath, Player player, BossController controller)
         {
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
-                { "bossID", bossId },
-                { "puppet", puppet },
-                { "boss", delegates },
+                { "bossID", controller.BossID },
+                { "puppet", controller.Puppet },
+                { "boss", controller },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
             if (LoadLuaFile(filepath, "getInterruptData", dict) is LuaFunction[] array)
