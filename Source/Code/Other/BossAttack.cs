@@ -16,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "player", player },
                 { "bossID", bossId },
                 { "puppet", puppet },
-                { "bossAttack", delegates },
+                { "boss", delegates },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             }
         )?.FirstOrDefault();

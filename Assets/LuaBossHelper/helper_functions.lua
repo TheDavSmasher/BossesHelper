@@ -952,24 +952,24 @@ end
 --- The following Delegates will only work on Attack files.
 
 function helpers.bossSeededRandom()
-    return bossAttack.random:Invoke()
+    return boss.random:Invoke()
 end
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
 ---@param entity Entity The entity to add
 function helpers.addEntity(entity)
-    bossAttack.addEntity:Invoke(entity)
+    boss.addEntity:Invoke(entity)
 end
 
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
 ---@param entity Entity The entity to destroy.
 function helpers.destroyEntity(entity)
-    bossAttack.destroyEntity:Invoke(entity)
+    boss.destroyEntity:Invoke(entity)
 end
 
 --- Calls RemoveSelf on all active tracked entities.
 function helpers.destroyAll()
-    bossAttack.destroyAll:Invoke()
+    boss.destroyAll:Invoke()
 end
 
 --#endregion
@@ -1037,6 +1037,7 @@ function helpers.savePhaseChangeToSession(health, index, startImmediately)
 end
 
 ---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
+---This function also Works in Cutscene files
 ---@param permanent boolean If the boss should not be loaded again. False will spawn the Boss every time the room is loaded.
 function helpers.removeBoss(permanent)
     boss.removeBoss:Invoke(permanent or false)
@@ -1044,19 +1045,7 @@ end
 
 --#endregion
 
---#region Cutscene Delegates
 
---- The following Delegates will only work in Event files
-
----Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
----@param permanent boolean If the boss should not be loaded again. False will spawn the Boss every time the room is loaded.
-function helpers.removeBossCutscene(permanent)
-    cutsceneEntity.CutsceneDelegates.removeBoss:Invoke(permanent or false)
-end
-
---#endregion
-
---#endregion
 
 --#region Other Helper Functions
 
