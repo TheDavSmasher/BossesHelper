@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
-        private Random random;
+        public Random Random { get; private set; }
 
         private EntityID id;
 
@@ -90,7 +90,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UserFileReader.ReadPatternFileInto(patternsPath, out Patterns, Level.LevelOffset);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Level.TimeActive);
-            random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
+            Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
         }
 
         public override void Awake(Scene scene)
@@ -190,12 +190,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 while (true)
                 {
-                    int nextAttack = random.Next() % pattern.StatePatternOrder.Length;
+                    int nextAttack = Random.Next() % pattern.StatePatternOrder.Length;
                     yield return PerformMethod(pattern.StatePatternOrder[nextAttack]);
                     currentAction++;
 
                     if (pattern.IterationCount == null) continue;
-                    if (currentAction > pattern.MinRandomIter && (currentAction > pattern.IterationCount || random.Next() % 2 == 1))
+                    if (currentAction > pattern.MinRandomIter && (currentAction > pattern.IterationCount || Random.Next() % 2 == 1))
                     {
                         if (pattern.GoToPattern is int next)
                             StartAttackPattern(next);
@@ -221,7 +221,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     loop++;
                     currentAction = 0;
                 }
-                if (loop > pattern.MinRandomIter && (loop > pattern.IterationCount || random.Next() % 2 == 1))
+                if (loop > pattern.MinRandomIter && (loop > pattern.IterationCount || Random.Next() % 2 == 1))
                 {
                     if (pattern.GoToPattern is int next)
                         StartAttackPattern(next);
