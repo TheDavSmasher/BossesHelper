@@ -952,24 +952,24 @@ end
 --- The following Delegates will only work on Attack files.
 
 function helpers.bossSeededRandom()
-    return boss.random:Invoke()
+    return boss.Random:Next()
 end
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
 ---@param entity Entity The entity to add
 function helpers.addEntity(entity)
-    boss.addEntity:Invoke(entity)
+    boss:AddEntity(entity)
 end
 
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
 ---@param entity Entity The entity to destroy.
 function helpers.destroyEntity(entity)
-    boss.destroyEntity:Invoke(entity)
+    boss:DestroyEntity(entity)
 end
 
 --- Calls RemoveSelf on all active tracked entities.
 function helpers.destroyAll()
-    boss.destroyAll:Invoke()
+    boss:DestroyAll()
 end
 
 --#endregion
@@ -980,47 +980,47 @@ end
 --- The following Delegates will only work on the Interruption functions, such as onHit()
 
 function helpers.seededRandom()
-    return boss.random:Invoke()
+    return boss.Random:Next()
 end
 
 ---Get the Boss' current health value
 ---@return number health The Boss's current health value
 function helpers.getHealth()
-    return boss.getHealth:Invoke()
+    return boss:GetHealth()
 end
 
 ---Set the Boss' health value to a new value.
 ---@param health number The value to set the health to.
 function helpers.setHealth(health)
-    boss.setHealth:Invoke(health)
+    boss:SetHealth(health)
 end
 
 ---Decrease the Boss' health by the given value
 ---@param health? number The amount of health lost. Defaults to 1.
 function helpers.decreaseHealth(health)
-    boss.decreaseHealth:Invoke(health or 1)
+    boss:DecreaseHealth(health or 1)
 end
 
 --- Wait for the current attack coroutine to end
 function helpers.waitForAttackToEnd()
-    return coroutine.yield(boss.waitForAttack:Invoke())
+    return coroutine.yield(boss:WaitForAttack())
 end
 
 ---Interrupt the current boss action pattern
 function helpers.interruptPattern()
-    boss.interruptPattern:Invoke()
+    boss:InterruptPattern()
 end
 
 ---Gets the currently set pattern index
 ---@return number ID The current pattern's index, base 0
 function helpers.getCurrentPatternID()
-    return boss.currentPattern:Invoke()
+    return boss:GetCurrentPatternIndex()
 end
 
 ---Start a new boss action pattern.
 ---@param goTo? number The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
 function helpers.startAttackPattern(goTo)
-    boss.startAttackPattern:Invoke(goTo or -1)
+    boss:StartAttackPattern(goTo or -1)
 end
 
 ---Start the next action pattern in index order.
@@ -1033,14 +1033,14 @@ end
 ---@param index number The pattern index the boss should start with upon reload.
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
-    boss.savePhaseChangeToSession:Invoke(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
+    boss:SavePhaseChangeToSession(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
 end
 
 ---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
 ---This function also Works in Cutscene files
 ---@param permanent boolean If the boss should not be loaded again. False will spawn the Boss every time the room is loaded.
 function helpers.removeBoss(permanent)
-    boss.removeBoss:Invoke(permanent or false)
+    boss:RemoveBoss(permanent or false)
 end
 
 --#endregion
