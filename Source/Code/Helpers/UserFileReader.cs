@@ -237,17 +237,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadCustomCodeFileInto(string filepath, out BossFunctions functions,
-            Player playerRef, BossController controller)
+        public static void ReadCustomCodeFileInto(string filepath, Player playerRef, BossController controller)
         {
             string path = CleanPath(filepath, ".lua");
             if (!Everest.Content.TryGet(path, out ModAsset onHitFile))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
-                functions = null;
                 return;
             }
-            functions = new BossFunctions(onHitFile.PathVirtual, playerRef, controller);
+            controller.Puppet.SetPuppetFunctions(new BossFunctions(onHitFile.PathVirtual, playerRef, controller));
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)

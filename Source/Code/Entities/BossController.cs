@@ -88,23 +88,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Level = SceneAs<Level>();
             Level.Add(Puppet);
             UserFileReader.ReadPatternFileInto(patternsPath, out Patterns, Level.LevelOffset);
-            int generalSeed = BossesHelperModule.Instance.TASSeed > 0
-                ? BossesHelperModule.Instance.TASSeed : (int)Math.Floor(Level.TimeActive);
+            int tasSeed = BossesHelperModule.Instance.TASSeed;
+            int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Level.TimeActive);
             random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
         }
 
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            PopulateAttacksEventsAndFunctions(scene.GetPlayer());
-        }
-
-        private void PopulateAttacksEventsAndFunctions(Player player)
-        {
+            Player player = scene.GetPlayer();
             UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, player, this);
             UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, player, this);
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, out BossFunctions bossReactions, player, this);
-            Puppet.SetPuppetFunctions(bossReactions);
+            UserFileReader.ReadCustomCodeFileInto(functionsPath, player, this);
         }
 
         public override void Removed(Scene scene)
