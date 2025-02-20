@@ -61,17 +61,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly string BossID;
 
-        public Level Level;
+        private Level Level;
 
-        public readonly BossPuppet Puppet;
+        private readonly BossPuppet Puppet;
 
-        public Dictionary<string, BossAttack> AllAttacks;
+        private Dictionary<string, BossAttack> AllAttacks;
 
-        public Dictionary<string, BossEvent> AllEvents;
+        private Dictionary<string, BossEvent> AllEvents;
 
         private int Health;
 
-        public List<BossPattern> Patterns;
+        private List<BossPattern> Patterns;
 
         private int currentPatternIndex;
 
