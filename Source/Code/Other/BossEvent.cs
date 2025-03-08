@@ -22,8 +22,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
-                { "bossID", controller.BossID },
-                { "puppet", controller.Puppet },
+                { "bossID", controller?.BossID },
+                { "puppet", controller?.Puppet },
                 { "boss", controller },
                 { "cutsceneEntity", this },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
