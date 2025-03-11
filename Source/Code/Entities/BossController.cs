@@ -140,7 +140,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 && positionTrigger.Collide(entityPos);
         }
 
-        private void StartAttackPattern(int goTo = -1)
+        public void StartAttackPattern(int goTo = -1)
         {
             if (goTo >= Patterns.Count)
             {
