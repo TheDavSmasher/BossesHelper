@@ -9,6 +9,8 @@ public class BossesHelperSession : EverestModuleSession
     #region Health System
     public bool wasOffscreen;
 
+    public bool useFakeDeath;
+
     public Vector2 lastSafePosition;
 
     public Vector2 lastSpawnPoint;
@@ -57,6 +59,8 @@ public class BossesHelperSession : EverestModuleSession
         public HealthSystemManager.OffscreenEffect playerOffscreen;
 
         public string[] fakeDeathEntities;
+
+        public string[] fakeDeathMethods;
 
         //Visual
         public string iconSprite;
