@@ -202,6 +202,15 @@ public class BossesHelperModule : EverestModule
 
     private static PlayerDeadBody FakeDie(Player self, Vector2 dir)
     {
+        Level level = self.SceneAs<Level>();
+
+        void TeleportPlayer()
+        {
+            level.Add(self);
+            self.Position = Session.lastSafePosition;
+            level.DoScreenWipe(true);
+        }
+
         if (self.StateMachine.State != Player.StReflectionFall)
         {
             self.Stop(self.wallSlideSfx);
@@ -216,11 +225,11 @@ public class BossesHelperModule : EverestModule
             Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
             PlayerDeadBody fakeDeadBody = new(self, dir)
             {
-                DeathAction = () => { }
+                DeathAction = TeleportPlayer
             };
-            fakeDeadBody.Get<Coroutine>().Replace(BossesHelperUtils.NewDeathRoutine(fakeDeadBody));
-            self.Scene.Add(fakeDeadBody);
-            self.Visible = false;
+            fakeDeadBody.Get<Coroutine>().Replace(BossesHelperUtils.FakeDeathRoutine(fakeDeadBody));
+            level.Add(fakeDeadBody);
+            level.Remove(self);
         }
         return null;
     }
