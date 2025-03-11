@@ -62,7 +62,7 @@ public class BossesHelperModule : EverestModule
         using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 0, after: ["*"])).Use())
         {
             On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
-            On.Celeste.Player.Die += GetDeathCallStack;
+            On.Celeste.Player.Die += DeathCalledFromMethod;
         }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
@@ -73,7 +73,7 @@ public class BossesHelperModule : EverestModule
     public override void Unload()
     {
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
-        On.Celeste.Player.Die -= GetDeathCallStack;
+        On.Celeste.Player.Die -= DeathCalledFromMethod;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
@@ -89,7 +89,7 @@ public class BossesHelperModule : EverestModule
         Session.wasOffscreen = false;
     }
 
-    private static PlayerDeadBody GetDeathCallStack(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
+    private static PlayerDeadBody DeathCalledFromMethod(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
         StackTrace trace = new();
         int index = 1;
