@@ -1,6 +1,7 @@
 ﻿using Celeste.Mod.Entities;
 using Monocle;
 using Microsoft.Xna.Framework;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -26,30 +27,34 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager(EntityData data, Vector2 _) : this()
         {
-            BossesHelperModule.Session.healthData.iconSprite = data.String("healthIcons", HealthData.iconSprite);
-            BossesHelperModule.Session.healthData.startAnim = data.String("healthIconsCreateAnim", HealthData.startAnim);
-            BossesHelperModule.Session.healthData.endAnim = data.String("healthIconsRemoveAnim", HealthData.endAnim);
-            Vector2 screenPosition = new Vector2(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
-            BossesHelperModule.Session.healthData.healthBarPos = screenPosition;
-            Vector2 iconScale = new Vector2(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
-            BossesHelperModule.Session.healthData.healthIconScale = iconScale;
-            BossesHelperModule.Session.healthData.iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation);
-            BossesHelperModule.Session.healthData.globalController = data.Bool("isGlobal");
-            BossesHelperModule.Session.healthData.globalHealth = HealthData.globalController ? data.Bool("globalHealth") : false;
-            BossesHelperModule.Session.healthData.playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal);
+            Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
+            Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
+            BossesHelperModule.Session.healthData = new()
+            {
+                iconSprite = data.String("healthIcons", HealthData.iconSprite),
+                startAnim = data.String("healthIconsCreateAnim", HealthData.startAnim),
+                endAnim = data.String("healthIconsRemoveAnim", HealthData.endAnim),
+                healthBarPos = screenPosition,
+                healthIconScale = iconScale,
+                iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation),
+                globalController = data.Bool("isGlobal"),
+                globalHealth = HealthData.globalController ? data.Bool("globalHealth") : false,
+                playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),
+                damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
+                playerOnCrush = data.Enum<CrushEffect>("crushEffect", HealthData.playerOnCrush),
+                playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", HealthData.playerOffscreen),
+                fakeDeathEntities = SeparateList(data.String("fakeDeathEntities", JoinList(HealthData.fakeDeathEntities))).ToArray(),
+                onDamageFunction = data.String("onDamageFunction", HealthData.onDamageFunction),
+                activateInstantly = data.Bool("applySystemInstantly"),
+                startVisible = data.Bool("startVisible"),
+                playerBlink = data.Bool("playerBlink", true),
+                playerStagger = data.Bool("playerStagger", true),
+                activateFlag = data.String("activationFlag", HealthData.activateFlag),
+                isEnabled = false
+            };
             ResetCurrentHealth(!HealthData.isCreated);
-            BossesHelperModule.Session.healthData.damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown);
-            BossesHelperModule.Session.healthData.playerOnCrush = data.Enum<CrushEffect>("crushEffect", HealthData.playerOnCrush);
-            BossesHelperModule.Session.healthData.playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", HealthData.playerOffscreen);
-            BossesHelperModule.Session.healthData.onDamageFunction = data.String("onDamageFunction", HealthData.onDamageFunction);
-            BossesHelperModule.Session.healthData.activateInstantly = data.Bool("applySystemInstantly");
-            BossesHelperModule.Session.healthData.startVisible = data.Bool("startVisible");
-            BossesHelperModule.Session.healthData.playerBlink = data.Bool("playerBlink", true);
-            BossesHelperModule.Session.healthData.playerStagger = data.Bool("playerStagger", true);
-            BossesHelperModule.Session.healthData.activateFlag = data.String("activationFlag", HealthData.activateFlag);
-            BossesHelperModule.Session.healthData.isEnabled = false;
             BossesHelperModule.Session.healthData.isCreated = true;
-            if (BossesHelperModule.Session.healthData.globalController)
+            if (HealthData.globalController)
                 AddTag(Tags.Global);
         }
 
