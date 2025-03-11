@@ -15,13 +15,24 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
         {
             string key = classType.Name + ":" + method;
-            if (createdILHooks.ContainsKey(key)) return;
             MethodInfo methodInfo = classType.GetMethod(method, flags);
             if (methodInfo == null) return;
             if (stateMethod)
             {
                 methodInfo = methodInfo.GetStateMachineTarget();
             }
+            GenerateHookOn(key, methodInfo, action);
+        }
+
+        public static void GenerateHookOn(MethodInfo methodInfo, ILContext.Manipulator action)
+        {
+            string key = methodInfo.DeclaringType.Name + ":" + methodInfo.Name;
+            GenerateHookOn(key, methodInfo, action);
+        }
+
+        public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
+        {
+            if (createdILHooks.ContainsKey(key)) return;
             ILHook newHook = new(methodInfo, action);
             createdILHooks.Add(key, newHook);
             newHook.Apply();
