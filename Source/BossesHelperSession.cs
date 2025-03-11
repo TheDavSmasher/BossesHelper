@@ -80,21 +80,9 @@ public class BossesHelperSession : EverestModuleSession
 
     public int currentPlayerHealth;
 
-    [YamlIgnore]
-    public HealthSystemManager mapHealthSystemManager;
-
-    [YamlIgnore]
-    public DamageController mapDamageController;
-
-    [YamlIgnore]
-    public PlayerHealthBar mapHealthBar;
-
     public bool safeGroundBlockerCreated;
 
     public bool globalSafeGroundBlocker;
-
-    [YamlIgnore]
-    public UpdateSafeBlocker mapUpdateSafeBlocker;
     #endregion
 
     #region Boss Phase
