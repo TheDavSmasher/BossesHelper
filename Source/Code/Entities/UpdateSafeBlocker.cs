@@ -4,6 +4,7 @@ using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
+    [Tracked(false)]
     [CustomEntity("BossesHelper/UpdateSafeBlocker")]
     public class UpdateSafeBlocker : Entity
     {
