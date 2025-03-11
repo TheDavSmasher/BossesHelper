@@ -161,10 +161,7 @@ public class BossesHelperModule : EverestModule
         if (damageTracked && Session.currentPlayerHealth <= 0)
             return orig(self, dir, always, register);
         if (Session.useFakeDeath)
-        {
-            UseFakeDeath(self, dir);
-            return null;
-        }
+            return FakeDie(self, dir);
         if (Session.damageCooldown > 0)
             return null;
         if (!damageTracked)
@@ -199,25 +196,29 @@ public class BossesHelperModule : EverestModule
         }
     }
 
-    private static void UseFakeDeath(Player self, Vector2 dir)
+    private static PlayerDeadBody FakeDie(Player self, Vector2 dir)
     {
-        self.Stop(self.wallSlideSfx);
-        self.Depth = -1000000;
-        self.Speed = Vector2.Zero;
-        self.StateMachine.Locked = true;
-        self.Collidable = false;
-        self.Drop();
-        self.LastBooster?.PlayerDied();
-        self.level.InCutscene = false;
-        self.level.Shake();
-        Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
-        PlayerDeadBody fakeDeadBody = new(self, dir)
+        if (self.StateMachine.State != Player.StReflectionFall)
         {
-            DeathAction = () => { }
-        };
-        fakeDeadBody.Get<Coroutine>().Replace(BossesHelperUtils.NewDeathRoutine(fakeDeadBody));
-        self.Scene.Add(fakeDeadBody);
-        self.Visible = false;
+            self.Stop(self.wallSlideSfx);
+            self.Depth = -1000000;
+            self.Speed = Vector2.Zero;
+            self.StateMachine.Locked = true;
+            self.Collidable = false;
+            self.Drop();
+            self.LastBooster?.PlayerDied();
+            self.level.InCutscene = false;
+            self.level.Shake();
+            Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
+            PlayerDeadBody fakeDeadBody = new(self, dir)
+            {
+                DeathAction = () => { }
+            };
+            fakeDeadBody.Get<Coroutine>().Replace(BossesHelperUtils.NewDeathRoutine(fakeDeadBody));
+            self.Scene.Add(fakeDeadBody);
+            self.Visible = false;
+        }
+        return null;
     }
 
     private static bool KillOffscreen(Player player)
