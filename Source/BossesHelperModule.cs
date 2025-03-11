@@ -8,6 +8,7 @@ using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
 using MonoMod.Cil;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using System.Diagnostics;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -58,9 +59,10 @@ public class BossesHelperModule : EverestModule
 
     public override void Load()
     {
-        using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 1, after: ["*"])).Use())
+        using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 0, after: ["*"])).Use())
         {
             On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
+            On.Celeste.Player.Die += GetDeathCallStack;
         }
         On.Celeste.Level.LoadLevel += SetStartingHealth;
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
@@ -71,6 +73,7 @@ public class BossesHelperModule : EverestModule
     public override void Unload()
     {
         On.Celeste.Level.EnforceBounds -= PlayerDiedWhileEnforceBounds;
+        On.Celeste.Player.Die -= GetDeathCallStack;
         On.Celeste.Level.LoadLevel -= SetStartingHealth;
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
@@ -84,6 +87,26 @@ public class BossesHelperModule : EverestModule
         Session.wasOffscreen = true;
         orig(self, player);
         Session.wasOffscreen = false;
+    }
+
+    private static PlayerDeadBody GetDeathCallStack(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
+    {
+        StackTrace trace = new();
+        int index = 1;
+        while (index < trace.FrameCount)
+        {
+            if (trace.GetFrame(index++).GetMethod().Name.Contains("Celeste.Player:Die"))
+                break;
+        }
+        int length = HealthData.fakeDeathMethods != null ? HealthData.fakeDeathMethods.Length : 0;
+        for (int i = 0; i < length; i++)
+        {
+            if (trace.GetFrame(index).GetMethod().Name.Contains(HealthData.fakeDeathMethods[i]))
+                Session.useFakeDeath = true;
+        }
+        PlayerDeadBody result = orig(self, dir, always, register);
+        Session.useFakeDeath = false;
+        return result;
     }
 
     public static void SetStartingHealth(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes intro, bool fromLoader = false)
