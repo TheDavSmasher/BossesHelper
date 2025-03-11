@@ -224,14 +224,14 @@ public class BossesHelperModule : EverestModule
     private static bool KillOffscreen(Player player)
     {
         float? offscreemAtY = GetFromY(player.SceneAs<Level>(), player);
-        if (offscreemAtY == null)
+        if (offscreemAtY is not float atY)
             return false;
         switch (HealthData.playerOffscreen)
         {
             case HealthSystemManager.OffscreenEffect.BounceUp:
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
                 player.Play("event:/game/general/assist_screenbottom");
-                player.Bounce((float)offscreemAtY);
+                player.Bounce(atY);
                 break;
             case HealthSystemManager.OffscreenEffect.BubbleBack:
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
