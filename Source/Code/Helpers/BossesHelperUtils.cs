@@ -404,7 +404,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<string> SeparateList(string listString)
         {
-            List<string> res = listString.Split([',']).ToList();
+            List<string> res = listString.Split(',').ToList();
             for (int i = 0; i < res.Count; i++)
             {
                 res[i] = res[i].Trim();
@@ -419,7 +419,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<float> SeparateFloatList(string listString)
         {
-            return listString.Replace(" ", string.Empty).Split([',']).Select(float.Parse).ToList();
+            return SeparateList(listString).Select(float.Parse).ToList();
         }
 
         public class Crc32
