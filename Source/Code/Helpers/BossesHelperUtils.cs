@@ -90,7 +90,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 tween.Stop();
             }
             self.Position += Vector2.UnitY * -5f;
-            level.Displacement.AddBurst(self.Position, 0.3f, 0f, 80f);
             level.Shake();
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
             self.End();
