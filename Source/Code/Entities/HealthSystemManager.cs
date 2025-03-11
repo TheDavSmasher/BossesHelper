@@ -43,7 +43,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
                 playerOnCrush = data.Enum<CrushEffect>("crushEffect", HealthData.playerOnCrush),
                 playerOffscreen = data.Enum<OffscreenEffect>("offscreenEffect", HealthData.playerOffscreen),
-                fakeDeathEntities = SeparateList(data.String("fakeDeathEntities", JoinList(HealthData.fakeDeathEntities))).ToArray(),
                 fakeDeathMethods = SeparateList(data.String("fakeDeathMethods", JoinList(HealthData.fakeDeathMethods))).ToArray(),
                 onDamageFunction = data.String("onDamageFunction", HealthData.onDamageFunction),
                 activateInstantly = data.Bool("applySystemInstantly"),

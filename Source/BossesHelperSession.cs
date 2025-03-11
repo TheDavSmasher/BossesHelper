@@ -58,8 +58,6 @@ public class BossesHelperSession : EverestModuleSession
 
         public HealthSystemManager.OffscreenEffect playerOffscreen;
 
-        public string[] fakeDeathEntities;
-
         public string[] fakeDeathMethods;
 
         //Visual
