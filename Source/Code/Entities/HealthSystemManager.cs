@@ -2,6 +2,10 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using System;
+using System.Reflection;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+using MonoMod.Cil;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -81,6 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
+            DisableHealthSystem();
             BossesHelperModule.Session.mapHealthSystemManager = null;
             BossesHelperModule.Session.healthData.isCreated = false;
             BossesHelperModule.Session.mapHealthBar?.RemoveSelf();
@@ -91,12 +96,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BossesHelperModule.Session.healthData.isEnabled = false;
             RemoveSelf();
+            UnloadFakeDeathHooks();
         }
 
         public void EnableHealthSystem()
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
             SceneAs<Level>()?.Add(BossesHelperModule.Session.mapHealthBar ??= new(), BossesHelperModule.Session.mapDamageController ??= new());
+            LoadFakeDeathHooks();
         }
 
         private static void ResetCurrentHealth(bool reset)
@@ -104,6 +111,42 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (reset)
             {
                 BossesHelperModule.Session.currentPlayerHealth = BossesHelperModule.Session.healthData.playerHealthVal;
+            }
+        }
+
+        //Fake Data Shenanigans
+        private static void LoadFakeDeathHooks()
+        {
+            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            {
+                string[] opts = fakeMethod.Split(':');
+                if (opts.Length != 2)
+                    continue;
+                Type entityType = LuaMethodWrappers.GetTypeFromString(opts[0], "");
+                MethodInfo methodInfo = entityType?.GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (methodInfo != null)
+                {
+                    ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, DetermineDeathCall);
+                }
+            }
+        }
+
+        private static void DetermineDeathCall(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
+            while (cursor.TryGotoNext(instr => instr.MatchRet()))
+            {
+                cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
+                cursor.Index++;
+            }
+        }
+
+        private static void UnloadFakeDeathHooks()
+        {
+            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            {
+                ILHookHelper.DisposeHook(fakeMethod);
             }
         }
     }
