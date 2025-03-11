@@ -3,6 +3,7 @@ local healthSystemManager = {}
 local crushModeOpts = {
     {"Push Out", "pushOut"},
     {"Solid On Invincible Player", "invincibleSolid"},
+    {"Fake Death", "fakeDeath"},
     {"Instant Death", "instantDeath"},
     {"Use Old Value", ""}
 }
@@ -10,6 +11,7 @@ local crushModeOpts = {
 local offscreenModeOpts = {
     {"Bounce Up", "bounceUp"},
     {"Bubble Back", "bubbleBack"},
+    {"Fake Death", "fakeDeath"},
     {"Instant Death", "instantDeath"},
     {"Use Old Value", ""}
 }
