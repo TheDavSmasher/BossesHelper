@@ -59,10 +59,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
+        public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
-            if (BSession.damageCooldown > 0 && !ignoreCooldown || SaveData.Instance.Assists.Invincible ||
-                level.InCutscene || amount <= 0)
+            if (level.InCutscene ||
+                !evenIfInvincible && (BSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0))
             {
                 return;
             }
