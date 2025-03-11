@@ -22,14 +22,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 methodInfo = methodInfo.GetStateMachineTarget();
             }
-            createdILHooks.Add(key, new ILHook(methodInfo, action));
+            ILHook newHook = new(methodInfo, action);
+            createdILHooks.Add(key, newHook);
+            newHook.Apply();
         }
 
         public static void DisposeHook(Type classType, string method)
         {
             string key = classType.Name + ":" + method;
-            createdILHooks[key].Dispose();
-            createdILHooks.Remove(key);
+            if (createdILHooks.TryGetValue(key, out ILHook toRemove))
+            {
+                toRemove.Dispose();
+                createdILHooks.Remove(key);
+            }
         }
 
         public static void DisposeAll()
