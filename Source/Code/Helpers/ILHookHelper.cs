@@ -41,6 +41,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void DisposeHook(Type classType, string method)
         {
             string key = classType.Name + ":" + method;
+            DisposeHook(key);
+        }
+
+        public static void DisposeHook(string key)
+        {
             if (createdILHooks.TryGetValue(key, out ILHook toRemove))
             {
                 toRemove.Dispose();
