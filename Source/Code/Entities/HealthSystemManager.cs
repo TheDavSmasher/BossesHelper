@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod.Entities;
 using Monocle;
 using Microsoft.Xna.Framework;
-using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
