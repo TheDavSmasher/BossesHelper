@@ -17,14 +17,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public UpdateSafeBlocker()
         {
-            BossesHelperModule.Session.mapUpdateSafeBlocker = this;
             BossesHelperModule.Session.safeGroundBlockerCreated = true;
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            if (scene.Tracker.GetEntity<UpdateSafeBlocker>() != this)
+                RemoveSelf();
         }
 
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            BossesHelperModule.Session.mapUpdateSafeBlocker = null;
             BossesHelperModule.Session.safeGroundBlockerCreated = false;
         }
     }
