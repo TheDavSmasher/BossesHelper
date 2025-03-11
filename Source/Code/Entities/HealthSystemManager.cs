@@ -19,6 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             PushOut,
             InvincibleSolid,
+            FakeDeath,
             InstantDeath
         }
 
@@ -26,6 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BounceUp,
             BubbleBack,
+            FakeDeath,
             InstantDeath
         }
 
