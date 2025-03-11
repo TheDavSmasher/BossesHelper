@@ -404,7 +404,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<string> SeparateList(string listString)
         {
-            return listString.Replace(" ", string.Empty).Split([',']).ToList();
+            List<string> res = listString.Split([',']).ToList();
+            for (int i = 0; i < res.Count; i++)
+            {
+                res[i] = res[i].Trim();
+            }
+            return res;
+        }
+
+        public static string JoinList(string[] list)
+        {
+            return string.Join(",", list);
         }
 
         public static List<float> SeparateFloatList(string listString)
