@@ -190,6 +190,10 @@ public class BossesHelperModule : EverestModule
                 PlayerTakesDamage(Vector2.Zero);
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
+            case HealthSystemManager.CrushEffect.FakeDeath:
+                PlayerTakesDamage(Vector2.Zero);
+                FakeDie(player, Vector2.UnitY * -1);
+                break;
             default: //CrushEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
                 break;
@@ -237,6 +241,10 @@ public class BossesHelperModule : EverestModule
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
                 if (!Session.alreadyFlying)
                     player.Add(new Coroutine(PlayerFlyBack(player)));
+                break;
+            case HealthSystemManager.OffscreenEffect.FakeDeath:
+                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                FakeDie(player, Vector2.UnitY * -1);
                 break;
             default: //OffscreenEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
