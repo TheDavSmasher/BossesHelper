@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Monocle;
 using Microsoft.Xna.Framework;
-using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -65,47 +64,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 sprite = new Sprite();
                 return false;
             }
-        }
-
-        public static IEnumerator NewDeathRoutine(this PlayerDeadBody self)
-        {
-            Level level = self.SceneAs<Level>();
-            if (self.bounce != Vector2.Zero)
-            {
-                Audio.Play("event:/char/madeline/predeath", self.Position);
-                self.scale = 1.5f;
-                Celeste.Freeze(0.05f);
-                yield return null;
-                Vector2 from = self.Position;
-                Vector2 to = from + self.bounce * 24f;
-                Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.5f, start: true);
-                self.Add(tween);
-                tween.OnUpdate = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
-                {
-                    self.Position = from + (to - from) * t.Eased;
-                    self.scale = 1.5f - t.Eased * 0.5f;
-                    self.sprite.Rotation = (float)(Math.Floor(t.Eased * 4f) * 6.2831854820251465);
-                };
-                yield return tween.Duration * 0.75f;
-                tween.Stop();
-            }
-            self.Position += Vector2.UnitY * -5f;
-            level.Displacement.AddBurst(self.Position, 0.3f, 0f, 80f);
-            level.Shake();
-            Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
-            Audio.Play(self.HasGolden ? "event:/new_content/char/madeline/death_golden" : "event:/char/madeline/death", self.Position);
-            self.deathEffect = new DeathEffect(self.initialHairColor, self.Center - self.Position);
-            self.deathEffect.OnUpdate = delegate (float f)
-            {
-                self.light.Alpha = 1f - f;
-            };
-            self.Add(self.deathEffect);
-            yield return self.deathEffect.Duration * 0.65f;
-            if (self.ActionDelay > 0f)
-            {
-                yield return self.ActionDelay;
-            }
-            self.End();
         }
         #endregion
 
