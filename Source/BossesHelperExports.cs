@@ -59,5 +59,15 @@ namespace Celeste.Mod.BossesHelper
         {
             BossesHelperModule.PlayerTakesDamage(from, amount, silent, stagger, ignoreCooldown);
         }
+
+        public static void UseFakeDeath()
+        {
+            BossesHelperModule.Session.useFakeDeath = true;
+        }
+
+        public static void ClearFakeDeath()
+        {
+            BossesHelperModule.Session.useFakeDeath = false;
+        }
     }
 }
