@@ -67,7 +67,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static IEnumerator NewDeathRoutine(this PlayerDeadBody self)
+        public static IEnumerator FakeDeathRoutine(this PlayerDeadBody self)
         {
             Level level = self.SceneAs<Level>();
             if (self.bounce != Vector2.Zero)
@@ -93,18 +93,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             level.Displacement.AddBurst(self.Position, 0.3f, 0f, 80f);
             level.Shake();
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
-            Audio.Play(self.HasGolden ? "event:/new_content/char/madeline/death_golden" : "event:/char/madeline/death", self.Position);
-            self.deathEffect = new DeathEffect(self.initialHairColor, self.Center - self.Position);
-            self.deathEffect.OnUpdate = delegate (float f)
-            {
-                self.light.Alpha = 1f - f;
-            };
-            self.Add(self.deathEffect);
-            yield return self.deathEffect.Duration * 0.65f;
-            if (self.ActionDelay > 0f)
-            {
-                yield return self.ActionDelay;
-            }
             self.End();
         }
         #endregion
