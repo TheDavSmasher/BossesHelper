@@ -156,8 +156,7 @@ public class BossesHelperModule : EverestModule
         {
             if (damageTracked)
             {
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
-                return null;
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
             }            
             return orig(self, dir, always, register);
         }
@@ -192,7 +191,7 @@ public class BossesHelperModule : EverestModule
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             default: //CrushEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
                 break;
         }
     }
@@ -215,7 +214,7 @@ public class BossesHelperModule : EverestModule
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
             default: //OffscreenEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, ignoreCooldown: true);
+                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
                 break;
         }
         return true;
@@ -230,9 +229,9 @@ public class BossesHelperModule : EverestModule
         player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY * 8);
     }
 
-    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
+    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
     {
-        Session.mapDamageController?.TakeDamage(origin, amount, silent, stagger, ignoreCooldown);
+        Session.mapDamageController?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
     }
 
     private static float? GetFromY(Level level, Player player)
