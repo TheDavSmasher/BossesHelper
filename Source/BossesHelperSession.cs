@@ -11,6 +11,8 @@ public class BossesHelperSession : EverestModuleSession
 
     public bool useFakeDeath;
 
+    public bool fakeDeathRespawn;
+
     public Vector2 lastSafePosition;
 
     public Vector2 lastSpawnPoint;
