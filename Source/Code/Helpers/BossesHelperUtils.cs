@@ -5,6 +5,7 @@ using System.Linq;
 using Monocle;
 using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
+using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -186,6 +187,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private Level level;
 
+            private bool isGlobal;
+
             public int Count
             {
                 get
@@ -247,6 +250,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     createAnims = SeparateList(HealthData.startAnim);
                     removeAnims = SeparateList(HealthData.endAnim);
                     iconSeparations = SeparateFloatList(HealthData.iconSeparation);
+                    for (int i = 0; i < Health; i++)
+                    {
+                        healthIcons.Add(new HealthIcon(BarScale,
+                            icons.ElementAtOrDefault(i, icons.Last()),
+                            createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                            removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                            )
+                        );
+                    }
                 }
             }
 
@@ -262,6 +274,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void MakeGlobal()
             {
+                isGlobal = true;
                 AddTag(Tags.Global);
                 foreach (HealthIcon icon in healthIcons)
                     icon.AddTag(Tags.Global);
@@ -282,6 +295,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     createAnims.ElementAtOrDefault(i, createAnims.LastOrDefault()),
                     removeAnims.ElementAtOrDefault(i, removeAnims.LastOrDefault())
                 );
+                if (isGlobal)
+                    healthIcon.AddTag(Tags.Global);
                 healthIcons.Add(healthIcon);
                 level.Add(healthIcon);
                 healthIcon.DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
