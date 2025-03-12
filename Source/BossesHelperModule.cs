@@ -112,11 +112,12 @@ public class BossesHelperModule : EverestModule
             return;
         if (HealthData.globalController &&
             (intro == Player.IntroTypes.Transition && !HealthData.globalHealth ||
-            intro == Player.IntroTypes.Respawn && !fromLoader))
+            intro == Player.IntroTypes.Respawn && !fromLoader && !Session.fakeDeathRespawn))
         {
             Session.currentPlayerHealth = HealthData.playerHealthVal;
             Engine.Scene.Tracker.GetEntity<PlayerHealthBar>().healthIcons.RefillHealth();
         }
+        Session.fakeDeathRespawn = false;
     }
 
     public static void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
@@ -156,7 +157,7 @@ public class BossesHelperModule : EverestModule
         {
             if (damageTracked)
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);        
-            return orig(self, dir, always, register);
+            return null;
         }
         if (damageTracked && Session.currentPlayerHealth <= 0)
             return orig(self, dir, always, register);
@@ -191,7 +192,7 @@ public class BossesHelperModule : EverestModule
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             case HealthSystemManager.CrushEffect.FakeDeath:
-                PlayerTakesDamage(Vector2.Zero);
+                PlayerTakesDamage(Vector2.Zero, evenIfInvincible: true);
                 FakeDie(player, Vector2.UnitY * -1);
                 break;
             default: //CrushEffect.InstantDeath
@@ -211,8 +212,9 @@ public class BossesHelperModule : EverestModule
             level.DoScreenWipe(true);
         }
 
-        if (self.StateMachine.State != Player.StReflectionFall)
+        if (!self.Dead && self.StateMachine.State != Player.StReflectionFall)
         {
+            Session.fakeDeathRespawn = true;
             self.Stop(self.wallSlideSfx);
             self.Depth = -1000000;
             self.Speed = Vector2.Zero;
@@ -252,7 +254,7 @@ public class BossesHelperModule : EverestModule
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
             case HealthSystemManager.OffscreenEffect.FakeDeath:
-                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
                 FakeDie(player, Vector2.UnitY * -1);
                 break;
             default: //OffscreenEffect.InstantDeath
