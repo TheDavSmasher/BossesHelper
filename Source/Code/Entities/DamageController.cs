@@ -38,6 +38,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Awake(Scene scene)
         {
+            if (scene.Tracker.GetEntity<DamageController>() != this)
+            {
+                RemoveSelf();
+                return;
+            }
             base.Awake(scene);
             LoadFunction(level.GetPlayer());
         }

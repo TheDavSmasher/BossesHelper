@@ -28,6 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Tag = Tags.HUD;
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
+                AddTag(Tags.Global);
                 healthIcons.MakeGlobal();
         }
 
@@ -39,6 +40,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Awake(Scene scene)
         {
+            if (scene.Tracker.GetEntity<PlayerHealthBar>() != this)
+            {
+                RemoveSelf();
+                return;
+            }
             healthIcons.Clear();
             healthIcons.RefillHealth();
             base.Awake(scene);
