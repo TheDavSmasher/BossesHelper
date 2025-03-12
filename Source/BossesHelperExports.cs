@@ -4,6 +4,7 @@ using MonoMod.ModInterop;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Components;
 using System.Reflection;
+using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper
 {
@@ -45,14 +46,14 @@ namespace Celeste.Mod.BossesHelper
 
         public static int GetCurrentPlayerHealth()
         {
-            if (BossesHelperModule.Session.mapDamageController != null)
+            if (Engine.Scene.Tracker.GetEntity<DamageController>() != null)
                 return BossesHelperModule.Session.currentPlayerHealth;
             return -1;
         }
 
         public static void RecoverPlayerHealth(int amount)
         {
-            BossesHelperModule.Session.mapDamageController?.RecoverHealth(amount);
+            Engine.Scene.Tracker.GetEntity<DamageController>()?.RecoverHealth(amount);
         }
 
         public static void MakePlayerTakeDamage(Vector2 from, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)

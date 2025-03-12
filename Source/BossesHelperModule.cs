@@ -91,9 +91,9 @@ public class BossesHelperModule : EverestModule
         if (fromLoader)
         {
             if (HealthData.isCreated)
-                self.Add(Session.mapHealthSystemManager ??= new());
+                self.Add(new HealthSystemManager());
             if (Session.safeGroundBlockerCreated)
-                self.Add(Session.mapUpdateSafeBlocker ??= new());
+                self.Add(new UpdateSafeBlocker());
         }
         orig(self, intro, fromLoader);
         if (Engine.Scene.GetPlayer() is Player entity)
@@ -108,21 +108,21 @@ public class BossesHelperModule : EverestModule
                 Session.travelingToSavePoint = false;
             }
         }
-        if (Session.mapHealthSystemManager == null || !HealthData.isEnabled)
+        if (Engine.Scene.Tracker.GetEntity<HealthSystemManager>() == null || !HealthData.isEnabled)
             return;
         if (HealthData.globalController &&
             (intro == Player.IntroTypes.Transition && !HealthData.globalHealth ||
             intro == Player.IntroTypes.Respawn && !fromLoader))
         {
             Session.currentPlayerHealth = HealthData.playerHealthVal;
-            Session.mapHealthBar.healthIcons.RefillHealth();
+            Engine.Scene.Tracker.GetEntity<PlayerHealthBar>().healthIcons.RefillHealth();
         }
     }
 
     public static void UpdatePlayerLastSafe(On.Celeste.Player.orig_Update orig, Player self)
     {
         orig(self);
-        if (self.OnSafeGround && Session.mapUpdateSafeBlocker == null)
+        if (self.OnSafeGround && self.Scene.Tracker.GetEntity<UpdateSafeBlocker>() == null)
             Session.lastSafePosition = self.Position;
         if (self.StateMachine.State != Player.StCassetteFly)
             Session.alreadyFlying = false;
@@ -151,7 +151,7 @@ public class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        bool damageTracked = Session.mapHealthSystemManager != null && HealthData.isEnabled;
+        bool damageTracked = self.Scene.Tracker.GetEntity<HealthSystemManager>() != null && HealthData.isEnabled;
         if (always)
         {
             if (damageTracked)
@@ -176,7 +176,7 @@ public class BossesHelperModule : EverestModule
     #region Hook Helper Methods
     public static void KillOnCrush(Player player, CollisionData data, bool evenIfInvincible)
     {
-        if (Session.mapHealthSystemManager == null || !HealthData.isEnabled)
+        if (player.Scene.Tracker.GetEntity<HealthSystemManager>() == null || !HealthData.isEnabled)
             return;
         switch (HealthData.playerOnCrush)
         {
@@ -206,7 +206,7 @@ public class BossesHelperModule : EverestModule
 
         void TeleportPlayer()
         {
-            level.Add(self);
+            //level.Add(self);
             self.Position = Session.lastSafePosition;
             level.DoScreenWipe(true);
         }
@@ -273,7 +273,7 @@ public class BossesHelperModule : EverestModule
 
     public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
     {
-        Session.mapDamageController?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
+        Engine.Scene.Tracker.GetEntity<DamageController>()?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
     }
 
     private static float? GetFromY(Level level, Player player)

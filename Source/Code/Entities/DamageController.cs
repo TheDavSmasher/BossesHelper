@@ -92,11 +92,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-            if (BSession.mapHealthBar != null)
+            PlayerHealthBar healthBar = Scene.Tracker.GetEntity<PlayerHealthBar>();
+            if (healthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    BSession.mapHealthBar.healthIcons.DecreaseHealth();
+                    healthBar.healthIcons.DecreaseHealth();
                 }
             }
             else
@@ -108,10 +109,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void RecoverHealth(int amount = 1)
         {
             BSession.currentPlayerHealth += amount;
-            int count = BSession.mapHealthBar.healthIcons.Count;
+            PlayerHealthBar healthBar = Scene.Tracker.GetEntity<PlayerHealthBar>();
+            int count = healthBar.healthIcons.Count;
             for (int i = count; i < count + amount; i++)
             {
-                BSession.mapHealthBar.healthIcons.IncreaseHealth(i);
+                healthBar.healthIcons.IncreaseHealth(i);
             }
         }
 
@@ -167,12 +169,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             tween.Stop();
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
-        }
-
-        public override void Removed(Scene scene)
-        {
-            base.Removed(scene);
-            BSession.mapDamageController = null;
         }
     }
 }

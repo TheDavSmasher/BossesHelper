@@ -56,7 +56,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 playerBlink = data.Bool("playerBlink", true),
                 playerStagger = data.Bool("playerStagger", true),
                 activateFlag = data.String("activationFlag", HealthData.activateFlag),
-                isEnabled = false
+                isEnabled = false,
+                isCreated = HealthData.isCreated                
             };
             ResetCurrentHealth(!HealthData.isCreated);
             BossesHelperModule.Session.healthData.isCreated = true;
@@ -67,12 +68,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public HealthSystemManager()
         {
             ResetCurrentHealth(HealthData.isCreated && !HealthData.globalHealth);
-            BossesHelperModule.Session.mapHealthSystemManager = this;
         }
 
-        public override void Added(Scene scene)
+        public override void Awake(Scene scene)
         {
-            base.Added(scene);
+            base.Awake(scene);
+            if (scene.Tracker.GetEntity<HealthSystemManager>() != this)
+            {
+                RemoveSelf();
+                return;
+            }
             if (HealthData.isEnabled || HealthData.activateInstantly)
                 EnableHealthSystem();
         }
@@ -87,11 +92,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            DisableHealthSystem();
-            BossesHelperModule.Session.mapHealthSystemManager = null;
-            BossesHelperModule.Session.healthData.isCreated = false;
-            BossesHelperModule.Session.mapHealthBar?.RemoveSelf();
-            BossesHelperModule.Session.mapDamageController?.RemoveSelf();
+            if (scene.Tracker.GetEntity<HealthSystemManager>() == this)
+            {
+                DisableHealthSystem();
+                BossesHelperModule.Session.healthData.isCreated = false;
+                scene.Tracker.GetEntity<PlayerHealthBar>()?.RemoveSelf();
+                scene.Tracker.GetEntity<DamageController>()?.RemoveSelf();
+            }
+        }
+
+        public void EnableHealthSystem()
+        {
+            BossesHelperModule.Session.healthData.isEnabled = true;
+            SceneAs<Level>()?.Add(new PlayerHealthBar(), new DamageController());
+            LoadFakeDeathHooks();
         }
 
         public void DisableHealthSystem()
@@ -99,13 +113,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.isEnabled = false;
             RemoveSelf();
             UnloadFakeDeathHooks();
-        }
-
-        public void EnableHealthSystem()
-        {
-            BossesHelperModule.Session.healthData.isEnabled = true;
-            SceneAs<Level>()?.Add(BossesHelperModule.Session.mapHealthBar ??= new(), BossesHelperModule.Session.mapDamageController ??= new());
-            LoadFakeDeathHooks();
         }
 
         private static void ResetCurrentHealth(bool reset)

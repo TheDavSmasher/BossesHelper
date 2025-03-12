@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             Level level = SceneAs<Level>();
             if (level.Tracker.GetEntity<HealthSystemManager>() != null)
             {
-                BossesHelperModule.Session.mapDamageController.RecoverHealth(healAmount);
+                level.Tracker.GetEntity<DamageController>().RecoverHealth(healAmount);
                 if (onlyOnce)
                 {
                     if (permanent)

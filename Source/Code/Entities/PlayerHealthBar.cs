@@ -47,7 +47,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            BossesHelperModule.Session.mapHealthBar = null;
             healthIcons.RemoveSelf();
         }
     }

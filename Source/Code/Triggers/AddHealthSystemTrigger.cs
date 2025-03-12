@@ -23,10 +23,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
 
         private IEnumerator RemoveAndReadd()
         {
-            BossesHelperModule.Session.mapHealthSystemManager?.RemoveSelf();
+            Scene.Tracker.GetEntity<HealthSystemManager>()?.RemoveSelf();
             yield return null;
-            new HealthSystemManager(data, Vector2.Zero);
-            SceneAs<Level>().Add(BossesHelperModule.Session.mapHealthSystemManager);
+            SceneAs<Level>().Add(new HealthSystemManager(data, Vector2.Zero));
             if (onlyOnce)
             {
                 SceneAs<Level>().Session.DoNotLoad.Add(id);

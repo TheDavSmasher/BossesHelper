@@ -23,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             level = scene as Level;
-            BossesHelperModule.Session.mapUpdateSafeBlocker?.RemoveSelf();
+            scene.Tracker.GetEntity<UpdateSafeBlocker>()?.RemoveSelf();
             RemoveSelf();
         }
 
