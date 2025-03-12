@@ -31,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        public HealthSystemManager(EntityData data, Vector2 _) : this()
+        public HealthSystemManager(EntityData data, Vector2 _)
         {
             Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
             Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
@@ -70,16 +70,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             ResetCurrentHealth(HealthData.isCreated && !HealthData.globalHealth);
         }
 
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            if (HealthData.isEnabled || HealthData.activateInstantly)
+                EnableHealthSystem();
+        }
+
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
             if (scene.Tracker.GetEntity<HealthSystemManager>() != this)
-            {
                 RemoveSelf();
-                return;
-            }
-            if (HealthData.isEnabled || HealthData.activateInstantly)
-                EnableHealthSystem();
         }
 
         public override void Update()
@@ -104,7 +106,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void EnableHealthSystem()
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
-            SceneAs<Level>()?.Add(new PlayerHealthBar(), new DamageController());
+            if (Scene.Tracker.GetEntity<PlayerHealthBar>() == null)
+                Scene.Add(new PlayerHealthBar());
+            if (Scene.Tracker.GetEntity<DamageController>() == null)
+                Scene.Add(new DamageController());
             LoadFakeDeathHooks();
         }
 
