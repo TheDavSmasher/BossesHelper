@@ -260,6 +260,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
+            public void MakeGlobal()
+            {
+                AddTag(Tags.Global);
+                foreach (HealthIcon icon in healthIcons)
+                    icon.AddTag(Tags.Global);
+            }
+
             public void RefillHealth()
             {
                 for (int i = healthIcons.Count; i < Health; i++)

@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Tag = Tags.HUD;
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
-                AddTag(Tags.Global);
+                healthIcons.MakeGlobal();
         }
 
         public override void Added(Scene scene)
