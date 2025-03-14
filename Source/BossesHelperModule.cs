@@ -157,7 +157,7 @@ public class BossesHelperModule : EverestModule
         {
             if (damageTracked)
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);        
-            return null;
+            return orig(self, dir, always, register);
         }
         if (damageTracked && Session.currentPlayerHealth <= 0)
             return orig(self, dir, always, register);
