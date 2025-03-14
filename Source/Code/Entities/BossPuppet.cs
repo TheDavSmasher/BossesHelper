@@ -55,7 +55,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public float BossHitCooldown { get; private set; }
 
-        private int facing;
+        public int Facing;
 
         public const float Gravity = 900f;
 
@@ -111,7 +111,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(new PlayerCollider(KillOnContact));
             onCollideH = OnCollideH;
             onCollideV = OnCollideV;
-            facing = MirrorSprite ? -1 : 1;
+            Facing = MirrorSprite ? -1 : 1;
             if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite sprite))
             {
                 Sprite = sprite;
@@ -255,7 +255,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (Scene.GetPlayer() is Player entity && DynamicPositionOver_Quarter(entity.X))
             {
-                facing *= -1;
+                Facing *= -1;
             }
             if (BossHitCooldown > 0)
             {
@@ -289,7 +289,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!DynamicFacing)
                 return false;
-            if (facing == 1 && MirrorSprite || facing == -1 && !MirrorSprite)
+            if (Facing == 1 && MirrorSprite || Facing == -1 && !MirrorSprite)
                 return pos < base.X - base.Collider.Width / 4;
             return pos > base.X + base.Collider.Width / 4;
         }
@@ -299,7 +299,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Render();
             if (Sprite != null)
             {
-                Sprite.Scale.X = facing;
+                Sprite.Scale.X = Facing;
             }
         }
 
