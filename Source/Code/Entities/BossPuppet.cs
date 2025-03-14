@@ -253,6 +253,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Update()
         {
+            if (Facing != 0)
+            {
+                Facing /= Facing;
+            }
+            else
+            {
+                Facing = 1;
+            }
             if (Scene.GetPlayer() is Player entity && DynamicPositionOver_Quarter(entity.X))
             {
                 Facing *= -1;
