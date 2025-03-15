@@ -1546,6 +1546,25 @@ function helpers.functionToFunc(func)
     return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToFunc(func)
 end
 
+---Get the length of the provided vector2
+---@param vector Vector2 Vector to get length of
+---@return number length The length of the vector2
+function helpers.getVector2Length(vector)
+    return math.sqrt(vector.X * vector.X + vector.Y * vector.Y)
+end
+
+---Normalizes the vector provided to the given length or 1.
+---@param vector Vector2 The vector to normalize
+---@param length number The new length of the vector or 1
+---@return Vector2 normal The normalized vector2
+function normalizeVector2(vector, length)
+    local len = helpers.v2L(vector)
+    if length and length <= 0 then return vector2(0, 0) end
+
+    if len == 0 then return vector end
+    return vector2(vector.X / len, vector.Y / len) * (length or 1)
+end
+
 --#endregion
 
 --#endregion
