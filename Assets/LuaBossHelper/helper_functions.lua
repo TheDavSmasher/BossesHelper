@@ -1289,7 +1289,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
+    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -1320,7 +1320,7 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, ...))
+    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
 end
 
 local function killPlayer(entity, player)
