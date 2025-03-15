@@ -1324,7 +1324,7 @@ function helpers.addConstantBackgroundCoroutine(func, ...)
 end
 
 local function killPlayer(entity, player)
-    helpers.die(helpers.normalizeVector2(player.Position - entity.Position))
+    helpers.die(helpers.normalize(player.Position - entity.Position))
 end
 
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
@@ -1549,7 +1549,7 @@ end
 ---Get the length of the provided vector2
 ---@param vector Vector2 Vector to get length of
 ---@return number length The length of the vector2
-function helpers.getVector2Length(vector)
+function helpers.v2L(vector)
     return math.sqrt(vector.X * vector.X + vector.Y * vector.Y)
 end
 
@@ -1557,7 +1557,7 @@ end
 ---@param vector Vector2 The vector to normalize
 ---@param length? number The new length of the vector or 1
 ---@return Vector2 normal The normalized vector2
-function helpers.normalizeVector2(vector, length)
+function helpers.normalize(vector, length)
     local len = helpers.v2L(vector)
     if length and length <= 0 then return vector2(0, 0) end
 
