@@ -255,7 +255,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (Facing != 0)
             {
-
                 Facing /= Math.Abs(Facing);
             }
             else
