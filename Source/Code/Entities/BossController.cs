@@ -33,6 +33,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private int currentPatternIndex;
 
+        private int? forcedAttackIndex;
+
         private readonly Coroutine currentPattern;
 
         private bool playerHasMoved;
@@ -190,7 +192,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 while (true)
                 {
-                    int nextAttack = Random.Next() % pattern.StatePatternOrder.Length;
+                    int nextAttack = (forcedAttackIndex ?? Random.Next()) % pattern.StatePatternOrder.Length;
+                    forcedAttackIndex = null;
                     yield return PerformMethod(pattern.StatePatternOrder[nextAttack]);
                     currentAction++;
 
@@ -205,7 +208,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                 }
             }
-            //Deterministic Pattern
+            //Ordered Pattern
             if (pattern.PrePatternMethods != null)
             {
                 foreach (Method method in pattern.PrePatternMethods)
@@ -306,6 +309,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         #endregion
 
         #region Attack Delegates
+        public void ForceNextAttackIndex(int index)
+        {
+            forcedAttackIndex = index;
+        }
+
         public void AddEntity(Entity entity)
         {
             if (!activeEntities.Contains(entity))
