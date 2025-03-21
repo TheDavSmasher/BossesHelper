@@ -396,20 +396,21 @@ Two accessible entities are included:
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
     - Can also be called from `getNewBasicAttackActor()` helper function, with similar parameters.
 
+The entities returned by these functions must be manually added onto the scene.
+
 Four Components are added with this helper for various usages.
 
-- Entity Chain Component: Can be used to "chain" an entity to another one.
-  - Constructor Parameters:
-    - Entity entity: The Entity this chain will be set on. This is the additional entity.
-    - bool chainPosition: If the chained entity should move around as the chained one moves, essentially moving as one.
-    - bool removeTogether: If the chained entity should remove itself if the component is removed.
-  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChain(params)`.
+- Entity Chain Component: Can be used to "chain" an entity to another one, so as the Entity this component is added to moves, so will the chained Entity, essentially moving as one.
+  - One can be created with the `getEntityChain()` helper function.
 - Entity Flagger: A Component that will execute a function passed once the given session flag matches the state needed, and if the flag should be reset after used.
   - One can be created with the `getEntityFlagger()` helper function.
-  - Must be added manually to the Entity that it will execute on.
 - Entity Timer: A Component that will execute a function passed once the timer runs to completion.
   - One can be created with the `getEntityTimer()` helper function.
-  - Must be added manually to the Entitty that it will execute on.
+- Entity Checker: A Component that will execute the first function passed every frame until it's return value--which must be a boolean--matches the state needed, and if it should remove itself after such is the case.
+  - One can be created with the `getEntityChecker()` helper function.
+
+All components returned by these functions must be added manually to the Entity that they will execute on.
+
 
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
