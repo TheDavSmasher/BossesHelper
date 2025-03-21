@@ -382,6 +382,7 @@ Two accessible entities are included:
     - float xScale: The Actor's Sprite's X scale. Defaults to 1.
     - float yScale: The Actor's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackActor(params)`.
+    - Can also be called from `getNewBasicAttackEntity()` helper function, with similar parameters.
 - Attack Entity: A generic Entity that can be used for simple disjointed hitboxes.
   - Constructor Parameters:
     - Vector2 position: Where the Entity will spawn.
@@ -393,6 +394,7 @@ Two accessible entities are included:
     - float xScale: The Entity's Sprite's X scale. Defaults to 1.
     - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
   - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
+    - Can also be called from `getNewBasicAttackActor()` helper function, with similar parameters.
 
 Four Components are added with this helper for various usages.
 
@@ -400,15 +402,8 @@ Four Components are added with this helper for various usages.
   - Constructor Parameters:
     - Entity entity: The Entity this chain will be set on. This is the additional entity.
     - bool chainPosition: If the chained entity should move around as the chained one moves, essentially moving as one.
-    - bool active: If the Entity should be Active.
-    - bool visible: If the Entity should be Visible.
-  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChainComp(params)`.
-- Entity Collider: A Generic Typed Component that can be used to enable/track collisions between the parent entity and the Entity type specified and execute a function.
-  - In order to add one to an entity within Lua, call the `addEntityColliderTo()` helper function.
-    - The second parameter, the one used to define the type of the Entity it should collide with, like Springs or Spinners, can be either an instance of the entity itself or a string with the absolute path to it, including namespace, but still relative to the `Celeste.` namespace.
-      - For Springs, for example, you can provide either a Spring object or the "Spring" name.
-      - For Maddie Helping Hand MoreCustomNPC, for example, you can also provide an instance or the "Mod.MaxHelpingHand.Entities.MoreCustomNPC" name.
-  - This Component is also created such that it can be used by anything.
+    - bool removeTogether: If the chained entity should remove itself if the component is removed.
+  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Components.EntityChain(params)`.
 - Entity Flagger: A Component that will execute a function passed once the given session flag matches the state needed, and if the flag should be reset after used.
   - One can be created with the `getEntityFlagger()` helper function.
   - Must be added manually to the Entity that it will execute on.
@@ -559,7 +554,6 @@ When this component is wanted for other, cross-mod entities, special steps must 
 
 This Helper includes a few things exported with ModInterop, namely:
 
-- **GetEntityColliderComponent**: Returns an Entity Collider Component ready to be used by any entity with any other entity Type.
 - **GetEntityChainComponent**: Returns an Entity Chain Component to keep two entities's positions tied together.
 - **GetEntityTimerComponent**: Returns an Entity Timer Component to easily execute a function on the entity added once the timer runs to completion.
 - **GetEntityFlaggerComponent**: Returns an Entity Flagger Component to easily execute a function on the entity added to once the flag state matches the needed state.
