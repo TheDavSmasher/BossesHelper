@@ -1327,6 +1327,16 @@ local function killPlayer(entity, player)
     helpers.die(helpers.normalize(player.Position - entity.Position))
 end
 
+---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
+---@param checker fun() The function that will be called every frame to test its value.
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@param state? boolean The state the checker function's return value must match. Defaults to true.
+---@param remove? boolean If the component should remove itself after it calls the func function. Defaults to true
+---@return Component checker The Entity Checker that can be added to any Entity.
+function helpers.getEntityChecker(checker, func, state, remove)
+    return celeste.Mod.BossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
+end
+
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
 ---Can be added to any Entity.
 ---@param timer number The amount of time that must pass for the timer to execute.
@@ -1345,6 +1355,15 @@ end
 ---@return Component flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
     return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
+end
+
+---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
+---@param entity Entity The entity to chain, whose position will change as the base Entity moves.
+---@param startChained? boolean Whether the entity should start chained immediately. Defaults to true.
+---@param remove? boolean Whether the chained entity should be removed if the chain component is also removed.
+---@return Component the Entity Chain component that can be added to any Entity.
+function helpers.getEntityChain(entity, startChained, remove)
+    return celeste.Mod.BossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
 ---Create and return a basic entity to use in attacks.
