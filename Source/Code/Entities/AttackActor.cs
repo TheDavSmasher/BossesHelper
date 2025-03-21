@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public const float Gravity = 900f;
 
-        private bool SolidCollidable;
+        public bool SolidCollidable;
 
         private readonly Collision onCollideH;
 
