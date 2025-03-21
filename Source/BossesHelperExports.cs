@@ -24,9 +24,9 @@ namespace Celeste.Mod.BossesHelper
                 .AddToEntityOnMethod(entity, method, flags, stateMethod);
         }
 
-        public static Component GetEntityChainComponent(Entity entity, bool chain)
+        public static Component GetEntityChainComponent(Entity entity, bool chain, bool remove = false)
         {
-            return new EntityChain(entity, chain);
+            return new EntityChain(entity, chain, remove);
         }
 
         public static Component GetEntityTimerComponent(float timer, Action<Entity> action)
