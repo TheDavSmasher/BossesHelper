@@ -7,7 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     internal class AttackEntity : Entity
     {
-        private readonly Sprite sprite;
+        public Sprite Sprite { get; private set; }
 
         private readonly LuaFunction onCollide;
 
@@ -16,10 +16,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Collider = attackbox;
             base.Collidable = startCollidable;
-            if (GFX.SpriteBank.TryCreate(spriteName, out sprite))
+            if (GFX.SpriteBank.TryCreate(spriteName, out Sprite sprite))
             {
-                sprite.Scale = new Vector2(xScale, yScale);
-                Add(sprite);
+                Sprite = sprite;
+                Sprite.Scale = new Vector2(xScale, yScale);
+                Add(Sprite);
             }
             onCollide = onPlayer;
             Add(new PlayerCollider(OnPlayer));
@@ -27,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void PlayAnim(string anim)
         {
-            if (!sprite.TryPlay(anim))
+            if (!Sprite.TryPlay(anim))
             {
                 Logger.Log(LogLevel.Warn, "BossesHelper/AttackEntity", "Animation specified does not exist!");
             }
