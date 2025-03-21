@@ -147,6 +147,13 @@ function helpers.startNextAttackPattern()
   helpers.startAttackPattern(helpers.getCurrentPatternID() + 1)
 end
 
+---Force the next attack to be the attack of the given index. Index is based off of position within the Pattern.
+---Currently only supported in Random Patterns. The index is always ran past a modulo on the pattern attacks' count to avoid an out-of-bounds issue.
+---@param index number The attack index to select next. Will only take effect once per call.
+function helpers.forceNextAttackIndex(index)
+  boss:ForceNextAttackIndex(index)
+end
+
 ---Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
 ---@param health number The health value to save and set back upon reload.
 ---@param index number The pattern index the boss should start with upon reload.
