@@ -1,4 +1,3 @@
-
 --#region Bosses Helper functions
 
 --- Bosses Helper Attack specific functions and helper methods for the player
@@ -409,7 +408,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-  return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable(arg)
+  return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -440,11 +439,21 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-  celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, ...))
+  celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
 end
 
 local function killPlayer(entity, player)
-  helpers.die(player.Position - entity.Position)
+  helpers.die(helpers.normalize(player.Position - entity.Position))
+end
+
+---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
+---@param checker fun() The function that will be called every frame to test its value.
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@param state? boolean The state the checker function's return value must match. Defaults to true.
+---@param remove? boolean If the component should remove itself after it calls the func function. Defaults to true
+---@return Component checker The Entity Checker that can be added to any Entity.
+function helpers.getEntityChecker(checker, func, state, remove)
+  return celeste.Mod.BossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
 end
 
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
@@ -465,6 +474,15 @@ end
 ---@return Component flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
   return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
+end
+
+---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
+---@param entity Entity The entity to chain, whose position will change as the base Entity moves.
+---@param startChained? boolean Whether the entity should start chained immediately. Defaults to true.
+---@param remove? boolean Whether the chained entity should be removed if the chain component is also removed.
+---@return Component the Entity Chain component that can be added to any Entity.
+function helpers.getEntityChain(entity, startChained, remove)
+  return celeste.Mod.BossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
 ---Create and return a basic entity to use in attacks.
@@ -664,6 +682,25 @@ end
 ---@return Func Action The delegate that will call the function when invoked
 function helpers.functionToFunc(func)
   return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.LuaFunctionToFunc(func)
+end
+
+---Get the length of the provided vector2
+---@param vector Vector2 Vector to get length of
+---@return number length The length of the vector2
+function helpers.v2L(vector)
+  return math.sqrt(vector.X * vector.X + vector.Y * vector.Y)
+end
+
+---Normalizes the vector provided to the given length or 1.
+---@param vector Vector2 The vector to normalize
+---@param length? number The new length of the vector or 1
+---@return Vector2 normal The normalized vector2
+function helpers.normalize(vector, length)
+  local len = helpers.v2L(vector)
+  if length and length <= 0 then return vector2(0, 0) end
+
+  if len == 0 then return vector end
+  return vector2(vector.X / len, vector.Y / len) * (length or 1)
 end
 
 --#endregion
