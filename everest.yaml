@@ -1,5 +1,5 @@
 - Name: BossesHelper
-  Version: 1.0.6
+  Version: 1.0.7
   DLL: bin/BossesHelper.dll
   Dependencies:
     - Name: EverestCore
