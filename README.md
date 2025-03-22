@@ -376,6 +376,7 @@ Two accessible entities are included:
     - LuaFunction onPlayer: The function to call when the player collides with the Actor's hitbox.
       - Will be called with the parameters `player` and `self`, being the Player and the Entity itself.
     - bool startCollidable: If the Actor's hitbox should start collidable when added.
+    - bool startSolidCollidable: If the Actor should start collidable with solids when added.
     - string spriteName: The name of the sprite to use.
     - float gravMult: The multiplier on the Gravity constant (900, same as the player) that should apply to this Actor.
     - float maxFall: The max speed gravity will accelerate this Actor to by normal means. This value can be surpassed manually.
