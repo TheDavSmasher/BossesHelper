@@ -1003,7 +1003,7 @@ end
 
 --- Wait for the current attack coroutine to end
 function helpers.waitForAttackToEnd()
-    return coroutine.yield(boss:WaitForAttack())
+    return coroutine.yield(boss:WaitForAttackToEnd())
 end
 
 ---Interrupt the current boss action pattern
