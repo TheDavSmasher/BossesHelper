@@ -433,65 +433,31 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         #region Entity Collider Creator
         /*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
-        {
-            try
+            Type baseType;
+            if (baseEntity is string val)
             {
-                Type baseType;
-                if (baseEntity is string val)
-                {
-                    baseType = GetTypeFromString(val);
-                }
-                else if (baseEntity is Entity entity)
-                {
-                    baseType = entity.GetType();
-                }
-                else
-                {
-                    return null;
-                }
+                baseType = GetTypeFromString(val);
+            }
+            else if (baseEntity is Entity entity)
+            {
+                baseType = entity.GetType();
+            }
 
-                return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [func, collider]);
-            }
-            catch (ArgumentNullException)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested entity type does not exist");
-            }
-            catch (Exception arg)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
-            }
-            return null;
+            return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [func, collider]);
         }
 
         public static object GetEntityColliderByComponent(object baseComponent, LuaFunction func, Collider collider = null)
-        {
-            try
+            Type baseType;
+            if (baseComponent is string val)
             {
-                Type baseType;
-                if (baseComponent is string val)
-                {
-                    baseType = GetTypeFromString(val);
-                }
-                else if (baseComponent is Component component)
-                {
-                    baseType = component.GetType();
-                }
-                else
-                {
-                    return null;
-                }
+                baseType = GetTypeFromString(val);
+            }
+            else if (baseComponent is Component component)
+            {
+                baseType = component.GetType();
+            }
 
-                return Activator.CreateInstance(typeof(EntityColliderByComponent<>).MakeGenericType(baseType), [func, collider]);
-            }
-            catch (ArgumentNullException)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to get component: Requested component type does not exist");
-            }
-            catch (Exception arg)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to get component: {arg}");
-            }
-            return null;
+            return Activator.CreateInstance(typeof(EntityColliderByComponent<>).MakeGenericType(baseType), [func, collider]);
         }*/
         #endregion
     }
