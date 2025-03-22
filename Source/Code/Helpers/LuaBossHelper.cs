@@ -77,20 +77,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             yield return null;
         }
 
-        public delegate void ParamAction(params object[] args);
-
-        public static ParamAction LuaFunctionToAction(LuaFunction func)
-        {
-            return (params object[] args) => func.Call(args);
-        }
-
-        public delegate object ParamFunc(params object[] args);
-
-        public static ParamFunc LuaFunctionToFunc(LuaFunction func)
-        {
-            return (params object[] args) => func.Call(args).First();
-        }
-
         public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
         {
             if (!string.IsNullOrEmpty(filename))
@@ -132,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void DoMethodAfterDelay(LuaFunction func, float delay)
         {
-            Alarm.Create(Alarm.AlarmMode.Oneshot, delegate { func.Call(); }, delay, true);
+            Alarm.Create(Alarm.AlarmMode.Oneshot, () => func.Call(), delay, true);
         }
 
         public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
