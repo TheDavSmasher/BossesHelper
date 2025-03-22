@@ -4,28 +4,21 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    public class EntityTimer(float timer, Action<Entity> action) : Component(active: true, visible: false)
+    public class EntityTimer(float timer, Action<Entity> action) : StateChecker(action)
     {
-        public float Timer = timer;
-
-        public Action<Entity> action = action;
+        private float Timer = timer;
 
         public EntityTimer(float timer, LuaFunction action)
-            : this(timer, (e) => action.Call(e))
-        {
-        }
+            : this(timer, (e) => action.Call(e)) { }
 
-        public override void Update()
+        protected override bool StateCheck()
         {
-            if (Timer <= 0)
-            {
-                action.Invoke(Entity);
-                RemoveSelf();
-            }
-            else
+            bool result = Timer <= 0;
+            if (!result)
             {
                 Timer -= Engine.DeltaTime;
             }
+            return result;
         }
     }
 }

@@ -4,32 +4,24 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    public class EntityFlagger(string flag, Action<Entity> action, bool stateNeeded, bool resetFlag) : Component(active: true, visible: false)
+    public class EntityFlagger(string flag, Action<Entity> action, bool stateNeeded, bool resetFlag)
+        : StateChecker(action, stateNeeded)
     {
-        public string flag = flag;
+        private readonly string flag = flag;
 
-        public bool stateNeeded = stateNeeded;
-
-        public bool resetFlag = resetFlag;
-
-        public Action<Entity> action = action;
+        private readonly bool resetFlag = resetFlag;
 
         public EntityFlagger(string flag, LuaFunction action, bool stateNeeded, bool resetFlag)
-            : this(flag, (e) => action.Call(e), stateNeeded, resetFlag)
-        {
-        }
+            : this(flag, (e) => action.Call(e), stateNeeded, resetFlag) { }
 
-        public override void Update()
+        protected override bool StateCheck()
         {
-            if (SceneAs<Level>().Session.GetFlag(flag) == stateNeeded)
+            bool result = SceneAs<Level>().Session.GetFlag(flag);
+            if (result && resetFlag)
             {
-                action.Invoke(Entity);
-                if (resetFlag)
-                {
-                    SceneAs<Level>().Session.SetFlag(flag, !stateNeeded);
-                }
-                RemoveSelf();
+                SceneAs<Level>().Session.SetFlag(flag, !stateNeeded);
             }
+            return result;
         }
     }
 }
