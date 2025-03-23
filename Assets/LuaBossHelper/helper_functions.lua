@@ -17,8 +17,6 @@
 ---@alias Collider Collider A Monocle Collider object.
 ---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
----@alias Action Action A C# Action, a delegate void object.
----@alias Func Func A C# Func, a delegate object object.
 
 --#endregion
 
