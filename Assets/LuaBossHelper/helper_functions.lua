@@ -117,14 +117,16 @@ function helpers.loadCelesteAsset(filename)
     setmetatable(env, {__index = _ENV})
 
     local func = load(content, nil, nil, env)
-    local success, result = pcall(func)
 
-    if success then
-        return result
+    if func then
+        local success, result = pcall(func)
 
-    else
-        celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: " .. result)
+        if success then
+            return result
+        end
     end
+
+    celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: " .. result)
 end
 
 --- Put debug message in the Celeste console.
