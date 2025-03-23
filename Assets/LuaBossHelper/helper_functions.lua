@@ -1,6 +1,27 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
+--#region Type Aliases
+
+---Mostly used for lua-language-server annotations and VS Code support
+
+---@class Vector2 A Vector2 object.
+---@field X number The x component of the vector
+---@field Y number The y component of the vector
+
+---@class EntityData An Everest EntityData object.
+---@field Values any
+
+---@alias Entity Entity A Monocle Entity object.
+---@alias Component Component A Monocle Component object.
+---@alias Collider Collider A Monocle Collider object.
+---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
+---@alias Easer Easer A Monocle Easer, used for Tweens.
+---@alias Action Action A C# Action, a delegate void object.
+---@alias Func Func A C# Func, a delegate object object.
+
+--#endregion
+
 --#region Original Helper Functions
 
 --- Helper functions that can be used in cutscenes.
@@ -9,6 +30,7 @@
 -- Return values starting with # are from C#.
 -- @module helper_functions
 
+---@diagnostic disable-next-line: undefined-field
 local luanet = _G.luanet
 
 local celeste = require("#celeste")
