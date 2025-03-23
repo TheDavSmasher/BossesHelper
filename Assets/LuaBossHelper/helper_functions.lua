@@ -1008,6 +1008,7 @@ end
 
 ---Decrease the Boss' health by the given value
 ---@param health? number The amount of health lost. Defaults to 1.
+---@default 1
 function helpers.decreaseHealth(health)
     boss:DecreaseHealth(health or 1)
 end
@@ -1030,6 +1031,7 @@ end
 
 ---Start a new boss action pattern.
 ---@param goTo? number The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
+---@default -1
 function helpers.startAttackPattern(goTo)
     boss:StartAttackPattern(goTo or -1)
 end
@@ -1050,6 +1052,7 @@ end
 ---@param health number The health value to save and set back upon reload.
 ---@param index number The pattern index the boss should start with upon reload.
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
+---@default true
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
     boss:SavePhaseChangeToSession(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
 end
@@ -1144,7 +1147,9 @@ end
 ---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time number The time the Boss will take to reach the target.
 ---@param easer? string|Easer The easer to apply to the motion. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
     return puppet:PositionTween(target, time, getEaserByName(easer, invert) or easer)
@@ -1155,7 +1160,9 @@ end
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
     return puppet:SpeedXTween(start, target, time, getEaserByName(easer, invert) or easer)
@@ -1166,7 +1173,9 @@ end
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
 ---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
     return puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
@@ -1179,7 +1188,9 @@ end
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, invert)
     return puppet:SpeedTween(xStart, yStart, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
@@ -1189,7 +1200,9 @@ end
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
     return puppet:SpeedXTween(puppet.Speed.X, target, time, getEaserByName(easer, invert) or easer)
@@ -1199,7 +1212,9 @@ end
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
 ---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
     return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
@@ -1210,7 +1225,9 @@ end
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
 ---@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
----@param invert? boolean If the easer should be inverted
+---@default nil
+---@param invert? boolean If the easer should be inverted. Defaults to false.
+---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
     return puppet:SpeedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
@@ -1278,8 +1295,10 @@ end
 ---Create a new Rectangular Hitbox Collider
 ---@param width number The width of the collider.
 ---@param height number The height of the collider.
----@param x number The x offset of the hitbox. Defaults to 0.
----@param y number The y offest of the Hitbox. Defaults to 0.
+---@param x? number The x offset of the hitbox. Defaults to 0.
+---@default 0
+---@param y? number The y offest of the Hitbox. Defaults to 0.
+---@default 0
 ---@return Collider hitbox The created Hitbox Collider
 function helpers.getHitbox(width, height, x, y)
     return monocle.Hitbox(width, height, x or 0, y or 0)
@@ -1287,8 +1306,10 @@ end
 
 ---Create a new Circle Collider
 ---@param radius number The radius of the collider.
----@param x number The x offset of the hitbox. Defaults to 0.
----@param y number The y offest of the Hitbox. Defaults to 0.
+---@param x? number The x offset of the hitbox. Defaults to 0.
+---@default 0
+---@param y? number The y offest of the Hitbox. Defaults to 0.
+---@default 0
 ---@return Collider circle The created Hitbox Collider
 function helpers.getCircle(radius, x, y)
     return monocle.Circle(radius, x or 0, y or 0)
@@ -1339,8 +1360,11 @@ end
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
 ---@param checker fun() The function that will be called every frame to test its value.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@default helpers.destroyEntity
 ---@param state? boolean The state the checker function's return value must match. Defaults to true.
+---@default true
 ---@param remove? boolean If the component should remove itself after it calls the func function. Defaults to true
+---@default true
 ---@return Component checker The Entity Checker that can be added to any Entity.
 function helpers.getEntityChecker(checker, func, state, remove)
     return celeste.Mod.BossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
@@ -1350,6 +1374,7 @@ end
 ---Can be added to any Entity.
 ---@param timer number The amount of time that must pass for the timer to execute.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@default helpers.destroyEntity
 ---@return Component timer The Entity Timer that can be added to any Entity.
 function helpers.getEntityTimer(timer, func)
     return celeste.Mod.BossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
@@ -1359,8 +1384,11 @@ end
 ---Can be added to any Entity.
 ---@param flag string The session flag the entity will use to activate its function.
 ---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will the Entity the component is added to. Defaults to the destroyEntity function.
+---@default helpers.destroyEntity
 ---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
+---@default true
 ---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
+---@default true
 ---@return Component flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
     return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
@@ -1369,7 +1397,9 @@ end
 ---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
 ---@param entity Entity The entity to chain, whose position will change as the base Entity moves.
 ---@param startChained? boolean Whether the entity should start chained immediately. Defaults to true.
+---@default true
 ---@param remove? boolean Whether the chained entity should be removed if the chain component is also removed.
+---@default false
 ---@return Component the Entity Chain component that can be added to any Entity.
 function helpers.getEntityChain(entity, startChained, remove)
     return celeste.Mod.BossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
@@ -1380,9 +1410,13 @@ end
 ---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
+---@default true
 ---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@default killPlayer
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
+---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
+---@default 1
 function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
 end
@@ -1391,13 +1425,20 @@ end
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
----@param gravMult? number The multiplier to the Gravity constant the Actor should use.
----@param maxFall? number The fastest the Boss will fall naturally due to gravity.
+---@param gravMult? number The multiplier to the Gravity constant the Actor should use. Defaults to 1.
+---@default 1
+---@param maxFall? number The fastest the Boss will fall naturally due to gravity. Defaults to 90.
+---@default 90
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
----@param startSolidCollidable boolean If the entity should spawn with solid collisions active. Defaults to true.
+---@default true
+---@param startSolidCollidable? boolean If the entity should spawn with solid collisions active. Defaults to true.
+---@default true
 ---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@default killPlayer
 ---@param xScale? number The horizontal sprite scale. Defaults to 1.
+---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
+---@default 1
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
     return celeste.Mod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
@@ -1514,8 +1555,11 @@ end
 ---Get a new EntityData object
 ---@param position Vector2 The vector2 position the entityData will hold.
 ---@param width? number The width the EntityData will hold. Defaults to 0.
+---@default 0
 ---@param height? number The height the EntityData will hold. Defaults to 0.
+---@default 0
 ---@param id? number The id the EntityData will hold. Defaults to 1000.
+---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
     newData = celeste.Mod.BossesHelper.BossesHelperModule.MakeEntityData()
@@ -1573,6 +1617,7 @@ end
 ---Normalizes the vector provided to the given length or 1.
 ---@param vector Vector2 The vector to normalize
 ---@param length? number The new length of the vector or 1
+---@default 1
 ---@return Vector2 normal The normalized vector2
 function helpers.normalize(vector, length)
     local len = helpers.v2L(vector)
