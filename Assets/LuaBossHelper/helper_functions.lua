@@ -907,15 +907,6 @@ end
 
 --- Bosses Helper Attack specific functions and helper methods for the player
 
----@alias Entity Entity A Monocle Entity object.
----@alias Vector2 Vector2 A Vector2 object.
----@alias Component Component A Monocle Component object.
----@alias Collider Collider A Monocle Collider object.
----@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
----@alias EntityData EntityData An Everest EntityData object.
----@alias Easer Easer A Monocle Easer, used for Tweens.
----@alias Action Action A C# Action, a delegate void object.
----@alias Func Func A C# Func, a delegate object object.
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 
 local function getEaserByName(name, invert)
@@ -966,18 +957,8 @@ local function getEaserByName(name, invert)
     end
 end
 
---#region Delegates
 
---- These will not work outside of the files specified due to being passed by reference.
---- Since no reference to the Controller is given, these function delegates are necessary.
-
---#region Attack Delegates
-
---- The following Delegates will only work on Attack files.
-
-function helpers.bossSeededRandom()
-    return boss.Random:Next()
-end
+--#region Entity Adding
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
 ---@param entity Entity The entity to add
@@ -999,10 +980,16 @@ end
 --#endregion
 
 
---#region Interrupt Delegates
+--#region Fight Logic
 
---- The following Delegates will only work on the Interruption functions, such as onHit()
+---Plan an animation on the Boss' given sprite
+---@param anim string The animation to play
+function helpers.playPuppetAnim(anim)
+    puppet:PlayBossAnim(anim)
+end
 
+---Get a random number based on the boss's random seed.
+---@return integer next A seeded-random integer.
 function helpers.seededRandom()
     return boss.Random:Next()
 end
@@ -1077,17 +1064,8 @@ end
 --#endregion
 
 
-
 --#region Other Helper Functions
 
---- Additional, non-delegate helper shorthand methods
---- These can be used anywhere within the Mod.
-
----Plan an animation on the Boss' given sprite
----@param anim string The animation to play
-function helpers.playPuppetAnim(anim)
-    puppet:PlayBossAnim(anim)
-end
 
 --#region Position and Movement
 
@@ -1425,7 +1403,6 @@ function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
---#endregion
 
 --#region Component Retreival
 
@@ -1507,6 +1484,8 @@ end
 function helpers.entityHasComponent(entity, name, prefix)
     return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
+
+--#endregion
 
 --#endregion
 
@@ -1602,8 +1581,6 @@ function helpers.normalize(vector, length)
     if len == 0 then return vector end
     return vector2(vector.X / len, vector.Y / len) * (length or 1)
 end
-
---#endregion
 
 --#endregion
 
