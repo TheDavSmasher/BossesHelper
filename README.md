@@ -412,7 +412,6 @@ Four Components are added with this helper for various usages.
 
 All components returned by these functions must be added manually to the Entity that they will execute on.
 
-
 A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
 ## Boss Health Bar
