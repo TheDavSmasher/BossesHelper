@@ -12,7 +12,6 @@ This is a helper specifically designed to allow the creation of custom bosses wi
   - [Hitbox Metadata](#hitbox-metadata)
   - [Patterns](#patterns)
   - [Attacks](#attacks)
-    - [Entity Timers and Flaggers](#entity-timers-and-flaggers)
   - [Events](#events)
   - [Functions](#functions)
 - [Helper Objects and Components](#helper-objects-and-components)
@@ -298,14 +297,6 @@ end
 ```
 
 An `onBegin()` function must be provided, which holds the code the attack will execute. Given that it's also its own files, any number of local functions can be defined and used within the function. Each file is provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all regular helper functions.
-
-#### Entity Timers and Flaggers
-
-Some of the Helper functions provided are getting Entity Timer or Entity Flaggers. These components are shortcut versions for ease of execution of certain delegate methods when the condition is met.
-
-Entity Timers will execute the provided method on the entity added to once the timer provided reaches 0. Entity Flaggers will execute the provided method when the given Session flag matches the state needed, which defaults to true.
-
-`getEntityTimer()` and `getEntityFlagger()` will return the respective Component to your Lua environment, which can then be added to any Entity. If any Component is added before the entity it's added to, it will not update until it is added.
 
 ### Events
 
