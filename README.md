@@ -8,6 +8,7 @@ This is a helper specifically designed to allow the creation of custom bosses wi
   - [Basic Setup Entries](#basic-setup-entries)
   - [Custom File Entries](#custom-file-entries)
   - [Other Entries](#other-entries)
+- [Lua Helper Functions](#lua-helper-functions)
 - [File Formats](#file-formats)
   - [Hitbox Metadata](#hitbox-metadata)
   - [Patterns](#patterns)
@@ -71,6 +72,12 @@ These entries are more miscellaneous and not fully necessary for all Bosses but 
 - Start Attacking Immediately: Normally, the Boss will start attacking once the player moves. Marking this true will start attacking as soon as the scene starts.
 - Sidekick Cooldown: Only applicable to the Sidekick Attack Hurt Mode. Determines the time Badeline will be unable to shoot another laser.
 - Sidekick Freeze: Only applicable to the Sidekick Attack Hurt Mode. As Badeline is marked as a Follower, if marked false, she'll continue to follow the player even while aiming her laser. Marking this true will stop her in place while she shoots instead.
+
+## Lua Helper Functions
+
+Thoughout the document, there is a mention of helper functions provided to the Lua environment used to run all attacks, events, and setup. It uses all helper functions pre-existing from the Lua Cutscenes mod made by Cruor. Additional helper functions specific to this mod have also been added. You can find these helper functions [here](boss_helper_functions.md).
+
+A small layout with hyperlinks to each of these functions can be found [here](boss_helper_functions_layout.md).
 
 ## File Formats
 

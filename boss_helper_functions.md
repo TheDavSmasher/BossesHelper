@@ -1,4 +1,6 @@
-# Bosses Helper Lua Helper Functions
+# [Bosses Helper](README.md): Lua Helper Functions
+
+## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)
 
 ## Entity Adding
 
