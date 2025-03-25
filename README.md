@@ -75,7 +75,7 @@ These entries are more miscellaneous and not fully necessary for all Bosses but 
 
 ## Lua Helper Functions
 
-Thoughout the document, there is a mention of helper functions provided to the Lua environment used to run all attacks, events, and setup. It uses all helper functions pre-existing from the Lua Cutscenes mod made by Cruor. Additional helper functions specific to this mod have also been added. You can find these helper functions [here](boss_helper_functions.md).
+Thoughout the document, there is a mention of helper functions provided to the Lua environment used to run all attacks, events, and setup. It uses all helper functions pre-existing from the Lua Cutscenes mod made by Cruor. These helper functions can be found [here](https://maddie480.ovh/lua-cutscenes-documentation/modules/helper_functions.html). Additional helper functions specific to this mod have also been added. You can find these helper functions [here](boss_helper_functions.md).
 
 A small layout with hyperlinks to each of these functions can be found [here](boss_helper_functions_layout.md).
 
