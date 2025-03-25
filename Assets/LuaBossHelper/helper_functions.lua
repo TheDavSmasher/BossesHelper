@@ -1442,6 +1442,7 @@ function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
+--#endregion
 
 --#region Component Retreival
 
@@ -1523,8 +1524,6 @@ end
 function helpers.entityHasComponent(entity, name, prefix)
     return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
-
---#endregion
 
 --#endregion
 
