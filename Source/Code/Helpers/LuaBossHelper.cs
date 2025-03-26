@@ -111,6 +111,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return new ColliderList(colliders.ToArray());
         }
 
+        public static IEnumerator Say(string dialog, LuaTable luaEvents)
+        {
+            List<Func<IEnumerator>> events = new();
+            foreach (object luaEvent in luaEvents.Values)
+            {
+                if (luaEvent is LuaFunction luaFunction)
+                {
+                    events.Add(luaFunction.ToIEnumerator);
+                }
+            }
+            yield return Textbox.Say(dialog, [.. events]);
+        }
+
         public static LuaTable GetEmptyTable()
         {
             return Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
