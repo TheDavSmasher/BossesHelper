@@ -138,7 +138,7 @@ Each Rectangular Hitbox has up to 4 attributes: `width`, `height`, `xOffset`, an
 
 `Bouncebox` and `Target` behave somewhat similarly, but due to the fact that they are restricted to Rectangular hitboxes and Circle colliders respectively, they are formatted somewhat differently. Instead of having a Parent node to delimit a set, any number of `Bouncebox` or `Target` nodes that share the same tag (no tag is equivalent to `tag="main"`) will be considered as part of the same set. `Bouncebox` attributes are the same as those of a Rectangular Hitbox, and `Target` attributes are the same as those of a Circle Hitbox. All `Bouncebox` and `Target` hitboxes are also stored in their respective dictionaries, so shared tags between different hitbox node types are accepted.
 
-The Tags for each set of Hitboxes are useful for switching between them with designated helper functions, such as `changeBaseHitboxTo()`. Each of the 4 Hitbox Type sets (Hitbox, Hurtbox, Bouncebox, Target) has its own method, as each one is stored in separate dictionaries.
+The Tags for each set of Hitboxes are useful for switching between them with designated helper functions, such as [`changeBaseHitboxTo()`](boss_helper_functions.md#helperschangebasehitboxto-tag). Each of the 4 Hitbox Type sets (Hitbox, Hurtbox, Bouncebox, Target) has its own method, as each one is stored in separate dictionaries.
 
 If no `Hitboxes` node is provided, the Boss will use a default Hitbox of the dimensions and position of the Boss's Sprite, aligned with the sprite's position. The same applies to `Hurtboxes`. If no `Bouncebox` node is provided, it will use a default Hitbox of the same width as the Boss's Sprite, height of 6, and aligned to the top of the sprite. If no `Target` node is provided, the Boss will use a default Circle of radius 4 and offset 0. If no file is provided, the Boss will use all of the previously mentioned default hitboxes.
 
@@ -330,6 +330,8 @@ An `onBegin()` function must be provided, which holds the code the cutscene will
 This Lua file should follow the following format:
 
 ```lua
+--- All of these functions are optional by definition, but make sure to include the ones that are necessary for the specific boss.
+
 function onContact()
     --Your code here
 end
@@ -361,7 +363,7 @@ The functions `onContact()`, `onDasH()`, `onBounce()`, and `onLaser()` will each
 
 These collision functions are essential to fight logic, as it is where the user must specify if the Boss takes damage if the current pattern should be interrupted, if it should wait for the current attack to end, and if a new attack pattern should start. Lua helper functions are provided for each of these necessities through delegates.
 
-The `setup()` function will be called during load time before the scene starts. It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary. If the Hurt Mode was set to Custom, it's highly encouraged to add this file, since otherwise the Boss cannot be hurt. This function will still be called regardless of Hurt Mode, though.
+The `setup()` function will be called during load time **before the scene starts**. (If any function is called directly within the `setup()` function that requires the scene, this wil fail. Either do so in an Attack/Event or in a function added with [`addConstantBackgroundCoroutine()`](boss_helper_functions.md#helpersaddconstantbackgroundcoroutine-func-).) It can be used to give the Boss additional components, sprites, or starting values. This function is not necessary. If the Hurt Mode was set to Custom, it's highly encouraged to add this file, since otherwise the Boss cannot be hurt. This function will still be called regardless of Hurt Mode, though.
 
 All functions in this file are provided with a reference to the `player`, the Boss's ID under `bossID`, the Boss's `puppet`, and multiple controller delegate functions under `boss`, as well as access to all regular helper functions. The delegates provided here are different from the ones provided for Attacks, as explained in the Helper functions file.
 
@@ -372,49 +374,26 @@ This Helper also adds a few Entities and Components for ease of use or just gene
 Two accessible entities are included:
 
 - Attack Actor: A generic Entity that subclasses the Actor class and has movement and collision logic.
-  - Constructor Parameters:
-    - Vector2 position: Where the Actor will spawn.
-    - Collider attackbox: The Collider Hitbox the Actor will use.
-    - LuaFunction onPlayer: The function to call when the player collides with the Actor's hitbox.
-      - Will be called with the parameters `player` and `self`, being the Player and the Entity itself.
-    - bool startCollidable: If the Actor's hitbox should start collidable when added.
-    - bool startSolidCollidable: If the Actor should start collidable with solids when added.
-    - string spriteName: The name of the sprite to use.
-    - float gravMult: The multiplier on the Gravity constant (900, same as the player) that should apply to this Actor.
-    - float maxFall: The max speed gravity will accelerate this Actor to by normal means. This value can be surpassed manually.
-    - float xScale: The Actor's Sprite's X scale. Defaults to 1.
-    - float yScale: The Actor's Sprite's Y scale. Defaults to 1.
-  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackActor(params)`.
-    - Can also be called from `getNewBasicAttackEntity()` helper function, with similar parameters.
+  - Can be called from [`getNewBasicAttackEntity(params)`](boss_helper_functions.md#helpersgetnewbasicattackactor-position-hitboxes-spritename-gravmult1-maxfall90-startcollidabletrue-startsolidcollidabletrue-funconplayerkillplayer-xscale1-yscale1) helper function with these parameters.
 - Attack Entity: A generic Entity that can be used for simple disjointed hitboxes.
-  - Constructor Parameters:
-    - Vector2 position: Where the Entity will spawn.
-    - Collider attackbox: The Collider Hitbox the Entity will use.
-    - LuaFunction onPlayer: The function to call when the player collides with the Entity's hitbox.
-      - Will be called with the parameters `player` and `self`, being the Player and the Entity itself.
-    - bool startCollidable: If the Entity's hitbox should start collidable when added.
-    - string spriteName: The name of the sprite to use.
-    - float xScale: The Entity's Sprite's X scale. Defaults to 1.
-    - float yScale: The Entity's Sprite's Y scale. Defaults to 1.
-  - Can be called from Lua with `celeste.Mod.BossesHelper.Code.Entities.AttackEntity(params)`.
-    - Can also be called from `getNewBasicAttackActor()` helper function, with similar parameters.
+  - Can be called from [`getNewBasicAttackActor(params)`](boss_helper_functions.md#helpersgetnewbasicattackentity-position-hitboxes-spritename-startcollidabletrue-funconplayerkillplayer-xscale1-yscale1) helper function with these parameters.
 
 The entities returned by these functions must be manually added onto the scene.
 
 Four Components are added with this helper for various usages.
 
 - Entity Chain Component: Can be used to "chain" an entity to another one, so as the Entity this component is added to moves, so will the chained Entity, essentially moving as one.
-  - One can be created with the `getEntityChain()` helper function.
+  - One can be created with the [`getEntityChain()`](boss_helper_functions.md#helpersgetentitychain-entity-startchainedtrue-removefalse) helper function.
 - Entity Flagger: A Component that will execute a function passed once the given session flag matches the state needed, and if the flag should be reset after used.
-  - One can be created with the `getEntityFlagger()` helper function.
+  - One can be created with the [`getEntityFlagger()`](boss_helper_functions.md#helpersgetentityflagger-flag-funchelpersdestroyentity-statetrue-resetflagtrue) helper function.
 - Entity Timer: A Component that will execute a function passed once the timer runs to completion.
-  - One can be created with the `getEntityTimer()` helper function.
+  - One can be created with the [`getEntityTimer()`](boss_helper_functions.md#helpersgetentitytimer-timer-funchelpersdestroyentity) helper function.
 - Entity Checker: A Component that will execute the first function passed every frame until it's return value--which must be a boolean--matches the state needed, and if it should remove itself after such is the case.
-  - One can be created with the `getEntityChecker()` helper function.
+  - One can be created with the [`getEntityChecker()`](boss_helper_functions.md#helpersgetentitychecker-checker-funchelpersdestroyentity-statetrue-removetrue) helper function.
 
 All components returned by these functions must be added manually to the Entity that they will execute on.
 
-A basic collider can be obtained with the `getHitbox()` or `getCircle()` helper functions, which can be combined with the `getColliderList()` function. A basic vector2 object can be obtained with `vector2(x,y)`.
+A basic collider can be obtained with the [`getHitbox()`](boss_helper_functions.md#helpersgethitbox-width-height-x0-y0) or [`getCircle()`](boss_helper_functions.md#helpersgetcircle-radius-x0-y0) helper functions, which can be combined with the [`getColliderList()`](boss_helper_functions.md#helpersgetcolliderlist-) function. A basic vector2 object can be obtained with `vector2(x,y)`.
 
 ## Boss Health Bar
 
