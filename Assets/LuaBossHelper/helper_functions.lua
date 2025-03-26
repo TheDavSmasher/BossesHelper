@@ -822,12 +822,22 @@ function helpers.cassetteFly(endX, endY, controllX, controllY)
     helpers.cassetteFlyTo(endX + playerX, endY + playerY, controllX + playerX, controllY + playerY)
 end
 
-function helpers.setLevelFlag()
-    -- TODO - Implement
+--- Set session level flag.
+-- @string flag Flag to set.
+-- @bool value State of flag.
+function helpers.setLevelFlag(flag, value)
+    if value then
+        engine.Scene.Session.LevelFlags:Add(flag)
+    else
+        engine.Scene.Session.LevelFlags:Remove(flag)
+    end
 end
 
-function helpers.getLevelFlag()
-    -- TODO - Implement
+--- Get session level flag.
+-- @string flag Flag to get.
+-- @treturn bool The state of the flag.
+function helpers.getLevelFlag(flag)
+    return engine.Scene.Session:GetLevelFlag(flag)
 end
 
 --- Gives the player a key.
