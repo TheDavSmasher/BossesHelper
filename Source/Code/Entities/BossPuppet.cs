@@ -320,6 +320,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
+        public IEnumerator WaitBossAnim(string anim)
+        {
+            if (Sprite != null && Sprite.Has(anim))
+            {
+                yield return Sprite.PlayAnim(anim);
+            }
+        }
+
         #region Lua Helper Functions
         public void SetGravityMult(float mult)
         {
