@@ -61,6 +61,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Vector2 Speed;
 
+        public float groundFriction;
+
+        public float airFriction;
+
         private readonly Collision onCollideH;
 
         private readonly Collision onCollideV;
@@ -98,6 +102,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
             maxFall = data.Float("maxFall", 90f);
             effectiveGravity = data.Float("baseGravityMultiplier", 1f) * Gravity;
+            groundFriction = 0f;
+            airFriction = 0f;
             freezeSidekickOnAttack = data.Bool("sidekickFreeze");
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
@@ -285,6 +291,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
             }
+            //Apply friction
+            Speed.X = Calc.Approach(Speed.X, 0f, (Grounded ? groundFriction : airFriction) * Engine.DeltaTime);
             //Return Sprite Scale
             if (Sprite != null)
             {
