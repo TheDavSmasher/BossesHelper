@@ -993,19 +993,19 @@ function helpers.seededRandom()
 end
 
 ---Get the Boss' current health value
----@return number health The Boss's current health value
+---@return integer health The Boss's current health value
 function helpers.getHealth()
     return boss:GetHealth()
 end
 
 ---Set the Boss' health value to a new value.
----@param health number The value to set the health to.
+---@param health integer The value to set the health to.
 function helpers.setHealth(health)
     boss:SetHealth(health)
 end
 
 ---Decrease the Boss' health by the given value
----@param health? number The amount of health lost. Defaults to 1.
+---@param health? integer The amount of health lost. Defaults to 1.
 ---@default 1
 function helpers.decreaseHealth(health)
     boss:DecreaseHealth(health or 1)
@@ -1022,13 +1022,13 @@ function helpers.interruptPattern()
 end
 
 ---Gets the currently set pattern index
----@return number ID The current pattern's index, base 0
+---@return integer ID The current pattern's index, base 0
 function helpers.getCurrentPatternID()
     return boss:GetCurrentPatternIndex()
 end
 
 ---Start a new boss action pattern.
----@param goTo? number The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
+---@param goTo? integer The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
 ---@default -1
 function helpers.startAttackPattern(goTo)
     boss:StartAttackPattern(goTo or -1)
@@ -1041,14 +1041,14 @@ end
 
 ---Force the next attack to be the attack of the given index. Index is based off of position within the Pattern.
 ---Currently only supported in Random Patterns. The index is always ran past a modulo on the pattern attacks' count to avoid an out-of-bounds issue.
----@param index number The attack index to select next. Will only take effect once per call.
+---@param index integer The attack index to select next. Will only take effect once per call.
 function helpers.forceNextAttackIndex(index)
     boss:ForceNextAttackIndex(index)
 end
 
 ---Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
----@param health number The health value to save and set back upon reload.
----@param index number The pattern index the boss should start with upon reload.
+---@param health integer The health value to save and set back upon reload.
+---@param index integer The pattern index the boss should start with upon reload.
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
 ---@default true
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
@@ -1555,7 +1555,7 @@ end
 ---@default 0
 ---@param height? number The height the EntityData will hold. Defaults to 0.
 ---@default 0
----@param id? number The id the EntityData will hold. Defaults to 1000.
+---@param id? integer The id the EntityData will hold. Defaults to 1000.
 ---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
