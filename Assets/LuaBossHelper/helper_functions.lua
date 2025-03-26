@@ -980,10 +980,16 @@ end
 
 --#region Fight Logic
 
----Plan an animation on the Boss' given sprite
+---Plan an animation on the Boss's given sprite
 ---@param anim string The animation to play
 function helpers.playPuppetAnim(anim)
     puppet:PlayBossAnim(anim)
+end
+
+---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
+---@param anim string The animation to play
+function helpers.playAndWaitPuppetAnim(anim)
+    coroutine.yield(boss:WaitBossAnim(anim))
 end
 
 ---Get a random number based on the boss's random seed.
@@ -1548,6 +1554,13 @@ end
 --#endregion
 
 --#region Misc. Functions
+
+---Display textbox with dialog. Any provided functions will be passed as Triggers accessible to Dialog.txt triggers.
+---@param dialog string Dialog ID used for the conversation.
+---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
+function helpers.sayExt(dialog, ...)
+    coroutine.yield(celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+end
 
 ---Get a new EntityData object
 ---@param position Vector2 The vector2 position the entityData will hold.
