@@ -146,6 +146,8 @@ If no `Hitboxes` node is provided, the Boss will use a default Hitbox of the dim
 
 This XML file uses the format of the following example:
 
+<div style="max-height: 750px; overflow-y: auto;">
+
 ```xml
 <Patterns>
     <!--The following patterns are only examples of how to set this up.
@@ -243,6 +245,8 @@ This XML file uses the format of the following example:
     </Random>
 </Patterns>
 ```
+
+</div></br>
 
 The entirety of the contents are inside the `Patterns` node. There can be as many `Pattern`, `Random`, or `Event` nodes inside, but there must be at least 1 in general of either kind. All nodes in the file are stored in the same order as they are in the file, and are indexed as such as well, inside an index-0 array (meaning that the first Pattern provided is index 0).
 
