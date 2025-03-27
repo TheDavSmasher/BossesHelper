@@ -70,15 +70,33 @@ bossMasterController.fieldInformation = {
 function bossMasterController.fieldOrder(entity)
     if entity.hurtMode == "sidekickAttack" then
         return {
-            "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "sidekickCooldown",
-            "hitboxMetadataPath", "patternsPath", "attacksPath", "eventsPath", "functionsPath", "__Boss_pad",
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "startCollidable", "startSolidCollidable", "sidekickFreeze"
+            "x", "y",
+            "bossID", "bossSprite",
+            "bossHealthMax", "hurtMode",
+            "maxFall", "bossHitCooldown",
+            "baseGravityMultiplier", "sidekickCooldown",
+
+            "hitboxMetadataPath", "patternsPath",
+            "attacksPath", "eventsPath",
+            "functionsPath", "__Boss_pad",
+
+            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately",
+            "startCollidable", "startSolidCollidable", "sidekickFreeze"
         }
     else
         return {
-            "x", "y", "bossID", "bossSprite", "bossHealthMax", "hurtMode", "maxFall", "bossHitCooldown", "baseGravityMultiplier", "__Boss_pad",
-            "hitboxMetadataPath", "patternsPath", "attacksPath", "eventsPath", "functionsPath", "__Boss_pad_",
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately", "startCollidable", "startSolidCollidable"
+            "x", "y",
+            "bossID", "bossSprite",
+            "bossHealthMax", "hurtMode",
+            "maxFall", "bossHitCooldown",
+            "baseGravityMultiplier", "__Boss_pad",
+
+            "hitboxMetadataPath", "patternsPath",
+            "attacksPath", "eventsPath",
+            "functionsPath", "__Boss_pad_",
+
+            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately",
+            "startCollidable", "startSolidCollidable"
         }
     end
 end
