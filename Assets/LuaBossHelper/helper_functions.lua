@@ -915,55 +915,7 @@ end
 
 --- Bosses Helper Attack specific functions and helper methods for the player
 
----A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
-
-local function getEaserByName(name, invert)
-    local ease = require("#monocle.ease")
-    local typ = type(name)
-    if (typ ~= "string") then
-        return nil
-    end
-    local value = string.lower(name)
-    local easers = {
-        linear = ease.Linear,
-        sinein = ease.SineIn,
-        sineout = ease.SineOut,
-        sineinout = ease.SineInOut,
-        quadin = ease.QuadIn,
-        quadout = ease.QuadOut,
-        quadinout = ease.QuadInOut,
-        cubein = ease.CubeIn,
-        cubeout = ease.CubeOut,
-        cubeinout = ease.CubeInOut,
-        quintin = ease.QuintIn,
-        quintout = ease.QuintOut,
-        QuintInOut = ease.QuintInOut,
-        expoin = ease.ExpoIn,
-        expoout = ease.ExpoOut,
-        expoinout = ease.ExpoInOut,
-        backin = ease.BackIn,
-        backout = ease.BackOut,
-        backinout = ease.BackInOut,
-        bigbackin = ease.BigBackIn,
-        bigbackout = ease.BigBackOut,
-        bigbackinout = ease.BigBackInOut,
-        elasticin = ease.ElasticIn,
-        elasticout = ease.ElasticOut,
-        elasticinout = ease.ElasticInOut,
-        bouncein = ease.BounceIn,
-        bounceout = ease.BounceOut,
-        bounceinout = ease.BounceInOut,
-        default = nil
-    }
-    if easers[value] then
-        if invert or false then
-            return ease.Invert(easers[value])
-        end
-        return easers[value]
-    else
-        return easers["default"]
-    end
-end
+local ease = require("#monocle.ease")
 
 
 --#region Entity Adding
@@ -1157,42 +1109,54 @@ function helpers.keepSpeedDuring(time)
     return puppet:SetSpeedDuring(puppet.Speed.X, puppet.Speed.Y, time)
 end
 
+local function getEaser(easer, invert)
+    if type(easer) == "string" then
+        return helpers.getEaserByName(easer, invert)
+    elseif type(easer) == "userdata" then
+        if invert then
+            return ease.Invert(easer)
+        end
+        return easer
+    end
+    return nil
+end
+
 ---Create a new Position Tween, which will slowly move the Boss to the target.
 ---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time number The time the Boss will take to reach the target.
----@param easer? string|Easer The easer to apply to the motion. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    return puppet:PositionTween(target, time, getEaserByName(easer, invert) or easer)
+    return puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed.
 ---@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
-    return puppet:SpeedXTween(start, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedXTween(start, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' y speed.
 ---@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
-    return puppet:SpeedYTween(start, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedYTween(start, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' speed.
@@ -1201,25 +1165,25 @@ end
 ---@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, invert)
-    return puppet:SpeedTween(xStart, yStart, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedTween(xStart, yStart, xTarget, yTarget, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
-    return puppet:SpeedXTween(puppet.Speed.X, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedXTween(puppet.Speed.X, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
@@ -1227,24 +1191,24 @@ end
 ---@param time number The time the Boss will take to reach the target y speed.
 ---@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
 ---@default nil
----@param invert? boolean If the easer should be inverted. Defaults to false.
+---@param invert? boolean If the easer should be inverted. If a string is provided, it will call helpers.getEaserByName. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
-    return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss'  speed from its current x speed value.
 ---@param xTarget number The value the Boss' speed x component will slowly change to.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
-    return puppet:SpeedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaserByName(easer, invert) or easer)
+    return puppet:SpeedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert) or easer)
 end
 
 --#endregion
@@ -1645,6 +1609,57 @@ function helpers.normalize(vector, length)
 
     if len == 0 then return vector end
     return vector2(vector.X / len, vector.Y / len) * (length or 1)
+end
+
+---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
+---@param name? string The name of the Easer to get.
+---@param invert? boolean If the easer returned should be inverted.
+---@return nil|Easer easer The Easer found or nil if not found.
+function helpers.getEaserByName(name, invert)
+    local typ = type(name)
+    if (typ ~= "string") then
+        return nil
+    end
+    local value = string.lower(name)
+    local easers = {
+        linear = ease.Linear,
+        sinein = ease.SineIn,
+        sineout = ease.SineOut,
+        sineinout = ease.SineInOut,
+        quadin = ease.QuadIn,
+        quadout = ease.QuadOut,
+        quadinout = ease.QuadInOut,
+        cubein = ease.CubeIn,
+        cubeout = ease.CubeOut,
+        cubeinout = ease.CubeInOut,
+        quintin = ease.QuintIn,
+        quintout = ease.QuintOut,
+        QuintInOut = ease.QuintInOut,
+        expoin = ease.ExpoIn,
+        expoout = ease.ExpoOut,
+        expoinout = ease.ExpoInOut,
+        backin = ease.BackIn,
+        backout = ease.BackOut,
+        backinout = ease.BackInOut,
+        bigbackin = ease.BigBackIn,
+        bigbackout = ease.BigBackOut,
+        bigbackinout = ease.BigBackInOut,
+        elasticin = ease.ElasticIn,
+        elasticout = ease.ElasticOut,
+        elasticinout = ease.ElasticInOut,
+        bouncein = ease.BounceIn,
+        bounceout = ease.BounceOut,
+        bounceinout = ease.BounceInOut,
+        default = nil
+    }
+    if easers[value] then
+        if invert or false then
+            return ease.Invert(easers[value])
+        end
+        return easers[value]
+    else
+        return easers["default"]
+    end
 end
 
 --#endregion
