@@ -1189,9 +1189,9 @@ end
 ---Create a new Tween for the Boss' x speed from its current y speed value.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to applt to the y speed value. Defaults to nil.
+---@param easer? string|Easer The easer to applt to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
----@param invert? boolean If the easer should be inverted. If a string is provided, it will call helpers.getEaserByName. Defaults to false.
+---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
