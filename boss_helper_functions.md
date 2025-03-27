@@ -382,7 +382,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -412,7 +412,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -450,7 +450,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -476,7 +476,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -502,7 +502,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -532,7 +532,7 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
