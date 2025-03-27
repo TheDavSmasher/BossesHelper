@@ -37,6 +37,12 @@ bossMasterController.fieldInformation = {
     baseGravityMultiplier = {
         fieldType = "number"
     },
+    groundFriction = {
+        fieldType = "number"
+    },
+    airFriction = {
+        fieldType = "number"
+    },
     sidekickCooldown = {
         fieldType = "number"
     },
@@ -74,6 +80,7 @@ function bossMasterController.fieldOrder(entity)
             "bossID", "bossSprite",
             "bossHealthMax", "hurtMode",
             "maxFall", "bossHitCooldown",
+            "groundFriction", "airFriction",
             "baseGravityMultiplier", "sidekickCooldown",
 
             "hitboxMetadataPath", "patternsPath",
@@ -89,6 +96,7 @@ function bossMasterController.fieldOrder(entity)
             "bossID", "bossSprite",
             "bossHealthMax", "hurtMode",
             "maxFall", "bossHitCooldown",
+            "groundFriction", "airFriction",
             "baseGravityMultiplier", "__Boss_pad",
 
             "hitboxMetadataPath", "patternsPath",
@@ -117,6 +125,8 @@ bossMasterController.placements = {
             bossHitCooldown = "0.5",
             maxFall = "90",
             baseGravityMultiplier = "1.0",
+            groundFriction = "0.0",
+            airFriction = "0.0",
             dynamicFacing = true,
             mirrorSprite = false,
             killOnContact = false,
@@ -140,6 +150,8 @@ bossMasterController.placements = {
             bossHitCooldown = "0.5",
             maxFall = "90",
             baseGravityMultiplier = "1.0",
+            groundFriction = "0.0",
+            airFriction = "0.0",
             sidekickCooldown = "5.0",
             dynamicFacing = true,
             mirrorSprite = false,
