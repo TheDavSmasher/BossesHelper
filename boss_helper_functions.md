@@ -184,9 +184,9 @@ This function also Works in Cutscene files
 
 ---
 
-## helpers.setGroundFriction (friction)
+### helpers.setGroundFriction (friction)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the Boss's horizontal ground friction deceleration rate.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the Boss's horizontal ground friction deceleration rate.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`friction` (`number`)  
 
@@ -194,9 +194,9 @@ This function also Works in Cutscene files
 
 ---
 
-## helpers.setAirFriction (friction)
+### helpers.setAirFriction (friction)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the Boss's horizontal air friction deceleration rate.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the Boss's horizontal air friction deceleration rate.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`friction` (`number`)  
 
