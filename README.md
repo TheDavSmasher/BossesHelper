@@ -1,5 +1,9 @@
 # Bosses Helper
 
+**Current Version**: `1.0.10`
+
+---
+
 This is a helper specifically designed to allow the creation of custom bosses within a Celeste map, fully customizable through input in the map editor or utilizing user-provided .xml and .lua files to execute attacks, cutscenes, and more.
 
 ## Layout
