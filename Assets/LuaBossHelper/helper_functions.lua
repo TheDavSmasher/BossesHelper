@@ -1149,7 +1149,7 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1162,7 +1162,7 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to applt to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1177,7 +1177,7 @@ end
 ---@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1189,7 +1189,7 @@ end
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1201,7 +1201,7 @@ end
 ---Create a new Tween for the Boss' x speed from its current y speed value.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to applt to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1214,7 +1214,7 @@ end
 ---@param xTarget number The value the Boss' speed x component will slowly change to.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to applt to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
