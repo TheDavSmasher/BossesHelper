@@ -102,8 +102,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
             maxFall = data.Float("maxFall", 90f);
             effectiveGravity = data.Float("baseGravityMultiplier", 1f) * Gravity;
-            groundFriction = 0f;
-            airFriction = 0f;
+            groundFriction = data.Float("groundFriction");
+            airFriction = data.Float("airFriction");
             freezeSidekickOnAttack = data.Bool("sidekickFreeze");
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
