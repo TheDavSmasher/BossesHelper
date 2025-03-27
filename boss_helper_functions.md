@@ -34,7 +34,17 @@
 
 ### helpers.playPuppetAnim (anim)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plan an animation on the Boss' given sprite
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plan an animation on the Boss's given sprite
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`anim` (`string`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The animation to play  
+
+---
+
+### helpers.playAndWaitPuppetAnim (anim)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`anim` (`string`)  
 
@@ -58,7 +68,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`number`): The Boss's current health value
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`integer`): The Boss's current health value
 
 ---
 
@@ -66,7 +76,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the Boss' health value to a new value.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`number`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`integer`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value to set the health to.  
 
@@ -76,7 +86,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decrease the Boss' health by the given value
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`number`) (default `1`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`integer`) (default `1`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The amount of health lost. Defaults to 1.  
 
@@ -100,7 +110,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ID` (`number`): The current pattern's index, base 0
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ID` (`integer`): The current pattern's index, base 0
 
 ---
 
@@ -108,7 +118,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a new boss action pattern.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`goTo` (`number`) (default `-1`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`goTo` (`integer`) (default `-1`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.  
 
@@ -125,7 +135,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Force the next attack to be the attack of the given index. Index is based off of position within the Pattern.
 Currently only supported in Random Patterns. The index is always ran past a modulo on the pattern attacks' count to avoid an out-of-bounds issue.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`index` (`number`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`index` (`integer`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The attack index to select next. Will only take effect once per call.  
 
@@ -135,11 +145,11 @@ Currently only supported in Random Patterns. The index is always ran past a modu
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`number`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`health` (`integer`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The health value to save and set back upon reload.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`index` (`number`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`index` (`integer`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The pattern index the boss should start with upon reload.  
 
@@ -306,7 +316,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.positionTween (target, time[, invert=false])
+### helpers.positionTween (target, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Position Tween, which will slowly move the Boss to the target.
 
@@ -318,6 +328,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to apply to the motion. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -328,7 +342,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedXTween (start, target, time[, invert=false])
+### helpers.speedXTween (start, target, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss' x speed.
 
@@ -344,6 +358,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target x speed.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -354,7 +372,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedYTween (start, target, time[, invert=false])
+### helpers.speedYTween (start, target, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss' y speed.
 
@@ -370,6 +388,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target y speed.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -380,7 +402,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedTween (xStart, xTarget, yStart, yTarget, time[, invert=false])
+### helpers.speedTween (xStart, xTarget, yStart, yTarget, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss' speed.
 
@@ -404,6 +426,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target x speed.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -414,7 +440,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedXTweenTo (target, time[, invert=false])
+### helpers.speedXTweenTo (target, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss' x speed from its current x speed value.
 
@@ -426,6 +452,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target x speed.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -436,7 +466,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedYTweenTo (target, time[, invert=false])
+### helpers.speedYTweenTo (target, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss' x speed from its current y speed value.
 
@@ -448,6 +478,10 @@ This function also Works in Cutscene files
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target y speed.  
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the y speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer should be inverted. Defaults to false.  
@@ -458,7 +492,7 @@ This function also Works in Cutscene files
 
 ---
 
-### helpers.speedTweenTo (xTarget, yTarget, time[, invert=false])
+### helpers.speedTweenTo (xTarget, yTarget, time[, easer=nil[, invert=false]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Tween for the Boss'  speed from its current x speed value.
 
@@ -473,6 +507,10 @@ This function also Works in Cutscene files
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`time` (`number`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time the Boss will take to reach the target x speed.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`string|Easer`) (default `nil`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The easer to applt to the x speed value. If a string is provided, it will call [helpers.getEaserByName](#helpersgeteaserbyname-name-invert). Defaults to nil.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (default `false`)  
 
@@ -1028,6 +1066,20 @@ Can be added to any Entity.
 
 ## Misc. Functions
 
+### helpers.sayExt (dialog, ...)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display textbox with dialog. Any provided functions will be passed as Triggers accessible to Dialog.txt triggers.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`dialog` (`string`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dialog ID used for the conversation.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`...` (`function`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Functions that will be called whenever a trigger is activated through dialogue.  
+
+---
+
 ### helpers.getNewEntityData (position[, width=0[, height=0[, id=1000]]])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a new EntityData object
@@ -1044,7 +1096,7 @@ Can be added to any Entity.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The height the EntityData will hold. Defaults to 0.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`id` (`number`) (default `1000`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`id` (`integer`) (default `1000`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The id the EntityData will hold. Defaults to 1000.  
 
@@ -1085,6 +1137,10 @@ Can be added to any Entity.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`key` (`string`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The key the object is stored under.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`object` (`nil|any`): The object stored, or nil if key is not found.
 
 ---
 
@@ -1141,5 +1197,23 @@ Can be added to any Entity.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`normal` (`Vector2`): The normalized vector2
+
+---
+
+### helpers.getEaserByName ([name[, invert]])
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` (`string`) (optional)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Easer to get.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (optional)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer returned should be inverted.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`nil|Easer`): The Easer found or nil if not found.
 
 ---

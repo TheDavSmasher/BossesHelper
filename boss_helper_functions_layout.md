@@ -9,6 +9,7 @@
 ## [Fight Logic](boss_helper_functions.md#fight-logic)
 
 - [helpers.playPuppetAnim (anim)](boss_helper_functions.md#helpersplaypuppetanim-anim)
+- [helpers.playAndWaitPuppetAnim (anim)](boss_helper_functions.md#helpersplayandwaitpuppetanim-anim)
 - [helpers.seededRandom ()](boss_helper_functions.md#helpersseededrandom-)
 - [helpers.getHealth ()](boss_helper_functions.md#helpersgethealth-)
 - [helpers.setHealth (health)](boss_helper_functions.md#helperssethealth-health)
@@ -34,13 +35,13 @@
 - [helpers.keepXSpeedDuring (time)](boss_helper_functions.md#helperskeepxspeedduring-time)
 - [helpers.keepYSpeedDuring (time)](boss_helper_functions.md#helperskeepyspeedduring-time)
 - [helpers.keepSpeedDuring (time)](boss_helper_functions.md#helperskeepspeedduring-time)
-- [helpers.positionTween (target, time[, invert=false])](boss_helper_functions.md#helperspositiontween-target-time-invertfalse)
-- [helpers.speedXTween (start, target, time[, invert=false])](boss_helper_functions.md#helpersspeedxtween-start-target-time-invertfalse)
-- [helpers.speedYTween (start, target, time[, invert=false])](boss_helper_functions.md#helpersspeedytween-start-target-time-invertfalse)
-- [helpers.speedTween (xStart, xTarget, yStart, yTarget, time[, invert=false])](boss_helper_functions.md#helpersspeedtween-xstart-xtarget-ystart-ytarget-time-invertfalse)
-- [helpers.speedXTweenTo (target, time[, invert=false])](boss_helper_functions.md#helpersspeedxtweento-target-time-invertfalse)
-- [helpers.speedYTweenTo (target, time[, invert=false])](boss_helper_functions.md#helpersspeedytweento-target-time-invertfalse)
-- [helpers.speedTweenTo (xTarget, yTarget, time[, invert=false])](boss_helper_functions.md#helpersspeedtweento-xtarget-ytarget-time-invertfalse)
+- [helpers.positionTween (target, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helperspositiontween-target-time-easernil-invertfalse)
+- [helpers.speedXTween (start, target, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedxtween-start-target-time-easernil-invertfalse)
+- [helpers.speedYTween (start, target, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedytween-start-target-time-easernil-invertfalse)
+- [helpers.speedTween (xStart, xTarget, yStart, yTarget, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedtween-xstart-xtarget-ystart-ytarget-time-easernil-invertfalse)
+- [helpers.speedXTweenTo (target, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedxtweento-target-time-easernil-invertfalse)
+- [helpers.speedYTweenTo (target, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedytweento-target-time-easernil-invertfalse)
+- [helpers.speedTweenTo (xTarget, yTarget, time[, easer=nil[, invert=false]])](boss_helper_functions.md#helpersspeedtweento-xtarget-ytarget-time-easernil-invertfalse)
 
 ## [Collisions and Colliders](boss_helper_functions.md#collisions-and-colliders)
 
@@ -88,6 +89,7 @@
 
 ## [Misc. Functions](boss_helper_functions.md#misc-functions)
 
+- [helpers.sayExt (dialog, ...)](boss_helper_functions.md#helperssayext-dialog-)
 - [helpers.getNewEntityData (position[, width=0[, height=0[, id=1000]]])](boss_helper_functions.md#helpersgetnewentitydata-position-width0-height0-id1000)
 - [helpers.setEntityDataAttributes (entityData)](boss_helper_functions.md#helperssetentitydataattributes-entitydata)
 - [helpers.storeObjectInBoss (key, object)](boss_helper_functions.md#helpersstoreobjectinboss-key-object)
@@ -96,3 +98,4 @@
 - [helpers.doMethodAfterDelay (func, delay)](boss_helper_functions.md#helpersdomethodafterdelay-func-delay)
 - [helpers.v2L (vector)](boss_helper_functions.md#helpersv2l-vector)
 - [helpers.normalize (vector[, length=1])](boss_helper_functions.md#helpersnormalize-vector-length1)
+- [helpers.getEaserByName ([name[, invert]])](boss_helper_functions.md#helpersgeteaserbyname-name-invert)
