@@ -1044,6 +1044,18 @@ function helpers.setEffectiveGravityMult(mult)
     puppet:SetGravityMult(mult)
 end
 
+---Set the Boss's horizontal ground friction deceleration rate.
+---@param friction number The deceleration rate to set.
+function helpers.setGroundFriction(friction)
+    puppet.groundFriction = friction
+end
+
+---Set the Boss's horizontal air friction deceleration rate.
+---@param friction number The deceleration rate to set.
+function helpers.setAirFriction(friction)
+    puppet.airFriction = friction
+end
+
 ---Set the Boss' x speed to the given value
 ---@param value number The value to set the Boss' speed x component to.
 function helpers.setXSpeed(value)

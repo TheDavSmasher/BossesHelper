@@ -26,6 +26,8 @@
 ## [Position and Movement](boss_helper_functions.md#position-and-movement)
 
 - [helpers.setEffectiveGravityMult (mult)](boss_helper_functions.md#helpersseteffectivegravitymult-mult)
+- [helpers.setGroundFriction (friction)](boss_helper_functions.md#helperssetgroundfriction-friction)
+- [helpers.setAirFriction (friction)](boss_helper_functions.md#helperssetairfriction-friction)
 - [helpers.setXSpeed (value)](boss_helper_functions.md#helperssetxspeed-value)
 - [helpers.setYSpeed (value)](boss_helper_functions.md#helperssetyspeed-value)
 - [helpers.setSpeed (x, y)](boss_helper_functions.md#helperssetspeed-x-y)
