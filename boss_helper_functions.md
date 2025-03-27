@@ -2,6 +2,8 @@
 
 ## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)
 
+Find the actual Lua file [here](Assets/LuaBossHelper/helper_functions.lua).
+
 ## Entity Adding
 
 ### helpers.addEntity (entity)
