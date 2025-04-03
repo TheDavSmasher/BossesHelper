@@ -10,15 +10,18 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public class BossEvent : CutsceneEntity
+    public class BossEvent : CutsceneEntity, IBossAction
     {
         private readonly IEnumerator Cutscene;
 
         private readonly LuaFunction endMethod;
 
+        private readonly Action AddToScene;
+
         public BossEvent(string filepath, Player player = null, BossController controller = null)
             : base(fadeInOnSkip: true, endingChapterAfter: false)
         {
+            AddToScene = () => controller.Scene.Add(this);
             Dictionary<object, object> dict = new Dictionary<object, object>
             {
                 { "player", player },
@@ -56,10 +59,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public override void OnBegin(Level level)
         {
-            if (Cutscene != null)
-            {
-                Add(new Coroutine(Coroutine(level)));
-            }
+            Add(new Coroutine(Coroutine(level)));
         }
 
         public override void OnEnd(Level level)
@@ -73,6 +73,16 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to call OnEnd");
                 Logger.LogDetailed(e);
             }
+        }
+
+        public IEnumerator Perform()
+        {
+            AddToScene();
+            do
+            {
+                yield return null;
+            }
+            while (Running);
         }
     }
 }

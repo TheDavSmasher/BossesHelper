@@ -8,7 +8,7 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public class BossAttack(string filepath, Player player, BossController controller)
+    public class BossAttack(string filepath, Player player, BossController controller): IBossAction
     {
         private readonly LuaFunction attackFunction = LoadLuaFile(filepath, "getAttackData", new Dictionary<object, object>
             {
@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         )?.FirstOrDefault();
 
-        public IEnumerator Coroutine()
+        public IEnumerator Perform()
         {
             yield return attackFunction.ToIEnumerator();
         }
