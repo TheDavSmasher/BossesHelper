@@ -254,16 +254,15 @@ The entirety of the contents are inside the `Patterns` node. There can be as man
 
 `Pattern` nodes can have different attributes to make them end in different ways.
 
-- If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted when the Boss is collided with.
+- If no attributes are defined, then the Pattern will loop indefinitely unless manually interrupted as dictated by the Boss's setup.
 - If a `goto` attribute is provided, the Pattern will then go to the indicated Pattern with the matching index when the Pattern ends.
-  - Not providing this attribute alongside any others will make it so goTo pattern is the one directly below the current one, or the next one in order.
+  - Not providing this attribute when any other is will make it so `goTo` pattern is the one directly below the current one, or the next one in order.
 - If a `repeat` attribute is provided, the Pattern will loop however many times as specified in `repeat`. A value of 0 will run the Pattern once from top to bottom and then go to the given pattern. A value of 1 will execute twice and then run. It is defined as how many _additional_ loops will run until it ends.
-  - Not providing this attribute alongside any others is the same as providing `repeat` with value 0.
+  - Not providing this attribute with `goTo` provided is the same as providing `repeat` with value 0.
 - If a `minRepeat` attribute is provided, it acts the same way as the `repeat` attribute does, except that once this attribute's value loop count is met, a random chance of the pattern ending at every loop exists.
-  - If `repeat` is provided but `minRepeat` is not, `minRepeat` will default to the value of `repeat`.
-  - The opposite is also true, `repeat` defaulting to `minRepeat` if `minRepeat` is provided but `repeat` is not.
-  - If both are provided, the Pattern will loop at least until `minRepeat` and at most until `repeat` loops, with a 50% chance of ending at every loop.
-  - If `minRepeat` is larger than `repeat`, only the `repeat` will take effect.
+  - If either `repeat` or `minRepeat` is not provided, it will default to the value of the one provided.
+  - If both are provided, the Pattern will run at least `minRepeat` loops and at most `repeat` loops, with a 50% chance of ending at every loop end.
+  - If `minRepeat` is larger than `repeat`, only the `minRepeat` will take effect.
 - If attributes `width`, `height`, `x`, and `y` are provided, these attributes will delimit a rectangle at a given position. Whenever the Player is inside the given rectangle, the Pattern's loop will end.
   - The coordinates for the `x` and `y` attributes are room coordinates.
   - If either `width` or `height` are missing, the Hitbox will not be created.
