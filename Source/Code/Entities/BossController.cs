@@ -128,10 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    if (Patterns[currentPatternIndex].GoToPattern is int next)
-                        StartAttackPattern(next);
-                    else
-                        StartNextAttackPattern();
+                    ChangePattern(Patterns[currentPatternIndex].GoToPattern);
                 }
             }
         }
@@ -180,10 +177,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified event file.");
                 }
-                if (pattern.GoToPattern is int next)
-                    StartAttackPattern(next);
-                else
-                    StartNextAttackPattern();
+                ChangePattern(pattern.GoToPattern);
                 yield return null;
             }
             int currentAction = 0;
@@ -200,10 +194,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     if (pattern.IterationCount == null) continue;
                     if (currentAction > pattern.MinRandomIter && (currentAction > pattern.IterationCount || Random.Next() % 2 == 1))
                     {
-                        if (pattern.GoToPattern is int next)
-                            StartAttackPattern(next);
-                        else
-                            StartNextAttackPattern();
+                        ChangePattern(pattern.GoToPattern);
                         yield return null;
                     }
                 }
@@ -226,10 +217,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 if (loop > pattern.MinRandomIter && (loop > pattern.IterationCount || Random.Next() % 2 == 1))
                 {
-                    if (pattern.GoToPattern is int next)
-                        StartAttackPattern(next);
-                    else
-                        StartNextAttackPattern();
+                    ChangePattern(pattern.GoToPattern);
                     yield return null;
                 }
 
@@ -255,6 +243,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             yield return method.Duration;
+        }
+
+        private void ChangePattern(int? nextPattern)
+        {
+            if (nextPattern is int next)
+                StartAttackPattern(next);
+            else
+                StartNextAttackPattern();
         }
 
         #region Delegate methods
