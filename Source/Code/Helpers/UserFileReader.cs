@@ -43,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 minCount ??= count;
                 if (count < minCount)
                     count = minCount;
-
+                
                 if (patternNode.LocalName.ToLower().Equals("random"))
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)

@@ -266,6 +266,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void InterruptPattern()
         {
             currentPattern.Active = false;
+            isAttacking = false;
             DestroyAll();
         }
 
