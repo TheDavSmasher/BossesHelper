@@ -37,8 +37,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public BossPattern(string eventName, int? goTo)
-            : this([new Method(eventName, null)], goTo: goTo, isEvent: true)
-        {
-        }
+            : this([new Method(eventName, null)], goTo: goTo, isEvent: true) { }
     }
 }
