@@ -29,21 +29,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             public readonly int? GoToPattern = goTo;
 
-            protected readonly Dictionary<string, IBossAction> Actions = delegates.Actions;
-
-            private readonly Action<int?> ChangeToPattern = delegates.ChangeToPattern;
-
-            private readonly Action<bool> SetIsAttacking = delegates.SetIsAttacking;
+            protected readonly ControllerDelegates delegates = delegates;
 
             protected IEnumerator PerformMethod(Method method)
             {
                 if (!method.ActionName.ToLower().Equals("wait"))
                 {
-                    if (Actions.TryGetValue(method.ActionName, out IBossAction attack))
+                    if (delegates.Actions.TryGetValue(method.ActionName, out IBossAction attack))
                     {
-                        SetIsAttacking(true);
+                        delegates.SetIsAttacking(true);
                         yield return attack.Perform();
-                        SetIsAttacking(false);
+                        delegates.SetIsAttacking(false);
                     }
                     else
                     {
@@ -55,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected IEnumerator ChangePattern()
             {
-                ChangeToPattern(GoToPattern);
+                delegates.ChangeToPattern(GoToPattern);
                 yield return null;
             }
 
@@ -70,8 +66,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected readonly Method[] StatePatternOrder = patternLoop;
 
-            protected readonly Func<int> RandomNext = delegates.RandomNext;
-
             private readonly int? MinRandomIter = minCount;
 
             private readonly int? IterationCount = count;
@@ -85,7 +79,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 {
                     yield return PerformMethod(StatePatternOrder[getAttackIndex()]);
                     int counter = updateLoop();
-                    if (counter > MinRandomIter && (counter > IterationCount || RandomNext() % 2 == 1))
+                    if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
                         yield return ChangePattern();
                     }
@@ -97,12 +91,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             int? goTo, ControllerDelegates delegates)
             : AttackPattern(patternLoop, trigger, minCount, count, goTo, delegates)
         {
-            private readonly Func<int?> AttackIndexForced = delegates.AttackIndexForced;
-
             public override IEnumerator Perform()
             {
                 yield return PerformRepeat(
-                    () => (AttackIndexForced() ?? RandomNext()) % StatePatternOrder.Length,
+                    () => (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length,
                     () => currentAction++);
             }
         }
