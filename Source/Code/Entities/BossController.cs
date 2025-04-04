@@ -8,6 +8,7 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 using static Celeste.Mod.BossesHelper.Code.Other.Patterns;
+using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -19,8 +20,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public string BossID { get; private set; }
 
         public BossPuppet Puppet { get; private set; }
-
-        public Dictionary<string, IBossAction> Actions { get; private set; }
 
         private EntityID id;
 
@@ -39,6 +38,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private readonly Coroutine currentPattern;
 
         private List<BossPattern> AllPatterns;
+
+        private Dictionary<string, IBossAction> Actions;
+
+        private readonly ControllerDelegates delegates;
 
         private readonly List<Entity> activeEntities;
 
@@ -68,6 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
             FetchSavedPhase();
+            delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
         }
 
         private void FetchSavedPhase()
@@ -85,7 +89,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Scene.Add(Puppet);
-            UserFileReader.ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset);
+            AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset, delegates);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
             Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
@@ -95,8 +99,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.GetPlayer();
-            UserFileReader.ReadAttackFilesInto(attacksPath, out var AllAttacks, player, this);
-            UserFileReader.ReadEventFilesInto(eventsPath, out var AllEvents, player, this);
+            ReadAttackFilesInto(attacksPath, out var AllAttacks, player, this);
+            ReadEventFilesInto(eventsPath, out var AllEvents, player, this);
             Actions = new();
             foreach (var attack in AllAttacks)
             {
@@ -106,7 +110,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Actions.Add(events.Key, events.Value);
             }
-            UserFileReader.ReadCustomCodeFileInto(functionsPath, player, this);
+            ReadCustomCodeFileInto(functionsPath, player, this);
         }
 
         public override void Removed(Scene scene)
