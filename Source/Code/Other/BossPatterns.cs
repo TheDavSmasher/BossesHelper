@@ -15,13 +15,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public float? Duration = duration;
         }
 
-        public struct ControllerDelegates
+        public struct ControllerDelegates(Dictionary<string, IBossAction> actions, Action<int?> changeToPattern,
+            Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
         {
-            public Dictionary<string, IBossAction> Actions;
-            public Action<int?> ChangeToPattern;
-            public Func<int> RandomNext;
-            public Action<bool> SetIsAttacking;
-            public Func<int?> AttackIndexForced;
+            public Dictionary<string, IBossAction> Actions = actions;
+            public Action<int?> ChangeToPattern = changeToPattern;
+            public Func<int> RandomNext = randomNext;
+            public Action<bool> SetIsAttacking = setIsAttacking;
+            public Func<int?> AttackIndexForced = attackIndexForced;
         }
 
         public abstract class BossPattern(int? goTo, ControllerDelegates delegates)
