@@ -1,7 +1,6 @@
 ﻿using Monocle;
 using System.Collections.Generic;
 using Celeste.Mod.Entities;
-using Celeste.Mod.BossesHelper.Code.Other;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using System;
@@ -25,9 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet Puppet { get; private set; }
 
-        private Dictionary<string, BossAttack> AllAttacks;
-
-        private Dictionary<string, BossEvent> AllEvents;
+        private Dictionary<string, IBossAction> Actions;
 
         private int Health;
 
@@ -101,8 +98,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.GetPlayer();
-            UserFileReader.ReadAttackFilesInto(attacksPath, out AllAttacks, player, this);
-            UserFileReader.ReadEventFilesInto(eventsPath, out AllEvents, player, this);
+            UserFileReader.ReadAttackFilesInto(attacksPath, out var AllAttacks, player, this);
+            UserFileReader.ReadEventFilesInto(eventsPath, out var AllEvents, player, this);
+            Actions = new();
+            foreach (var attack in AllAttacks)
+            {
+                Actions.Add(attack.Key, attack.Value);
+            }
+            foreach (var events in AllEvents)
+            {
+                Actions.Add(events.Key, events.Value);
+            }
             UserFileReader.ReadCustomCodeFileInto(functionsPath, player, this);
         }
 
@@ -161,7 +167,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             StartAttackPattern(currentPatternIndex + 1);
         }
 
-        private IEnumerator PerformPattern(BossPattern pattern)
+        private IEnumerator PerformPattern(BossPatterns pattern)
         {
             //Boss Event
             if (pattern.IsEvent)
@@ -218,7 +224,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!method.ActionName.ToLower().Equals("wait"))
             {
-                if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
+                if (Actions.TryGetValue(method.ActionName, out IBossAction attack))
                 {
                     isActing = true;
                     yield return attack.Perform();
@@ -226,7 +232,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 else
                 {
-                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified attack file.");
+                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified action.");
                 }
             }
             yield return method.Duration;
