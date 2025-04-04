@@ -162,11 +162,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             currentPattern.Replace(PerformPattern(Patterns[currentPatternIndex]));
         }
 
-        private void StartNextAttackPattern()
-        {
-            StartAttackPattern(currentPatternIndex + 1);
-        }
-
         private IEnumerator PerformPattern(BossPatterns pattern)
         {
             //Boss Event
@@ -240,10 +235,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator ChangePattern(int? nextPattern)
         {
-            if (nextPattern is int next)
-                StartAttackPattern(next);
-            else
-                StartNextAttackPattern();
+            StartAttackPattern(nextPattern is int next ? next : currentPatternIndex + 1);
             yield return null;
         }
 
