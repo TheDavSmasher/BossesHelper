@@ -39,13 +39,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public abstract class BossPattern(Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
-            Func<int?, IEnumerator> changePattern, int? goTo = null)
+            Action<int?> changePattern, int? goTo = null)
         {
             protected readonly Dictionary<string, IBossAction> Actions = references;
 
             protected readonly int? GoToPattern = goTo;
 
-            protected readonly Func<int?, IEnumerator> ChangePattern = changePattern;
+            private readonly Action<int?> ChangeToPattern = changePattern;
 
             private readonly Action<bool> SetIsAttacking = setIsAttacking;
 
@@ -67,12 +67,18 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return method.Duration;
             }
 
+            protected IEnumerator ChangePattern()
+            {
+                ChangeToPattern(GoToPattern);
+                yield return null;
+            }
+
             public abstract IEnumerator Perform();
         }
 
         public abstract class AttackPattern(
             Dictionary<string, IBossAction> references, Method[] patternLoop,
-            Func<int?, IEnumerator> changePattern, Func<int> randomNext, Action<bool> setIsAttacking,
+            Action<int?> changePattern, Func<int> randomNext, Action<bool> setIsAttacking,
             Hitbox trigger = null, int? minCount = null, int? count = null, int? goTo = null)
             : BossPattern(references, setIsAttacking, changePattern, goTo)
         {
@@ -92,13 +98,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 if (counter > MinRandomIter && (counter > IterationCount || RandomNext() % 2 == 1))
                 {
-                    yield return ChangePattern(GoToPattern);
+                    yield return ChangePattern();
                 }
             }
         }
 
         public class RandomPattern(Dictionary<string, IBossAction> references, Method[] patternLoop,
-            Func<int?, IEnumerator> changePattern, Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> indexForced,
+            Action<int?> changePattern, Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> indexForced,
             Hitbox trigger = null, int? minCount = null, int? count = null, int? goTo = null)
             : AttackPattern(references, patternLoop, changePattern, randomNext, setIsAttacking, trigger, minCount, count, goTo)
         {
@@ -118,16 +124,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public class SequentialPattern(Dictionary<string, IBossAction> references, Method[] patternLoop, Method[] preLoop,
-            Func<int?, IEnumerator> changePattern, Func<int> randomNext, Action<bool> setIsAttacking,
+            Action<int?> changePattern, Func<int> randomNext, Action<bool> setIsAttacking,
             Hitbox trigger = null, int? minCount = null, int? count = null, int? goTo = null)
             : AttackPattern(references, patternLoop, changePattern, randomNext, setIsAttacking, trigger, minCount, count, goTo)
         {
             private readonly Method[] PrePatternMethods = preLoop;
 
-            private int loop = 0;
-
             public override IEnumerator Perform()
             {
+                int loop = 0;
                 if (PrePatternMethods != null)
                 {
                     foreach (Method method in PrePatternMethods)
@@ -152,7 +157,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public class EventCutscene(Method eventMethod, Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
-            Func<int?, IEnumerator> changePattern, int? goTo = null)
+            Action<int?> changePattern, int? goTo = null)
             : BossPattern(references, setIsAttacking, changePattern, goTo)
         {
             private readonly Method Event = eventMethod;
@@ -160,7 +165,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public override IEnumerator Perform()
             {
                 yield return PerformMethod(Event);
-                yield return ChangePattern(GoToPattern);
+                yield return ChangePattern();
             }
         }
     }
