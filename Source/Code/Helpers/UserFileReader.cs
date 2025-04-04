@@ -7,6 +7,7 @@ using System.Xml;
 using System.Linq;
 using System;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
+using static Celeste.Mod.BossesHelper.Code.Other.Patterns;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
