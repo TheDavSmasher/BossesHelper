@@ -212,37 +212,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static void ReadEventFilesInto(string path, out Dictionary<string, BossEvent> events, 
+        public static void ReadLuaFilesInto(string attacksPath, string eventsPath, out Dictionary<string, IBossAction> actions,
             Player playerRef, BossController controller)
         {
-            events = new Dictionary<string, BossEvent>();
-            if (!Everest.Content.TryGet(path, out ModAsset eventFiles))
+            actions = new();
+            string[] paths = { attacksPath, eventsPath };
+            for (int i = 0; i < 2; i++)
             {
-                Logger.Log(LogLevel.Info, "Bosses Helper", "No Event files were found.");
-                return;
-            }
-            foreach (ModAsset eventFile in eventFiles.Children)
-            {
-                if (!events.TryAdd(eventFile.PathVirtual.Substring(path.Length + 1),
-                    new BossEvent(eventFile.PathVirtual, playerRef, controller)))
-                    Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.");
-            }
-        }
-
-        public static void ReadAttackFilesInto(string path, out Dictionary<string, BossAttack> attacks,
-            Player playerRef, BossController controller)
-        {
-            attacks = new Dictionary<string, BossAttack>();
-            if (!Everest.Content.TryGet(path, out ModAsset attackFiles))
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Attack files.");
-                return;
-            }
-            foreach (ModAsset attackFile in attackFiles.Children)
-            {
-                if(!attacks.TryAdd(attackFile.PathVirtual.Substring(path.Length + 1),
-                    new BossAttack(attackFile.PathVirtual, playerRef, controller)))
-                    Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.");
+                string path = paths[i];
+                if (!Everest.Content.TryGet(path, out ModAsset luaFiles))
+                {
+                    Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
+                    return;
+                }
+                foreach (ModAsset luaFile in luaFiles.Children)
+                {
+                    IBossAction action = i == 0
+                        ? new BossAttack(luaFile.PathVirtual, playerRef, controller)
+                        : new BossEvent(luaFile.PathVirtual, playerRef, controller);
+                    if (!actions.TryAdd(luaFile.PathVirtual.Substring(path.Length + 1), action))
+                        Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
+                }
             }
         }
 

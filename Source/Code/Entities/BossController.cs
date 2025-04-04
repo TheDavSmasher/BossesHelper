@@ -99,17 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.GetPlayer();
-            ReadAttackFilesInto(attacksPath, out var AllAttacks, player, this);
-            ReadEventFilesInto(eventsPath, out var AllEvents, player, this);
-            Actions = new();
-            foreach (var attack in AllAttacks)
-            {
-                Actions.Add(attack.Key, attack.Value);
-            }
-            foreach (var events in AllEvents)
-            {
-                Actions.Add(events.Key, events.Value);
-            }
+            ReadLuaFilesInto(attacksPath, eventsPath, out Actions, player, this);
             ReadCustomCodeFileInto(functionsPath, player, this);
         }
 
