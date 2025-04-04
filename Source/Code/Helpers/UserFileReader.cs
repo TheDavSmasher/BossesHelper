@@ -15,14 +15,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset, ControllerDelegates delegates)
+        public static void ReadPatternFileInto(string filepath, out List<BossPattern> targetOut,
+            Vector2 offset, ControllerDelegates delegates)
         {
-            List<BossPattern> targetOut = new List<BossPattern>();
+            targetOut = new List<BossPattern>();
             string path = CleanPath(filepath, ".xml");
             if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
-                return targetOut;
+                return;
             }
             XmlDocument document = new XmlDocument();
             document.Load(xml.Stream);
@@ -83,7 +84,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     new SequentialPattern(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo, delegates)
                 );
             }
-            return targetOut;
         }
 
         public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)

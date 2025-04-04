@@ -89,7 +89,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Scene.Add(Puppet);
-            AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset, delegates);
+            ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset, delegates);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
             Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
