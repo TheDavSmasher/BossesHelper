@@ -220,11 +220,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             for (int i = 0; i < 2; i++)
             {
                 string path = paths[i];
-                if (!Everest.Content.TryGet(path, out ModAsset luaFiles))
-                {
-                    Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
-                    return;
-                }
+                if (!ReadLuaPath(path, out ModAsset luaFiles)) return;
                 foreach (ModAsset luaFile in luaFiles.Children)
                 {
                     IBossAction action = i == 0
@@ -238,24 +234,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadCustomCodeFileInto(string filepath, Player playerRef, BossController controller)
         {
-            string path = CleanPath(filepath, ".lua");
-            if (!Everest.Content.TryGet(path, out ModAsset onHitFile))
-            {
-                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for custom setup.");
-                return;
-            }
-            controller.Puppet.SetPuppetFunctions(new BossFunctions(onHitFile.PathVirtual, playerRef, controller));
+            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile)) return;
+            controller.Puppet.SetPuppetFunctions(new BossFunctions(setupFile.PathVirtual, playerRef, controller));
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
         {
-            string path = CleanPath(filepath, ".lua");
-            if (!Everest.Content.TryGet(path, out ModAsset file))
+            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset saveFile)) return;
+            savePoint.LoadFunction(saveFile.PathVirtual, playerRef);
+        }
+
+        private static bool ReadLuaPath(string path, out ModAsset asset)
+        {
+            asset = null;
+            if (!Everest.Content.TryGet(path, out ModAsset luaPath))
             {
-                Logger.Log(LogLevel.Info, "Bosses Helper", "No Lua file found for Save Point.");
-                return;
+                Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
+                return false;
             }
-            savePoint.LoadFunction(file.PathVirtual, playerRef);
+            asset = luaPath;
+            return true;
         }
         #endregion
 
