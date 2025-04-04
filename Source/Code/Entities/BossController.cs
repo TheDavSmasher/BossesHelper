@@ -157,7 +157,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void StartAttackPattern(int goTo = -1)
         {
-            if (goTo >= Patterns.Count)
+            if (goTo >= AllPatterns.Count)
             {
                 currentPatternIndex = -1;
                 currentPattern.Active = false;
