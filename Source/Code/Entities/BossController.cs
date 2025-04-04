@@ -39,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool playerHasMoved;
 
-        private bool isAttacking;
+        private bool isActing;
 
         private bool startAttackingImmediately;
 
@@ -64,7 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             eventsPath = data.Attr("eventsPath");
             functionsPath = data.Attr("functionsPath");
             patternsPath = data.Attr("patternsPath");
-            isAttacking = false;
+            isActing = false;
             currentPatternIndex = 0;
             currentPattern = new Coroutine();
             Add(currentPattern);
@@ -121,11 +121,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     playerHasMoved = true;
                     StartAttackPattern(currentPatternIndex);
                 }
-                if (!playerHasMoved && isAttacking)
+                if (!playerHasMoved && isActing)
                 {
                     playerHasMoved = true;
                 }
-                if (!isAttacking && IsPlayerWithinSpecifiedRegion(entity.Position))
+                if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
                     ChangePattern(Patterns[currentPatternIndex].GoToPattern);
@@ -233,9 +233,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (AllAttacks.TryGetValue(method.ActionName, out BossAttack attack))
                 {
-                    isAttacking = true;
-                    yield return attack.Coroutine();
-                    isAttacking = false;
+                    isActing = true;
+                    yield return attack.Perform();
+                    isActing = false;
                 }
                 else
                 {
@@ -257,7 +257,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         #region Interruption Delegates
         public IEnumerator WaitForAttackToEnd()
         {
-            while (isAttacking)
+            while (isActing)
             {
                 yield return null;
             }
@@ -266,7 +266,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void InterruptPattern()
         {
             currentPattern.Active = false;
-            isAttacking = false;
+            isActing = false;
             DestroyAll();
         }
 
