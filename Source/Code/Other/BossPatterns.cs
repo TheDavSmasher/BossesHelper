@@ -6,7 +6,7 @@ using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public static class Patterns
+    public static class BossPatterns
     {
         public struct Method(string name, float? duration)
         {

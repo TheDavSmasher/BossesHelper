@@ -7,7 +7,7 @@ using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
-using static Celeste.Mod.BossesHelper.Code.Other.Patterns;
+using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
