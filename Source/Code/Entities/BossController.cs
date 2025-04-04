@@ -133,7 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    StartAttackPattern(AllPatterns[currentPatternIndex].GoToPattern is int next ? next : currentPatternIndex + 1);
+                    ChangeToPattern(AllPatterns[currentPatternIndex].GoToPattern);
                 }
             }
         }
@@ -142,14 +142,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             return ((AttackPattern) AllPatterns[currentPatternIndex]).PlayerPositionTrigger is Hitbox positionTrigger 
                 && positionTrigger.Collide(entityPos);
-        }
-
-        private int? AttackIndexForced()
-        {
-            if (forcedAttackIndex is not int index)
-                return null;
-            forcedAttackIndex = null;
-            return index;
         }
 
         public void StartAttackPattern(int goTo = -1)
@@ -165,6 +157,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 currentPatternIndex = goTo;
             }
             currentPattern.Replace(AllPatterns[currentPatternIndex].Perform());
+        }
+
+        private int? AttackIndexForced()
+        {
+            if (forcedAttackIndex is not int index)
+                return null;
+            forcedAttackIndex = null;
+            return index;
+        }
+
+        private void ChangeToPattern(int? goTo)
+        {
+            StartAttackPattern(goTo is int next ? next : currentPatternIndex + 1);
         }
 
         #region Delegate methods
