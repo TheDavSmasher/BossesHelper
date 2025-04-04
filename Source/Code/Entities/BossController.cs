@@ -7,6 +7,7 @@ using System.Collections;
 using System;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
