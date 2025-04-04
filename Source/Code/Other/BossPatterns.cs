@@ -1,13 +1,7 @@
 ﻿using Monocle;
-using System.Collections;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    public interface IBossAction
-    {
-        public IEnumerator Perform();
-    }
-
     public struct Method(string name, float? duration)
     {
         public string ActionName = name;
@@ -15,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public float? Duration = duration;
     }
 
-    public class BossPattern(Method[] patternLoop, Method[] prePattern = null, Hitbox trigger = null,
+    public class BossPatterns(Method[] patternLoop, Method[] prePattern = null, Hitbox trigger = null,
         int? minCount = null, int? count = null, int? goTo = null, bool random = false, bool isEvent = false)
     {
         public readonly bool IsEvent = isEvent;
@@ -42,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public BossPattern(string eventName, int? goTo)
+        public BossPatterns(string eventName, int? goTo)
             : this([new Method(eventName, null)], goTo: goTo, isEvent: true) { }
     }
 }

@@ -14,9 +14,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static void ReadPatternFileInto(string filepath, out List<BossPattern> targetOut, Vector2 offset)
+        public static void ReadPatternFileInto(string filepath, out List<BossPatterns> targetOut, Vector2 offset)
         {
-            targetOut = new List<BossPattern>();
+            targetOut = new List<BossPatterns>();
             string path = CleanPath(filepath, ".xml");
             if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
@@ -33,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 List<Method> methodList = new();
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
-                    targetOut.Add(new BossPattern(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
+                    targetOut.Add(new BossPatterns(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
                     continue;
                 }
 
@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
                             action.GetValueOrDefaultNullF("wait")), Math.Max(action.GetValueOrDefaultInt("weight"), 1)));
                     }
-                    targetOut.Add(new BossPattern(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
+                    targetOut.Add(new BossPatterns(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
                     continue;
                 }
 
@@ -74,7 +74,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     }
                 }
 
-                targetOut.Add(new BossPattern(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo));
+                targetOut.Add(new BossPatterns(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo));
             }
         }
 
