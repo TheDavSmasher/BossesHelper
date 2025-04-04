@@ -14,8 +14,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
-        private EntityID id;
-
         public Random Random { get; private set; }
 
         public string BossID { get; private set; }
@@ -24,9 +22,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public Dictionary<string, IBossAction> Actions { get; private set; }
 
+        private EntityID id;
+
         private int Health;
 
-        private List<BossPattern> AllPatterns;
+        private bool playerHasMoved;
+
+        private bool isActing;
+
+        private bool startAttackingImmediately;
 
         private int currentPatternIndex;
 
@@ -34,11 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Coroutine currentPattern;
 
-        private bool playerHasMoved;
-
-        private bool isActing;
-
-        private bool startAttackingImmediately;
+        private List<BossPattern> AllPatterns;
 
         private readonly List<Entity> activeEntities;
 
