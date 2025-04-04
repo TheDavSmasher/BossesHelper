@@ -43,8 +43,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             protected readonly Dictionary<string, IBossAction> Actions = references;
 
-            protected readonly int? GoToPattern = goTo;
-
             private readonly Action<int?> ChangeToPattern = changePattern;
 
             private readonly Action<bool> SetIsAttacking = setIsAttacking;

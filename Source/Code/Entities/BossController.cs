@@ -136,14 +136,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    ChangePattern(Patterns[currentPatternIndex].GoToPattern);
+                    StartAttackPattern(AllPatterns[currentPatternIndex].GoToPattern is int next ? next : currentPatternIndex + 1);
                 }
             }
         }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
-            return Patterns[currentPatternIndex].PlayerPositionTrigger is Hitbox positionTrigger 
+            return ((AttackPattern) AllPatterns[currentPatternIndex]).PlayerPositionTrigger is Hitbox positionTrigger 
                 && positionTrigger.Collide(entityPos);
         }
 
