@@ -164,21 +164,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Boss Event
             if (pattern.IsEvent)
             {
-                if (AllEvents.TryGetValue(pattern.FirstAction, out BossEvent cutscene))
-                {
-                    Level.Add(cutscene);
-                    do
-                    {
-                        yield return null;
-                    } 
-                    while (cutscene.Running) ;
-                }
-                else
-                {
-                    Logger.Log(LogLevel.Error, "Bosses Helper", "Could not find specified event file.");
-                }
-                ChangePattern(pattern.GoToPattern);
-                yield return null;
+                yield return PerformMethod(pattern.StatePatternOrder[0]);
+                yield return ChangePattern(pattern.GoToPattern);
             }
             int currentAction = 0;
             //Random Pattern
@@ -194,8 +181,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     if (pattern.IterationCount == null) continue;
                     if (currentAction > pattern.MinRandomIter && (currentAction > pattern.IterationCount || Random.Next() % 2 == 1))
                     {
-                        ChangePattern(pattern.GoToPattern);
-                        yield return null;
+                        yield return ChangePattern(pattern.GoToPattern);
                     }
                 }
             }
@@ -217,8 +203,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
                 if (loop > pattern.MinRandomIter && (loop > pattern.IterationCount || Random.Next() % 2 == 1))
                 {
-                    ChangePattern(pattern.GoToPattern);
-                    yield return null;
+                    yield return ChangePattern(pattern.GoToPattern);
                 }
 
                 yield return PerformMethod(pattern.StatePatternOrder[currentAction]);
@@ -245,12 +230,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             yield return method.Duration;
         }
 
-        private void ChangePattern(int? nextPattern)
+        private IEnumerator ChangePattern(int? nextPattern)
         {
             if (nextPattern is int next)
                 StartAttackPattern(next);
             else
                 StartNextAttackPattern();
+            yield return null;
         }
 
         #region Delegate methods
