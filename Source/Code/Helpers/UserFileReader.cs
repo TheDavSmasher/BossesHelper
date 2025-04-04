@@ -15,14 +15,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static void ReadPatternFileInto(string filepath, out List<BossPatterns> targetOut, Vector2 offset)
+        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset, ControllerDelegates delegates)
         {
-            targetOut = new List<BossPatterns>();
+            List<BossPattern> targetOut = new List<BossPattern>();
             string path = CleanPath(filepath, ".xml");
             if (!Everest.Content.TryGet(path, out ModAsset xml))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
-                return;
+                return targetOut;
             }
             XmlDocument document = new XmlDocument();
             document.Load(xml.Stream);
@@ -34,7 +34,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 List<Method> methodList = new();
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
-                    targetOut.Add(new BossPatterns(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto")));
+                    targetOut.Add(
+                        new EventCutscene(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto"), delegates)
+                    );
                     continue;
                 }
 
@@ -53,7 +55,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
                             action.GetValueOrDefaultNullF("wait")), Math.Max(action.GetValueOrDefaultInt("weight"), 1)));
                     }
-                    targetOut.Add(new BossPatterns(methodList.ToArray(), null, trigger, minCount, count, goTo, true));
+                    targetOut.Add(
+                        new RandomPattern(methodList.ToArray(), trigger, minCount, count, goTo, delegates)
+                    );
                     continue;
                 }
 
@@ -75,8 +79,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     }
                 }
 
-                targetOut.Add(new BossPatterns(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo));
+                targetOut.Add(
+                    new SequentialPattern(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo, delegates)
+                );
             }
+            return targetOut;
         }
 
         public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
