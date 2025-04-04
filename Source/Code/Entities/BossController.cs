@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private int Health;
 
-        private List<BossPattern> Patterns;
+        private List<BossPattern> AllPatterns;
 
         private int currentPatternIndex;
 
@@ -88,7 +88,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Added(scene);
             Level = SceneAs<Level>();
             Level.Add(Puppet);
-            UserFileReader.ReadPatternFileInto(patternsPath, out Patterns, Level.LevelOffset);
+            UserFileReader.ReadPatternFileInto(patternsPath, out AllPatterns, Level.LevelOffset);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Level.TimeActive);
             Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
