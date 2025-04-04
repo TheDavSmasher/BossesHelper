@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 : this([new Method(eventName, null)], goTo: goTo, isEvent: true) { }
         }
 
-        public abstract class BossPattern(Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
+        public abstract class BossActionPattern(Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
             Func<int?, IEnumerator> changePattern, int? goTo = null)
         {
             protected readonly Dictionary<string, IBossAction> Actions = references;
@@ -74,7 +74,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             Dictionary<string, IBossAction> references, Method[] patternLoop,
             Func<int?, IEnumerator> changePattern, Func<int> randomNext, Action<bool> setIsAttacking,
             Hitbox trigger = null, int? minCount = null, int? count = null, int? goTo = null)
-            : BossPattern(references, setIsAttacking, changePattern, goTo)
+            : BossActionPattern(references, setIsAttacking, changePattern, goTo)
         {
             public readonly Hitbox PlayerPositionTrigger = trigger;
 
@@ -153,7 +153,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public class EventCutscene(Method eventMethod, Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
             Func<int?, IEnumerator> changePattern, int? goTo = null)
-            : BossPattern(references, setIsAttacking, changePattern, goTo)
+            : BossActionPattern(references, setIsAttacking, changePattern, goTo)
         {
             private readonly Method Event = eventMethod;
 
