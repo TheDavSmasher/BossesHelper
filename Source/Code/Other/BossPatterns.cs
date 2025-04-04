@@ -61,11 +61,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public class EventCutscene(string eventMethod, int? goTo, ControllerDelegates delegates)
             : BossPattern(goTo, delegates)
         {
-            private readonly Method Event = new(eventMethod, null);
+            private readonly string Event = eventMethod;
 
             public override IEnumerator Perform()
             {
-                yield return PerformMethod(Event);
+                yield return PerformMethod(new(Event, null));
                 yield return ChangePattern();
             }
         }
