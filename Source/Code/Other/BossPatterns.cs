@@ -58,6 +58,18 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public abstract IEnumerator Perform();
         }
 
+        public class EventCutscene(string eventMethod, int? goTo, ControllerDelegates delegates)
+            : BossPattern(goTo, delegates)
+        {
+            private readonly Method Event = new(eventMethod, null);
+
+            public override IEnumerator Perform()
+            {
+                yield return PerformMethod(Event);
+                yield return ChangePattern();
+            }
+        }
+
         public abstract class AttackPattern(Method[] patternLoop, Hitbox trigger,
             int? minCount, int? count, int? goTo, ControllerDelegates delegates)
             : BossPattern(goTo, delegates)
@@ -115,18 +127,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return PerformRepeat(
                     () => currentAction,
                     () => loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0);
-            }
-        }
-
-        public class EventCutscene(string eventMethod, int? goTo, ControllerDelegates delegates)
-            : BossPattern(goTo, delegates)
-        {
-            private readonly Method Event = new(eventMethod, null);
-
-            public override IEnumerator Perform()
-            {
-                yield return PerformMethod(Event);
-                yield return ChangePattern();
             }
         }
     }
