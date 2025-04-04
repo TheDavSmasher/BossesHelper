@@ -68,10 +68,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     switch (action.LocalName.ToLower())
                     {
                         case "wait":
-                            methodList.Add(new Method("wait", float.Parse(action.GetValue("time"))));
+                            methodList.Add(new Method("wait", action.GetValueOrDefaultNullF("time")));
                             break;
                         case "loop":
-                            preLoopList = new(methodList);
+                            preLoopList = [.. methodList];
                             methodList.Clear();
                             break;
                         default:
