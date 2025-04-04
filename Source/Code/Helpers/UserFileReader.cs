@@ -213,7 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         #region Lua Files
         public static void ReadLuaFilesInto(this BossController controller, string attacksPath, string eventsPath,
-            out Dictionary<string, IBossAction> actions, Player playerRef)
+            string customPath, out Dictionary<string, IBossAction> actions, Player playerRef)
         {
             actions = new();
             string[] paths = { attacksPath, eventsPath };
@@ -230,11 +230,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
                 }
             }
-        }
-
-        public static void ReadCustomCodeFileInto(this BossController controller, string filepath, Player playerRef)
-        {
-            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile)) return;
+            if (!ReadLuaPath(CleanPath(customPath, ".lua"), out ModAsset setupFile)) return;
             controller.Puppet.SetPuppetFunctions(new BossFunctions(setupFile.PathVirtual, playerRef, controller));
         }
 

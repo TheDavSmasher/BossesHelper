@@ -98,9 +98,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Player player = scene.GetPlayer();
-            this.ReadLuaFilesInto(attacksPath, eventsPath, out Actions, player);
-            this.ReadCustomCodeFileInto(functionsPath, player);
+            this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
         }
 
         public override void Removed(Scene scene)
@@ -166,8 +164,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             StartAttackPattern(goTo is int next ? next : currentPatternIndex + 1);
         }
 
-        #region Delegate methods
-        #region Interruption Delegates
+        #region Lua Helper methods
         public IEnumerator WaitForAttackToEnd()
         {
             while (isActing)
@@ -216,9 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             Health -= val;
         }
-        #endregion
 
-        #region Attack Delegates
         public void ForceNextAttackIndex(int index)
         {
             forcedAttackIndex = index;
@@ -247,7 +242,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();
         }
-        #endregion
         #endregion
     }
 }
