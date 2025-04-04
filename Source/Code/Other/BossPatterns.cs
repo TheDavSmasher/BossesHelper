@@ -123,16 +123,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 }
                 while (true)
                 {
+                    yield return PerformMethod(StatePatternOrder[currentAction]);
+
+                    currentAction++;
+
                     if (currentAction >= StatePatternOrder.Length)
                     {
                         loop++;
                         currentAction = 0;
                     }
+
                     yield return ChangeWhenCounter(loop);
-
-                    yield return PerformMethod(StatePatternOrder[currentAction]);
-
-                    currentAction++;
                 }
             }
         }
