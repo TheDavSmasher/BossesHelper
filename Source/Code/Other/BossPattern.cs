@@ -1,7 +1,13 @@
 ﻿using Monocle;
+using System.Collections;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
+    public interface IBossAction
+    {
+        public IEnumerator Perform();
+    }
+
     public struct Method(string name, float? duration)
     {
         public string ActionName = name;
