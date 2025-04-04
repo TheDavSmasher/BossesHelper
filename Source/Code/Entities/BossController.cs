@@ -14,17 +14,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/BossController")]
     public class BossController : Entity
     {
-        public Random Random { get; private set; }
-
         private EntityID id;
+
+        public Random Random { get; private set; }
 
         public string BossID { get; private set; }
 
-        private Level Level;
-
         public BossPuppet Puppet { get; private set; }
 
-        private Dictionary<string, IBossAction> Actions;
+        public Dictionary<string, IBossAction> Actions { get; private set; }
 
         private int Health;
 
@@ -86,11 +84,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Level = SceneAs<Level>();
-            Level.Add(Puppet);
-            UserFileReader.ReadPatternFileInto(patternsPath, out AllPatterns, Level.LevelOffset);
+            Scene.Add(Puppet);
+            UserFileReader.ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
-            int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Level.TimeActive);
+            int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
             Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
         }
 
@@ -197,7 +194,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             RemoveSelf();
             if (permanent)
             {
-                Level.Session.DoNotLoad.Add(id);
+                SceneAs<Level>().Session.DoNotLoad.Add(id);
             }
         }
 
@@ -232,9 +229,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!activeEntities.Contains(entity))
             {
-                Level.Add(entity);
+                Scene.Add(entity);
                 activeEntities.Add(entity);
-                entity.Scene = Level;
+                entity.Scene = Scene;
             }
         }
 
