@@ -78,11 +78,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected int currentAction;
 
-            protected IEnumerator ChangeWhenCounter(int counter)
+            protected IEnumerator PerformRepeat(Func<int> getAttackIndex, Func<int> updateLoop)
             {
-                if (counter > MinRandomIter && (counter > IterationCount || RandomNext() % 2 == 1))
+                currentAction = 0;
+                while (true)
                 {
-                    yield return ChangePattern();
+                    yield return PerformMethod(StatePatternOrder[getAttackIndex()]);
+                    int counter = updateLoop();
+                    if (counter > MinRandomIter && (counter > IterationCount || RandomNext() % 2 == 1))
+                    {
+                        yield return ChangePattern();
+                    }
                 }
             }
         }
@@ -95,15 +101,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public override IEnumerator Perform()
             {
-                currentAction = 0;
-                while (true)
-                {
-                    int nextAttack = (AttackIndexForced() ?? RandomNext()) % StatePatternOrder.Length;
-                    yield return PerformMethod(StatePatternOrder[nextAttack]);
-                    currentAction++;
-
-                    yield return ChangeWhenCounter(currentAction);
-                }
+                yield return PerformRepeat(
+                    () => (AttackIndexForced() ?? RandomNext()) % StatePatternOrder.Length,
+                    () => currentAction++);
             }
         }
 
@@ -115,26 +115,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public override IEnumerator Perform()
             {
-                currentAction = 0;
                 int loop = 0;
                 foreach (Method method in PrePatternMethods)
                 {
                     yield return PerformMethod(method);
                 }
-                while (true)
-                {
-                    yield return PerformMethod(StatePatternOrder[currentAction]);
-
-                    currentAction++;
-
-                    if (currentAction >= StatePatternOrder.Length)
-                    {
-                        loop++;
-                        currentAction = 0;
-                    }
-
-                    yield return ChangeWhenCounter(loop);
-                }
+                yield return PerformRepeat(
+                    () => currentAction,
+                    () => loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0);
             }
         }
 
