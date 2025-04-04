@@ -99,8 +99,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Player player = scene.GetPlayer();
-            ReadLuaFilesInto(attacksPath, eventsPath, out Actions, player, this);
-            ReadCustomCodeFileInto(functionsPath, player, this);
+            this.ReadLuaFilesInto(attacksPath, eventsPath, out Actions, player);
+            this.ReadCustomCodeFileInto(functionsPath, player);
         }
 
         public override void Removed(Scene scene)
