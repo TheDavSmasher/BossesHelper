@@ -154,11 +154,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public class EventCutscene(Method eventMethod, Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
+        public class EventCutscene(string eventMethod, Dictionary<string, IBossAction> references, Action<bool> setIsAttacking,
             Action<int?> changePattern, int? goTo = null)
             : BossPattern(references, setIsAttacking, changePattern, goTo)
         {
-            private readonly Method Event = eventMethod;
+            private readonly Method Event = new(eventMethod, null);
 
             public override IEnumerator Perform()
             {
