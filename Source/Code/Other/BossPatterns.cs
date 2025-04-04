@@ -76,7 +76,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly int? IterationCount = count;
 
-            protected int currentAction = 0;
+            protected int currentAction;
 
             protected IEnumerator ChangeWhenCounter(int counter)
             {
@@ -95,6 +95,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public override IEnumerator Perform()
             {
+                currentAction = 0;
                 while (true)
                 {
                     int nextAttack = (AttackIndexForced() ?? RandomNext()) % StatePatternOrder.Length;
@@ -114,6 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public override IEnumerator Perform()
             {
+                currentAction = 0;
                 int loop = 0;
                 foreach (Method method in PrePatternMethods)
                 {
