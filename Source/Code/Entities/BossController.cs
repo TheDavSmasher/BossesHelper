@@ -147,6 +147,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 && positionTrigger.Collide(entityPos);
         }
 
+        private int? AttackIndexForced()
+        {
+            if (forcedAttackIndex is not int index)
+                return null;
+            forcedAttackIndex = null;
+            return index;
+        }
+
         public void StartAttackPattern(int goTo = -1)
         {
             if (goTo >= Patterns.Count)
