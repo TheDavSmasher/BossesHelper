@@ -115,12 +115,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public override IEnumerator Perform()
             {
                 int loop = 0;
-                if (PrePatternMethods != null)
+                foreach (Method method in PrePatternMethods)
                 {
-                    foreach (Method method in PrePatternMethods)
-                    {
-                        yield return PerformMethod(method);
-                    }
+                    yield return PerformMethod(method);
                 }
                 while (true)
                 {

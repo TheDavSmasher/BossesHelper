@@ -80,8 +80,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     }
                 }
 
-                targetOut.Add(
-                    new SequentialPattern(methodList.ToArray(), preLoopList?.ToArray(), trigger, minCount, count, goTo, delegates)
+                targetOut.Add(new SequentialPattern(
+                    methodList.ToArray(), preLoopList?.ToArray() ?? [], trigger, minCount, count, goTo, delegates)
                 );
             }
         }
