@@ -1,6 +1,6 @@
 # Bosses Helper
 
-**Current Version**: `1.0.10`
+**Current Version**: `1.1.0`
 
 ---
 
