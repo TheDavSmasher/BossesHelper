@@ -124,7 +124,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Sprite.Scale = Vector2.One;
                 SetHitboxesAndColliders(data.Attr("bossID"));
                 Add(Sprite);
-                PlayBossAnim("idle");
+                PlayBossAnim(data.String("startingAnim", "idle"));
             }
             else
             {
