@@ -41,7 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Dictionary<string, IBossAction> Actions;
 
-        private readonly ControllerDelegates delegates;
+        private ControllerDelegates delegates;
 
         private readonly List<Entity> activeEntities;
 
@@ -71,7 +71,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
             FetchSavedPhase();
-            delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
         }
 
         private void FetchSavedPhase()
@@ -89,7 +88,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Scene.Add(Puppet);
-            ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset, delegates);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
             Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
@@ -99,6 +97,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
+            delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
+            ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset, delegates);
         }
 
         public override void Removed(Scene scene)
