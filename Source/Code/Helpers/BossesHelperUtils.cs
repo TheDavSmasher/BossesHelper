@@ -27,6 +27,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return defaultValue;
         }
 
+        public static bool TryPop<T>(this List<T> list, out T value, int? at = null)
+        {
+            int index = at is int i ? i : list.Count - 1;
+            if (index < 0 || index >= list.Count)
+            {
+                value = default(T);
+                return false;
+            }
+            value = list.Pop(index);
+            return true;
+        }
+
         public static T Pop<T>(this List<T> list, int? at = null)
         {
             int index = at is int i ? i : list.Count - 1;
