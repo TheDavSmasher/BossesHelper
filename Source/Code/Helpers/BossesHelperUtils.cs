@@ -153,9 +153,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Tag = Tags.HUD;
             }
 
-            public void DrawIcon(Vector2 position)
+            public void DrawIcon(Vector2? position = null)
             {
-                Position = position;
+                Position = position is Vector2 changed ? changed : Position;
                 Add(new Coroutine(IconRoutine(startAnim)));
             }
 
