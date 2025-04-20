@@ -139,9 +139,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Add(new Coroutine(IconRoutine(startAnim)));
             }
 
-            public void RemoveIcon()
+            public void RemoveIcon(bool remove = true)
             {
-                Add(new Coroutine(IconRoutine(endAnim, true)));
+                Add(new Coroutine(IconRoutine(endAnim, remove)));
             }
 
             private IEnumerator IconRoutine(string anim, bool remove = false)
