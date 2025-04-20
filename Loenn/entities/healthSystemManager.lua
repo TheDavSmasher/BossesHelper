@@ -123,7 +123,8 @@ healthSystemManager.placements = {
         applySystemInstantly = true,
         startVisible = true,
         playerStagger = true,
-        playerBlink = true
+        playerBlink = true,
+        removeOnDamage = true
     }
 }
 

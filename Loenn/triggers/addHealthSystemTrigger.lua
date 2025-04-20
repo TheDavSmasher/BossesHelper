@@ -122,7 +122,8 @@ addHealthSystemTrigger.placements = {
         startVisible = true,
         playerStagger = true,
         playerBlink = true,
-        onlyOnce = true
+        onlyOnce = true,
+        removeOnDamage = true
     }
 }
 

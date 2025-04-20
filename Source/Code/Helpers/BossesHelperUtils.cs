@@ -191,7 +191,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             private readonly bool useSessionValues;
 
-            private readonly bool removeIconOnDamage;
+            private bool removeIconOnDamage;
 
             private readonly List<HealthIcon> healthIcons = new();
 
@@ -248,6 +248,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
+                removeIconOnDamage = entityData.Bool("removeOnDamage");
                 for (int i = 0; i < Health; i++)
                 {
                     healthIcons.Add(CreateFromLists(i));
@@ -276,6 +277,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     createAnims = SeparateList(HealthData.startAnim);
                     removeAnims = SeparateList(HealthData.endAnim);
                     iconSeparations = SeparateFloatList(HealthData.iconSeparation);
+                    removeIconOnDamage = HealthData.removeOnDamage;
                     for (int i = 0; i < Health; i++)
                     {
                         healthIcons.Add(CreateFromLists(i));

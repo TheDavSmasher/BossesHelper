@@ -76,6 +76,8 @@ public class BossesHelperSession : EverestModuleSession
         public Vector2 healthIconScale;
 
         public bool startVisible;
+
+        public bool removeOnDamage;
     }
 
     public HealthSystemData healthData;

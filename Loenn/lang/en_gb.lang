@@ -38,6 +38,7 @@ entities.BossesHelper/HealthSystemManager.attributes.description.playerStagger=I
 entities.BossesHelper/HealthSystemManager.attributes.name.playerBlink=PLayer Blink On Damage
 entities.BossesHelper/HealthSystemManager.attributes.description.playerBlink=If the player should blink when intangible due to taking damage. False will keep the player visible at all times.
 entities.BossesHelper/HealthSystemManager.attributes.description.startVisible=If the Health Bar should start being visible when the Health System gets added.
+entities.BossesHelper/HealthSystemManager.attributes.description.removeOnDamage=If a Health Icon updated for lost health should remove itself after its Remove Anim ends or remain in place.\nIf false, it'll be cleared whenever the Health Bar resets. If at any point health is increased or refreshed, it will try to reuse these icons before creating new ones.
 
 entities.BossesHelper/BossHealthBar.attributes.description.barType=The health display type.
 entities.BossesHelper/BossHealthBar.attributes.description.healthIcons=The sprite each health icon marker should use per hit point.\nMultiple sprites may be provided, up to the Health Value.\nIf less are provided, the last one will be used for all remaining ones. If only one is provided, it'll be used for all.

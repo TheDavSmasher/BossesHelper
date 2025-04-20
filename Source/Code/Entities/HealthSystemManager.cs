@@ -53,6 +53,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 onDamageFunction = data.String("onDamageFunction", HealthData.onDamageFunction),
                 activateInstantly = data.Bool("applySystemInstantly"),
                 startVisible = data.Bool("startVisible"),
+                removeOnDamage = data.Bool("removeOnDamage", true),
                 playerBlink = data.Bool("playerBlink", true),
                 playerStagger = data.Bool("playerStagger", true),
                 activateFlag = data.String("activationFlag", HealthData.activateFlag),
