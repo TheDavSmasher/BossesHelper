@@ -312,16 +312,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void IncreaseHealth(int i)
             {
-                HealthIcon healthIcon = new HealthIcon(BarScale,
-                    icons.ElementAtOrDefault(i, icons.LastOrDefault()),
-                    createAnims.ElementAtOrDefault(i, createAnims.LastOrDefault()),
-                    removeAnims.ElementAtOrDefault(i, removeAnims.LastOrDefault())
-                );
-                if (isGlobal)
-                    healthIcon.AddTag(Tags.Global);
+                Vector2? iconPosition = null;
+                if (!toRemove.TryPop(out HealthIcon healthIcon))
+                {
+                    healthIcon = new HealthIcon(BarScale,
+                        icons.ElementAtOrDefault(i, icons.LastOrDefault()),
+                        createAnims.ElementAtOrDefault(i, createAnims.LastOrDefault()),
+                        removeAnims.ElementAtOrDefault(i, removeAnims.LastOrDefault())
+                    );
+                    if (isGlobal)
+                        healthIcon.AddTag(Tags.Global);
+                    iconPosition = Position + Vector2.UnitX * GetEffectiveSeparation(i);
+                }
                 healthIcons.Add(healthIcon);
                 level.Add(healthIcon);
-                healthIcon.DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
+                healthIcon.DrawIcon(iconPosition);
             }
 
             private float GetEffectiveSeparation(int index)
@@ -343,13 +348,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (healthIcons.Count > 0)
                 {
-                    HealthIcon removed = healthIcons.Last();
+                    HealthIcon removed = healthIcons.Pop();
                     removed.RemoveIcon(removeIconOnDamage);
                     if (!removeIconOnDamage)
                     {
                         toRemove.Add(removed);
                     }
-                    healthIcons.RemoveAt(healthIcons.Count - 1);
                 }
                 else
                 {
