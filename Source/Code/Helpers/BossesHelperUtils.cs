@@ -250,13 +250,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 this.iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
                 for (int i = 0; i < Health; i++)
                 {
-                    healthIcons.Add(new HealthIcon(BarScale,
-                        icons.ElementAtOrDefault(i, icons.Last()),
-                        createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                        removeAnims.ElementAtOrDefault(i, removeAnims.Last())
-                        )
-                    );
+                    healthIcons.Add(CreateFromLists(i));
                 }
+            }
+
+            private HealthIcon CreateFromLists(int i)
+            {
+                return new(BarScale,
+                    icons.ElementAtOrDefault(i, icons.Last()),
+                    createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                    removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                );
             }
 
             public override void Added(Scene scene)
@@ -274,12 +278,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                     for (int i = 0; i < Health; i++)
                     {
-                        healthIcons.Add(new HealthIcon(BarScale,
-                            icons.ElementAtOrDefault(i, icons.Last()),
-                            createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                            removeAnims.ElementAtOrDefault(i, removeAnims.Last())
-                            )
-                        );
+                        healthIcons.Add(CreateFromLists(i));
                     }
                 }
             }
