@@ -363,6 +363,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public void Clear()
             {
                 healthIcons.Clear();
+                toRemove.Clear();
             }
 
             public override void Removed(Scene scene)
