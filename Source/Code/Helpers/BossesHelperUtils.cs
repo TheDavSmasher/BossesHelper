@@ -39,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             sprite.OnLastFrame += waitUntilDone;
             if (sprite.TryPlay(anim))
             {
-                while (!singleLoop)
+                while (!singleLoop && sprite.Animating)
                 {
                     yield return null;
                 }
