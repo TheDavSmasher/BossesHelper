@@ -27,6 +27,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return defaultValue;
         }
 
+        public static T Pop<T>(this List<T> list, int? at = null)
+        {
+            int index = at is int i ? i : list.Count - 1;
+            T popped = list.ElementAt(index);
+            list.RemoveAt(index);
+            return popped;
+        }
+
         public static Player GetPlayer(this Scene scene)
         {
             return scene?.Tracker?.GetEntity<Player>();
