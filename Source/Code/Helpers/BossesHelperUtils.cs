@@ -171,6 +171,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             private readonly bool useSessionValues;
 
+            private readonly bool removeIconOnDamage;
+
             private readonly List<HealthIcon> healthIcons = new();
 
             private readonly List<HealthIcon> toRemove = new();
@@ -321,7 +323,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (healthIcons.Count > 0)
                 {
-                    healthIcons.Last().RemoveIcon();
+                    HealthIcon removed = healthIcons.Last();
+                    removed.RemoveIcon(removeIconOnDamage);
+                    if (!removeIconOnDamage)
+                    {
+                        toRemove.Add(removed);
+                    }
                     healthIcons.RemoveAt(healthIcons.Count - 1);
                 }
                 else
@@ -338,6 +345,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Removed(Scene scene)
             {
                 healthIcons.ForEach((x) => x.RemoveSelf());
+                toRemove.ForEach((x) => x.RemoveSelf());
                 base.Removed(scene);
             }
         }
