@@ -171,7 +171,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             private readonly bool useSessionValues;
 
-            private readonly List<HealthIcon> healthIcons;
+            private readonly List<HealthIcon> healthIcons = new();
+
+            private readonly List<HealthIcon> toRemove = new();
 
             private List<string> icons;
 
@@ -212,7 +214,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public HealthIconList()
             {
                 useSessionValues = true;
-                healthIcons = new List<HealthIcon>();
             }
 
             public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
@@ -221,7 +222,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Health = health;
                 Position = barPosition;
                 BarScale = barScale;
-                healthIcons = new List<HealthIcon>();
                 this.icons = SeparateList(entityData.Attr("healthIcons"));
                 this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
