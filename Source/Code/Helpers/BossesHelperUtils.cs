@@ -216,8 +216,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public class HealthIconList : HealthDisplay
         {
-            private readonly bool useSessionValues;
-
             private bool removeIconOnDamage;
 
             private readonly List<HealthIcon> healthIcons = new();
@@ -259,13 +257,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public HealthIconList()
                 : base(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth)
             {
-                useSessionValues = true;
+                icons = SeparateList(HealthData.iconSprite);
+                createAnims = SeparateList(HealthData.startAnim);
+                removeAnims = SeparateList(HealthData.endAnim);
+                iconSeparations = SeparateFloatList(HealthData.iconSeparation);
+                removeIconOnDamage = HealthData.removeOnDamage;
+                PopulateHealthIcons();
             }
 
             public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
                 : base(barPosition, barScale, () => health)
             {
-                useSessionValues = false;
                 icons = SeparateList(entityData.Attr("healthIcons"));
                 createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
@@ -290,15 +292,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 base.Added(scene);
                 level = scene as Level;
-                if (useSessionValues)
-                {
-                    icons = SeparateList(HealthData.iconSprite);
-                    createAnims = SeparateList(HealthData.startAnim);
-                    removeAnims = SeparateList(HealthData.endAnim);
-                    iconSeparations = SeparateFloatList(HealthData.iconSeparation);
-                    removeIconOnDamage = HealthData.removeOnDamage;
-                    PopulateHealthIcons();
-                }
             }
 
             public override void Awake(Scene scene)
