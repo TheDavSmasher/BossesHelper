@@ -43,6 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 healthBarPos = screenPosition,
                 healthIconScale = iconScale,
                 iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation),
+                frameSprite = data.String("frameSprite", HealthData.frameSprite),
                 globalController = data.Bool("isGlobal"),
                 globalHealth = HealthData.globalController ? data.Bool("globalHealth") : false,
                 playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),

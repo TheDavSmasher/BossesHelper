@@ -85,6 +85,9 @@ healthSystemManager.fieldInformation = {
         fieldType = "path",
         allowedExtensions = {"lua"},
         allowMissingPath = false
+    },
+    __Boss_pad = {
+        fieldType = "spacer"
     }
 }
 
@@ -93,6 +96,7 @@ healthSystemManager.fieldOrder = {
     "playerHealth", "damageCooldown",
     "crushEffect", "offscreenEffect",
     "activationFlag", "onDamageFunction",
+    "frameSprite", "__Boss_pad",
     "healthIcons", "healthIconsCreateAnim",
     "healthIconsSeparation", "healthIconsRemoveAnim",
     "healthIconsScreenX", "healthIconsScreenY",
@@ -106,6 +110,7 @@ healthSystemManager.placements = {
     data = {
         activationFlag = "",
         healthIcons = "",
+        frameSprite = "",
         healthIconsCreateAnim = "",
         healthIconsRemoveAnim = "",
         healthIconsScreenX = "160",

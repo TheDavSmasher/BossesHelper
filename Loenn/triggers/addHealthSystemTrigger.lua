@@ -82,6 +82,9 @@ addHealthSystemTrigger.fieldInformation = {
         fieldType = "path",
         allowedExtensions = {"lua"},
         allowMissingPath = false
+    },
+    __Boss_pad = {
+        fieldType = "spacer"
     }
 }
 
@@ -90,6 +93,7 @@ addHealthSystemTrigger.fieldOrder = {
     "width", "height",
     "playerHealth", "damageCooldown",
     "crushEffect", "offscreenEffect",
+    "frameSprite", "__Boss_pad",
     "activationFlag", "onDamageFunction",
     "healthIcons", "healthIconsCreateAnim",
     "healthIconsSeparation", "healthIconsRemoveAnim",
@@ -104,6 +108,7 @@ addHealthSystemTrigger.placements = {
     data = {
         activationFlag = "",
         healthIcons = "",
+        frameSprite = "",
         healthIconsCreateAnim = "",
         healthIconsRemoveAnim = "",
         healthIconsScreenX = "160",
