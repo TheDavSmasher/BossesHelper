@@ -230,8 +230,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly List<float> iconSeparations;
 
-            private Level level;
-
             private readonly bool isGlobal;
 
             public int Count
@@ -295,18 +293,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public override void Added(Scene scene)
-            {
-                base.Added(scene);
-                level = scene as Level;
-            }
-
             public override void Awake(Scene scene)
             {
                 base.Awake(scene);
                 for (int i = 0; i < MaxHealth; i++)
                 {
-                    level.Add(healthIcons[i]);
+                    Scene.Add(healthIcons[i]);
                     healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
                 }
             }
@@ -334,7 +326,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     iconPosition = Position + Vector2.UnitX * GetEffectiveSeparation(i);
                 }
                 healthIcons.Add(healthIcon);
-                level.Add(healthIcon);
+                Scene.Add(healthIcon);
                 healthIcon.DrawIcon(iconPosition);
             }
 
