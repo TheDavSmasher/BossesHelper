@@ -168,6 +168,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Color = color;
                 OldVisible = true;
             }
+
+            public override void Update()
+            {
+                base.Update();
+                base.Visible = !Scene.Paused && OldVisible;
+        }
         }
 
         public class HealthIcon : Entity
