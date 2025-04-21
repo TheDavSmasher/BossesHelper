@@ -434,23 +434,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private readonly int MaxHealth;
 
             public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, Alignment barDir)
-                : base(barPosition, barScale, bossHealth, color)
+                : base(new(GetPositionX(barPosition, barScale, barDir), barPosition.Y), barScale, bossHealth, color)
             {
                 base.Collider = new Hitbox(barScale.X, barScale.Y);
                 MaxWidth = barScale.X;
-                base.Position = barPosition;
                 this.barDir = barDir;
-                if (barDir == -1)
-                {
-                    Position.X = barPosition.X - barScale.X;
-                }
-                else if (barDir == 0)
-                {
-                    Position.X = barPosition.X - barScale.X / 2;
-                }
                 leftEdge = Position.X;
+                MaxHealth = GetHealth();
+            }
 
-                MaxHealth = bossHealth.Invoke();
+            private static float GetPositionX(Vector2 position, Vector2 scale, Alignment dir)
+            {
+                return dir switch
+                {
+                    Alignment.Left => position.X - scale.X,
+                    Alignment.Center => position.Y - scale.X / 2,
+                    _ => position.X,
+                };
             }
 
             public override void Update()
