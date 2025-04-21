@@ -285,12 +285,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 for (int i = 0; i < MaxHealth; i++)
                 {
-                    healthIcons.Add(new(BarScale,
-                        icons.ElementAtOrDefault(i, icons.Last()),
-                        createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                        removeAnims.ElementAtOrDefault(i, removeAnims.Last())
-                    ));
+                    healthIcons.Add(CreateFromList(i));
                 }
+            }
+
+            private HealthIcon CreateFromList(int i)
+            {
+                return new(BarScale,
+                    icons.ElementAtOrDefault(i, icons.Last()),
+                    createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                    removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                );
             }
 
             public override void Awake(Scene scene)
@@ -316,11 +321,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Vector2? iconPosition = null;
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    healthIcon = new HealthIcon(BarScale,
-                        icons.ElementAtOrDefault(i, icons.LastOrDefault()),
-                        createAnims.ElementAtOrDefault(i, createAnims.LastOrDefault()),
-                        removeAnims.ElementAtOrDefault(i, removeAnims.LastOrDefault())
-                    );
+                    healthIcon = CreateFromList(i);
                     if (isGlobal)
                         healthIcon.AddTag(Tags.Global);
                     iconPosition = Position + Vector2.UnitX * GetEffectiveSeparation(i);
