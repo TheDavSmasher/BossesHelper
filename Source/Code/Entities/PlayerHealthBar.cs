@@ -24,12 +24,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal PlayerHealthBar()
         {
-            healthIcons = new();
+            healthIcons = new(HealthData.globalController);
             AddTag(Tags.HUD);
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
                 AddTag(Tags.Global);
-                healthIcons.MakeGlobal();
         }
 
         public override void Added(Scene scene)

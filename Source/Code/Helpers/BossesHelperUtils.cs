@@ -232,7 +232,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private Level level;
 
-            private bool isGlobal;
+            private readonly bool isGlobal;
 
             public int Count
             {
@@ -254,7 +254,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList()
+            public HealthIconList(bool global)
                 : base(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth)
             {
                 icons = SeparateList(HealthData.iconSprite);
@@ -263,6 +263,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                 removeIconOnDamage = HealthData.removeOnDamage;
                 PopulateHealthIcons();
+                isGlobal = global;
+                if (isGlobal)
+                {
+                    AddTag(Tags.Global);
+                    foreach (HealthIcon icon in healthIcons)
+                        icon.AddTag(Tags.Global);
+                }
             }
 
             public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
@@ -302,14 +309,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     level.Add(healthIcons[i]);
                     healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
                 }
-            }
-
-            public void MakeGlobal()
-            {
-                isGlobal = true;
-                AddTag(Tags.Global);
-                foreach (HealthIcon icon in healthIcons)
-                    icon.AddTag(Tags.Global);
             }
 
             public void RefillHealth()
