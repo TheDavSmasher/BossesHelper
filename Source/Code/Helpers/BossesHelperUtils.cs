@@ -280,12 +280,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Awake(Scene scene)
             {
                 base.Awake(scene);
-                PopulateHealthIcons();
-                for (int i = 0; i < MaxHealth; i++)
-                {
-                    Scene.Add(healthIcons[i]);
-                    healthIcons[i].DrawIcon(GetEffectiveSeparation(i));
-                }
+                RefillHealth();
             }
 
             public override void Removed(Scene scene)
@@ -293,28 +288,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 healthIcons.ForEach((x) => x.RemoveSelf());
                 toRemove.ForEach((x) => x.RemoveSelf());
                 base.Removed(scene);
-            }
-
-            private void PopulateHealthIcons()
-            {
-                for (int i = 0; i < MaxHealth; i++)
-                {
-                    healthIcons.Add(CreateFromList(i));
-                }
-            }
-
-            private HealthIcon CreateFromList(int i)
-            {
-                HealthIcon newIcon = new(BarScale,
-                    icons.ElementAtOrDefault(i, icons.Last()),
-                    createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                    removeAnims.ElementAtOrDefault(i, removeAnims.Last())
-                );
-                if (isGlobal)
-                {
-                    newIcon.AddTag(Tags.Global);
-                }
-                return newIcon;
             }
 
             public void RefillHealth()
@@ -330,7 +303,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Vector2? iconPosition = null;
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    healthIcon = CreateFromList(i);
+                    healthIcon = new(BarScale,
+                        icons.ElementAtOrDefault(i, icons.Last()),
+                        createAnims.ElementAtOrDefault(i, createAnims.Last()),
+                        removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                    );
+                    if (isGlobal)
+                        healthIcon.AddTag(Tags.Global);
                     iconPosition = GetEffectiveSeparation(i);
                 }
                 healthIcons.Add(healthIcon);
