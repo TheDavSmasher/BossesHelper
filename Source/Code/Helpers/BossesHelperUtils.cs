@@ -416,7 +416,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthBar : HealthDisplay
+        public class HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, HealthBar.Alignment barDir)
+            : HealthDisplay(barPosition, barScale, bossHealth, color)
         {
             public enum Alignment
             {
@@ -425,22 +426,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Right
             }
 
-            private readonly float leftEdge;
+            private readonly float leftEdge = GetPositionX(barPosition, barScale, barDir);
 
-            private readonly Alignment BarDir;
+            private readonly Alignment BarDir = barDir;
 
-            private readonly float MaxWidth;
+            private readonly float MaxWidth = barScale.X;
 
-            private readonly int MaxHealth;
+            private readonly int MaxHealth = bossHealth();
 
-            public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, Alignment barDir)
-                : base(new(GetPositionX(barPosition, barScale, barDir), barPosition.Y), barScale, bossHealth, color)
+            public override void Added(Scene scene)
             {
-                base.Collider = new Hitbox(barScale.X, barScale.Y);
-                MaxWidth = barScale.X;
-                BarDir = barDir;
-                leftEdge = Position.X;
-                MaxHealth = GetHealth();
+                base.Added(scene);
+                Position.X = leftEdge;
+                Collider = new Hitbox(BarScale.X, BarScale.Y);
             }
 
             private static float GetPositionX(Vector2 position, Vector2 scale, Alignment dir)
@@ -461,14 +459,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
                 Collider.Width = MaxWidth * GetHealth() / MaxHealth;
-                if (BarDir == Alignment.Left)
+                Position.X = BarDir switch
                 {
-                    Position.X = leftEdge + (MaxWidth - Collider.Width);
-                }
-                else if (BarDir == Alignment.Center)
-                {
-                    Position.X = leftEdge + (MaxWidth - Collider.Width) / 2;
-                }
+                    Alignment.Left => leftEdge + (MaxWidth - Collider.Width),
+                    Alignment.Center => leftEdge + (MaxWidth - Collider.Width) / 2,
+                    _ => leftEdge
+                };
             }
 
             public override void Render()
