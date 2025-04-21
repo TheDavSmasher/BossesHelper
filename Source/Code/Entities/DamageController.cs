@@ -17,6 +17,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private static BossesHelperSession BSession => BossesHelperModule.Session;
 
+        private PlayerHealthBar HealthBar => Scene.Tracker.GetEntity<PlayerHealthBar>();
+
         private readonly float baseCooldown;
 
         private Level level;
@@ -54,6 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Dictionary<object, object> dict = new Dictionary<object, object>
                 {
                     { "player", player },
+                    { "healthBar", HealthBar.healthIcons },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 };
                 LuaFunction[] array = LoadLuaFile(Filepath, "getFunctionData", dict);
@@ -97,12 +100,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-            PlayerHealthBar healthBar = Scene.Tracker.GetEntity<PlayerHealthBar>();
-            if (healthBar != null)
+            if (HealthBar != null)
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    healthBar.healthIcons.DecreaseHealth();
+                    HealthBar.healthIcons.DecreaseHealth();
                 }
             }
             else
@@ -114,8 +116,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void RecoverHealth(int amount = 1)
         {
             BSession.currentPlayerHealth += amount;
-            PlayerHealthBar healthBar = Scene.Tracker.GetEntity<PlayerHealthBar>();
-            healthBar.healthIcons.RefillHealth(amount);
+            HealthBar.healthIcons.RefillHealth(amount);
         }
 
         private IEnumerator PlayerStagger(Player player, Vector2 bounce)
