@@ -416,16 +416,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, HealthBar.Alignment barDir)
+        public class HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, Alignment barDir)
             : HealthDisplay(barPosition, barScale, bossHealth, color)
         {
-            public enum Alignment
-            {
-                Left = -1,
-                Center,
-                Right
-            }
-
             private readonly float leftEdge = GetPositionX(barPosition, barScale, barDir);
 
             private readonly Alignment BarDir = barDir;
@@ -477,6 +470,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Helpers
+        public enum Alignment
+        {
+            Left = -1,
+            Center,
+            Right
+        }
+
         public static float DistanceBetween(Vector2 start, Vector2 end)
         {
             var dx = start.X - end.X;

@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     level.Add(barEntity = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
                     break;
                 default:
-                    level.Add(barEntity = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (HealthBar.Alignment) barType));
+                    level.Add(barEntity = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType));
                     break;
             }
             Visible = entityData.Bool("startVisible");
