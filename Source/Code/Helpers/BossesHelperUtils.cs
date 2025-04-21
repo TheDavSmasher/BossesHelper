@@ -130,6 +130,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly Color BaseColor;
 
+            public readonly int MaxHealth;
+
             public Color Color;
 
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
@@ -139,6 +141,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Position = position;
                 BarScale = barScale;
                 GetHealth = getHealth;
+                MaxHealth = GetHealth();
                 BaseColor = color;
                 Color = color;
             }
@@ -229,8 +232,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private List<float> iconSeparations;
 
-            private int Health;
-
             private Level level;
 
             private bool isGlobal;
@@ -259,20 +260,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 : base(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth)
             {
                 useSessionValues = true;
-                Health = GetHealth();
             }
 
             public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
                 : base(barPosition, barScale, () => health)
             {
                 useSessionValues = false;
-                Health = GetHealth();
                 this.icons = SeparateList(entityData.Attr("healthIcons"));
                 this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
                 removeIconOnDamage = entityData.Bool("removeOnDamage");
-                for (int i = 0; i < Health; i++)
+                for (int i = 0; i < MaxHealth; i++)
                 {
                     healthIcons.Add(CreateFromLists(i));
                 }
@@ -298,7 +297,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     removeAnims = SeparateList(HealthData.endAnim);
                     iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                     removeIconOnDamage = HealthData.removeOnDamage;
-                    for (int i = 0; i < Health; i++)
+                    for (int i = 0; i < MaxHealth; i++)
                     {
                         healthIcons.Add(CreateFromLists(i));
                     }
@@ -308,7 +307,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Awake(Scene scene)
             {
                 base.Awake(scene);
-                for (int i = 0; i < Health; i++)
+                for (int i = 0; i < MaxHealth; i++)
                 {
                     level.Add(healthIcons[i]);
                     healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
@@ -325,7 +324,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void RefillHealth()
             {
-                for (int i = healthIcons.Count; i < Health; i++)
+                for (int i = healthIcons.Count; i < MaxHealth; i++)
                 {
                     IncreaseHealth(i);
                 }
@@ -424,8 +423,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private readonly Alignment BarDir = barDir;
 
             private readonly float MaxWidth = barScale.X;
-
-            private readonly int MaxHealth = bossHealth();
 
             public override void Added(Scene scene)
             {
