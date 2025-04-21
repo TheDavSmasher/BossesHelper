@@ -136,6 +136,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public Color Color;
 
+            public new bool Visible
+            {
+                get
+                {
+                    return IsVisible;
+                }
+                set
+                {
+                    OldVisible = value;
+                }
+            }
+
+            protected virtual bool IsVisible
+            {
+                get
+                {
+                    return base.Visible;
+                }
+            }
+
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
             {
                 Add(Frame = GFX.SpriteBank.Create(HealthData.frameSprite));
