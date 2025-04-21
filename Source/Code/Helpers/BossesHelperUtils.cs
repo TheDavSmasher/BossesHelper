@@ -216,19 +216,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public class HealthIconList : HealthDisplay
         {
-            private bool removeIconOnDamage;
+            private readonly bool removeIconOnDamage;
 
             private readonly List<HealthIcon> healthIcons = new();
 
             private readonly List<HealthIcon> toRemove = new();
 
-            private List<string> icons;
+            private readonly List<string> icons;
 
-            private List<string> createAnims;
+            private readonly List<string> createAnims;
 
-            private List<string> removeAnims;
+            private readonly List<string> removeAnims;
 
-            private List<float> iconSeparations;
+            private readonly List<float> iconSeparations;
 
             private Level level;
 
