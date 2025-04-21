@@ -68,18 +68,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             BossHealth = component.Health;
             Color baseColor = entityData.HexColor("baseColor", Color.White);
-            switch (barType)
+            level.Add(barEntity = barType switch
             {
-                case BarTypes.Icons:
-                    level.Add(barEntity = new HealthIconList(entityData, BossHealth.Invoke(), BarPosition, BarScale));
-                    break;
-                case BarTypes.Countdown:
-                    level.Add(barEntity = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
-                    break;
-                default:
-                    level.Add(barEntity = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType));
-                    break;
-            }
+                BarTypes.Icons => new HealthIconList(entityData, BossHealth.Invoke(), BarPosition, BarScale),
+                BarTypes.Countdown => new HealthNumber(BarPosition, BarScale, BossHealth, baseColor),
+                _ => new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType)
+            });
             Visible = entityData.Bool("startVisible");
         }
 
