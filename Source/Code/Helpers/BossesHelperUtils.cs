@@ -326,18 +326,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void DecreaseHealth()
             {
-                if (healthIcons.Count > 0)
-                {
-                    HealthIcon removed = healthIcons.Pop();
-                    removed.RemoveIcon(removeIconOnDamage);
-                    if (!removeIconOnDamage)
-                    {
-                        toRemove.Add(removed);
-                    }
-                }
-                else
+                if (healthIcons.Count <= 0)
                 {
                     Logger.Log("Health Render", "No Health Icon to remove");
+                    return;
+                }
+                HealthIcon removed = healthIcons.Pop();
+                removed.RemoveIcon(removeIconOnDamage);
+                if (!removeIconOnDamage)
+                {
+                    toRemove.Add(removed);
                 }
             }
 
