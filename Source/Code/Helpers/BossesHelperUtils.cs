@@ -266,10 +266,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 : base(barPosition, barScale, () => health)
             {
                 useSessionValues = false;
-                this.icons = SeparateList(entityData.Attr("healthIcons"));
-                this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                this.iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
+                icons = SeparateList(entityData.Attr("healthIcons"));
+                createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
+                iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
                 removeIconOnDamage = entityData.Bool("removeOnDamage");
                 for (int i = 0; i < MaxHealth; i++)
                 {
