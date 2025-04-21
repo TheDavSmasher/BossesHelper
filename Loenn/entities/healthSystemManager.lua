@@ -97,8 +97,8 @@ healthSystemManager.fieldOrder = {
     "healthIconsSeparation", "healthIconsRemoveAnim",
     "healthIconsScreenX", "healthIconsScreenY",
     "healthIconsScaleX", "healthIconsScaleY",
-    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink",
-    "playerStagger", "startVisible"
+    "isGlobal", "globalHealth", "applySystemInstantly", "startVisible",
+    "playerBlink", "playerStagger"
 }
 
 healthSystemManager.placements = {

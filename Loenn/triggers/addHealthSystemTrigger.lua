@@ -95,8 +95,8 @@ addHealthSystemTrigger.fieldOrder = {
     "healthIconsSeparation", "healthIconsRemoveAnim",
     "healthIconsScreenX", "healthIconsScreenY",
     "healthIconsScaleX", "healthIconsScaleY",
-    "isGlobal", "globalHealth", "applySystemInstantly", "playerBlink",
-    "playerStagger", "startVisible", "onlyOnce"
+    "isGlobal", "globalHealth", "applySystemInstantly", "startVisible",
+    "playerStagger", "playerBlink", "onlyOnce"
 }
 
 addHealthSystemTrigger.placements = {
