@@ -279,6 +279,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 PopulateHealthIcons();
             }
 
+            public override void Awake(Scene scene)
+            {
+                base.Awake(scene);
+                for (int i = 0; i < MaxHealth; i++)
+                {
+                    Scene.Add(healthIcons[i]);
+                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
+                }
+            }
+
+            public override void Removed(Scene scene)
+            {
+                healthIcons.ForEach((x) => x.RemoveSelf());
+                toRemove.ForEach((x) => x.RemoveSelf());
+                base.Removed(scene);
+            }
+
             private void PopulateHealthIcons()
             {
                 for (int i = 0; i < MaxHealth; i++)
@@ -299,16 +316,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     newIcon.AddTag(Tags.Global);
                 }
                 return newIcon;
-            }
-
-            public override void Awake(Scene scene)
-            {
-                base.Awake(scene);
-                for (int i = 0; i < MaxHealth; i++)
-                {
-                    Scene.Add(healthIcons[i]);
-                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
-                }
             }
 
             public void RefillHealth()
@@ -368,13 +375,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 healthIcons.Clear();
                 toRemove.Clear();
-            }
-
-            public override void Removed(Scene scene)
-            {
-                healthIcons.ForEach((x) => x.RemoveSelf());
-                toRemove.ForEach((x) => x.RemoveSelf());
-                base.Removed(scene);
             }
         }
 
