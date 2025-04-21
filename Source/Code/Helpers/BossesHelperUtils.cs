@@ -341,13 +341,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private float GetEffectiveSeparation(int index)
             {
-                if (index == 0)
-                    return 0f;
-                if (index == 1)
-                    return iconSeparations[0];
-
-                float sum = iconSeparations[0];
-                for (int i = 1; i < index; i++)
+                float sum = 0f;
+                for (int i = 0; i < index; i++)
                 {
                     sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.LastOrDefault());
                 }
