@@ -290,9 +290,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 base.Removed(scene);
             }
 
-            public void RefillHealth()
+            public void RefillHealth(int? upTo = null)
             {
-                for (int i = healthIcons.Count; i < MaxHealth; i++)
+                int limit = upTo is int to ? healthIcons.Count + to : MaxHealth;
+                for (int i = healthIcons.Count; i < limit; i++)
                 {
                     IncreaseHealth(i);
                 }

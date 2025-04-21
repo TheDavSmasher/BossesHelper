@@ -115,11 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BSession.currentPlayerHealth += amount;
             PlayerHealthBar healthBar = Scene.Tracker.GetEntity<PlayerHealthBar>();
-            int count = healthBar.healthIcons.Count;
-            for (int i = count; i < count + amount; i++)
-            {
-                healthBar.healthIcons.IncreaseHealth(i);
-            }
+            healthBar.healthIcons.RefillHealth(amount);
         }
 
         private IEnumerator PlayerStagger(Player player, Vector2 bounce)
