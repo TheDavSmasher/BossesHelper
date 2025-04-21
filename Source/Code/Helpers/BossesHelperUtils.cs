@@ -418,15 +418,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public class HealthBar : HealthDisplay
         {
+            public enum Alignment
+            {
+                Left = -1,
+                Center,
+                Right
+            }
+
             private readonly float leftEdge;
 
-            private readonly int barDir;
+            private readonly Alignment barDir;
 
             private readonly float MaxWidth;
 
             private readonly int MaxHealth;
 
-            public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, int barDir)
+            public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, Alignment barDir)
                 : base(barPosition, barScale, bossHealth, color)
             {
                 base.Collider = new Hitbox(barScale.X, barScale.Y);
@@ -454,11 +461,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
                 Collider.Width = MaxWidth * GetHealth() / MaxHealth;
-                if (barDir == -1)
+                if (barDir == Alignment.Left)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width);
                 }
-                else if (barDir == 0)
+                else if (barDir == Alignment.Center)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width) / 2;
                 }
