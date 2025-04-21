@@ -434,23 +434,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthBar : Entity
+        public class HealthBar : HealthDisplay
         {
-            private readonly Func<int> bossHealth;
-
             private readonly float leftEdge;
 
             private readonly int barDir;
 
             private readonly Color baseColor;
 
-            private Color color;
-
             private readonly float MaxWidth;
 
             private readonly int MaxHealth;
 
             public HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, int barDir)
+                : base(barPosition, barScale, bossHealth, color)
             {
                 base.Collider = new Hitbox(barScale.X, barScale.Y);
                 MaxWidth = barScale.X;
@@ -465,22 +462,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Position.X = barPosition.X - barScale.X / 2;
                 }
                 leftEdge = Position.X;
-                this.bossHealth = bossHealth;
                 this.baseColor = color;
-                this.color = color;
 
                 MaxHealth = bossHealth.Invoke();
-                Tag = Tags.HUD;
             }
 
             public override void Update()
             {
                 base.Update();
-                if (color != baseColor)
+                if (Color != baseColor)
                 {
-                    color = Color.Lerp(color, baseColor, 0.1f);
+                    Color = Color.Lerp(Color, baseColor, 0.1f);
                 }
-                Collider.Width = MaxWidth * bossHealth() / MaxHealth;
+                Collider.Width = MaxWidth * GetHealth() / MaxHealth;
                 if (barDir == -1)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width);
@@ -493,7 +487,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Render()
             {
-                Draw.Rect(Collider, color);
+                Draw.Rect(Collider, Color);
                 base.Render();
                 Visible = !Scene.Paused;
             }
