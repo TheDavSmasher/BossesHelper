@@ -202,14 +202,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Render()
             {
-                if (Scene.Paused)
-                {
-                    icon.Visible = false;
-                }
-                else
-                {
-                    icon.Visible = oldVisible;
-                }
+                icon.Visible = !Scene.Paused && oldVisible;
                 base.Render();
             }
         }
