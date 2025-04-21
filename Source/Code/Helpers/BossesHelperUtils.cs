@@ -427,7 +427,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly float leftEdge;
 
-            private readonly Alignment barDir;
+            private readonly Alignment BarDir;
 
             private readonly float MaxWidth;
 
@@ -438,7 +438,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 base.Collider = new Hitbox(barScale.X, barScale.Y);
                 MaxWidth = barScale.X;
-                this.barDir = barDir;
+                BarDir = barDir;
                 leftEdge = Position.X;
                 MaxHealth = GetHealth();
             }
@@ -461,11 +461,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
                 Collider.Width = MaxWidth * GetHealth() / MaxHealth;
-                if (barDir == Alignment.Left)
+                if (BarDir == Alignment.Left)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width);
                 }
-                else if (barDir == Alignment.Center)
+                else if (BarDir == Alignment.Center)
                 {
                     Position.X = leftEdge + (MaxWidth - Collider.Width) / 2;
                 }
