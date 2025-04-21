@@ -396,13 +396,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthNumber : HealthDisplay
+        public class HealthNumber(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color)
+            : HealthDisplay(barPosition, barScale, bossHealth, color)
         {
-            public HealthNumber(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color)
-                : base(barPosition, barScale, bossHealth, color)
-            {
-            }
-
             public override void Update()
             {
                 base.Update();
@@ -414,7 +410,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Render()
             {
-                ActiveFont.Draw(GetHealth.Invoke().ToString(), Position, new Vector2(0.5f, 0.5f), BarScale, Color);
+                ActiveFont.Draw($"{GetHealth()}", Position, new Vector2(0.5f, 0.5f), BarScale, Color);
                 base.Render();
                 Visible = !Scene.Paused;
             }
