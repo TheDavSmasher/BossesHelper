@@ -285,7 +285,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 for (int i = 0; i < MaxHealth; i++)
                 {
                     Scene.Add(healthIcons[i]);
-                    healthIcons[i].DrawIcon(Position + Vector2.UnitX * GetEffectiveSeparation(i));
+                    healthIcons[i].DrawIcon(GetEffectiveSeparation(i));
                 }
             }
 
@@ -332,21 +332,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
                     healthIcon = CreateFromList(i);
-                    iconPosition = Position + Vector2.UnitX * GetEffectiveSeparation(i);
+                    iconPosition = GetEffectiveSeparation(i);
                 }
                 healthIcons.Add(healthIcon);
                 Scene.Add(healthIcon);
                 healthIcon.DrawIcon(iconPosition);
             }
 
-            private float GetEffectiveSeparation(int index)
+            private Vector2 GetEffectiveSeparation(int index)
             {
                 float sum = 0f;
                 for (int i = 0; i < index; i++)
                 {
                     sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.LastOrDefault());
                 }
-                return sum;
+                return Position + Vector2.UnitX * sum;
             }
 
             public void DecreaseHealth()
