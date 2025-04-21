@@ -25,7 +25,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         internal PlayerHealthBar()
         {
             healthIcons = new();
-            Tag = Tags.HUD;
+            AddTag(Tags.HUD);
             Visible = HealthData.startVisible;
             if (HealthData.globalController)
                 AddTag(Tags.Global);
