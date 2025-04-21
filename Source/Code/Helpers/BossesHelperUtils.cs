@@ -120,6 +120,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region Health Displays
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
+        public class HealthDisplay : Entity
+        {
+            public readonly Sprite Frame;
+
+            public readonly Vector2 BarScale;
+
+            public readonly Func<int> GetHealth;
+
+            public readonly Color Color;
+
+            public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
+            {
+                Add(Frame = GFX.SpriteBank.Create(HealthData.frameSprite));
+                AddTag(Tags.HUD);
+                Position = position;
+                BarScale = barScale;
+                GetHealth = getHealth;
+                Color = color;
+            }
+        }
+
         public class HealthIcon : Entity
         {
             private readonly Sprite icon;
