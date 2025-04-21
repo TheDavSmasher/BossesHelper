@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     level.Add(barEntity = new HealthNumber(BarPosition, BarScale, BossHealth, baseColor));
                     break;
                 default:
-                    int barAnchor = barType == BarTypes.BarCentered ? 0 : barType == BarTypes.BarLeft ? -1 : 1;
+                    HealthBar.Alignment barAnchor = barType == BarTypes.BarCentered ? HealthBar.Alignment.Center : barType == BarTypes.BarLeft ? HealthBar.Alignment.Left : HealthBar.Alignment.Right;
                     level.Add(barEntity = new HealthBar(BarPosition, BarScale, BossHealth, baseColor, barAnchor));
                     break;
             }
