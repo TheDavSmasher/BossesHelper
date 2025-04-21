@@ -230,7 +230,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly List<float> iconSeparations;
 
-            private readonly bool isGlobal;
+            private readonly bool isGlobal = false;
 
             public int Count
             {
@@ -260,13 +260,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 removeAnims = SeparateList(HealthData.endAnim);
                 iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                 removeIconOnDamage = HealthData.removeOnDamage;
-                PopulateHealthIcons();
                 isGlobal = global;
+                PopulateHealthIcons();
                 if (isGlobal)
                 {
                     AddTag(Tags.Global);
-                    foreach (HealthIcon icon in healthIcons)
-                        icon.AddTag(Tags.Global);
                 }
             }
 
@@ -291,11 +289,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private HealthIcon CreateFromList(int i)
             {
-                return new(BarScale,
+                HealthIcon newIcon = new(BarScale,
                     icons.ElementAtOrDefault(i, icons.Last()),
                     createAnims.ElementAtOrDefault(i, createAnims.Last()),
                     removeAnims.ElementAtOrDefault(i, removeAnims.Last())
                 );
+                if (isGlobal)
+                {
+                    newIcon.AddTag(Tags.Global);
+                }
+                return newIcon;
             }
 
             public override void Awake(Scene scene)
@@ -322,8 +325,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
                     healthIcon = CreateFromList(i);
-                    if (isGlobal)
-                        healthIcon.AddTag(Tags.Global);
                     iconPosition = Position + Vector2.UnitX * GetEffectiveSeparation(i);
                 }
                 healthIcons.Add(healthIcon);
