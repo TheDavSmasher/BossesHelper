@@ -128,7 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly Func<int> GetHealth;
 
-            public readonly Color Color;
+            public Color Color;
 
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
             {
