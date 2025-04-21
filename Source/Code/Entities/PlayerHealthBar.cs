@@ -34,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            (scene as Level).Add(healthIcons);
+            scene.Add(healthIcons);
         }
 
         public override void Awake(Scene scene)
