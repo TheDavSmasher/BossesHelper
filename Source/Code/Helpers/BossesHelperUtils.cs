@@ -132,7 +132,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly int MaxHealth;
 
-            public bool OldVisible;
+            public bool ActiveVisibility;
 
             public Color Color;
 
@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 set
                 {
-                    OldVisible = value;
+                    ActiveVisibility = value;
                 }
             }
 
@@ -166,13 +166,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 MaxHealth = GetHealth();
                 BaseColor = color;
                 Color = color;
-                OldVisible = true;
+                ActiveVisibility = true;
             }
 
             public override void Update()
             {
                 base.Update();
-                base.Visible = !Scene.Paused && OldVisible;
+                base.Visible = !Scene.Paused && ActiveVisibility;
             }
         }
 
@@ -304,7 +304,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 base.Update();
                 foreach (var icon in healthIcons)
                 {
-                    icon.Visible = !Scene.Paused && OldVisible;
+                    icon.Visible = !Scene.Paused && ActiveVisibility;
                 }
             }
 
