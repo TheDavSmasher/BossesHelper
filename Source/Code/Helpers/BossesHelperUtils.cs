@@ -311,21 +311,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     );
                     if (isGlobal)
                         healthIcon.AddTag(Tags.Global);
-                    iconPosition = GetEffectiveSeparation(i);
+
+                    float sum = 0f;
+                    for (int index = 0; index < i; index++)
+                    {
+                        sum += iconSeparations.ElementAtOrDefault(index, iconSeparations.LastOrDefault());
+                    }
+                    iconPosition = Position + Vector2.UnitX * sum;
                 }
                 healthIcons.Add(healthIcon);
                 Scene.Add(healthIcon);
                 healthIcon.DrawIcon(iconPosition);
-            }
-
-            private Vector2 GetEffectiveSeparation(int index)
-            {
-                float sum = 0f;
-                for (int i = 0; i < index; i++)
-                {
-                    sum += iconSeparations.ElementAtOrDefault(i, iconSeparations.LastOrDefault());
-                }
-                return Position + Vector2.UnitX * sum;
             }
 
             public void DecreaseHealth()
