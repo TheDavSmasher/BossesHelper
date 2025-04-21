@@ -208,7 +208,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIconList : Entity
+        public class HealthIconList : HealthDisplay
         {
             private readonly bool useSessionValues;
 
@@ -225,8 +225,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private List<string> removeAnims;
 
             private List<float> iconSeparations;
-
-            private Vector2 BarScale;
 
             private int Health;
 
@@ -255,16 +253,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
 
             public HealthIconList()
+                : base(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth)
             {
                 useSessionValues = true;
+                Health = GetHealth();
             }
 
             public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
+                : base(barPosition, barScale, () => health)
             {
                 useSessionValues = false;
-                Health = health;
-                Position = barPosition;
-                BarScale = barScale;
+                Health = GetHealth();
                 this.icons = SeparateList(entityData.Attr("healthIcons"));
                 this.createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 this.removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
@@ -291,9 +290,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 level = scene as Level;
                 if (useSessionValues)
                 {
-                    Health = BossesHelperModule.Session.currentPlayerHealth;
-                    Position = HealthData.healthBarPos;
-                    BarScale = HealthData.healthIconScale;
                     icons = SeparateList(HealthData.iconSprite);
                     createAnims = SeparateList(HealthData.startAnim);
                     removeAnims = SeparateList(HealthData.endAnim);
