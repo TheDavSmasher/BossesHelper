@@ -173,7 +173,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 base.Update();
                 base.Visible = !Scene.Paused && OldVisible;
-        }
+            }
         }
 
         public class HealthIcon : Entity
@@ -253,15 +253,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public new bool Visible
+            protected override bool IsVisible
             {
                 get
                 {
                     return healthIcons.Any(icon => icon.Visible);
-                }
-                set
-                {
-                    OldVisible = value;
                 }
             }
 
@@ -384,7 +380,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 ActiveFont.Draw($"{GetHealth()}", Position, new Vector2(0.5f, 0.5f), BarScale, Color);
                 base.Render();
-                Visible = !Scene.Paused && OldVisible;
             }
         }
 
@@ -434,7 +429,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Draw.Rect(Collider, Color);
                 base.Render();
-                Visible = !Scene.Paused && OldVisible;
             }
         }
         #endregion
