@@ -397,38 +397,28 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthNumber : Entity
+        public class HealthNumber : HealthDisplay
         {
-            private readonly Func<int> bossHealth;
-
-            private Vector2 barScale;
-
             private readonly Color baseColor;
 
-            private Color color;
-
             public HealthNumber(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color)
+                : base(barPosition, barScale, bossHealth, color)
             {
-                Position = barPosition;
-                this.barScale = barScale;
-                this.bossHealth = bossHealth;
                 this.baseColor = color;
-                this.color = color;
-                Tag = Tags.HUD;
             }
 
             public override void Update()
             {
                 base.Update();
-                if (color != baseColor)
+                if (Color != baseColor)
                 {
-                    color = Color.Lerp(color, baseColor, 0.1f);
+                    Color = Color.Lerp(Color, baseColor, 0.1f);
                 }
             }
 
             public override void Render()
             {
-                ActiveFont.Draw(bossHealth.Invoke().ToString(), Position, new Vector2(0.5f, 0.5f), barScale, color);
+                ActiveFont.Draw(GetHealth.Invoke().ToString(), Position, new Vector2(0.5f, 0.5f), BarScale, Color);
                 base.Render();
                 Visible = !Scene.Paused;
             }
