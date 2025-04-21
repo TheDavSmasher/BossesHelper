@@ -390,8 +390,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly Alignment BarDir = barDir;
 
-            private readonly float MaxWidth = barScale.X;
-
             public override void Added(Scene scene)
             {
                 base.Added(scene);
@@ -416,11 +414,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
-                Collider.Width = MaxWidth * GetHealth() / MaxHealth;
+                float maxWidth = BarScale.X;
+                Collider.Width = maxWidth * GetHealth() / MaxHealth;
                 Position.X = BarDir switch
                 {
-                    Alignment.Left => leftEdge + (MaxWidth - Collider.Width),
-                    Alignment.Center => leftEdge + (MaxWidth - Collider.Width) / 2,
+                    Alignment.Left => leftEdge + (maxWidth - Collider.Width),
+                    Alignment.Center => leftEdge + (maxWidth - Collider.Width) / 2,
                     _ => leftEdge
                 };
             }
