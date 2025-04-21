@@ -30,7 +30,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly BarTypes barType;
 
-        private Entity barEntity;
+        private HealthDisplay barEntity;
 
         private readonly EntityData entityData;
 
@@ -80,9 +80,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Update()
         {
             base.Update();
-            if (barType == BarTypes.Icons)
+            if (barEntity is HealthIconList healthIcons)
             {
-                HealthIconList healthIcons = (HealthIconList) barEntity;
                 for (int i = 0; i < (healthIcons.Count - BossHealth()); i++)
                 {
                     healthIcons.DecreaseHealth();
