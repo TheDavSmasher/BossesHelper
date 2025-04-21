@@ -277,9 +277,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 base.Removed(scene);
             }
 
-            public override void Render()
+            public override void Update()
             {
-                base.Render();
+                base.Update();
                 foreach (var icon in healthIcons)
                 {
                     icon.Visible = !Scene.Paused && OldVisible;
