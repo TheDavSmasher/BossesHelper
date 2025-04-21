@@ -261,7 +261,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                 removeIconOnDamage = HealthData.removeOnDamage;
                 isGlobal = global;
-                PopulateHealthIcons();
                 if (isGlobal)
                 {
                     AddTag(Tags.Global);
@@ -276,12 +275,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
                 iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
                 removeIconOnDamage = entityData.Bool("removeOnDamage");
-                PopulateHealthIcons();
             }
 
             public override void Awake(Scene scene)
             {
                 base.Awake(scene);
+                PopulateHealthIcons();
                 for (int i = 0; i < MaxHealth; i++)
                 {
                     Scene.Add(healthIcons[i]);
