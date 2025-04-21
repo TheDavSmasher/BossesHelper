@@ -71,6 +71,8 @@ public class BossesHelperSession : EverestModuleSession
 
         public string iconSeparation;
 
+        public string frameSprite;
+
         public Vector2 healthBarPos;
 
         public Vector2 healthIconScale;

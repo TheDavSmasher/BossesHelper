@@ -128,6 +128,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly Func<int> GetHealth;
 
+            public readonly Color BaseColor;
+
             public Color Color;
 
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
@@ -137,6 +139,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Position = position;
                 BarScale = barScale;
                 GetHealth = getHealth;
+                BaseColor = color;
                 Color = color;
             }
         }
@@ -395,20 +398,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public class HealthNumber : HealthDisplay
         {
-            private readonly Color baseColor;
-
             public HealthNumber(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color)
                 : base(barPosition, barScale, bossHealth, color)
             {
-                this.baseColor = color;
             }
 
             public override void Update()
             {
                 base.Update();
-                if (Color != baseColor)
+                if (Color != BaseColor)
                 {
-                    Color = Color.Lerp(Color, baseColor, 0.1f);
+                    Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
             }
 
@@ -425,8 +425,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private readonly float leftEdge;
 
             private readonly int barDir;
-
-            private readonly Color baseColor;
 
             private readonly float MaxWidth;
 
@@ -448,7 +446,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     Position.X = barPosition.X - barScale.X / 2;
                 }
                 leftEdge = Position.X;
-                this.baseColor = color;
 
                 MaxHealth = bossHealth.Invoke();
             }
@@ -456,9 +453,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Update()
             {
                 base.Update();
-                if (Color != baseColor)
+                if (Color != BaseColor)
                 {
-                    Color = Color.Lerp(Color, baseColor, 0.1f);
+                    Color = Color.Lerp(Color, BaseColor, 0.1f);
                 }
                 Collider.Width = MaxWidth * GetHealth() / MaxHealth;
                 if (barDir == -1)
