@@ -19,10 +19,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private enum BarTypes
         {
-            Icons,
-            BarLeft,
+            BarLeft = -1,
             BarRight,
             BarCentered,
+            Icons,
             Countdown
         }
 
