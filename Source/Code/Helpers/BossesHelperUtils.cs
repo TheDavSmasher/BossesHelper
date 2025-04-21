@@ -132,6 +132,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly int MaxHealth;
 
+            public bool OldVisible;
+
             public Color Color;
 
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
@@ -144,6 +146,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 MaxHealth = GetHealth();
                 BaseColor = color;
                 Color = color;
+                OldVisible = true;
             }
         }
 
@@ -155,8 +158,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly string endAnim;
 
-            private bool oldVisible;
-
             public new bool Visible
             {
                 get
@@ -165,7 +166,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 set
                 {
-                    oldVisible = value;
+                    icon.Visible = value;
                 }
             }
 
@@ -173,7 +174,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 GFX.SpriteBank.TryCreate(iconSprite, out icon);
                 Add(icon);
-                oldVisible = icon.Visible;
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
@@ -198,12 +198,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     RemoveSelf();
                 }
-            }
-
-            public override void Render()
-            {
-                icon.Visible = !Scene.Paused && oldVisible;
-                base.Render();
             }
         }
 
@@ -241,7 +235,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 set
                 {
-                    healthIcons.ForEach(icon => icon.Visible = value);
+                    OldVisible = value;
                 }
             }
 
@@ -281,6 +275,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 healthIcons.ForEach((x) => x.RemoveSelf());
                 toRemove.ForEach((x) => x.RemoveSelf());
                 base.Removed(scene);
+            }
+
+            public override void Render()
+            {
+                base.Render();
+                foreach (var icon in healthIcons)
+                {
+                    icon.Visible = !Scene.Paused && OldVisible;
+                }
             }
 
             public void RefillHealth(int? upTo = null)
@@ -355,7 +358,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 ActiveFont.Draw($"{GetHealth()}", Position, new Vector2(0.5f, 0.5f), BarScale, Color);
                 base.Render();
-                Visible = !Scene.Paused;
+                Visible = !Scene.Paused && OldVisible;
             }
         }
 
@@ -405,7 +408,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 Draw.Rect(Collider, Color);
                 base.Render();
-                Visible = !Scene.Paused;
+                Visible = !Scene.Paused && OldVisible;
             }
         }
         #endregion
