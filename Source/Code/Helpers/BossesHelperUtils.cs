@@ -169,9 +169,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 ActiveVisibility = true;
             }
 
-            public override void Update()
+            public override void Render()
             {
-                base.Update();
+                base.Render();
                 base.Visible = !Scene.Paused && ActiveVisibility;
             }
         }
@@ -299,9 +299,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 base.Removed(scene);
             }
 
-            public override void Update()
+            public override void Render()
             {
-                base.Update();
+                base.Render();
                 foreach (var icon in healthIcons)
                 {
                     icon.Visible = !Scene.Paused && ActiveVisibility;
