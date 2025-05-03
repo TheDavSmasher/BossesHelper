@@ -236,6 +236,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly List<HealthIcon> toRemove = new();
 
+            private IEnumerable<HealthIcon> AllIcons => healthIcons.Concat(toRemove);
+
             private readonly List<string> icons;
 
             private readonly List<string> createAnims;
@@ -258,7 +260,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 get
                 {
-                    return healthIcons.Any(icon => icon.Visible);
+                    return AllIcons.Any(icon => icon.Visible);
                 }
             }
 
@@ -303,7 +305,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Render()
             {
                 base.Render();
-                foreach (var icon in healthIcons)
+                foreach (var icon in AllIcons)
                 {
                     icon.Visible = !Scene.Paused && ActiveVisibility;
                 }
