@@ -158,7 +158,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
             {
-                Add(Frame = GFX.SpriteBank.Create(HealthData.frameSprite));
+                GFX.SpriteBank.TryCreate(HealthData.frameSprite, out Frame);
+                Add(Frame);
                 AddTag(Tags.HUD);
                 Position = position;
                 BarScale = barScale;
