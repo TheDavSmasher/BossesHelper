@@ -237,7 +237,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly List<HealthIcon> toRemove = new();
 
-            private IEnumerable<HealthIcon> AllIcons => healthIcons.Concat(toRemove);
+            private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
 
             private readonly List<string> icons;
 
@@ -298,8 +298,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Removed(Scene scene)
             {
-                healthIcons.ForEach((x) => x.RemoveSelf());
-                toRemove.ForEach((x) => x.RemoveSelf());
+                AllIcons.ForEach((x) => x.RemoveSelf());
                 base.Removed(scene);
             }
 
