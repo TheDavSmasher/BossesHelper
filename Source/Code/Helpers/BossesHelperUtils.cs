@@ -170,9 +170,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 ActiveVisibility = true;
             }
 
-            public override void Render()
+            public override void Update()
             {
-                base.Render();
+                base.Update();
                 base.Visible = !Scene.Paused && ActiveVisibility;
             }
         }
