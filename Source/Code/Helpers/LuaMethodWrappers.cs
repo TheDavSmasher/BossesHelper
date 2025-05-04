@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Reflection;
 using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;

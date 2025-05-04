@@ -1,6 +1,5 @@
 ﻿using System;
 using Monocle;
-using Celeste;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using Celeste.Mod.BossesHelper.Code.Components;

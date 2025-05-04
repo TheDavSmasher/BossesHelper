@@ -20,13 +20,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public class BossAttack(string filepath, Player player, BossController controller) : IBossAction
         {
             private readonly LuaFunction attackFunction = LoadLuaFile(filepath, "getAttackData", new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "bossID", controller.BossID },
-                    { "puppet", controller.Puppet },
-                    { "boss", controller },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                }
+            {
+                { "player", player },
+                { "bossID", controller.BossID },
+                { "puppet", controller.Puppet },
+                { "boss", controller },
+                { "modMetaData", BossesHelperModule.Instance.Metadata }
+            }
             )?.FirstOrDefault();
 
             public IEnumerator Perform()
@@ -48,14 +48,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 AddToScene = () => controller.Scene.Add(this);
                 Dictionary<object, object> dict = new Dictionary<object, object>
-            {
-                { "player", player },
-                { "bossID", controller?.BossID },
-                { "puppet", controller?.Puppet },
-                { "boss", controller },
-                { "cutsceneEntity", this },
-                { "modMetaData", BossesHelperModule.Instance.Metadata }
-            };
+                {
+                    { "player", player },
+                    { "bossID", controller?.BossID },
+                    { "puppet", controller?.Puppet },
+                    { "boss", controller },
+                    { "cutsceneEntity", this },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                };
                 if (LoadLuaFile(filepath, "getCutsceneData", dict) is LuaFunction[] array)
                 {
                     Cutscene = array.ElementAtOrDefault(0)?.ToIEnumerator();
