@@ -91,7 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 currentAction = 0;
                 while (true)
                 {
-                    yield return PerformMethod(StatePatternOrder[AttackIndex]);
+                    yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Length]);
                     int counter = UpdateLoop();
                     if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
@@ -107,8 +107,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             int? goTo, ControllerDelegates delegates)
             : AttackPattern(patternLoop, trigger, minCount, count, goTo, delegates)
         {
-            protected override int AttackIndex => 
-                (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length;
+            protected override int AttackIndex => delegates.AttackIndexForced() ?? delegates.RandomNext();
 
             protected override int UpdateLoop()
             {
@@ -136,8 +135,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected override int UpdateLoop()
             {
-                currentAction = (currentAction + 1) % StatePatternOrder.Length;
-                return loop += (currentAction == 0) ? 1 : 0;
+                currentAction++;
+                return loop += (currentAction % StatePatternOrder.Length == 0) ? 1 : 0;
             }
         }
     }
