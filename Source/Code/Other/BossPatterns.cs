@@ -103,10 +103,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 return currentAction;
             }
 
-            protected virtual int UpdateLoop()
-            {
-                return currentAction++;
-            }
+            protected abstract int UpdateLoop();
         }
 
         public class RandomPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count,
@@ -116,6 +113,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             protected override int GetAttackIndex()
             {
                 return (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length;
+            }
+
+            protected override int UpdateLoop()
+            {
+                return currentAction++;
             }
         }
 
@@ -139,7 +141,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected override int UpdateLoop()
             {
-                return loop += (base.UpdateLoop() % StatePatternOrder.Length == 0) ? 1 : 0;
+                currentAction = (currentAction + 1) % StatePatternOrder.Length;
+                return loop += (currentAction == 0) ? 1 : 0;
             }
         }
     }
