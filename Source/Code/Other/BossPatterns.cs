@@ -84,13 +84,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected int currentAction;
 
-            protected IEnumerator PerformRepeat(Func<int> updateLoop)
+            protected IEnumerator PerformRepeat()
             {
                 currentAction = 0;
                 while (true)
                 {
                     yield return PerformMethod(StatePatternOrder[GetAttackIndex()]);
-                    int counter = updateLoop();
+                    int counter = UpdateLoop();
                     if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
                         yield return ChangePattern();
@@ -102,6 +102,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 return currentAction;
             }
+
+            protected abstract int UpdateLoop();
         }
 
         public class RandomPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count,
@@ -113,9 +115,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 return (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length;
             }
 
+            protected override int UpdateLoop()
+            {
+                return currentAction++;
+            }
+
             public override IEnumerator Perform()
             {
-                yield return PerformRepeat(() => currentAction++);
+                yield return PerformRepeat();
             }
         }
 
@@ -125,14 +132,21 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             private readonly Method[] PrePatternMethods = preLoop;
 
+            private int loop;
+
             public override IEnumerator Perform()
             {
-                int loop = 0;
+                loop = 0;
                 foreach (Method method in PrePatternMethods)
                 {
                     yield return PerformMethod(method);
                 }
-                yield return PerformRepeat(() => loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0);
+                yield return PerformRepeat();
+            }
+
+            protected override int UpdateLoop()
+            {
+                return loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0;
             }
         }
     }
