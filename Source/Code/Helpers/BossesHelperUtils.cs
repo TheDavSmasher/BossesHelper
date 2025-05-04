@@ -5,7 +5,6 @@ using System.Linq;
 using Monocle;
 using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
-using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
