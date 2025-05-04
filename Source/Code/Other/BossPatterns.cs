@@ -84,7 +84,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected int currentAction;
 
-            protected IEnumerator PerformRepeat()
+            public override IEnumerator Perform()
             {
                 currentAction = 0;
                 while (true)
@@ -119,11 +119,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 return currentAction++;
             }
-
-            public override IEnumerator Perform()
-            {
-                yield return PerformRepeat();
-            }
         }
 
         public class SequentialPattern(Method[] patternLoop, Method[] preLoop,
@@ -141,7 +136,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 {
                     yield return PerformMethod(method);
                 }
-                yield return PerformRepeat();
+                yield return base.Perform();
             }
 
             protected override int UpdateLoop()
