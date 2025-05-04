@@ -23,6 +23,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level level;
 
+        private LuaFunction onRecover;
+
         private LuaFunction onDamage;
 
         internal DamageController()
@@ -63,6 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (array != null)
                 {
                     onDamage = array.ElementAtOrDefault(0);
+                    onRecover = array.ElementAtOrDefault(1);
                 }
             }
         }
@@ -117,6 +120,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             BSession.currentPlayerHealth += amount;
             HealthBar.healthIcons.RefillHealth(amount);
+            if (onRecover != null)
+                Add(new Coroutine(onRecover.ToIEnumerator()));
         }
 
         private IEnumerator PlayerStagger(Player player, Vector2 bounce)

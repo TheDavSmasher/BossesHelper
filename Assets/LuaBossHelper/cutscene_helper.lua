@@ -70,12 +70,13 @@ local function prepareInterruption(env, func)
 end
 
 local function prepareFunction(env, func)
-    local success, onDamage = pcall(func)
+    local success, onDamage, onRecover = pcall(func)
 
     if success then
         onDamage = onDamage or env.onDamage
+        onRecover = onRecover or env.onRecover
 
-        return onDamage
+        return onDamage, onRecover
     else
         celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load on damage function in Lua: " .. onDamage)
         return success
