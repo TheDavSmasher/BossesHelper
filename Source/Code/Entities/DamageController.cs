@@ -46,16 +46,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 return;
             }
             base.Awake(scene);
-            LoadFunction(level.GetPlayer());
+            LoadFunction();
         }
 
-        private void LoadFunction(Player player)
+        private void LoadFunction()
         {
             if (!string.IsNullOrEmpty(Filepath))
             {
                 Dictionary<object, object> dict = new Dictionary<object, object>
                 {
-                    { "player", player },
+                    { "player", level.GetPlayer() },
                     { "healthBar", HealthBar.healthIcons },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 };
