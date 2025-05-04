@@ -84,12 +84,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected int currentAction;
 
-            protected IEnumerator PerformRepeat(Func<int> getAttackIndex, Func<int> updateLoop)
+            protected IEnumerator PerformRepeat(Func<int> updateLoop)
             {
                 currentAction = 0;
                 while (true)
                 {
-                    yield return PerformMethod(StatePatternOrder[getAttackIndex()]);
+                    yield return PerformMethod(StatePatternOrder[GetAttackIndex()]);
                     int counter = updateLoop();
                     if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
@@ -97,17 +97,25 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     }
                 }
             }
+
+            protected virtual int GetAttackIndex()
+            {
+                return currentAction;
+            }
         }
 
         public class RandomPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count,
             int? goTo, ControllerDelegates delegates)
             : AttackPattern(patternLoop, trigger, minCount, count, goTo, delegates)
         {
+            protected override int GetAttackIndex()
+            {
+                return (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length;
+            }
+
             public override IEnumerator Perform()
             {
-                yield return PerformRepeat(
-                    () => (delegates.AttackIndexForced() ?? delegates.RandomNext()) % StatePatternOrder.Length,
-                    () => currentAction++);
+                yield return PerformRepeat(() => currentAction++);
             }
         }
 
@@ -124,9 +132,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 {
                     yield return PerformMethod(method);
                 }
-                yield return PerformRepeat(
-                    () => currentAction,
-                    () => loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0);
+                yield return PerformRepeat(() => loop += ((currentAction = (currentAction + 1) % StatePatternOrder.Length) == 0) ? 1 : 0);
             }
         }
     }
