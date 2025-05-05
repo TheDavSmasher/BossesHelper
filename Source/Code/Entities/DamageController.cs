@@ -34,14 +34,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             baseCooldown = BSession.healthData.damageCooldown;
         }
 
-        public override void Added(Scene scene)
-        {
-            base.Added(scene);
-            level = scene as Level;
-        }
-
         public override void Awake(Scene scene)
         {
+            level = scene as Level;
             if (scene.Tracker.GetEntity<DamageController>() != this)
             {
                 RemoveSelf();
