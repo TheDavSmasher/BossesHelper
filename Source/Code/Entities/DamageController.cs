@@ -147,6 +147,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private IEnumerator PlayerInvincible(Player player)
         {
             int times = 2;
+            void ChangeVisible(bool state) {
+                player.Sprite.Visible = state;
+                player.Hair.Visible = state;
+            }
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, BSession.damageCooldown, start: true);
             Add(tween);
             tween.OnUpdate = delegate
@@ -155,21 +159,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     if (times <= 0)
                     {
-                        player.Sprite.Visible = false;
-                        player.Hair.Visible = false;
+                        ChangeVisible(false);
                         times = 2;
                     }
                     else
                     {
-                        player.Sprite.Visible = true;
-                        player.Hair.Visible = true;
+                        ChangeVisible(true);
                         times--;
                     }
                 }
             };
             yield return tween.Wait();
-            player.Sprite.Visible = true;
-            player.Hair.Visible = true;
+            ChangeVisible(true);
         }
     }
 }
