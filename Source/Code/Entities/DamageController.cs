@@ -167,8 +167,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     }
                 }
             };
-            yield return tween.Duration;
-            tween.Stop();
+            yield return tween.Wait();
             player.Sprite.Visible = true;
             player.Hair.Visible = true;
         }
