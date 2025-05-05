@@ -100,10 +100,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             if (HealthBar != null)
             {
-                for (int i = 0; i < amount; i++)
-                {
-                    HealthBar.healthIcons.DecreaseHealth();
-                }
+                HealthBar.healthIcons.DecreaseHealth(amount);
             }
             else
             {

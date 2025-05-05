@@ -82,10 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Update();
             if (barEntity is HealthIconList healthIcons)
             {
-                for (int i = 0; i < (healthIcons.Count - BossHealth()); i++)
-                {
-                    healthIcons.DecreaseHealth();
-                }
+                healthIcons.DecreaseHealth(healthIcons.Count - BossHealth());
             }
         }
 
