@@ -139,23 +139,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private IEnumerator PlayerInvincible()
         {
-            static void ChangeVisible(Player player, bool state) {
-                player.Sprite.Visible = state;
-                player.Hair.Visible = state;
+            static void ChangeVisible(bool state) {
+                if (Engine.Scene.GetPlayer() is Player player)
+                {
+                    player.Sprite.Visible = state;
+                    player.Hair.Visible = state;
+                }
             }
             int times = 1;
             Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, BSession.damageCooldown, Ease.CubeOut, delegate
             {
-                if (Scene.OnInterval(0.02f) && Engine.Scene.GetPlayer() is Player player)
+                if (Scene.OnInterval(0.02f))
                 {
-                    ChangeVisible(player, times++ % 3 == 0);
+                    ChangeVisible(times++ % 3 == 0);
                 }
             });
             yield return tween.Wait();
-            if (Engine.Scene.GetPlayer() is Player player)
-            {
-                ChangeVisible(player, true);
-            }
+            ChangeVisible(true);
         }
     }
 }
