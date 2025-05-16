@@ -6,7 +6,6 @@ using Monocle;
 using System.Xml;
 using System.Linq;
 using System;
-using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
@@ -37,15 +36,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
                     targetOut.Add(
-                        new EventCutscene(patternNode.GetValue("file"), patternNode.GetValueOrDefaultNullI("goto"), delegates)
+                        new EventCutscene(patternNode.GetValue("file"), patternNode.GetValueOrDefault<int>("goto"), delegates)
                     );
                     continue;
                 }
 
-                int? goTo = patternNode.GetValueOrDefaultNullI("goto");
+                int? goTo = patternNode.GetValueOrDefault<int>("goto");
                 Hitbox trigger = GetHitboxFromXml(patternNode, offset);
-                int? minCount = patternNode.GetValueOrDefaultNullI("minRepeat");
-                int? count = patternNode.GetValueOrDefaultNullI("repeat") ?? minCount ?? (goTo != null ? 0 : null);
+                int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
+                int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo != null ? 0 : null);
                 minCount ??= count;
                 if (count < minCount)
                     count = minCount;
@@ -55,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
                         methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
-                            action.GetValueOrDefaultNullF("wait")), Math.Max(action.GetValueOrDefaultInt("weight"), 1)));
+                            action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault<int>("weight") ?? 0, 1)));
                     }
                     targetOut.Add(
                         new RandomPattern(methodList.ToArray(), trigger, minCount, count, goTo, delegates)
@@ -69,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     switch (action.LocalName.ToLower())
                     {
                         case "wait":
-                            methodList.Add(new Method("wait", action.GetValueOrDefaultNullF("time")));
+                            methodList.Add(new Method("wait", action.GetValueOrDefault<float>("time")));
                             break;
                         case "loop":
                             preLoopList = [.. methodList];
@@ -154,29 +153,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region XML Helper Functions
-        private static float GetValueOrDefaultFloat(this XmlNode source, string tag, float value = 0f)
+        private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
         {
-            return GetValueOrDefault(source, tag, float.Parse, value).Value;
-        }
-
-        private static float? GetValueOrDefaultNullF(this XmlNode source, string tag, float? value = null)
-        {
-            return GetValueOrDefault(source, tag, float.Parse, value);
-        }
-
-        private static int GetValueOrDefaultInt(this XmlNode source, string tag, int value = 0)
-        {
-            return GetValueOrDefault(source, tag, int.Parse, value).Value;
-        }
-
-        private static int? GetValueOrDefaultNullI(this XmlNode source, string tag, int? value = null)
-        {
-            return GetValueOrDefault(source, tag, int.Parse, value);
-        }
-
-        private static T? GetValueOrDefault<T>(this XmlNode source, string tag, Func<string, T> parser, T? value = default) where T : struct
-        {
-            return source.Attributes[tag]?.Value.Parse(parser) ?? value;
+            return source.Attributes[tag]?.Value.Parse(T.Parse);
         }
 
         private static string GetTagOrMain(this XmlNode source)
@@ -191,23 +170,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static Hitbox GetHitboxFromXml(XmlNode source, float defaultWidth, float defaultHeight)
         {
-            return new Hitbox(source.GetValueOrDefaultFloat("width", defaultWidth), source.GetValueOrDefaultFloat("height", defaultHeight),
-                source.GetValueOrDefaultFloat("xOffset"), source.GetValueOrDefaultFloat("yOffset"));
+            return new Hitbox(source.GetValueOrDefault<float>("width") ?? defaultWidth, source.GetValueOrDefault<float>("height") ?? defaultHeight,
+                source.GetValueOrDefault<float>("xOffset") ?? 0f, source.GetValueOrDefault<float>("yOffset") ?? 0f);
         }
 
         private static Hitbox GetHitboxFromXml(XmlNode source, Vector2 offset)
         {
-            float width = source.GetValueOrDefaultFloat("width");
-            float height = source.GetValueOrDefaultFloat("height");
+            float width = source.GetValueOrDefault<float>("width") ?? 0f;
+            float height = source.GetValueOrDefault<float>("height") ?? 0f;
             if (width <= 0 || height <= 0)
                 return null;
-            return new Hitbox(width, height, source.GetValueOrDefaultFloat("x") + offset.X,
-                source.GetValueOrDefaultFloat("y") + offset.Y);
+            return new Hitbox(width, height, source.GetValueOrDefault<float>("x") ??  + offset.X,
+                source.GetValueOrDefault<float>("y") ??  + offset.Y);
         }
 
         private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)
         {
-            return new Circle(source.GetValueOrDefaultFloat("radius", defaultRadius), source.GetValueOrDefaultFloat("xOffset"), source.GetValueOrDefaultFloat("yOffset"));
+            return new Circle(source.GetValueOrDefault<float>("radius") ?? defaultRadius, source.GetValueOrDefault<float>("xOffset") ?? 0f, source.GetValueOrDefault<float>("yOffset") ?? 0f);
         }
         #endregion
         #endregion
