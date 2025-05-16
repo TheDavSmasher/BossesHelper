@@ -54,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
                         methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
-                            action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault<int>("weight") ?? 0, 1)));
+                            action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault("weight", 0), 1)));
                     }
                     targetOut.Add(
                         new RandomPattern(methodList.ToArray(), trigger, minCount, count, goTo, delegates)
@@ -127,16 +127,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (hitboxNode.NodeType == XmlNodeType.Comment) continue;
 
-                string tag = hitboxNode.GetTagOrMain();
+                string tag = hitboxNode.GetValue("tag");
                 switch (hitboxNode.LocalName.ToLower())
                 {
                     case "hitboxes":
                         baseHitboxOptions ??= new();
-                        baseHitboxOptions.Add(hitboxNode.GetTagOrMain(), GetAllColliders(hitboxNode));
+                        baseHitboxOptions.Add(hitboxNode.GetValue("tag"), GetAllColliders(hitboxNode));
                         break;
                     case "hurtboxes":
                         baseHurtboxOptions ??= new();
-                        baseHurtboxOptions.Add(hitboxNode.GetTagOrMain(), GetAllColliders(hitboxNode));
+                        baseHurtboxOptions.Add(hitboxNode.GetValue("tag"), GetAllColliders(hitboxNode));
                         break;
                     case "bouncebox":
                         bounceHitboxes ??= new();
@@ -158,35 +158,41 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source.Attributes[tag]?.Value.Parse(T.Parse);
         }
 
-        private static string GetTagOrMain(this XmlNode source)
+        private static T GetValueOrDefault<T>(this XmlNode source, string tag, T value) where T : struct, IParsable<T>
         {
-            return source.Attributes["tag"]?.Value ?? "main";
+            return source.Attributes[tag]?.Value.Parse(T.Parse) ?? value;
         }
 
         private static string GetValue(this XmlNode source, string tag)
         {
-            return source.Attributes[tag].Value;
+            return source.Attributes[tag]?.Value ?? "main";
         }
 
         private static Hitbox GetHitboxFromXml(XmlNode source, float defaultWidth, float defaultHeight)
         {
-            return new Hitbox(source.GetValueOrDefault<float>("width") ?? defaultWidth, source.GetValueOrDefault<float>("height") ?? defaultHeight,
-                source.GetValueOrDefault<float>("xOffset") ?? 0f, source.GetValueOrDefault<float>("yOffset") ?? 0f);
+            return new Hitbox(
+                source.GetValueOrDefault("width", defaultWidth), source.GetValueOrDefault("height", defaultHeight),
+                source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
+            );
         }
 
         private static Hitbox GetHitboxFromXml(XmlNode source, Vector2 offset)
         {
-            float width = source.GetValueOrDefault<float>("width") ?? 0f;
-            float height = source.GetValueOrDefault<float>("height") ?? 0f;
+            float width = source.GetValueOrDefault("width", 0f);
+            float height = source.GetValueOrDefault("height", 0f);
             if (width <= 0 || height <= 0)
                 return null;
-            return new Hitbox(width, height, source.GetValueOrDefault<float>("x") ??  + offset.X,
-                source.GetValueOrDefault<float>("y") ??  + offset.Y);
+            return new Hitbox(width, height,
+                source.GetValueOrDefault("x", 0f) + offset.X, source.GetValueOrDefault("y", 0f) + offset.Y
+            );
         }
 
         private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)
         {
-            return new Circle(source.GetValueOrDefault<float>("radius") ?? defaultRadius, source.GetValueOrDefault<float>("xOffset") ?? 0f, source.GetValueOrDefault<float>("yOffset") ?? 0f);
+            return new Circle(
+                source.GetValueOrDefault("radius", defaultRadius),
+                source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
+            );
         }
         #endregion
         #endregion
