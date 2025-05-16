@@ -114,6 +114,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
             self.End();
         }
+
+        public static int ParseI(this string value)
+        {
+            return int.Parse(value);
+        }
+
+        public static float ParseF(this string value)
+        {
+            return float.Parse(value);
+        }
         #endregion
 
         #region Health Displays

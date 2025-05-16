@@ -6,6 +6,7 @@ using Monocle;
 using System.Xml;
 using System.Linq;
 using System;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
@@ -155,32 +156,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region XML Helper Functions
         private static float GetValueOrDefaultFloat(this XmlNode source, string tag, float value = 0f)
         {
-            XmlAttribute attribute = source.Attributes[tag];
-            return attribute != null ? float.Parse(attribute.Value) : value;
+            return source.Attributes[tag]?.Value.ParseF() ?? value;
         }
 
         private static float? GetValueOrDefaultNullF(this XmlNode source, string tag, float? value = null)
         {
-            XmlAttribute attribute = source.Attributes[tag];
-            return attribute != null ? float.Parse(attribute.Value) : value;
+            return source.Attributes[tag]?.Value.ParseF() ?? value;
         }
 
         private static int GetValueOrDefaultInt(this XmlNode source, string tag, int value = 0)
         {
-            XmlAttribute attribute = source.Attributes[tag];
-            return attribute != null ? int.Parse(attribute.Value) : value;
+            return source.Attributes[tag]?.Value.ParseI() ?? value;
         }
 
         private static int? GetValueOrDefaultNullI(this XmlNode source, string tag, int? value = null)
         {
-            XmlAttribute attribute = source.Attributes[tag];
-            return attribute != null ? int.Parse(attribute.Value) : value;
+            return source.Attributes[tag]?.Value.ParseI() ?? value;
         }
 
         private static string GetTagOrMain(this XmlNode source)
         {
-            XmlAttribute attribute = source.Attributes["tag"];
-            return attribute != null ? attribute.Value : "main";
+            return source.Attributes["tag"]?.Value ?? "main";
         }
 
         private static string GetValue(this XmlNode source, string tag)
