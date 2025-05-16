@@ -94,7 +94,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 foreach (XmlElement baseOption in source.ChildNodes)
                 {
                     baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
-                        ? GetCircleFromXml(baseOption, 4f) : GetHitboxFromXml(baseOption, 8f, 8f));
+                        ? baseOption.GetCircle() : GetHitboxFromXml(baseOption, 8f, 8f));
                 }
                 return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
             }
@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         break;
                     case "target":
                         targetCircles ??= new();
-                        InsertNewCollider(targetCircles, tag, GetCircleFromXml(hitboxNode, 4f));
+                        InsertNewCollider(targetCircles, tag, hitboxNode.GetCircle());
                         break;
                 }
             }
@@ -187,7 +187,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             );
         }
 
-        private static Circle GetCircleFromXml(XmlNode source, float defaultRadius)
+        private static Circle GetCircle(this XmlNode source, float defaultRadius = 4f)
         {
             return new Circle(
                 source.GetValueOrDefault("radius", defaultRadius),
