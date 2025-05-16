@@ -115,14 +115,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             self.End();
         }
 
-        public static int ParseI(this string value)
+        public static T Parse<T>(this string value, Func<string, T> parser)
         {
-            return int.Parse(value);
-        }
-
-        public static float ParseF(this string value)
-        {
-            return float.Parse(value);
+            return parser(value);
         }
         #endregion
 

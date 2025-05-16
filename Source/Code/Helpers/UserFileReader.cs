@@ -156,22 +156,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region XML Helper Functions
         private static float GetValueOrDefaultFloat(this XmlNode source, string tag, float value = 0f)
         {
-            return source.Attributes[tag]?.Value.ParseF() ?? value;
+            return GetValueOrDefault(source, tag, float.Parse, value).Value;
         }
 
         private static float? GetValueOrDefaultNullF(this XmlNode source, string tag, float? value = null)
         {
-            return source.Attributes[tag]?.Value.ParseF() ?? value;
+            return GetValueOrDefault(source, tag, float.Parse, value);
         }
 
         private static int GetValueOrDefaultInt(this XmlNode source, string tag, int value = 0)
         {
-            return source.Attributes[tag]?.Value.ParseI() ?? value;
+            return GetValueOrDefault(source, tag, int.Parse, value).Value;
         }
 
         private static int? GetValueOrDefaultNullI(this XmlNode source, string tag, int? value = null)
         {
-            return source.Attributes[tag]?.Value.ParseI() ?? value;
+            return GetValueOrDefault(source, tag, int.Parse, value);
+        }
+
+        private static T? GetValueOrDefault<T>(this XmlNode source, string tag, Func<string, T> parser, T? value = default) where T : struct
+        {
+            return source.Attributes[tag]?.Value.Parse(parser) ?? value;
         }
 
         private static string GetTagOrMain(this XmlNode source)
