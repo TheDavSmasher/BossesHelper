@@ -42,7 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
 
                 int? goTo = patternNode.GetValueOrDefault<int>("goto");
-                Hitbox trigger = GetHitboxFromXml(patternNode, offset);
+                Hitbox trigger = patternNode.GetHitbox(offset);
                 int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
                 int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo != null ? 0 : null);
                 minCount ??= count;
@@ -94,7 +94,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 foreach (XmlElement baseOption in source.ChildNodes)
                 {
                     baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
-                        ? baseOption.GetCircle() : GetHitboxFromXml(baseOption, 8f, 8f));
+                        ? baseOption.GetCircle() : baseOption.GetHitbox(8f, 8f));
                 }
                 return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
             }
@@ -140,7 +140,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         break;
                     case "bouncebox":
                         bounceHitboxes ??= new();
-                        InsertNewCollider(bounceHitboxes, tag, GetHitboxFromXml(hitboxNode, 8f, 6f));
+                        InsertNewCollider(bounceHitboxes, tag, hitboxNode.GetHitbox(8f, 6f));
                         break;
                     case "target":
                         targetCircles ??= new();
@@ -168,7 +168,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source.Attributes[tag]?.Value ?? "main";
         }
 
-        private static Hitbox GetHitboxFromXml(XmlNode source, float defaultWidth, float defaultHeight)
+        private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
         {
             return new Hitbox(
                 source.GetValueOrDefault("width", defaultWidth), source.GetValueOrDefault("height", defaultHeight),
@@ -176,7 +176,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             );
         }
 
-        private static Hitbox GetHitboxFromXml(XmlNode source, Vector2 offset)
+        private static Hitbox GetHitbox(this XmlNode source, Vector2 offset)
         {
             float width = source.GetValueOrDefault("width", 0f);
             float height = source.GetValueOrDefault("height", 0f);
