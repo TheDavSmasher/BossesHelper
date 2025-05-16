@@ -123,21 +123,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Celeste.Freeze(0.05f);
                 yield return null;
                 Vector2 to = new(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
-                Vector2 to = new Vector2(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
-                Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.2f, start: true);
-                Add(tween);
-                tween.OnUpdate = delegate (Tween t)
+                Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, delegate (Tween t)
                 {
                     Vector2 val = from + (to - from) * t.Eased;
-                    if (player != null)
+                    if (Engine.Scene.GetPlayer() is Player player)
                     {
                         player.MoveToX(val.X);
                         player.MoveToY(val.Y);
                         player.Sprite.Rotation = (float)(Math.Floor(t.Eased * 4f) * 6.2831854820251465);
                     }
-                };
-                yield return tween.Duration;
-                tween.Stop();
+                });
+                yield return tween.Wait();
             }
         }
 
@@ -147,21 +143,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 player.Sprite.Visible = state;
                 player.Hair.Visible = state;
             }
-            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, BSession.damageCooldown, start: true);
-            Add(tween);
             int times = 1;
-            tween.OnUpdate = delegate
+            Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, BSession.damageCooldown, Ease.CubeOut, delegate
             {
                 if (Scene.OnInterval(0.02f) && Engine.Scene.GetPlayer() is Player player)
                 {
                     ChangeVisible(player, times++ % 3 == 0);
                 }
-            };
+            });
             yield return tween.Wait();
             if (Engine.Scene.GetPlayer() is Player player)
             {
                 ChangeVisible(player, true);
+            }
         }
     }
-}
 }
