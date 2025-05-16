@@ -87,9 +87,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
                     if (BSession.healthData.playerStagger && stagger)
-                        Add(new Coroutine(PlayerStagger(entity, direction)));
+                        Add(new Coroutine(PlayerStagger(entity.Position, direction)));
                     if (BSession.healthData.playerBlink)
-                        Add(new Coroutine(PlayerInvincible(entity)));
+                        Add(new Coroutine(PlayerInvincible()));
                     if (onDamage != null)
                         Add(new Coroutine(onDamage.ToIEnumerator()));
                 }
@@ -116,13 +116,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Add(new Coroutine(onRecover.ToIEnumerator()));
         }
 
-        private IEnumerator PlayerStagger(Player player, Vector2 bounce)
+        private IEnumerator PlayerStagger(Vector2 from, Vector2 bounce)
         {
             if (bounce != Vector2.Zero)
             {
                 Celeste.Freeze(0.05f);
                 yield return null;
-                Vector2 from = player.Position;
+                Vector2 to = new(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
                 Vector2 to = new Vector2(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
                 Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.2f, start: true);
                 Add(tween);
@@ -141,9 +141,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private IEnumerator PlayerInvincible(Player player)
+        private IEnumerator PlayerInvincible()
         {
-            void ChangeVisible(bool state) {
+            static void ChangeVisible(Player player, bool state) {
                 player.Sprite.Visible = state;
                 player.Hair.Visible = state;
             }
@@ -152,13 +152,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             int times = 1;
             tween.OnUpdate = delegate
             {
-                if (Scene.OnInterval(0.02f))
+                if (Scene.OnInterval(0.02f) && Engine.Scene.GetPlayer() is Player player)
                 {
-                    ChangeVisible(times++ % 3 == 0);
+                    ChangeVisible(player, times++ % 3 == 0);
                 }
             };
             yield return tween.Wait();
-            ChangeVisible(true);
+            if (Engine.Scene.GetPlayer() is Player player)
+            {
+                ChangeVisible(player, true);
         }
     }
+}
 }
