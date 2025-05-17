@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using NLua;
-using System.Linq;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 

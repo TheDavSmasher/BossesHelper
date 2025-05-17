@@ -5,7 +5,6 @@ using System;
 using Monocle;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Other

@@ -4,7 +4,6 @@ using Monocle;
 using NLua;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 
