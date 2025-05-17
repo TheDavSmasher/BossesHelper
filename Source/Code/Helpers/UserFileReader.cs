@@ -111,20 +111,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 switch (hitboxNode.LocalName.ToLower())
                 {
                     case "hitboxes":
-                        baseHitboxOptions ??= new();
-                        baseHitboxOptions.Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
+                        (baseHitboxOptions ??= []).Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
                         break;
                     case "hurtboxes":
-                        baseHurtboxOptions ??= new();
-                        baseHurtboxOptions.Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
+                        (baseHurtboxOptions ??= []).Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
                         break;
                     case "bouncebox":
-                        bounceHitboxes ??= new();
-                        bounceHitboxes.InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
+                        (bounceHitboxes ??= []).InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
                         break;
                     case "target":
-                        targetCircles ??= new();
-                        targetCircles.InsertNewCollider(tag, hitboxNode.GetCircle());
+                        (targetCircles ??= []).InsertNewCollider(tag, hitboxNode.GetCircle());
                         break;
                 }
             }
