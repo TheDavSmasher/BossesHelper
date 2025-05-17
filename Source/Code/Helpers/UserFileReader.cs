@@ -88,10 +88,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
         {
-            Dictionary<string, Collider> baseHitboxOptions = null;
-            Dictionary<string, Collider> baseHurtboxOptions = null;
-            Dictionary<string, Collider> bounceHitboxes = null;
-            Dictionary<string, Collider> targetCircles = null;
+            Dictionary<string, Collider> baseHitboxOptions = null, baseHurtboxOptions = null,
+                bounceHitboxes = null, targetCircles = null;
 
             string path = CleanPath(filepath, ".xml");
             if (!Everest.Content.TryGet(path, out ModAsset xml))
