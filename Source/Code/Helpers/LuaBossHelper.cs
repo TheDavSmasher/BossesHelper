@@ -77,30 +77,34 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             yield return null;
         }
 
-        public static bool LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals, out LuaFunction[] funcs)
+        public static bool LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals, int count, out LuaFunction[] funcs)
         {
-            return (funcs = LoadLuaFile(filename, command, passedVals)) != null;
+            return (funcs = LoadLuaFile(filename, command, passedVals, count)).Length > 0;
         }
 
-        public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals)
+        public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals, int count = 1)
         {
+            LuaFunction[] funcs = null;
             if (!string.IsNullOrEmpty(filename))
             {
                 try
                 {
-                    object[] array = (cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals));
-                    if (array != null)
+                    if ((cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
                     {
-                        return Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
+                        funcs = Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
                     }
-                    Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
+                    else
+                    {
+                        Logger.Log("Bosses Helper", "Failed to load Lua Cutscene, target file does not exist: \"" + filename + "\"");
+                    }
                 }
                 catch (Exception e)
                 {
                     Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
                 }
             }
-            return null;
+            Array.Resize(ref funcs, count);
+            return funcs;
         }
 
         public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
