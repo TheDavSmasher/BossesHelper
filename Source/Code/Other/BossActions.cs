@@ -27,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "boss", controller },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 },
-            filepath, "getAttackData")[0];
+                filepath, "getAttackData")[0];
 
             public IEnumerator Perform()
             {
@@ -47,16 +47,16 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
             {
                 AddToScene = () => controller.Scene.Add(this);
-                Dictionary<object, object> dict = new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "bossID", controller?.BossID },
-                    { "puppet", controller?.Puppet },
-                    { "boss", controller },
-                    { "cutsceneEntity", this },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                };
-                LuaFunction[] array = LoadLuaFile(dict, filepath, "getCutsceneData", 2);
+                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
+                    {
+                        { "player", player },
+                        { "bossID", controller?.BossID },
+                        { "puppet", controller?.Puppet },
+                        { "boss", controller },
+                        { "cutsceneEntity", this },
+                        { "modMetaData", BossesHelperModule.Instance.Metadata }
+                    },
+                    filepath, "getCutsceneData", 2);
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
             }

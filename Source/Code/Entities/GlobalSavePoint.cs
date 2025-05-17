@@ -33,14 +33,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void LoadFunction(string filename, Player player)
         {
-            Dictionary<object, object> dict = new Dictionary<object, object>
-            {
-                { "player", player },
-                { "savePoint", this },
-                { "spawnPoint", Changer.spawnPoint },
-                { "modMetaData", BossesHelperModule.Instance.Metadata }
-            };
-            onInteract = LoadLuaFile(dict, filename, "getSavePointData")[0];
+            onInteract = LoadLuaFile(new Dictionary<object, object>
+                {
+                    { "player", player },
+                    { "savePoint", this },
+                    { "spawnPoint", Changer.spawnPoint },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                },
+                filename, "getSavePointData")[0];
         }
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset)

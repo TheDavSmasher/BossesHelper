@@ -50,13 +50,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (!string.IsNullOrEmpty(Filepath))
             {
-                Dictionary<object, object> dict = new Dictionary<object, object>
-                {
-                    { "player", level.GetPlayer() },
-                    { "healthBar", HealthBar.healthIcons },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                };
-                LuaFunction[] array = LoadLuaFile(dict, Filepath, "getFunctionData", 2);
+                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
+                    {
+                        { "player", level.GetPlayer() },
+                        { "healthBar", HealthBar.healthIcons },
+                        { "modMetaData", BossesHelperModule.Instance.Metadata }
+                    }, 
+                    Filepath, "getFunctionData", 2);
                 onDamage = array[0];
                 onRecover = array[1];
             }
