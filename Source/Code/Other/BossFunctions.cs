@@ -38,15 +38,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "boss", controller },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            if (LoadLuaFile(filepath, "getInterruptData", dict, 6, out LuaFunction[] array))
-            {
-                LuaFunction OnHitLua = array.FirstOrDefault();
-                OnContactLua = array.ElementAtOrDefault(1, OnHitLua);
-                OnDashLua = array.ElementAtOrDefault(2, OnHitLua);
-                OnBounceLua = array.ElementAtOrDefault(3, OnHitLua);
-                OnLaserLua = array.ElementAtOrDefault(4, OnHitLua);
-                array.ElementAtOrDefault(5)?.Call();
-            }
+            LuaFunction[] array = LoadLuaFile(filepath, "getInterruptData", dict, 6);
+            LuaFunction OnHitLua = array[0];
+            OnContactLua = array[1] ?? OnHitLua;
+            OnDashLua = array[2] ?? OnHitLua;
+            OnBounceLua = array[3] ?? OnHitLua;
+            OnLaserLua = array[4] ?? OnHitLua;
+            array[5]?.Call();
         }
 
         public Coroutine OnDamageCoroutine(DamageSource source)

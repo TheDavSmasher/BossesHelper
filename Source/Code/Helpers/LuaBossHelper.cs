@@ -77,11 +77,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             yield return null;
         }
 
-        public static bool LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals, int count, out LuaFunction[] funcs)
-        {
-            return (funcs = LoadLuaFile(filename, command, passedVals, count)).Length > 0;
-        }
-
         public static LuaFunction[] LoadLuaFile(string filename, string command, Dictionary<object, object> passedVals, int count = 1)
         {
             LuaFunction[] funcs = null;
