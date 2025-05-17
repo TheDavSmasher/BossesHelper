@@ -60,12 +60,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            talker = new TalkComponent(talkerRect, talkerOffset, OnTalk)
+            Add(talker = new TalkComponent(talkerRect, talkerOffset, OnTalk)
             {
                 Enabled = true,
                 PlayerMustBeFacing = false
-            };
-            Add(talker);
+            });
             if (scene.GetPlayer() is Player player)
                 this.ReadSavePointFunction(filepath, player);
         }
