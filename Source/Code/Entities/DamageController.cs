@@ -56,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     { "healthBar", HealthBar.healthIcons },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 };
-                LuaFunction[] array = LoadLuaFile(Filepath, "getFunctionData", dict, 2);
+                LuaFunction[] array = LoadLuaFile(dict, Filepath, "getFunctionData", 2);
                 onDamage = array[0];
                 onRecover = array[1];
             }

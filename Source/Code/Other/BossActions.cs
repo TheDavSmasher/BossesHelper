@@ -19,16 +19,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public class BossAttack(string filepath, Player player, BossController controller) : IBossAction
         {
-            private readonly LuaFunction attackFunction = LoadLuaFile(filepath, "getAttackData",
-                new Dictionary<object, object>
+            private readonly LuaFunction attackFunction = LoadLuaFile(new Dictionary<object, object>
                 {
                     { "player", player },
                     { "bossID", controller.BossID },
                     { "puppet", controller.Puppet },
                     { "boss", controller },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
-                }
-            )[0];
+                },
+            filepath, "getAttackData")[0];
 
             public IEnumerator Perform()
             {
@@ -57,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "cutsceneEntity", this },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 };
-                LuaFunction[] array = LoadLuaFile(filepath, "getCutsceneData", dict, 2);
+                LuaFunction[] array = LoadLuaFile(dict, filepath, "getCutsceneData", 2);
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
             }

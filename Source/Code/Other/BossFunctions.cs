@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 { "boss", controller },
                 { "modMetaData", BossesHelperModule.Instance.Metadata }
             };
-            LuaFunction[] array = LoadLuaFile(filepath, "getInterruptData", dict, 6);
+            LuaFunction[] array = LoadLuaFile(dict, filepath, "getInterruptData", 6);
             LuaFunction OnHitLua = array[0];
             OnContactLua = array[1] ?? OnHitLua;
             OnDashLua = array[2] ?? OnHitLua;
