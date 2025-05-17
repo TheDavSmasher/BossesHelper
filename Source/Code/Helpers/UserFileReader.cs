@@ -88,26 +88,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
         {
-            static Collider GetAllColliders(XmlNode source)
-            {
-                List<Collider> baseOptions = new();
-                foreach (XmlElement baseOption in source.ChildNodes)
-                {
-                    baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
-                        ? baseOption.GetCircle() : baseOption.GetHitbox(8f, 8f));
-                }
-                return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
-            }
-
-            static void InsertNewCollider(Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
-            {
-                if (!baseOptions.TryAdd(tag, newCollider))
-                    return;
-                baseOptions[tag] = baseOptions[tag] is ColliderList list
-                    ? new ColliderList([.. list.colliders, newCollider])
-                    : new ColliderList(baseOptions[tag], newCollider);
-            }
-
             Dictionary<string, Collider> baseHitboxOptions = null;
             Dictionary<string, Collider> baseHurtboxOptions = null;
             Dictionary<string, Collider> bounceHitboxes = null;
@@ -166,6 +146,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static string GetValue(this XmlNode source, string tag)
         {
             return source.Attributes[tag]?.Value ?? "main";
+        }
+
+        private static Collider GetAllColliders(this XmlNode source)
+        {
+            List<Collider> baseOptions = new();
+            foreach (XmlElement baseOption in source.ChildNodes)
+            {
+                baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
+                    ? baseOption.GetCircle() : baseOption.GetHitbox(8f, 8f));
+            }
+            return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
+        }
+
+        private static void InsertNewCollider(Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
+        {
+            if (!baseOptions.TryAdd(tag, newCollider))
+                return;
+            baseOptions[tag] = baseOptions[tag] is ColliderList list
+                ? new ColliderList([.. list.colliders, newCollider])
+                : new ColliderList(baseOptions[tag], newCollider);
         }
 
         private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
