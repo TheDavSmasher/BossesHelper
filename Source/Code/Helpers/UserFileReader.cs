@@ -112,19 +112,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     case "hitboxes":
                         baseHitboxOptions ??= new();
-                        baseHitboxOptions.Add(hitboxNode.GetValue("tag"), GetAllColliders(hitboxNode));
+                        baseHitboxOptions.Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
                         break;
                     case "hurtboxes":
                         baseHurtboxOptions ??= new();
-                        baseHurtboxOptions.Add(hitboxNode.GetValue("tag"), GetAllColliders(hitboxNode));
+                        baseHurtboxOptions.Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
                         break;
                     case "bouncebox":
                         bounceHitboxes ??= new();
-                        InsertNewCollider(bounceHitboxes, tag, hitboxNode.GetHitbox(8f, 6f));
+                        bounceHitboxes.InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
                         break;
                     case "target":
                         targetCircles ??= new();
-                        InsertNewCollider(targetCircles, tag, hitboxNode.GetCircle());
+                        targetCircles.InsertNewCollider(tag, hitboxNode.GetCircle());
                         break;
                 }
             }
@@ -159,7 +159,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
         }
 
-        private static void InsertNewCollider(Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
+        private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
         {
             if (!baseOptions.TryAdd(tag, newCollider))
                 return;
