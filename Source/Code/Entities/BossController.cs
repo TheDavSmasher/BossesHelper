@@ -29,11 +29,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private bool isActing;
 
-        private bool startAttackingImmediately;
-
         private int currentPatternIndex;
 
         private int? forcedAttackIndex;
+
+        private readonly bool startAttackingImmediately;
 
         private readonly Coroutine currentPattern;
 
@@ -70,11 +70,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(currentPattern);
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
-            FetchSavedPhase();
-        }
-
-        private void FetchSavedPhase()
-        {
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
                 Health = phase.bossHealthAt;
