@@ -106,22 +106,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (hitboxNode.NodeType == XmlNodeType.Comment) continue;
 
-                string tag = hitboxNode.GetValue("tag");
-                switch (hitboxNode.LocalName.ToLower())
+                BossPuppet.ColliderOption option = Enum.Parse<BossPuppet.ColliderOption>(hitboxNode.LocalName, true);
+                dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag"), option switch
                 {
-                    case "hitboxes":
-                        dataHolder[BossPuppet.ColliderOption.Hitboxes].InsertNewCollider(tag, hitboxNode.GetAllColliders());
-                        break;
-                    case "hurtboxes":
-                        dataHolder[BossPuppet.ColliderOption.Hurtboxes].InsertNewCollider(tag, hitboxNode.GetAllColliders());
-                        break;
-                    case "bouncebox":
-                        dataHolder[BossPuppet.ColliderOption.Bouncebox].InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
-                        break;
-                    case "target":
-                        dataHolder[BossPuppet.ColliderOption.Target].InsertNewCollider(tag, hitboxNode.GetCircle());
-                        break;
-                }
+                    BossPuppet.ColliderOption.Hitboxes or BossPuppet.ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
+                    BossPuppet.ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
+                    BossPuppet.ColliderOption.Target => hitboxNode.GetCircle(),
+                    _ => null
+                });
             }
         }
         #endregion
