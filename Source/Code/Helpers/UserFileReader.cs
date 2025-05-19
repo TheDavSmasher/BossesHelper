@@ -155,11 +155,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
         {
-            if (!baseOptions.TryAdd(tag, newCollider))
+            if (baseOptions.TryAdd(tag, new ColliderList(newCollider)))
                 return;
-            baseOptions[tag] = baseOptions[tag] is ColliderList list
-                ? new ColliderList([.. list.colliders, newCollider])
-                : new ColliderList(baseOptions[tag], newCollider);
+            baseOptions[tag] = new ColliderList([.. (baseOptions[tag] as ColliderList).colliders, newCollider]);
         }
 
         private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
