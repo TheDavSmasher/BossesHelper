@@ -45,7 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HurtModes HurtMode;
 
-        private BossFunctions bossFunctions;
+        internal BossFunctions BossFunctions { get; set; }
 
         private readonly float bossHitCooldownBase;
 
@@ -129,11 +129,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        internal void SetPuppetFunctions(BossFunctions functions)
-        {
-            bossFunctions = functions;
-        }
-
         private void SetHitboxesAndColliders(string bossID)
         {
             Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
@@ -210,7 +205,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(bossFunctions.OnDamageCoroutine(source));
+                Add(BossFunctions.OnDamageCoroutine(source));
             }
         }
 

@@ -210,7 +210,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
             if (!ReadLuaPath(CleanPath(customPath, ".lua"), out ModAsset setupFile)) return;
-            controller.Puppet.SetPuppetFunctions(new BossFunctions(setupFile.PathVirtual, playerRef, controller));
+            controller.Puppet.BossFunctions = new(setupFile.PathVirtual, playerRef, controller);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
