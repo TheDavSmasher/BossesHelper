@@ -155,7 +155,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
         {
-            if (baseOptions.TryAdd(tag, newCollider))
+            if (newCollider == null || baseOptions.TryAdd(tag, newCollider))
                 return;
             baseOptions[tag] = new ColliderList(
                 [.. baseOptions[tag] is ColliderList list ? list.colliders : [baseOptions[tag]], newCollider]);
