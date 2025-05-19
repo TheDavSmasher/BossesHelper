@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using System.Collections.Generic;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -100,7 +101,7 @@ public class BossesHelperSession : EverestModuleSession
         public int startWithPatternIndex = startIndex;
     }
 
-    public BossPhase BossPhaseSaved { get; set; }
+    public Dictionary<string, BossPhase> BossPhasesSaved = [];
     #endregion
 
     #region Global Save Point

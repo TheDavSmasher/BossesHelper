@@ -75,8 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void FetchSavedPhase()
         {
-            BossesHelperSession.BossPhase phase = BossesHelperModule.Session.BossPhaseSaved;
-            if (phase.bossHealthAt != 0)
+            if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
                 Health = phase.bossHealthAt;
                 currentPatternIndex = phase.startWithPatternIndex;
@@ -183,7 +182,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
         {
-            BossesHelperModule.Session.BossPhaseSaved = new(health, startImmediately, patternIndex);
+            BossesHelperModule.Session.BossPhasesSaved.Add(BossID,
+                new BossesHelperSession.BossPhase(health, startImmediately, patternIndex));
         }
 
         public void RemoveBoss(bool permanent)
