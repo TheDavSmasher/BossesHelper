@@ -14,29 +14,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static void ReadPatternFileInto(string filepath, out List<BossPattern> targetOut,
-            Vector2 offset, ControllerDelegates delegates)
+        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset, ControllerDelegates delegates)
         {
-            targetOut = [];
-            if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
-                return;
-            }
-            XmlDocument document = new XmlDocument();
-            document.Load(xml.Stream);
-            XmlNodeList patternsList = document.SelectSingleNode("Patterns").ChildNodes;
-            foreach (XmlNode patternNode in patternsList)
-            {
-                if (patternNode.NodeType == XmlNodeType.Comment) continue;
+            List<BossPattern> targetOut = [];
 
+            ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
+            {
                 List<Method> methodList = new();
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
                     targetOut.Add(
                         new EventCutscene(patternNode.GetValue("file"), patternNode.GetValueOrDefault<int>("goto"), delegates)
                     );
-                    continue;
+                    return;
                 }
 
                 int? goTo = patternNode.GetValueOrDefault<int>("goto");
@@ -46,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 minCount ??= count;
                 if (count < minCount)
                     count = minCount;
-                
+
                 if (patternNode.LocalName.ToLower().Equals("random"))
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)
@@ -57,7 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     targetOut.Add(
                         new RandomPattern(methodList.ToArray(), trigger, minCount, count, goTo, delegates)
                     );
-                    continue;
+                    return;
                 }
 
                 List<Method> preLoopList = null;
@@ -81,30 +71,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 targetOut.Add(new SequentialPattern(
                     methodList.ToArray(), preLoopList?.ToArray() ?? [], trigger, minCount, count, goTo, delegates)
                 );
-            }
+            });
+            return targetOut;
         }
 
-        public static void ReadMetadataFileInto(string filepath,
-            out Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder)
+        public static Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> ReadMetadataFileInto(string filepath)
         {
-            dataHolder = [];
+            Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder = [];
             foreach (BossPuppet.ColliderOption option in Enum.GetValues(typeof(BossPuppet.ColliderOption)))
             {
                 dataHolder.Add(option, []);
             }
 
-            if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
+            ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
             {
-                Logger.Log(LogLevel.Warn, "Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
-                return;
-            }
-            XmlDocument doc = new XmlDocument();
-            doc.Load(xml.Stream);
-            XmlNodeList hitboxList = doc.SelectSingleNode("HitboxMetadata").ChildNodes;
-            foreach (XmlNode hitboxNode in hitboxList)
-            {
-                if (hitboxNode.NodeType == XmlNodeType.Comment) continue;
-
                 BossPuppet.ColliderOption option = Enum.Parse<BossPuppet.ColliderOption>(hitboxNode.LocalName, true);
                 dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag"), option switch
                 {
@@ -113,9 +93,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     BossPuppet.ColliderOption.Target => hitboxNode.GetCircle(),
                     _ => null
                 });
-            }
+            });
+            return dataHolder;
         }
         #endregion
+
+        private static void ReadXMLFile(string filepath, string error, string node, Action<XmlNode> nodeReader)
+        {
+            if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
+            {
+                Logger.Log(LogLevel.Error, "Bosses Helper", error);
+                return;
+            }
+            XmlDocument document = new XmlDocument();
+            document.Load(xml.Stream);
+            foreach (XmlNode xmlNode in document.SelectSingleNode(node).ChildNodes)
+            {
+                if (xmlNode.NodeType == XmlNodeType.Comment) continue;
+
+                nodeReader(xmlNode);
+            }
+        }
 
         #region XML Helper Functions
         private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>

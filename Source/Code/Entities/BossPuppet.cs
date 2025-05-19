@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = sprite;
                 Sprite.Scale = Vector2.One;
-                UserFileReader.ReadMetadataFileInto(metadataPath, out hitboxMetadata);
+                hitboxMetadata = UserFileReader.ReadMetadataFileInto(metadataPath);
                 SetHitboxesAndColliders(data.Attr("bossID"));
                 Add(Sprite);
                 PlayBossAnim(data.String("startingAnim", "idle"));

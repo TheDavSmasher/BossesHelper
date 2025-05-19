@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
             delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
-            ReadPatternFileInto(patternsPath, out AllPatterns, SceneAs<Level>().LevelOffset, delegates);
+            AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset, delegates);
         }
 
         public override void Removed(Scene scene)
