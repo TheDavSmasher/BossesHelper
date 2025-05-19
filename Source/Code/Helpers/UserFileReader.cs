@@ -86,16 +86,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public static void ReadMetadataFileInto(string filepath, out BossPuppet.HitboxMedatata dataHolder)
+        public static void ReadMetadataFileInto(string filepath,
+            out Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder)
         {
-            Dictionary<string, Collider> baseHitboxOptions = null, baseHurtboxOptions = null,
-                bounceHitboxes = null, targetCircles = null;
+            dataHolder = [];
+            foreach (BossPuppet.ColliderOption option in Enum.GetValues(typeof(BossPuppet.ColliderOption)))
+            {
+                dataHolder.Add(option, []);
+            }
 
-            string path = CleanPath(filepath, ".xml");
-            if (!Everest.Content.TryGet(path, out ModAsset xml))
+            if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
             {
                 Logger.Log(LogLevel.Warn, "Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
-                dataHolder = default;
                 return;
             }
             XmlDocument doc = new XmlDocument();
@@ -109,20 +111,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 switch (hitboxNode.LocalName.ToLower())
                 {
                     case "hitboxes":
-                        (baseHitboxOptions ??= []).Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
+                        dataHolder[BossPuppet.ColliderOption.Hitboxes].Add(tag, hitboxNode.GetAllColliders());
                         break;
                     case "hurtboxes":
-                        (baseHurtboxOptions ??= []).Add(hitboxNode.GetValue("tag"), hitboxNode.GetAllColliders());
+                        dataHolder[BossPuppet.ColliderOption.Hurtboxes].Add(tag, hitboxNode.GetAllColliders());
                         break;
                     case "bouncebox":
-                        (bounceHitboxes ??= []).InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
+                        dataHolder[BossPuppet.ColliderOption.Bouncebox].InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
                         break;
                     case "target":
-                        (targetCircles ??= []).InsertNewCollider(tag, hitboxNode.GetCircle());
+                        dataHolder[BossPuppet.ColliderOption.Target].InsertNewCollider(tag, hitboxNode.GetCircle());
                         break;
                 }
             }
-            dataHolder = new(baseHitboxOptions, baseHurtboxOptions, bounceHitboxes, targetCircles);
         }
         #endregion
 
@@ -142,7 +143,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source.Attributes[tag]?.Value ?? "main";
         }
 
-        private static Collider GetAllColliders(this XmlNode source)
+        private static ColliderList GetAllColliders(this XmlNode source)
         {
             List<Collider> baseOptions = new();
             foreach (XmlElement baseOption in source.ChildNodes)
@@ -150,7 +151,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
                     ? baseOption.GetCircle() : baseOption.GetHitbox(8f, 8f));
             }
-            return baseOptions.Count > 1 ? new ColliderList(baseOptions.ToArray()) : baseOptions.First();
+            return new([.. baseOptions]);
         }
 
         private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
