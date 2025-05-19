@@ -98,6 +98,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
         #endregion
 
+        #region XML Helper Functions
         private static void ReadXMLFile(string filepath, string error, string node, Action<XmlNode> nodeReader)
         {
             if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
@@ -115,7 +116,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        #region XML Helper Functions
         private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
         {
             return source.Attributes[tag]?.Value.Parse(T.Parse);
