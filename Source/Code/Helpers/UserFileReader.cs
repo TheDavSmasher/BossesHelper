@@ -110,10 +110,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 switch (hitboxNode.LocalName.ToLower())
                 {
                     case "hitboxes":
-                        dataHolder[BossPuppet.ColliderOption.Hitboxes].Add(tag, hitboxNode.GetAllColliders());
+                        dataHolder[BossPuppet.ColliderOption.Hitboxes].InsertNewCollider(tag, hitboxNode.GetAllColliders());
                         break;
                     case "hurtboxes":
-                        dataHolder[BossPuppet.ColliderOption.Hurtboxes].Add(tag, hitboxNode.GetAllColliders());
+                        dataHolder[BossPuppet.ColliderOption.Hurtboxes].InsertNewCollider(tag, hitboxNode.GetAllColliders());
                         break;
                     case "bouncebox":
                         dataHolder[BossPuppet.ColliderOption.Bouncebox].InsertNewCollider(tag, hitboxNode.GetHitbox(8f, 6f));
@@ -155,9 +155,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
         {
-            if (baseOptions.TryAdd(tag, new ColliderList(newCollider)))
+            if (baseOptions.TryAdd(tag, newCollider))
                 return;
-            baseOptions[tag] = new ColliderList([.. (baseOptions[tag] as ColliderList).colliders, newCollider]);
+            baseOptions[tag] = new ColliderList(
+                [.. baseOptions[tag] is ColliderList list ? list.colliders : [baseOptions[tag]], newCollider]);
         }
 
         private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
