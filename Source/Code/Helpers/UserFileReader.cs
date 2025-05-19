@@ -17,9 +17,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static void ReadPatternFileInto(string filepath, out List<BossPattern> targetOut,
             Vector2 offset, ControllerDelegates delegates)
         {
-            targetOut = new List<BossPattern>();
-            string path = CleanPath(filepath, ".xml");
-            if (!Everest.Content.TryGet(path, out ModAsset xml))
+            targetOut = [];
+            if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
             {
                 Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to find any Pattern file.");
                 return;
