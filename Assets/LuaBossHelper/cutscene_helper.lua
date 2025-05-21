@@ -39,12 +39,13 @@ local function prepareCutscene(env, func)
 end
 
 local function prepareAttack(env, func)
-    local success, onBegin = pcall(func)
+    local success, onBegin, onEnd = pcall(func)
 
     if success then
         onBegin = onBegin or env.onBegin
+        onEnd = onEnd or env.onEnd
 
-        return onBegin
+        return onBegin, onEnd
     else
         celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load attack in Lua: " .. onBegin)
         return success
