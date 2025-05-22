@@ -21,8 +21,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
             {
+                string nodeType = patternNode.LocalName.ToLower();
                 List<Method> methodList = new();
-                if (patternNode.LocalName.ToLower().Equals("event"))
+                if (nodeType.Equals("event"))
                 {
                     targetOut.Add(new EventCutscene(
                         patternNode.GetMethod(true), patternNode.GetValueOrDefault<int>("goto"), actions, delegates
@@ -38,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (count < minCount)
                     count = minCount;
 
-                if (patternNode.LocalName.ToLower().Equals("random"))
+                if (nodeType.Equals("random"))
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
