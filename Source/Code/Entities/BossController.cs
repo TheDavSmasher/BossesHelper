@@ -182,7 +182,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             ActivePattern.Active = false;
             isActing = false;
-            DestroyAll();
+            CurrentPattern.EndAction(MethodEndReason.Interrupted);
         }
 
         public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
