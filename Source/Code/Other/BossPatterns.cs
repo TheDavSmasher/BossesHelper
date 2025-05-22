@@ -31,15 +31,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected readonly ControllerDelegates delegates = delegates;
 
-            public IBossAction CurrentAction { get; private set; }
+            public IBossAction CurrentAction;
 
             protected IEnumerator PerformMethod(Method method)
             {
                 if (!method.ActionName.ToLower().Equals("wait"))
                 {
-                    if (delegates.Actions.TryGetValue(method.ActionName, out IBossAction attack))
+                    if (delegates.Actions.TryGetValue(method.ActionName, out CurrentAction))
                     {
-                        CurrentAction = attack;
                         delegates.SetIsAttacking(true);
                         yield return CurrentAction.Perform();
                         delegates.SetIsAttacking(false);
