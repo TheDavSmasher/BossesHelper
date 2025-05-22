@@ -162,6 +162,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             StartAttackPattern(goTo is int next ? next : currentPatternIndex + 1);
         }
 
+        private IEnumerator CheckForPlayer()
+        {
+            while (Scene.GetPlayer() is not null)
+            {
+                yield return null;
+            }
+            AllPatterns[currentPatternIndex]
+        }
+
         #region Lua Helper methods
         public IEnumerator WaitForAttackToEnd()
         {
