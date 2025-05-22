@@ -1,14 +1,14 @@
-﻿using Monocle;
-using System.Collections.Generic;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using System.Collections;
+using Monocle;
 using System;
-using Celeste.Mod.BossesHelper.Code.Helpers;
+using System.Collections;
+using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
-using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -93,6 +93,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
             delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
             AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset, delegates);
+            Add(new Coroutine(CheckForPlayer()));
         }
 
         public override void Removed(Scene scene)
@@ -168,7 +169,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 yield return null;
             }
-            AllPatterns[currentPatternIndex]
+            AllPatterns[currentPatternIndex].EndAction(true);
         }
 
         #region Lua Helper methods
