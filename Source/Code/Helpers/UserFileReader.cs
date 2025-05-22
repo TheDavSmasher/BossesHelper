@@ -25,7 +25,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
                     targetOut.Add(new EventCutscene(
-                        patternNode.GetValue("file"), patternNode.GetValueOrDefault<int>("goto"), actions, delegates
+                        patternNode.GetMethod(true), patternNode.GetValueOrDefault<int>("goto"), actions, delegates
                     ));
                     return;
                 }
@@ -138,7 +138,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             return new Method(
                 isFile ? source.GetValue("file") : "wait",
-                !isFile || hasTime ? source.GetValueOrDefault<float>("time") : null
+                source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
             );
         }
 

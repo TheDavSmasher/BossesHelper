@@ -75,15 +75,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public abstract IEnumerator Perform();
         }
 
-        public class EventCutscene(string eventMethod, int? goTo,
+        public class EventCutscene(Method eventMethod, int? goTo,
             Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
             : BossPattern(goTo, actions, delegates)
         {
-            private readonly string Event = eventMethod;
+            private readonly Method Event = eventMethod;
 
             public override IEnumerator Perform()
             {
-                yield return PerformMethod(new(Event, null));
+                yield return PerformMethod(Event);
                 yield return ChangePattern();
             }
         }
