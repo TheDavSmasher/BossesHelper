@@ -182,8 +182,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         #region Lua Files
         public static Dictionary<string, IBossAction> ReadLuaFiles(this BossController controller,
-            string attacksPath, string eventsPath, string customPath, Player playerRef)
+            string attacksPath, string eventsPath, string customPath)
         {
+            Player playerRef = controller.Scene.GetPlayer();
             Dictionary<string, IBossAction> actions = [];
             string[] paths = [attacksPath, eventsPath];
             for (int i = 0; i < 2; i++)
