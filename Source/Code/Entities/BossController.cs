@@ -105,17 +105,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Update();
             if (Scene.GetPlayer() is Player entity)
             {
-                if (!playerHasMoved)
+                if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately || isActing))
                 {
-                    if (entity.Speed != Vector2.Zero || startAttackingImmediately)
-                    {
-                        playerHasMoved = true;
+                    playerHasMoved = true;
+                    if (!isActing)
                         StartAttackPattern(currentPatternIndex);
-                    }
-                    if (isActing)
-                    {
-                        playerHasMoved = true;
-                    }
                 }
                 if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
