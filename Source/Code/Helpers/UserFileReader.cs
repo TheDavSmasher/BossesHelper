@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset,
+        public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset,
             Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
             List<BossPattern> targetOut = [];
@@ -76,7 +76,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return targetOut;
         }
 
-        public static Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> ReadMetadataFileInto(string filepath)
+        public static Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
         {
             Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder = [];
             foreach (BossPuppet.ColliderOption option in Enum.GetValues(typeof(BossPuppet.ColliderOption)))
@@ -181,7 +181,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static Dictionary<string, IBossAction> ReadLuaFiles(this BossController controller,
+        public static Dictionary<string, IBossAction> ReadLuaFiles(BossController controller,
             string attacksPath, string eventsPath, string customPath)
         {
             Player playerRef = controller.Scene.GetPlayer();
