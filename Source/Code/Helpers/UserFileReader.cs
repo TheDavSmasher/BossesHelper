@@ -14,7 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     {
         #region XML Files
         #region XML Reading
-        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset, ControllerDelegates delegates)
+        public static List<BossPattern> ReadPatternFileInto(string filepath, Vector2 offset,
+            Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
             List<BossPattern> targetOut = [];
 
@@ -23,9 +24,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 List<Method> methodList = new();
                 if (patternNode.LocalName.ToLower().Equals("event"))
                 {
-                    targetOut.Add(
-                        new EventCutscene(patternNode.GetValue("file"), patternNode.GetValueOrDefault<int>("goto"), delegates)
-                    );
+                    targetOut.Add(new EventCutscene(
+                        patternNode.GetValue("file"), patternNode.GetValueOrDefault<int>("goto"), actions, delegates
+                    ));
                     return;
                 }
 
@@ -44,9 +45,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
                             action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault("weight", 0), 1)));
                     }
-                    targetOut.Add(
-                        new RandomPattern(methodList.ToArray(), trigger, minCount, count, goTo, delegates)
-                    );
+                    targetOut.Add(new RandomPattern(
+                        methodList.ToArray(), trigger, minCount, count, goTo, actions, delegates
+                    ));
                     return;
                 }
 
@@ -69,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
 
                 targetOut.Add(new SequentialPattern(
-                    methodList.ToArray(), preLoopList?.ToArray() ?? [], trigger, minCount, count, goTo, delegates)
+                    methodList.ToArray(), preLoopList?.ToArray() ?? [], trigger, minCount, count, goTo, actions, delegates)
                 );
             });
             return targetOut;
