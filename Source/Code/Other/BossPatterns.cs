@@ -18,16 +18,17 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public struct ControllerDelegates(Dictionary<string, IBossAction> actions, Action<int?> changeToPattern,
             Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
         {
-            public Dictionary<string, IBossAction> Actions = actions;
             public Action<int?> ChangeToPattern = changeToPattern;
             public Func<int> RandomNext = randomNext;
             public Action<bool> SetIsAttacking = setIsAttacking;
             public Func<int?> AttackIndexForced = attackIndexForced;
         }
 
-        public abstract class BossPattern(int? goTo, ControllerDelegates delegates)
+        public abstract class BossPattern(int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
             public readonly int? GoToPattern = goTo;
+
+            private readonly Dictionary<string, IBossAction> Actions = actions;
 
             protected readonly ControllerDelegates delegates = delegates;
 
@@ -37,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 if (!method.ActionName.ToLower().Equals("wait"))
                 {
-                    if (delegates.Actions.TryGetValue(method.ActionName, out CurrentAction))
+                    if (Actions.TryGetValue(method.ActionName, out CurrentAction))
                     {
                         delegates.SetIsAttacking(true);
                         yield return CurrentAction.Perform();
@@ -67,8 +68,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public abstract IEnumerator Perform();
         }
 
-        public class EventCutscene(string eventMethod, int? goTo, ControllerDelegates delegates)
-            : BossPattern(goTo, delegates)
+        public class EventCutscene(string eventMethod, int? goTo,
+            Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+            : BossPattern(goTo, actions, delegates)
         {
             private readonly string Event = eventMethod;
 
@@ -79,9 +81,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public abstract class AttackPattern(Method[] patternLoop, Hitbox trigger,
-            int? minCount, int? count, int? goTo, ControllerDelegates delegates)
-            : BossPattern(goTo, delegates)
+        public abstract class AttackPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count, int? goTo, 
+            Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+            : BossPattern(goTo, actions, delegates)
         {
             public readonly Hitbox PlayerPositionTrigger = trigger;
 
@@ -116,15 +118,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         }
 
         public class RandomPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count,
-            int? goTo, ControllerDelegates delegates)
-            : AttackPattern(patternLoop, trigger, minCount, count, goTo, delegates)
+            int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+            : AttackPattern(patternLoop, trigger, minCount, count, goTo, actions, delegates)
         {
             protected override int AttackIndex => delegates.AttackIndexForced() ?? delegates.RandomNext();
         }
 
-        public class SequentialPattern(Method[] patternLoop, Method[] preLoop,
-            Hitbox trigger, int? minCount, int? count, int? goTo, ControllerDelegates delegates)
-            : AttackPattern(patternLoop, trigger, minCount, count, goTo, delegates)
+        public class SequentialPattern(Method[] patternLoop, Method[] preLoop, Hitbox trigger,
+            int? minCount, int? count, int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+            : AttackPattern(patternLoop, trigger, minCount, count, goTo, actions, delegates)
         {
             private readonly Method[] PrePatternMethods = preLoop;
 
