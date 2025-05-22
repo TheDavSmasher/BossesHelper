@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     return;
                 }
 
-                List<Method> preLoopList = null;
+                List<Method> preLoopList = [];
                 foreach (XmlNode action in patternNode.ChildNodes)
                 {
                     switch (action.LocalName.ToLower())
@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
 
                 targetOut.Add(new SequentialPattern(
-                    methodList.ToArray(), preLoopList?.ToArray() ?? [], trigger, minCount, count, goTo, actions, delegates)
+                    methodList.ToArray(), preLoopList.ToArray(), trigger, minCount, count, goTo, actions, delegates)
                 );
             });
             return targetOut;
