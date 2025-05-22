@@ -67,6 +67,16 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
 
             public abstract IEnumerator Perform();
+
+            protected IEnumerator PerformAndChange(Func<Method> getMethod, Func<bool> changePattern)
+            {
+                yield return PerformMethod(getMethod());
+                if (changePattern())
+                {
+                    delegates.ChangeToPattern();
+                    yield return null;
+                }
+            }
         }
 
         public class EventCutscene(Method eventMethod, int? goTo,
@@ -75,12 +85,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             private readonly Method Event = eventMethod;
 
-            public override IEnumerator Perform()
-            {
-                yield return PerformMethod(Event);
-                delegates.ChangeToPattern();
-                yield return null;
-            }
+            public override IEnumerator Perform() => PerformAndChange(() => Event, () => true);
+            
         }
 
         public abstract class AttackPattern(List<Method> patternLoop, Hitbox trigger, int? minCount, int? count, int? goTo, 
@@ -104,13 +110,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 currentAction = 0;
                 while (true)
                 {
-                    yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Count]);
-                    int counter = UpdateLoop();
-                    if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
+                    yield return PerformAndChange(() => StatePatternOrder[AttackIndex % StatePatternOrder.Count], () =>
                     {
-                        delegates.ChangeToPattern();
-                        yield return null;
-                    }
+                        int counter = UpdateLoop();
+                        return counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1);
+                    });
                 }
             }
 
