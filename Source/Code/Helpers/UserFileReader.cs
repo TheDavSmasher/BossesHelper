@@ -30,8 +30,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     return;
                 }
 
-                int? goTo = patternNode.GetValueOrDefault<int>("goto");
                 Hitbox trigger = patternNode.GetHitbox(offset);
+                int? goTo = patternNode.GetValueOrDefault<int>("goto");
                 int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
                 int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? goTo * 0;
                 minCount ??= count;
