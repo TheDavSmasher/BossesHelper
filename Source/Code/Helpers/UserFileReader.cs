@@ -42,8 +42,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     foreach (XmlNode action in patternNode.ChildNodes)
                     {
-                        methodList.AddRange(Enumerable.Repeat(new Method(action.GetValue("file"),
-                            action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault("weight", 0), 1)));
+                        methodList.AddRange(Enumerable.Repeat(
+                            action.GetMethod(true, true),
+                            Math.Max(action.GetValueOrDefault("weight", 0), 1)
+                        ));
                     }
                     targetOut.Add(new RandomPattern(
                         methodList, trigger, minCount, count, goTo, actions, delegates
@@ -57,14 +59,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     switch (action.LocalName.ToLower())
                     {
                         case "wait":
-                            methodList.Add(new Method("wait", action.GetValueOrDefault<float>("time")));
+                            methodList.Add(action.GetMethod(false));
                             break;
                         case "loop":
                             preLoopList = [.. methodList];
                             methodList.Clear();
                             break;
                         default:
-                            methodList.Add(new Method(action.GetValue("file"), null));
+                            methodList.Add(action.GetMethod(true));
                             break;
                     }
                 }
@@ -130,6 +132,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static string GetValue(this XmlNode source, string tag)
         {
             return source.Attributes[tag]?.Value ?? "main";
+        }
+
+        private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
+        {
+            return new Method(
+                isFile ? source.GetValue("file") : "wait",
+                !isFile || hasTime ? source.GetValueOrDefault<float>("time") : null
+            );
         }
 
         private static ColliderList GetAllColliders(this XmlNode source)
