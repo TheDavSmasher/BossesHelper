@@ -88,13 +88,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public abstract class AttackPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count, int? goTo, 
+        public abstract class AttackPattern(List<Method> patternLoop, Hitbox trigger, int? minCount, int? count, int? goTo, 
             Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
             : BossPattern(goTo, actions, delegates)
         {
             public readonly Hitbox PlayerPositionTrigger = trigger;
 
-            protected readonly Method[] StatePatternOrder = patternLoop;
+            protected readonly List<Method> StatePatternOrder = patternLoop;
 
             private readonly int? MinRandomIter = minCount;
 
@@ -109,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 currentAction = 0;
                 while (true)
                 {
-                    yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Length]);
+                    yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Count]);
                     int counter = UpdateLoop();
                     if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
@@ -124,18 +124,18 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public class RandomPattern(Method[] patternLoop, Hitbox trigger, int? minCount, int? count,
+        public class RandomPattern(List<Method> patternLoop, Hitbox trigger, int? minCount, int? count,
             int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
             : AttackPattern(patternLoop, trigger, minCount, count, goTo, actions, delegates)
         {
             protected override int AttackIndex => delegates.AttackIndexForced() ?? delegates.RandomNext();
         }
 
-        public class SequentialPattern(Method[] patternLoop, Method[] preLoop, Hitbox trigger,
+        public class SequentialPattern(List<Method> patternLoop, List<Method> preLoop, Hitbox trigger,
             int? minCount, int? count, int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
             : AttackPattern(patternLoop, trigger, minCount, count, goTo, actions, delegates)
         {
-            private readonly Method[] PrePatternMethods = preLoop;
+            private readonly List<Method> PrePatternMethods = preLoop;
 
             private int loop;
 
@@ -151,7 +151,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected override int UpdateLoop()
             {
-                return loop += (base.UpdateLoop() % StatePatternOrder.Length == 0) ? 1 : 0;
+                return loop += (base.UpdateLoop() % StatePatternOrder.Count == 0) ? 1 : 0;
             }
         }
     }

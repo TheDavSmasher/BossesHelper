@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             action.GetValueOrDefault<float>("wait")), Math.Max(action.GetValueOrDefault("weight", 0), 1)));
                     }
                     targetOut.Add(new RandomPattern(
-                        methodList.ToArray(), trigger, minCount, count, goTo, actions, delegates
+                        methodList, trigger, minCount, count, goTo, actions, delegates
                     ));
                     return;
                 }
@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
 
                 targetOut.Add(new SequentialPattern(
-                    methodList.ToArray(), preLoopList.ToArray(), trigger, minCount, count, goTo, actions, delegates)
+                    methodList, preLoopList, trigger, minCount, count, goTo, actions, delegates)
                 );
             });
             return targetOut;
