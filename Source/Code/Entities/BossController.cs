@@ -39,8 +39,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private List<BossPattern> AllPatterns;
 
-        private Dictionary<string, IBossAction> Actions;
-
         private readonly List<Entity> activeEntities;
 
         private readonly string attacksPath;
@@ -88,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
+            this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Dictionary<string, IBossAction> Actions, scene.GetPlayer());
             AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset,
                 new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
             Add(new Coroutine(CheckForPlayer()));
