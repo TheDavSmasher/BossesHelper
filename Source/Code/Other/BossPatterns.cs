@@ -103,7 +103,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected virtual int AttackIndex => currentAction;
 
-            protected int currentAction;
+            private int currentAction;
 
             public override IEnumerator Perform()
             {
