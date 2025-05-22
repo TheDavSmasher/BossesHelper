@@ -114,7 +114,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    ChangeToPattern(CurrentPattern.GoToPattern);
+                    ChangeToPattern();
                 }
             }
         }
@@ -149,9 +149,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             return index;
         }
 
-        private void ChangeToPattern(int? goTo)
+        private void ChangeToPattern()
         {
-            StartAttackPattern(goTo ?? currentPatternIndex + 1);
+            StartAttackPattern(CurrentPattern.GoToPattern ?? currentPatternIndex + 1);
         }
 
         private IEnumerator CheckForPlayer()

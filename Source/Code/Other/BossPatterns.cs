@@ -15,10 +15,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public float? Duration = duration;
         }
 
-        public struct ControllerDelegates(Action<int?> changeToPattern,
+        public struct ControllerDelegates(Action changeToPattern,
             Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
         {
-            public Action<int?> ChangeToPattern = changeToPattern;
+            public Action ChangeToPattern = changeToPattern;
             public Func<int> RandomNext = randomNext;
             public Action<bool> SetIsAttacking = setIsAttacking;
             public Func<int?> AttackIndexForced = attackIndexForced;
@@ -63,7 +63,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             protected IEnumerator ChangePattern()
             {
-                delegates.ChangeToPattern(GoToPattern);
+                delegates.ChangeToPattern();
                 yield return null;
             }
 
