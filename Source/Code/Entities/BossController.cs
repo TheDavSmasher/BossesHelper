@@ -157,7 +157,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void ChangeToPattern(int? goTo)
         {
-            StartAttackPattern(goTo is int next ? next : currentPatternIndex + 1);
+            StartAttackPattern(goTo ?? currentPatternIndex + 1);
         }
 
         private IEnumerator CheckForPlayer()
