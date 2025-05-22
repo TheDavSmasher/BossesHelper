@@ -14,6 +14,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public interface IBossAction
         {
             public IEnumerator Perform();
+
+            public virtual void EndAction(bool playerDied) {}
         }
 
         public class BossAttack : IBossAction
@@ -40,6 +42,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public IEnumerator Perform()
             {
                 yield return attackFunction.ToIEnumerator();
+            }
+
+            public void EndAction(bool playerDied)
+            {
+                endFunction?.Call(playerDied);
             }
         }
 
