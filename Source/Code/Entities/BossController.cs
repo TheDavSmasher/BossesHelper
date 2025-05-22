@@ -164,7 +164,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 yield return null;
             }
-            AllPatterns[currentPatternIndex].EndAction(true);
+            AllPatterns[currentPatternIndex].EndAction(MethodEndReason.PlayerDied);
         }
 
         #region Lua Helper methods

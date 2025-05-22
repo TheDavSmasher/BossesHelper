@@ -6,6 +6,7 @@ using Monocle;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
+using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
@@ -15,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             public IEnumerator Perform();
 
-            public virtual void EndAction(bool playerDied) {}
+            public void EndAction(MethodEndReason reason);
         }
 
         public class BossAttack : IBossAction
@@ -44,9 +45,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return attackFunction.ToIEnumerator();
             }
 
-            public void EndAction(bool playerDied)
+            public void EndAction(MethodEndReason reason)
             {
-                endFunction?.Call(playerDied);
+                endFunction?.Call(reason);
             }
         }
 
@@ -63,15 +64,15 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             {
                 AddToScene = () => controller.Scene.Add(this);
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                    {
-                        { "player", player },
-                        { "bossID", controller?.BossID },
-                        { "puppet", controller?.Puppet },
-                        { "boss", controller },
-                        { "cutsceneEntity", this },
-                        { "modMetaData", BossesHelperModule.Instance.Metadata }
-                    },
-                    filepath, "getCutsceneData", 2);
+                {
+                    { "player", player },
+                    { "bossID", controller?.BossID },
+                    { "puppet", controller?.Puppet },
+                    { "boss", controller },
+                    { "cutsceneEntity", this },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                },
+                filepath, "getCutsceneData", 2);
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
             }
@@ -122,6 +123,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 }
                 while (Running);
             }
+
+            public void EndAction(MethodEndReason reason) { }
         }
     }
 }

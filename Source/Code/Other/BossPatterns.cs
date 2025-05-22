@@ -24,6 +24,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public Func<int?> AttackIndexForced = attackIndexForced;
         }
 
+        public enum MethodEndReason
+        {
+            Completed,
+            Interrupted,
+            PlayerDied
+        }
+
         public abstract class BossPattern(int? goTo, Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
             public readonly int? GoToPattern = goTo;
@@ -43,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                         delegates.SetIsAttacking(true);
                         yield return CurrentAction.Perform();
                         delegates.SetIsAttacking(false);
-                        EndAction(false);
+                        EndAction(MethodEndReason.Completed);
                         CurrentAction = null;
                     }
                     else
@@ -60,9 +67,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return null;
             }
 
-            public void EndAction(bool playerDied)
+            public void EndAction(MethodEndReason reason)
             {
-                CurrentAction?.EndAction(playerDied);
+                CurrentAction?.EndAction(reason);
             }
 
             public abstract IEnumerator Perform();
