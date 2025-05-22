@@ -181,26 +181,31 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static void ReadLuaFilesInto(this BossController controller, string attacksPath, string eventsPath,
-            string customPath, out Dictionary<string, IBossAction> actions, Player playerRef)
+        public static Dictionary<string, IBossAction> ReadLuaFiles(this BossController controller,
+            string attacksPath, string eventsPath, string customPath, Player playerRef)
         {
-            actions = new();
-            string[] paths = { attacksPath, eventsPath };
+            Dictionary<string, IBossAction> actions = [];
+            string[] paths = [attacksPath, eventsPath];
             for (int i = 0; i < 2; i++)
             {
                 string path = paths[i];
-                if (!ReadLuaPath(path, out ModAsset luaFiles)) return;
-                foreach (ModAsset luaFile in luaFiles.Children)
+                if (ReadLuaPath(path, out ModAsset luaFiles))
                 {
-                    IBossAction action = i == 0
-                        ? new BossAttack(luaFile.PathVirtual, playerRef, controller)
-                        : new BossEvent(luaFile.PathVirtual, playerRef, controller);
-                    if (!actions.TryAdd(luaFile.PathVirtual.Substring(path.Length + 1), action))
-                        Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
+                    foreach (ModAsset luaFile in luaFiles.Children)
+                    {
+                        IBossAction action = i == 0
+                            ? new BossAttack(luaFile.PathVirtual, playerRef, controller)
+                            : new BossEvent(luaFile.PathVirtual, playerRef, controller);
+                        if (!actions.TryAdd(luaFile.PathVirtual.Substring(path.Length + 1), action))
+                            Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
+                    }
                 }
             }
-            if (!ReadLuaPath(CleanPath(customPath, ".lua"), out ModAsset setupFile)) return;
-            controller.Puppet.BossFunctions = new(setupFile.PathVirtual, playerRef, controller);
+            if (ReadLuaPath(CleanPath(customPath, ".lua"), out ModAsset setupFile))
+            {
+                controller.Puppet.BossFunctions = new(setupFile.PathVirtual, playerRef, controller);
+            }
+            return actions;
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
