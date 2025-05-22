@@ -41,8 +41,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Dictionary<string, IBossAction> Actions;
 
-        private ControllerDelegates delegates;
-
         private readonly List<Entity> activeEntities;
 
         private readonly string attacksPath;
@@ -91,8 +89,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             this.ReadLuaFilesInto(attacksPath, eventsPath, functionsPath, out Actions, scene.GetPlayer());
-            delegates = new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced);
-            AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset, delegates);
+            AllPatterns = ReadPatternFileInto(patternsPath, SceneAs<Level>().LevelOffset,
+                new(Actions, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
             Add(new Coroutine(CheckForPlayer()));
         }
 
