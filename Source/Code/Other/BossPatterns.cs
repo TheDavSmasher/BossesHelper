@@ -42,6 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                         delegates.SetIsAttacking(true);
                         yield return CurrentAction.Perform();
                         delegates.SetIsAttacking(false);
+                        EndAction(false);
                         CurrentAction = null;
                     }
                     else
