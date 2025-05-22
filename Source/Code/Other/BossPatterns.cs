@@ -61,12 +61,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return method.Duration;
             }
 
-            protected IEnumerator ChangePattern()
-            {
-                delegates.ChangeToPattern();
-                yield return null;
-            }
-
             public void EndAction(MethodEndReason reason)
             {
                 CurrentAction?.EndAction(reason);
@@ -84,7 +78,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public override IEnumerator Perform()
             {
                 yield return PerformMethod(Event);
-                yield return ChangePattern();
+                delegates.ChangeToPattern();
+                yield return null;
             }
         }
 
@@ -113,7 +108,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     int counter = UpdateLoop();
                     if (counter > MinRandomIter && (counter > IterationCount || delegates.RandomNext() % 2 == 1))
                     {
-                        yield return ChangePattern();
+                        delegates.ChangeToPattern();
+                        yield return null;
                     }
                 }
             }
