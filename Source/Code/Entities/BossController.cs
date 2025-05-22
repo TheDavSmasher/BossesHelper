@@ -34,9 +34,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly bool startAttackingImmediately;
 
-        private readonly Coroutine currentPattern;
+        private readonly Coroutine ActivePattern;
 
         private List<BossPattern> AllPatterns;
+
+        private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
 
         private readonly List<Entity> activeEntities;
 
@@ -61,8 +63,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             patternsPath = data.Attr("patternsPath");
             isActing = false;
             currentPatternIndex = 0;
-            currentPattern = new Coroutine();
-            Add(currentPattern);
+            ActivePattern = new Coroutine();
+            Add(ActivePattern);
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
@@ -118,14 +120,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
                 {
                     InterruptPattern();
-                    ChangeToPattern(AllPatterns[currentPatternIndex].GoToPattern);
+                    ChangeToPattern(CurrentPattern.GoToPattern);
                 }
             }
         }
 
         private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
         {
-            return AllPatterns[currentPatternIndex] is AttackPattern attack
+            return CurrentPattern is AttackPattern attack
                 && attack.PlayerPositionTrigger is Hitbox positionTrigger 
                 && positionTrigger.Collide(entityPos);
         }
@@ -135,14 +137,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (goTo >= AllPatterns.Count)
             {
                 currentPatternIndex = -1;
-                currentPattern.Active = false;
+                ActivePattern.Active = false;
                 return;
             }
             if (goTo > 0)
             {
                 currentPatternIndex = goTo;
             }
-            currentPattern.Replace(AllPatterns[currentPatternIndex].Perform());
+            ActivePattern.Replace(CurrentPattern.Perform());
         }
 
         private int? AttackIndexForced()
@@ -164,7 +166,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 yield return null;
             }
-            AllPatterns[currentPatternIndex].EndAction(MethodEndReason.PlayerDied);
+            CurrentPattern.EndAction(MethodEndReason.PlayerDied);
         }
 
         #region Lua Helper methods
@@ -178,7 +180,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void InterruptPattern()
         {
-            currentPattern.Active = false;
+            ActivePattern.Active = false;
             isActing = false;
             DestroyAll();
         }
