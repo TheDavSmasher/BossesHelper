@@ -58,6 +58,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 yield return null;
             }
 
+            public void EndAction(bool playerDied)
+            {
+                CurrentAction?.EndAction(playerDied);
+            }
+
             public abstract IEnumerator Perform();
         }
 
