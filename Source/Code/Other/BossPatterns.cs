@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public float? Duration = duration;
         }
 
-        public struct ControllerDelegates(Dictionary<string, IBossAction> actions, Action<int?> changeToPattern,
+        public struct ControllerDelegates(Action<int?> changeToPattern,
             Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
         {
             public Action<int?> ChangeToPattern = changeToPattern;
