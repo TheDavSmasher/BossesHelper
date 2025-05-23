@@ -63,8 +63,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             patternsPath = data.Attr("patternsPath");
             isActing = false;
             currentPatternIndex = 0;
-            ActivePattern = new Coroutine();
-            Add(ActivePattern);
+            Add(ActivePattern = new Coroutine());
             Puppet = new BossPuppet(data, offset, () => Health);
             activeEntities = new List<Entity>();
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
