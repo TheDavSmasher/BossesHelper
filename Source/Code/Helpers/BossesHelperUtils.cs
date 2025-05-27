@@ -288,8 +288,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIconList(EntityData entityData, int health, Vector2 barPosition, Vector2 barScale)
-                : base(barPosition, barScale, () => health)
+            public HealthIconList(EntityData entityData, Vector2 barPosition, Vector2 barScale, Func<int> getHealth)
+                : base(barPosition, barScale, getHealth)
             {
                 icons = SeparateList(entityData.Attr("healthIcons"));
                 createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));

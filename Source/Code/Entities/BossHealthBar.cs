@@ -69,7 +69,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Color baseColor = entityData.HexColor("baseColor", Color.White);
             level.Add(barEntity = barType switch
             {
-                BarTypes.Icons => new HealthIconList(entityData, BossHealth.Invoke(), BarPosition, BarScale),
+                BarTypes.Icons => new HealthIconList(entityData, BarPosition, BarScale, BossHealth),
                 BarTypes.Countdown => new HealthNumber(BarPosition, BarScale, BossHealth, baseColor),
                 _ => new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType)
             });
