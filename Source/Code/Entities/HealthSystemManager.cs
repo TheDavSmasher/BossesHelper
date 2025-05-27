@@ -2,7 +2,6 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using System;
 using System.Reflection;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using MonoMod.Cil;
