@@ -1,10 +1,12 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Monocle;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -122,6 +124,32 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 ILHookHelper.DisposeHook(fakeMethod);
             }
+        }
+    }
+}
+
+namespace Celeste.Mod.BossesHelper.Code.Components
+{
+    public partial class GlobalSavePointChanger : Component
+    {
+        public void AddToEntityOnMethod<T>(T entity, string method,
+            BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
+        {
+            entity.Add(this);
+            ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
+        }
+
+        private static void AddUpdateDelegate(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            //this.Get<GlobalSavePointChanger>()?.Update();
+            cursor.EmitLdarg0();
+            cursor.EmitDelegate(UpdateSavePointChanger);
+        }
+
+        private static void UpdateSavePointChanger(Entity entity)
+        {
+            entity.Get<GlobalSavePointChanger>()?.Update();
         }
     }
 }

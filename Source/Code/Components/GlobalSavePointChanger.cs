@@ -1,14 +1,12 @@
 ﻿using Monocle;
 using System;
 using Microsoft.Xna.Framework;
-using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Helpers;
-using MonoMod.Cil;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
     [Tracked(false)]
-    public class GlobalSavePointChanger(object levelNameSrc, Vector2 spawnPoint, Player.IntroTypes spawnType = Player.IntroTypes.Respawn)
+    public partial class GlobalSavePointChanger(object levelNameSrc, Vector2 spawnPoint, Player.IntroTypes spawnType = Player.IntroTypes.Respawn)
         : Component(active: false, visible: false)
     {
         public readonly string spawnLevel = LevelName(levelNameSrc);
@@ -36,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             if (Scene != null)
             {
                 Vector2 newSpawn = SceneAs<Level>().GetSpawnPoint(spawnPoint);
-                if (newSpawn != spawnPoint && BossesHelperUtils.DistanceBetween(spawnPoint, newSpawn) <= 80)
+                if (newSpawn != spawnPoint && DistanceBetween(spawnPoint, newSpawn) <= 80)
                     spawnPoint = newSpawn;
             }
         }
@@ -45,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         {
             base.EntityAdded(scene);
             Vector2 newSpawn = SceneAs<Level>().GetSpawnPoint(spawnPoint);
-            if (newSpawn != spawnPoint && BossesHelperUtils.DistanceBetween(spawnPoint, newSpawn) <= 80)
+            if (newSpawn != spawnPoint && DistanceBetween(spawnPoint, newSpawn) <= 80)
                 spawnPoint = newSpawn;
         }
 
@@ -56,26 +54,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             BossesHelperModule.Session.savePointSpawnType = spawnType;
             BossesHelperModule.Session.savePointSet = true;
             Active = false;
-        }
-
-        public void AddToEntityOnMethod<T>(T entity, string method,
-            BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
-        {
-            entity.Add(this);
-            ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
-        }
-
-        private static void AddUpdateDelegate(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            //this.Get<GlobalSavePointChanger>()?.Update();
-            cursor.EmitLdarg0();
-            cursor.EmitDelegate(UpdateSavePointChanger);
-        }
-
-        private static void UpdateSavePointChanger(Entity entity)
-        {
-            entity.Get<GlobalSavePointChanger>()?.Update();
         }
     }
 }
