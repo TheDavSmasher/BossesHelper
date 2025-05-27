@@ -502,6 +502,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly UInt32[] m_checksumTable;
         }
+
+        public abstract class HudEntity : Entity
+        {
+            public HudEntity()
+            {
+                AddTag(Tags.HUD);
+            }
+        }
         #endregion
     }
 }
