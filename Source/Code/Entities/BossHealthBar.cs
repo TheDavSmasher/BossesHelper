@@ -11,9 +11,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [CustomEntity("BossesHelper/BossHealthBar")]
     public class BossHealthBar : Entity
     {
-        private Vector2 BarPosition;
+        private readonly Vector2 BarPosition;
 
-        private Vector2 BarScale;
+        private readonly Vector2 BarScale;
 
         private Func<int> BossHealth;
 
@@ -25,8 +25,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Icons,
             Countdown
         }
-
-        private Level level;
 
         private readonly BarTypes barType;
 
@@ -59,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            level = SceneAs<Level>();
+            Level level = SceneAs<Level>();
             if (SceneAs<Level>().Tracker.GetNearestComponent<BossHealthTracker>(entityData.Nodes[0]) is not { } component)
             {
                 RemoveSelf();
