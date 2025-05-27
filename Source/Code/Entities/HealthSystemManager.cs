@@ -78,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            if (scene.Tracker.GetEntity<HealthSystemManager>() != this)
+            if (scene.GetEntity<HealthSystemManager>() != this)
                 RemoveSelf();
         }
 
@@ -92,21 +92,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Removed(Scene scene)
         {
             base.Removed(scene);
-            if (scene.Tracker.GetEntity<HealthSystemManager>() == this)
+            if (scene.GetEntity<HealthSystemManager>() == this)
             {
                 DisableHealthSystem();
                 BossesHelperModule.Session.healthData.isCreated = false;
-                scene.Tracker.GetEntity<PlayerHealthBar>()?.RemoveSelf();
-                scene.Tracker.GetEntity<DamageController>()?.RemoveSelf();
+                scene.GetEntity<PlayerHealthBar>()?.RemoveSelf();
+                scene.GetEntity<DamageController>()?.RemoveSelf();
             }
         }
 
         public void EnableHealthSystem()
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
-            if (Scene.Tracker.GetEntity<PlayerHealthBar>() == null)
+            if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(new PlayerHealthBar());
-            if (Scene.Tracker.GetEntity<DamageController>() == null)
+            if (Scene.GetEntity<DamageController>() == null)
                 Scene.Add(new DamageController());
             LoadFakeDeathHooks();
         }

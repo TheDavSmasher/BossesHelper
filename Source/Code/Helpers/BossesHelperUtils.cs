@@ -51,6 +51,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return scene?.Tracker?.GetEntity<Player>();
         }
 
+        public static T GetEntity<T>(this Scene scene) where T : Entity => scene?.Tracker.GetEntity<T>();
+
         public static IEnumerator PlayAnim(this Sprite sprite, string anim)
         {
             bool singleLoop = false;
