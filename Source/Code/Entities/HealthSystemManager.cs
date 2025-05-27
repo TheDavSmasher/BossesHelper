@@ -138,9 +138,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 string[] opts = fakeMethod.Split(':');
                 if (opts.Length != 2)
                     continue;
-                Type entityType = LuaMethodWrappers.GetTypeFromString(opts[0], "");
-                MethodInfo methodInfo = entityType?.GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (methodInfo != null)
+                if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
+                    .GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    is MethodInfo methodInfo)
                 {
                     ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, DetermineDeathCall);
                 }
