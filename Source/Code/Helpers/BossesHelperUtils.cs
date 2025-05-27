@@ -79,7 +79,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                sprite = spriteBank.SpriteData[id].Create();
+                sprite = spriteBank.Create(id);
                 return true;
             }
             catch (Exception)
