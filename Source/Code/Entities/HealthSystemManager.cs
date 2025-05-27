@@ -130,7 +130,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        //Fake Data Shenanigans
+        #region Fake Death Shenanigans
         private static void LoadFakeDeathHooks()
         {
             foreach (string fakeMethod in HealthData.fakeDeathMethods)
@@ -165,5 +165,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 ILHookHelper.DisposeHook(fakeMethod);
             }
         }
+        #endregion
     }
 }
