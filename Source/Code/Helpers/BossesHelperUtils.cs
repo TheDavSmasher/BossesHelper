@@ -213,7 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
-                Tag = Tags.HUD;
+                AddTag(Tags.HUD);
             }
 
             public void DrawIcon(Vector2? position = null)
