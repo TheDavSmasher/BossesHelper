@@ -218,7 +218,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void DrawIcon(Vector2? position = null)
             {
-                Position = position is Vector2 changed ? changed : Position;
+                Position = position ?? Position;
                 Add(new Coroutine(IconRoutine(startAnim)));
             }
 
