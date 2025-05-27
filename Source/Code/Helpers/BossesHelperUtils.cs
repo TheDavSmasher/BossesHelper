@@ -209,7 +209,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
             {
                 GFX.SpriteBank.TryCreate(iconSprite, out icon);
-                Add(icon);
+                    Add(icon);
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
@@ -400,25 +400,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public class HealthBar(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color, Alignment barDir)
             : HealthDisplay(barPosition, barScale, bossHealth, color)
         {
-            private readonly float leftEdge = GetPositionX(barPosition, barScale, barDir);
-
-            private readonly Alignment BarDir = barDir;
+            private readonly float leftEdge = barDir switch
+            {
+                Alignment.Left => barPosition.X - barScale.X,
+                Alignment.Center => barPosition.Y - barScale.X / 2,
+                _ => barPosition.X,
+            };
 
             public override void Added(Scene scene)
             {
                 base.Added(scene);
                 Position.X = leftEdge;
                 Collider = new Hitbox(BarScale.X, BarScale.Y);
-            }
-
-            private static float GetPositionX(Vector2 position, Vector2 scale, Alignment dir)
-            {
-                return dir switch
-                {
-                    Alignment.Left => position.X - scale.X,
-                    Alignment.Center => position.Y - scale.X / 2,
-                    _ => position.X,
-                };
             }
 
             public override void Update()
@@ -430,7 +423,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 float maxWidth = BarScale.X;
                 Collider.Width = maxWidth * GetHealth() / MaxHealth;
-                Position.X = BarDir switch
+                Position.X = barDir switch
                 {
                     Alignment.Left => leftEdge + (maxWidth - Collider.Width),
                     Alignment.Center => leftEdge + (maxWidth - Collider.Width) / 2,
