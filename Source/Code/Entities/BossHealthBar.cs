@@ -60,8 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             level = SceneAs<Level>();
-            BossHealthTracker component = SceneAs<Level>().Tracker.GetNearestComponent<BossHealthTracker>(entityData.Nodes[0]);
-            if (component == null)
+            if (SceneAs<Level>().Tracker.GetNearestComponent<BossHealthTracker>(entityData.Nodes[0]) is not { } component)
             {
                 RemoveSelf();
                 return;
