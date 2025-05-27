@@ -13,12 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         protected override bool StateCheck()
         {
-            bool result = Timer <= 0;
-            if (!result)
-            {
-                Timer -= Engine.DeltaTime;
-            }
-            return result;
+            return (Timer -= Engine.DeltaTime) <= 0;
         }
     }
 }
