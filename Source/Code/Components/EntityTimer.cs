@@ -11,9 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public EntityTimer(float timer, LuaFunction action)
             : this(timer, (e) => action.Call(e)) { }
 
-        protected override bool StateCheck()
-        {
-            return (Timer -= Engine.DeltaTime) <= 0;
-        }
+        protected override bool StateCheck() => (Timer -= Engine.DeltaTime) <= 0;
+
     }
 }
