@@ -423,11 +423,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
                 float maxWidth = BarScale.X;
                 Collider.Width = maxWidth * GetHealth() / MaxHealth;
-                Position.X = barDir switch
+                Position.X = leftEdge + barDir switch
                 {
-                    Alignment.Left => leftEdge + (maxWidth - Collider.Width),
-                    Alignment.Center => leftEdge + (maxWidth - Collider.Width) / 2,
-                    _ => leftEdge
+                    Alignment.Left => (maxWidth - Collider.Width),
+                    Alignment.Center => (maxWidth - Collider.Width) / 2,
+                    _ => 0
                 };
             }
 
