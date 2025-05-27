@@ -7,65 +7,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 
-
-namespace Celeste.Mod.BossesHelper.Code.Helpers
-{
-    public static class ILHookHelper
-    {
-        private static readonly Dictionary<string, ILHook> createdILHooks = new();
-
-        public static void GenerateHookOn(Type classType, string method,
-            ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
-        {
-            string key = classType.Name + ":" + method;
-            if (classType.GetMethod(method, flags) is not MethodInfo methodInfo) return;
-            if (stateMethod)
-            {
-                methodInfo = methodInfo.GetStateMachineTarget();
-            }
-            GenerateHookOn(key, methodInfo, action);
-        }
-
-        public static void GenerateHookOn(MethodInfo methodInfo, ILContext.Manipulator action)
-        {
-            string key = methodInfo.DeclaringType.Name + ":" + methodInfo.Name;
-            GenerateHookOn(key, methodInfo, action);
-        }
-
-        public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
-        {
-            if (createdILHooks.ContainsKey(key)) return;
-            ILHook newHook = new(methodInfo, action);
-            createdILHooks.Add(key, newHook);
-            newHook.Apply();
-        }
-
-        public static void DisposeHook(Type classType, string method)
-        {
-            string key = classType.Name + ":" + method;
-            DisposeHook(key);
-        }
-
-        public static void DisposeHook(string key)
-        {
-            if (createdILHooks.TryGetValue(key, out ILHook toRemove))
-            {
-                toRemove.Dispose();
-                createdILHooks.Remove(key);
-            }
-        }
-
-        public static void DisposeAll()
-        {
-            foreach (ILHook hook in createdILHooks.Values)
-            {
-                hook.Dispose();
-            }
-            createdILHooks.Clear();
-        }
-    }
-}
-
 namespace Celeste.Mod.BossesHelper
 {
     public partial class BossesHelperModule
@@ -87,69 +28,130 @@ namespace Celeste.Mod.BossesHelper
             }
         }
     }
-}
 
-namespace Celeste.Mod.BossesHelper.Code.Entities
-{
-    public partial class HealthSystemManager
+    namespace Code
     {
-        private static partial void LoadFakeDeathHooks()
+        namespace Helpers
         {
-            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            public static class ILHookHelper
             {
-                string[] opts = fakeMethod.Split(':');
-                if (opts.Length != 2)
-                    continue;
-                if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
-                    .GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    is MethodInfo methodInfo)
+                private static readonly Dictionary<string, ILHook> createdILHooks = new();
+
+                public static void GenerateHookOn(Type classType, string method,
+                    ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
                 {
-                    ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, il =>
+                    string key = classType.Name + ":" + method;
+                    if (classType.GetMethod(method, flags) is not MethodInfo methodInfo) return;
+                    if (stateMethod)
                     {
-                        ILCursor cursor = new(il);
-                        cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
-                        while (cursor.TryGotoNext(instr => instr.MatchRet()))
-                        {
-                            cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
-                            cursor.Index++;
-                        }
-                    });
+                        methodInfo = methodInfo.GetStateMachineTarget();
+                    }
+                    GenerateHookOn(key, methodInfo, action);
+                }
+
+                public static void GenerateHookOn(MethodInfo methodInfo, ILContext.Manipulator action)
+                {
+                    string key = methodInfo.DeclaringType.Name + ":" + methodInfo.Name;
+                    GenerateHookOn(key, methodInfo, action);
+                }
+
+                public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
+                {
+                    if (createdILHooks.ContainsKey(key)) return;
+                    ILHook newHook = new(methodInfo, action);
+                    createdILHooks.Add(key, newHook);
+                    newHook.Apply();
+                }
+
+                public static void DisposeHook(Type classType, string method)
+                {
+                    string key = classType.Name + ":" + method;
+                    DisposeHook(key);
+                }
+
+                public static void DisposeHook(string key)
+                {
+                    if (createdILHooks.TryGetValue(key, out ILHook toRemove))
+                    {
+                        toRemove.Dispose();
+                        createdILHooks.Remove(key);
+                    }
+                }
+
+                public static void DisposeAll()
+                {
+                    foreach (ILHook hook in createdILHooks.Values)
+                    {
+                        hook.Dispose();
+                    }
+                    createdILHooks.Clear();
                 }
             }
         }
 
-        private static void UnloadFakeDeathHooks()
+        namespace Entities
         {
-            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            public partial class HealthSystemManager
             {
-                ILHookHelper.DisposeHook(fakeMethod);
+                private static partial void LoadFakeDeathHooks()
+                {
+                    foreach (string fakeMethod in HealthData.fakeDeathMethods)
+                    {
+                        string[] opts = fakeMethod.Split(':');
+                        if (opts.Length != 2)
+                            continue;
+                        if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
+                            .GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                            is MethodInfo methodInfo)
+                        {
+                            ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, il =>
+                            {
+                                ILCursor cursor = new(il);
+                                cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
+                                while (cursor.TryGotoNext(instr => instr.MatchRet()))
+                                {
+                                    cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
+                                    cursor.Index++;
+                                }
+                            });
+                        }
+                    }
+                }
+
+                private static void UnloadFakeDeathHooks()
+                {
+                    foreach (string fakeMethod in HealthData.fakeDeathMethods)
+                    {
+                        ILHookHelper.DisposeHook(fakeMethod);
+                    }
+                }
             }
         }
-    }
-}
 
-namespace Celeste.Mod.BossesHelper.Code.Components
-{
-    public partial class GlobalSavePointChanger : Component
-    {
-        public void AddToEntityOnMethod<T>(T entity, string method,
-            BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
+        namespace Components
         {
-            entity.Add(this);
-            ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
-        }
+            public partial class GlobalSavePointChanger : Component
+            {
+                public void AddToEntityOnMethod<T>(T entity, string method,
+                    BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
+                {
+                    entity.Add(this);
+                    ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
+                }
 
-        private static void AddUpdateDelegate(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            //this.Get<GlobalSavePointChanger>()?.Update();
-            cursor.EmitLdarg0();
-            cursor.EmitDelegate(UpdateSavePointChanger);
-        }
+                private static void AddUpdateDelegate(ILContext il)
+                {
+                    ILCursor cursor = new(il);
+                    //this.Get<GlobalSavePointChanger>()?.Update();
+                    cursor.EmitLdarg0();
+                    cursor.EmitDelegate(UpdateSavePointChanger);
+                }
 
-        private static void UpdateSavePointChanger(Entity entity)
-        {
-            entity.Get<GlobalSavePointChanger>()?.Update();
+                private static void UpdateSavePointChanger(Entity entity)
+                {
+                    entity.Get<GlobalSavePointChanger>()?.Update();
+                }
+            }
         }
     }
 }
