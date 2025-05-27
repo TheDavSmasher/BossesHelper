@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
-using Celeste.Mod.BossesHelper.Code.Entities;
 using MonoMod.RuntimeDetour;
-using MonoMod.Cil;
+using Celeste.Mod.BossesHelper.Code.Other;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper;
 
-public class BossesHelperModule : EverestModule
+public partial class BossesHelperModule : EverestModule
 {
     public static BossesHelperModule Instance { get; private set; }
 
@@ -131,23 +129,6 @@ public class BossesHelperModule : EverestModule
             Session.SafeSpawn = spawn;
         if (Session.damageCooldown > 0)
             Session.damageCooldown -= Engine.DeltaTime;
-    }
-
-    public static void ILOnSquish(ILContext il)
-    {
-        ILCursor dieCursor = new(il);
-        while (dieCursor.TryGotoNext(MoveType.After, instr => instr.MatchCallvirt<Player>("Die")))
-        {
-            ILCursor argCursor = new(dieCursor);
-            if (argCursor.TryGotoPrev(MoveType.AfterLabel, instr => instr.MatchLdarg0()))
-            {
-                //KillOnCrush(self, data, evenIfInvincible);
-                argCursor.EmitLdarg0();
-                argCursor.EmitLdarg1();
-                argCursor.EmitLdloc2();
-                argCursor.EmitDelegate(KillOnCrush);
-            }
-        }
     }
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)

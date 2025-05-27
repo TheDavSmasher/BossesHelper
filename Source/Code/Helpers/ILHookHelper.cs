@@ -1,4 +1,5 @@
-﻿using MonoMod.Cil;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using System;
@@ -59,6 +60,29 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 hook.Dispose();
             }
             createdILHooks.Clear();
+        }
+    }
+}
+
+namespace Celeste.Mod.BossesHelper
+{
+    public partial class BossesHelperModule
+    {
+        public static void ILOnSquish(ILContext il)
+        {
+            ILCursor dieCursor = new(il);
+            while (dieCursor.TryGotoNext(MoveType.After, instr => instr.MatchCallvirt<Player>("Die")))
+            {
+                ILCursor argCursor = new(dieCursor);
+                if (argCursor.TryGotoPrev(MoveType.AfterLabel, instr => instr.MatchLdarg0()))
+                {
+                    //KillOnCrush(self, data, evenIfInvincible);
+                    argCursor.EmitLdarg0()
+                        .EmitLdarg1()
+                        .EmitLdloc2()
+                        .EmitDelegate(KillOnCrush);
+                }
+            }
         }
     }
 }
