@@ -15,8 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
         {
             string key = classType.Name + ":" + method;
-            MethodInfo methodInfo = classType.GetMethod(method, flags);
-            if (methodInfo == null) return;
+            if (classType.GetMethod(method, flags) is not MethodInfo methodInfo) return;
             if (stateMethod)
             {
                 methodInfo = methodInfo.GetStateMachineTarget();
