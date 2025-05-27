@@ -500,11 +500,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             private readonly UInt32[] m_checksumTable;
         }
 
-        public abstract class HudEntity : Entity
+        public abstract class HudEntity : GlobalEntity
         {
-            public HudEntity()
+            public HudEntity(bool isGlobal = false) : base(isGlobal)
             {
                 AddTag(Tags.HUD);
+            }
+        }
+
+        public abstract class GlobalEntity : Entity
+        {
+            public GlobalEntity(bool isGlobal)
+            {
+                if (isGlobal)
+                {
+                    AddTag(Tags.Global);
+                }
             }
         }
         #endregion
