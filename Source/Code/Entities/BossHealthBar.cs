@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     [CustomEntity("BossesHelper/BossHealthBar")]
-    public class BossHealthBar : Entity
+    public class BossHealthBar : HudEntity
     {
         private readonly Vector2 BarPosition;
 
@@ -44,14 +44,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public BossHealthBar(EntityData data, Vector2 _)
+        public BossHealthBar(EntityData data, Vector2 _) : base()
         {
-            this.entityData = data;
+            entityData = data;
             Position = data.Position;
             BarPosition = new Vector2(data.Float("healthBarX"), data.Float("healthBarY"));
             BarScale = new Vector2(data.Float("healthScaleX", 1f), data.Float("healthScaleY", 1f));
             barType = data.Enum<BarTypes>("barType", BarTypes.BarLeft);
-            AddTag(Tags.HUD);
         }
 
         public override void Awake(Scene scene)

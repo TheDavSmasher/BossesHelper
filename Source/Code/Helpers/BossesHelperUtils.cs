@@ -128,7 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region Health Displays
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
-        public class HealthDisplay : Entity
+        public class HealthDisplay : HudEntity
         {
             public readonly Sprite Frame;
 
@@ -170,7 +170,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 if (GFX.SpriteBank.TryCreate(HealthData.frameSprite, out Frame))
                     Add(Frame);
-                AddTag(Tags.HUD);
                 Position = position;
                 BarScale = barScale;
                 GetHealth = getHealth;
@@ -186,7 +185,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIcon : Entity
+        public class HealthIcon : HudEntity
         {
             private readonly Sprite icon;
 
@@ -213,7 +212,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
-                AddTag(Tags.HUD);
             }
 
             public void DrawIcon(Vector2? position = null)
