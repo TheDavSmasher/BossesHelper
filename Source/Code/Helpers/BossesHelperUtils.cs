@@ -117,10 +117,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             self.End();
         }
 
+        #nullable enable
         public static T Parse<T>(this string value, Func<string, IFormatProvider?, T> parser)
         {
             return parser(value, null);
         }
+        #nullable disable
         #endregion
 
         #region Health Displays
