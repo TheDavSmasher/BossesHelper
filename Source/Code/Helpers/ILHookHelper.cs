@@ -141,10 +141,10 @@ namespace Celeste.Mod.BossesHelper
 
                 private static void AddUpdateDelegate(ILContext il)
                 {
-                    ILCursor cursor = new(il);
                     //this.Get<GlobalSavePointChanger>()?.Update();
-                    cursor.EmitLdarg0();
-                    cursor.EmitDelegate(UpdateSavePointChanger);
+                    new ILCursor(il)
+                        .EmitLdarg0()
+                        .EmitDelegate(UpdateSavePointChanger);
                 }
 
                 private static void UpdateSavePointChanger(Entity entity)
