@@ -510,9 +510,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public abstract class GlobalEntity : Entity
         {
+            protected readonly bool IsGlobal;
+
             public GlobalEntity(bool isGlobal)
             {
-                if (isGlobal)
+                if (IsGlobal = isGlobal)
                 {
                     AddTag(Tags.Global);
                 }
