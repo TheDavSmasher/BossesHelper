@@ -279,8 +279,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 removeAnims = SeparateList(HealthData.endAnim);
                 iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                 removeIconOnDamage = HealthData.removeOnDamage;
-                isGlobal = global;
-                if (isGlobal)
+                if (isGlobal = global)
                 {
                     AddTag(Tags.Global);
                 }
