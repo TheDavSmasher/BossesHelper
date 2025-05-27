@@ -86,3 +86,42 @@ namespace Celeste.Mod.BossesHelper
         }
     }
 }
+
+namespace Celeste.Mod.BossesHelper.Code.Entities
+{
+    public partial class HealthSystemManager
+    {
+        private static partial void LoadFakeDeathHooks()
+        {
+            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            {
+                string[] opts = fakeMethod.Split(':');
+                if (opts.Length != 2)
+                    continue;
+                if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
+                    .GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    is MethodInfo methodInfo)
+                {
+                    ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, il =>
+                    {
+                        ILCursor cursor = new(il);
+                        cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
+                        while (cursor.TryGotoNext(instr => instr.MatchRet()))
+                        {
+                            cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
+                            cursor.Index++;
+                        }
+                    });
+                }
+            }
+        }
+
+        private static void UnloadFakeDeathHooks()
+        {
+            foreach (string fakeMethod in HealthData.fakeDeathMethods)
+            {
+                ILHookHelper.DisposeHook(fakeMethod);
+            }
+        }
+    }
+}

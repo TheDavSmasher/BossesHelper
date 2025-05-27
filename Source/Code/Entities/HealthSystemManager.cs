@@ -2,15 +2,12 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Helpers;
-using MonoMod.Cil;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     [CustomEntity("BossesHelper/HealthSystemManager")]
-    public class HealthSystemManager : Entity
+    public partial class HealthSystemManager : Entity
     {
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
@@ -129,41 +126,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        #region Fake Death Shenanigans
-        private static void LoadFakeDeathHooks()
-        {
-            foreach (string fakeMethod in HealthData.fakeDeathMethods)
-            {
-                string[] opts = fakeMethod.Split(':');
-                if (opts.Length != 2)
-                    continue;
-                if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
-                    .GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    is MethodInfo methodInfo)
-                {
-                    ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, DetermineDeathCall);
-                }
-            }
-        }
-
-        private static void DetermineDeathCall(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
-            while (cursor.TryGotoNext(instr => instr.MatchRet()))
-            {
-                cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
-                cursor.Index++;
-            }
-        }
-
-        private static void UnloadFakeDeathHooks()
-        {
-            foreach (string fakeMethod in HealthData.fakeDeathMethods)
-            {
-                ILHookHelper.DisposeHook(fakeMethod);
-            }
-        }
-        #endregion
+        private static partial void LoadFakeDeathHooks();
     }
 }
