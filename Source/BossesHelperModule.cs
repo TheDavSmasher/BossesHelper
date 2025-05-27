@@ -135,10 +135,10 @@ public class BossesHelperModule : EverestModule
 
     public static void ILOnSquish(ILContext il)
     {
-        ILCursor dieCursor = new ILCursor(il);
+        ILCursor dieCursor = new(il);
         while (dieCursor.TryGotoNext(MoveType.After, instr => instr.MatchCallvirt<Player>("Die")))
         {
-            ILCursor argCursor = new ILCursor(dieCursor);
+            ILCursor argCursor = new(dieCursor);
             if (argCursor.TryGotoPrev(MoveType.AfterLabel, instr => instr.MatchLdarg0()))
             {
                 //KillOnCrush(self, data, evenIfInvincible);
@@ -300,8 +300,10 @@ public class BossesHelperModule : EverestModule
 
     public static EntityData MakeEntityData()
     {
-        EntityData entityData = new EntityData();
-        entityData.Values = new Dictionary<string, object>();
+        EntityData entityData = new()
+        {
+            Values = []
+        };
         return entityData;
     }
 
