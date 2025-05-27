@@ -7,7 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     [CustomEntity("BossesHelper/HealthSystemManager")]
-    public partial class HealthSystemManager : Entity
+    public partial class HealthSystemManager : GlobalEntity
     {
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
@@ -28,6 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         public HealthSystemManager(EntityData data, Vector2 _)
+            : base(data.Bool("isGlobal"))
         {
             Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
             Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
@@ -40,8 +41,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 healthIconScale = iconScale,
                 iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation),
                 frameSprite = data.String("frameSprite", HealthData.frameSprite),
-                globalController = data.Bool("isGlobal"),
-                globalHealth = HealthData.globalController && data.Bool("globalHealth"),
+                globalController = IsGlobal,
+                globalHealth = IsGlobal && data.Bool("globalHealth"),
                 playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),
                 damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
                 playerOnCrush = data.Enum("crushEffect", HealthData.playerOnCrush),
@@ -59,11 +60,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             ResetCurrentHealth(!HealthData.isCreated);
             BossesHelperModule.Session.healthData.isCreated = true;
-            if (HealthData.globalController)
-                AddTag(Tags.Global);
         }
 
-        public HealthSystemManager()
+        public HealthSystemManager() : base(false)
         {
             ResetCurrentHealth(HealthData.isCreated && !HealthData.globalHealth);
         }

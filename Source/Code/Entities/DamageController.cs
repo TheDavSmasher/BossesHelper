@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using NLua;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
-    public class DamageController : Entity
+    public class DamageController : GlobalEntity
     {
         private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
 
@@ -26,10 +27,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private LuaFunction onDamage;
 
-        internal DamageController()
+        internal DamageController() : base(BSession.healthData.globalController)
         {
-            if (BSession.healthData.globalController)
-                AddTag(Tags.Global);
             baseCooldown = BSession.healthData.damageCooldown;
         }
 

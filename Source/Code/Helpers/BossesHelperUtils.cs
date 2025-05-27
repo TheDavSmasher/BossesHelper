@@ -166,7 +166,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default)
+            public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default, bool isGlobal = false)
+                : base(isGlobal)
             {
                 if (GFX.SpriteBank.TryCreate(HealthData.frameSprite, out Frame))
                     Add(Frame);
@@ -205,7 +206,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim)
+            public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
+                : base(isGlobal)
             {
                 GFX.SpriteBank.TryCreate(iconSprite, out icon);
                     Add(icon);
@@ -253,8 +255,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly List<float> iconSeparations;
 
-            private readonly bool isGlobal = false;
-
             public int Count
             {
                 get
@@ -272,17 +272,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
 
             public HealthIconList(bool global)
-                : base(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth)
+                : base(HealthData.healthBarPos, HealthData.healthIconScale,
+                      () => BossesHelperModule.Session.currentPlayerHealth, isGlobal: global)
             {
                 icons = SeparateList(HealthData.iconSprite);
                 createAnims = SeparateList(HealthData.startAnim);
                 removeAnims = SeparateList(HealthData.endAnim);
                 iconSeparations = SeparateFloatList(HealthData.iconSeparation);
                 removeIconOnDamage = HealthData.removeOnDamage;
-                if (isGlobal = global)
-                {
-                    AddTag(Tags.Global);
-                }
             }
 
             public HealthIconList(EntityData entityData, Vector2 barPosition, Vector2 barScale, Func<int> getHealth)
@@ -333,10 +330,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     healthIcon = new(BarScale,
                         icons.ElementAtOrDefault(i, icons.Last()),
                         createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                        removeAnims.ElementAtOrDefault(i, removeAnims.Last())
+                        removeAnims.ElementAtOrDefault(i, removeAnims.Last()),
+                        IsGlobal
                     );
-                    if (isGlobal)
-                        healthIcon.AddTag(Tags.Global);
 
                     float sum = 0f;
                     for (int index = 0; index < i; index++)

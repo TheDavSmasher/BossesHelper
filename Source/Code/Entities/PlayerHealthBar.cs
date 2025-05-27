@@ -22,12 +22,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HealthIconList healthIcons;
 
-        internal PlayerHealthBar() : base()
+        internal PlayerHealthBar() : base(HealthData.globalController)
         {
             healthIcons = new(HealthData.globalController);
             Visible = HealthData.startVisible;
-            if (HealthData.globalController)
-                AddTag(Tags.Global);
         }
 
         public override void Added(Scene scene)
