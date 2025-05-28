@@ -140,23 +140,24 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region Health Displays
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
-        public class HealthDisplay : HudEntity
+        public class HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default, bool isGlobal = false)
+            : HudEntity(isGlobal)
         {
-            public readonly Sprite Frame;
+            public readonly Sprite Frame = GFX.SpriteBank.TryCreate(HealthData.frameSprite);
 
-            public readonly Vector2 BarScale;
+            public readonly Vector2 BarScale = barScale;
 
-            public readonly Func<int> GetHealth;
+            public readonly Func<int> GetHealth = getHealth;
 
-            public readonly Color BaseColor;
+            public readonly Color BaseColor = color;
 
-            public readonly int MaxHealth;
+            public readonly int MaxHealth = getHealth();
 
             public bool ActiveVisibility = true;
 
             protected bool ActiveVisible => !Scene.Paused && ActiveVisibility;
 
-            public Color Color;
+            public Color Color = color;
 
             public new bool Visible
             {
@@ -178,17 +179,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default, bool isGlobal = false)
-                : base(isGlobal)
+            public override void Added(Scene scene)
             {
-                if (GFX.SpriteBank.TryCreate(HealthData.frameSprite, out Frame))
-                    Add(Frame);
+                base.Added(scene);
                 Position = position;
-                BarScale = barScale;
-                GetHealth = getHealth;
-                MaxHealth = GetHealth();
-                BaseColor = color;
-                Color = color;
+                if (Frame.Width > 0 && Frame.Height > 0)
+                {
+                    Add(Frame);
+                }
             }
 
             public override void Update()
@@ -219,8 +217,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 base.Added(scene);
                 if (icon.Width > 0 && icon.Height > 0)
-            {
-                icon.Scale = barScale;
+                {
+                    icon.Scale = barScale;
                     Add(icon);
                 }
             }
