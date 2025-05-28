@@ -87,8 +87,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             AllPatterns = ReadPatternFile(patternsPath, SceneAs<Level>().LevelOffset,
-                ReadLuaFiles(this, attacksPath, eventsPath, functionsPath),
+                ReadLuaFiles(this, attacksPath, eventsPath),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
+            ReadBossFunctions(this, functionsPath);
             Add(new Coroutine(CheckForPlayer()));
         }
 

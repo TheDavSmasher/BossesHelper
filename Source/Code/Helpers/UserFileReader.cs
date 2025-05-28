@@ -192,8 +192,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static Dictionary<string, IBossAction> ReadLuaFiles(BossController controller,
-            string attacksPath, string eventsPath, string customPath)
+        public static Dictionary<string, IBossAction> ReadLuaFiles(
+            BossController controller, string attacksPath, string eventsPath)
         {
             Player playerRef = controller.Scene.GetPlayer();
             Dictionary<string, IBossAction> actions = [];
@@ -213,11 +213,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     }
                 }
             }
-            if (ReadLuaPath(CleanPath(customPath, ".lua"), out ModAsset setupFile))
+            return actions;
+        }
+
+        public static void ReadBossFunctions(BossController controller, string filepath)
+        {
+            Player playerRef = controller.Scene.GetPlayer();
+            if (ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile))
             {
                 controller.Puppet.BossFunctions = new(setupFile.PathVirtual, playerRef, controller);
             }
-            return actions;
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
