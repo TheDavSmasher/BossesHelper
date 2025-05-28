@@ -12,7 +12,7 @@ using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [CustomEntity("BossesHelper/BossController")]
-    public class BossController : Entity
+    public partial class BossController : Entity
     {
         public Random Random { get; private set; }
 
@@ -162,15 +162,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             CurrentPattern.EndAction(MethodEndReason.PlayerDied);
         }
 
-        #region Lua Helper methods
-        public IEnumerator WaitForAttackToEnd()
-        {
-            while (isActing)
-            {
-                yield return null;
-            }
-        }
-
         public void InterruptPattern()
         {
             ActivePattern.Active = false;
@@ -178,69 +169,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             CurrentPattern.EndAction(MethodEndReason.Interrupted);
         }
 
-        public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
-        {
-            BossesHelperModule.Session.BossPhasesSaved.Add(BossID,
-                new BossesHelperSession.BossPhase(health, startImmediately, patternIndex));
-        }
-
-        public void RemoveBoss(bool permanent)
-        {
-            RemoveSelf();
-            if (permanent)
-            {
-                SceneAs<Level>().Session.DoNotLoad.Add(id);
-            }
-        }
-
-        public int GetCurrentPatternIndex()
-        {
-            return currentPatternIndex;
-        }
-
-        public int GetHealth()
-        {
-            return Health;
-        }
-
-        public void SetHealth(int val)
-        {
-            Health = val;
-        }
-
-        public void DecreaseHealth(int val = 1)
-        {
-            Health -= val;
-        }
-
-        public void ForceNextAttackIndex(int index)
-        {
-            forcedAttackIndex = index;
-        }
-
-        public void AddEntity(Entity entity)
-        {
-            if (!activeEntities.Contains(entity))
-            {
-                Scene.Add(entity);
-                activeEntities.Add(entity);
-                entity.Scene = Scene;
-            }
-        }
-
-        public void DestroyEntity(Entity entity)
-        {
-            if (activeEntities.Remove(entity))
-            {
-                entity.RemoveSelf();
-            }
-        }
-
         public void DestroyAll()
         {
             activeEntities.ForEach(entity => entity.RemoveSelf());
             activeEntities.Clear();
         }
-        #endregion
     }
 }
