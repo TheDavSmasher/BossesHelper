@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             filepath = entityData.String("luaFile");
             string spriteName = entityData.String("savePointSprite");
             GFX.SpriteBank.TryCreate(spriteName, out Sprite);
-            Add(Sprite);
+                Add(Sprite);
             talkerRect = new Rectangle(entityData.Int("rectXOffset"),
                 entityData.Int("rectYOffset"), entityData.Int("rectWidth"), 8);
             talkerOffset = new Vector2(entityData.Float("talkerXOffset"), entityData.Float("talkerYOffset"));
