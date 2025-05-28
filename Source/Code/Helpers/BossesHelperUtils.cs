@@ -198,13 +198,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIcon : HudEntity
+        public class HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
+            : HudEntity(isGlobal)
         {
-            private readonly Sprite icon;
-
-            private readonly string startAnim;
-
-            private readonly string endAnim;
+            private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
 
             public new bool Visible
             {
@@ -218,13 +215,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
 
-            public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
-                : base(isGlobal)
+            public override void Added(Scene scene)
             {
-                Add(icon = GFX.SpriteBank.TryCreate(iconSprite));
-                this.startAnim = startAnim;
-                this.endAnim = endAnim;
+                base.Added(scene);
+                if (icon.Width > 0 && icon.Height > 0)
+            {
                 icon.Scale = barScale;
+                    Add(icon);
+                }
             }
 
             public void DrawIcon(Vector2? position = null)
