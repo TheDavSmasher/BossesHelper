@@ -186,58 +186,58 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
-            : HudEntity(isGlobal)
-        {
-            private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
-
-            public new bool Visible
-            {
-                get
-                {
-                    return icon.Visible;
-                }
-                set
-                {
-                    icon.Visible = value;
-                }
-            }
-
-            public override void Added(Scene scene)
-            {
-                base.Added(scene);
-                if (icon.Width > 0 && icon.Height > 0)
-                {
-                    icon.Scale = barScale;
-                    Add(icon);
-                }
-            }
-
-            public void DrawIcon(Vector2? position = null)
-            {
-                Position = position ?? Position;
-                Add(new Coroutine(IconRoutine(startAnim)));
-            }
-
-            public void RemoveIcon(bool remove = true)
-            {
-                Add(new Coroutine(IconRoutine(endAnim, remove)));
-            }
-
-            private IEnumerator IconRoutine(string anim, bool remove = false)
-            {
-                yield return icon.PlayAnim(anim);
-                if (remove)
-                {
-                    RemoveSelf();
-                }
-            }
-        }
-
         public class HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, List<string> icons,
                 List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIconOnDamage, bool isGlobal = false) 
             : HealthDisplay(barPosition, barScale, getHealth, isGlobal: isGlobal)
         {
+            private class HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
+            : HudEntity(isGlobal)
+            {
+                private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
+
+                public new bool Visible
+                {
+                    get
+                    {
+                        return icon.Visible;
+                    }
+                    set
+                    {
+                        icon.Visible = value;
+                    }
+                }
+
+                public override void Added(Scene scene)
+                {
+                    base.Added(scene);
+                    if (icon.Width > 0 && icon.Height > 0)
+                    {
+                        icon.Scale = barScale;
+                        Add(icon);
+                    }
+                }
+
+                public void DrawIcon(Vector2? position = null)
+                {
+                    Position = position ?? Position;
+                    Add(new Coroutine(IconRoutine(startAnim)));
+                }
+
+                public void RemoveIcon(bool remove = true)
+                {
+                    Add(new Coroutine(IconRoutine(endAnim, remove)));
+                }
+
+                private IEnumerator IconRoutine(string anim, bool remove = false)
+                {
+                    yield return icon.PlayAnim(anim);
+                    if (remove)
+                    {
+                        RemoveSelf();
+                    }
+                }
+            }
+
             private readonly List<HealthIcon> healthIcons = [];
 
             private readonly List<HealthIcon> toRemove = [];
