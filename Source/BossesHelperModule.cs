@@ -257,9 +257,9 @@ public partial class BossesHelperModule : EverestModule
         player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY * 8);
     }
 
-    public static void PlayerTakesDamage(Vector2 origin, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
+    public static void PlayerTakesDamage(Vector2? origin = null, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
     {
-        Engine.Scene.GetEntity<DamageController>()?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
+        Engine.Scene.GetEntity<DamageController>()?.TakeDamage(origin ?? Vector2.Zero, amount, silent, stagger, evenIfInvincible);
     }
 
     private static float? GetFromY(Player player)
