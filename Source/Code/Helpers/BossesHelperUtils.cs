@@ -11,9 +11,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     public static class BossesHelperUtils
     {
         #region Extensions
-        public static T ElementAtOrDefault<T>(this IList<T> list, int index, T @default)
+        public static T ElementAtOrLast<T>(this IList<T> list, int index)
         {
-            return index >= 0 && index < list.Count ? list[index] : @default;
+            return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
         }
 
         public static bool TryPop<T>(this List<T> list, out T value, int? at = null)
@@ -282,16 +282,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
                     healthIcon = new(BarScale,
-                        icons.ElementAtOrDefault(i, icons.Last()),
-                        createAnims.ElementAtOrDefault(i, createAnims.Last()),
-                        removeAnims.ElementAtOrDefault(i, removeAnims.Last()),
+                        icons.ElementAtOrLast(i),
+                        createAnims.ElementAtOrLast(i),
+                        removeAnims.ElementAtOrLast(i),
                         IsGlobal
                     );
 
                     float sum = 0f;
                     for (int index = 0; index < i; index++)
                     {
-                        sum += iconSeparations.ElementAtOrDefault(index, iconSeparations.LastOrDefault());
+                        sum += iconSeparations.ElementAtOrLast(index);
                     }
                     iconPosition = Position + Vector2.UnitX * sum;
                 }
