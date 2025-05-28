@@ -174,7 +174,7 @@ public partial class BossesHelperModule : EverestModule
                 break;
             case HealthSystemManager.CrushEffect.FakeDeath:
                 PlayerTakesDamage(Vector2.Zero, evenIfInvincible: true);
-                FakeDie(player, Vector2.UnitY * -1);
+                FakeDie(player);
                 break;
             default: //CrushEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
@@ -182,7 +182,7 @@ public partial class BossesHelperModule : EverestModule
         }
     }
 
-    private static PlayerDeadBody FakeDie(Player self, Vector2 dir)
+    private static PlayerDeadBody FakeDie(Player self, Vector2? dir = null)
     {
         Level level = self.SceneAs<Level>();
 
@@ -206,7 +206,7 @@ public partial class BossesHelperModule : EverestModule
             self.level.InCutscene = false;
             self.level.Shake();
             Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
-            PlayerDeadBody fakeDeadBody = new(self, dir)
+            PlayerDeadBody fakeDeadBody = new(self, dir ?? Vector2.UnitY * -1)
             {
                 DeathAction = TeleportPlayer
             };
@@ -236,7 +236,7 @@ public partial class BossesHelperModule : EverestModule
                 break;
             case HealthSystemManager.OffscreenEffect.FakeDeath:
                 PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
-                FakeDie(player, Vector2.UnitY * -1);
+                FakeDie(player);
                 break;
             default: //OffscreenEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
