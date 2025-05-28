@@ -272,24 +272,24 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
 
             public HealthIconList(bool global)
-                : base(HealthData.healthBarPos, HealthData.healthIconScale,
-                      () => BossesHelperModule.Session.currentPlayerHealth, isGlobal: global)
-            {
-                icons = SeparateList(HealthData.iconSprite);
-                createAnims = SeparateList(HealthData.startAnim);
-                removeAnims = SeparateList(HealthData.endAnim);
-                iconSeparations = SeparateFloatList(HealthData.iconSeparation);
-                removeIconOnDamage = HealthData.removeOnDamage;
-            }
+                : this(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth,
+                      SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim), SeparateList(HealthData.endAnim), 
+                      SeparateFloatList(HealthData.iconSeparation), HealthData.removeOnDamage, global) { }
 
             public HealthIconList(EntityData entityData, Vector2 barPosition, Vector2 barScale, Func<int> getHealth)
-                : base(barPosition, barScale, getHealth)
+                : this(barPosition, barScale, getHealth, SeparateList(entityData.Attr("healthIcons")),
+                      SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
+                      SeparateFloatList(entityData.Attr("healthIconsSeparation")), entityData.Bool("removeOnDamage")) { }
+
+            private HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, List<string> icons,
+                List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIcon, bool isGlobal = false)
+                : base(barPosition, barScale, getHealth, isGlobal: isGlobal)
             {
-                icons = SeparateList(entityData.Attr("healthIcons"));
-                createAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                removeAnims = SeparateList(entityData.Attr("healthIconsCreateAnim"));
-                iconSeparations = SeparateFloatList(entityData.Attr("healthIconsSeparation"));
-                removeIconOnDamage = entityData.Bool("removeOnDamage");
+                this.icons = icons;
+                this.createAnims = createAnims;
+                this.removeAnims = removeAnims;
+                this.iconSeparations = iconSeparations;
+                removeIconOnDamage = removeIcon;
             }
 
             public override void Awake(Scene scene)
