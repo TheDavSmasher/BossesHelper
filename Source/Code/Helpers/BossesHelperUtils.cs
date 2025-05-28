@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             int index = at is int i ? i : list.Count - 1;
             if (index < 0 || index >= list.Count)
             {
-                value = default(T);
+                value = default;
                 return false;
             }
             value = list.Pop(index);
