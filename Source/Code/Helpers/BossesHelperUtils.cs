@@ -174,11 +174,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, List<string> icons,
-                List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIconOnDamage, bool isGlobal = false) 
+        public class HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, bool isGlobal, List<string> icons,
+                List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIconOnDamage) 
             : HealthDisplay(barPosition, barScale, getHealth, isGlobal: isGlobal)
         {
-            private class HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
+            private class HealthIcon(Vector2 barScale, bool isGlobal, string iconSprite, string startAnim, string endAnim)
             : HudEntity(isGlobal)
             {
                 private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
@@ -238,11 +238,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public HealthIconList(bool global)
                 : this(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth,
-                      SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim), SeparateList(HealthData.endAnim), 
-                      SeparateFloatList(HealthData.iconSeparation), HealthData.removeOnDamage, global) { }
+                      global, SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim),
+                      SeparateList(HealthData.endAnim), SeparateFloatList(HealthData.iconSeparation), HealthData.removeOnDamage) { }
 
             public HealthIconList(EntityData entityData, Vector2 barPosition, Vector2 barScale, Func<int> getHealth)
-                : this(barPosition, barScale, getHealth, SeparateList(entityData.Attr("healthIcons")),
+                : this(barPosition, barScale, getHealth, false, SeparateList(entityData.Attr("healthIcons")),
                       SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
                       SeparateFloatList(entityData.Attr("healthIconsSeparation")), entityData.Bool("removeOnDamage")) { }
 
@@ -281,12 +281,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Vector2? iconPosition = null;
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    healthIcon = new(BarScale,
-                        icons.ElementAtOrLast(i),
-                        createAnims.ElementAtOrLast(i),
-                        removeAnims.ElementAtOrLast(i),
-                        IsGlobal
-                    );
+                    healthIcon = new(BarScale, IsGlobal, icons.ElementAtOrLast(i),
+                        createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
 
                     float sum = 0f;
                     for (int index = 0; index < i; index++)
