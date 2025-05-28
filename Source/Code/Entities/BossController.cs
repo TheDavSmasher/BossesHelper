@@ -20,9 +20,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet Puppet { get; private set; }
 
-        private readonly EntityID id;
+        private readonly EntityID entityId;
 
-        private readonly EntityData data;
+        private readonly EntityData entityData;
 
         private int Health;
 
@@ -47,8 +47,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public BossController(EntityData data, Vector2 offset, EntityID id)
             : base(data.Position + offset)
         {
-            this.id = id;
-            this.data = data;
+            entityId = id;
+            entityData = data;
             BossID = data.Attr("bossID");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
@@ -71,16 +71,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Scene.Add(Puppet);
             int tasSeed = BossesHelperModule.Instance.TASSeed;
             int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
-            Random = new Random(generalSeed * 37 + new Crc32().Get(id.Key));
+            Random = new Random(generalSeed * 37 + new Crc32().Get(entityId.Key));
         }
 
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            AllPatterns = ReadPatternFile(data.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-                ReadLuaFiles(this, data.Attr("attacksPath"), data.Attr("eventsPath")),
+            AllPatterns = ReadPatternFile(entityData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
+                ReadLuaFiles(this, entityData.Attr("attacksPath"), entityData.Attr("eventsPath")),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
-            ReadBossFunctions(this, data.Attr("functionsPath"));
+            ReadBossFunctions(this, entityData.Attr("functionsPath"));
             Add(new Coroutine(CheckForPlayer()));
         }
 

@@ -175,7 +175,7 @@ namespace Celeste.Mod.BossesHelper.Code
                 RemoveSelf();
                 if (permanent)
                 {
-                    SceneAs<Level>().Session.DoNotLoad.Add(id);
+                    SceneAs<Level>().Session.DoNotLoad.Add(entityId);
                 }
             }
 
