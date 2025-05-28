@@ -180,7 +180,7 @@ public partial class BossesHelperModule : EverestModule
 
     private static bool KillOffscreen(Player player)
     {
-        float? offscreemAtY = GetFromY(player.SceneAs<Level>(), player);
+        float? offscreemAtY = GetFromY(player);
         if (offscreemAtY is not float atY)
             return false;
         switch (HealthData.playerOffscreen)
@@ -262,8 +262,9 @@ public partial class BossesHelperModule : EverestModule
         Engine.Scene.Tracker.GetEntity<DamageController>()?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
     }
 
-    private static float? GetFromY(Level level, Player player)
+    private static float? GetFromY(Player player)
     {
+        Level level = player.SceneAs<Level>();
         if (!Session.wasOffscreen)
             return null;
         Rectangle camera = new((int)level.Camera.Left, (int)level.Camera.Top, 320, 180);
