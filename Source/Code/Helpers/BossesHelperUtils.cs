@@ -143,7 +143,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public readonly int MaxHealth = getHealth();
 
-            public bool ActiveVisibility = true;
+            private bool ActiveVisibility = true;
 
             protected bool ActiveVisible => !Scene.Paused && ActiveVisibility;
 
