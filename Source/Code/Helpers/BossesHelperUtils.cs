@@ -237,23 +237,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public class HealthIconList : HealthDisplay
+        public class HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, List<string> icons,
+                List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIconOnDamage, bool isGlobal = false) 
+            : HealthDisplay(barPosition, barScale, getHealth, isGlobal: isGlobal)
         {
-            private readonly bool removeIconOnDamage;
+            private readonly List<HealthIcon> healthIcons = [];
 
-            private readonly List<HealthIcon> healthIcons = new();
-
-            private readonly List<HealthIcon> toRemove = new();
+            private readonly List<HealthIcon> toRemove = [];
 
             private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
-
-            private readonly List<string> icons;
-
-            private readonly List<string> createAnims;
-
-            private readonly List<string> removeAnims;
-
-            private readonly List<float> iconSeparations;
 
             public int Count
             {
@@ -280,17 +272,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 : this(barPosition, barScale, getHealth, SeparateList(entityData.Attr("healthIcons")),
                       SeparateList(entityData.Attr("healthIconsCreateAnim")), SeparateList(entityData.Attr("healthIconsCreateAnim")),
                       SeparateFloatList(entityData.Attr("healthIconsSeparation")), entityData.Bool("removeOnDamage")) { }
-
-            private HealthIconList(Vector2 barPosition, Vector2 barScale, Func<int> getHealth, List<string> icons,
-                List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIcon, bool isGlobal = false)
-                : base(barPosition, barScale, getHealth, isGlobal: isGlobal)
-            {
-                this.icons = icons;
-                this.createAnims = createAnims;
-                this.removeAnims = removeAnims;
-                this.iconSeparations = iconSeparations;
-                removeIconOnDamage = removeIcon;
-            }
 
             public override void Awake(Scene scene)
             {
