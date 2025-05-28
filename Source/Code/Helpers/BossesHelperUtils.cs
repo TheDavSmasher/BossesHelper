@@ -269,7 +269,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void RefillHealth(int? upTo = null)
             {
-                int limit = upTo is int to ? Count + to : MaxHealth;
+                int limit = upTo + Count ?? MaxHealth;
                 for (int i = Count; i < limit; i++)
                 {
                     IncreaseHealth(i);
