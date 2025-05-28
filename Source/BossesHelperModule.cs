@@ -173,7 +173,7 @@ public partial class BossesHelperModule : EverestModule
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             case HealthSystemManager.CrushEffect.FakeDeath:
-                PlayerTakesDamage(Vector2.Zero, evenIfInvincible: true);
+                PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
                 FakeDie(player);
                 break;
             default: //CrushEffect.InstantDeath
