@@ -137,7 +137,7 @@ public partial class BossesHelperModule : EverestModule
         if (always)
         {
             if (damageTracked)
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);        
+                PlayerTakesDamage(amount: Session.currentPlayerHealth, evenIfInvincible: true);        
             return orig(self, dir, always, register);
         }
         if (damageTracked && Session.currentPlayerHealth <= 0)
@@ -163,13 +163,13 @@ public partial class BossesHelperModule : EverestModule
         switch (HealthData.playerOnCrush)
         {
             case HealthSystemManager.DeathEffect.PlayerPush:
-                PlayerTakesDamage(Vector2.Zero);
+                PlayerTakesDamage();
                 if (!player.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
                     player.TrySquishWiggle(data, player.level.Bounds.Width, player.level.Bounds.Height);
                 break;
             case HealthSystemManager.DeathEffect.PlayerSafe:
                 if (evenIfInvincible) break;
-                PlayerTakesDamage(Vector2.Zero);
+                PlayerTakesDamage();
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             default:
@@ -186,12 +186,12 @@ public partial class BossesHelperModule : EverestModule
         switch (HealthData.playerOffscreen)
         {
             case HealthSystemManager.DeathEffect.PlayerPush:
-                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                PlayerTakesDamage(stagger: false);
                 player.Play("event:/game/general/assist_screenbottom");
                 player.Bounce(atY);
                 break;
             case HealthSystemManager.DeathEffect.PlayerSafe:
-                PlayerTakesDamage(Vector2.Zero, stagger: false);
+                PlayerTakesDamage(stagger: false);
                 if (!Session.alreadyFlying)
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
@@ -206,11 +206,11 @@ public partial class BossesHelperModule : EverestModule
     {
         if (effect == HealthSystemManager.DeathEffect.FakeDeath)
         {
-            PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
+            PlayerTakesDamage(stagger: false, evenIfInvincible: true);
             FakeDie(player);
             return;
         }
-        PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
+        PlayerTakesDamage(amount: Session.currentPlayerHealth, evenIfInvincible: true);
     }
 
     private static PlayerDeadBody FakeDie(Player self, Vector2? dir = null)
