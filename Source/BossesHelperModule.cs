@@ -172,12 +172,8 @@ public partial class BossesHelperModule : EverestModule
                 PlayerTakesDamage(Vector2.Zero);
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
-            case HealthSystemManager.DeathEffect.FakeDeath:
-                PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
-                FakeDie(player);
-                break;
-            default: //DeathEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
+            default:
+                SharedDeath(player, HealthData.playerOnCrush);
                 break;
         }
     }
@@ -199,15 +195,22 @@ public partial class BossesHelperModule : EverestModule
                 if (!Session.alreadyFlying)
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
-            case HealthSystemManager.DeathEffect.FakeDeath:
-                PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
-                FakeDie(player);
-                break;
-            default: //DeathEffect.InstantDeath
-                PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
+            default:
+                SharedDeath(player, HealthData.playerOffscreen);
                 break;
         }
         return true;
+    }
+
+    private static void SharedDeath(Player player, HealthSystemManager.DeathEffect effect)
+    {
+        if (effect == HealthSystemManager.DeathEffect.FakeDeath)
+        {
+            PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
+            FakeDie(player);
+            return;
+        }
+        PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
     }
 
     private static PlayerDeadBody FakeDie(Player self, Vector2? dir = null)
