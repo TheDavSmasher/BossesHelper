@@ -151,23 +151,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public new bool Visible
             {
-                get
-                {
-                    return IsVisible;
-                }
-                set
-                {
-                    ActiveVisibility = value;
-                }
+                get => IsVisible;
+                set => ActiveVisibility = value;
             }
 
-            protected virtual bool IsVisible
-            {
-                get
-                {
-                    return base.Visible;
-                }
-            }
+            protected virtual bool IsVisible => base.Visible;
 
             public override void Added(Scene scene)
             {
@@ -244,21 +232,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
 
-            public int Count
-            {
-                get
-                {
-                    return healthIcons.Count;
-                }
-            }
+            public int Count => healthIcons.Count;
 
-            protected override bool IsVisible
-            {
-                get
-                {
-                    return AllIcons.Any(icon => icon.Visible);
-                }
-            }
+            protected override bool IsVisible => AllIcons.Any(icon => icon.Visible);
 
             public HealthIconList(bool global)
                 : this(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth,
