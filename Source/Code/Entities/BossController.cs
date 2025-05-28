@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Coroutine ActivePattern;
 
-        private readonly List<Entity> activeEntities;
+        private readonly List<Entity> activeEntities = [];
 
         private List<BossPattern> AllPatterns;
 
@@ -52,11 +52,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossID = data.Attr("bossID");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
-            isActing = false;
-            currentPatternIndex = 0;
             Add(ActivePattern = new Coroutine());
             Puppet = new BossPuppet(data, offset, () => Health);
-            activeEntities = new List<Entity>();
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
                 Health = phase.bossHealthAt;

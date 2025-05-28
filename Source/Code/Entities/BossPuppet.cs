@@ -60,11 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public float airFriction;
 
-        private readonly Collision onCollideH;
-
-        private readonly Collision onCollideV;
-
-        private readonly Dictionary<string, object> storedObjects;
+        private readonly Dictionary<string, object> storedObjects = [];
 
         public bool Grounded
         {
@@ -102,16 +98,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             freezeSidekickOnAttack = data.Bool("sidekickFreeze");
             sidekickCooldown = data.Float("sidekickCooldown");
             metadataPath = data.Attr("hitboxMetadataPath");
-            BossHitCooldown = 0f;
             SolidCollidable = data.Bool("startSolidCollidable");
-            base.Collidable = data.Bool("startCollidable");
-            storedObjects = new Dictionary<string, object>();
-            HurtMode = data.Enum<HurtModes>("hurtMode", HurtModes.PlayerContact);
+            Collidable = data.Bool("startCollidable");
+            HurtMode = data.Enum("hurtMode", HurtModes.PlayerContact);
             Add(new BossHealthTracker(health));
             killOnContact = data.Bool("killOnContact");
             Add(new PlayerCollider(KillOnContact));
-            onCollideH = OnCollideH;
-            onCollideV = OnCollideV;
             Facing = 1;
             if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite sprite))
             {
@@ -259,8 +251,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Move based on speed
             if (SolidCollidable)
             {
-                MoveH(Speed.X * Engine.DeltaTime, onCollideH);
-                MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+                MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
+                MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
             }
             else
             {
