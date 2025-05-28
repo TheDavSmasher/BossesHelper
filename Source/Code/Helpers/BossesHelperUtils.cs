@@ -75,6 +75,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return true;
         }
 
+        public static Sprite TryCreate(this SpriteBank spriteBank, string id)
+        {
+            try
+            {
+                return spriteBank.Create(id);
+            }
+            catch (Exception)
+            {
+                return new Sprite();
+            }
+        }
+
         public static bool TryCreate(this SpriteBank spriteBank, string id, out Sprite sprite)
         {
             try
@@ -209,8 +221,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public HealthIcon(Vector2 barScale, string iconSprite, string startAnim, string endAnim, bool isGlobal)
                 : base(isGlobal)
             {
-                GFX.SpriteBank.TryCreate(iconSprite, out icon);
-                    Add(icon);
+                Add(icon = GFX.SpriteBank.TryCreate(iconSprite));
                 this.startAnim = startAnim;
                 this.endAnim = endAnim;
                 icon.Scale = barScale;
