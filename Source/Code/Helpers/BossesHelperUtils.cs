@@ -293,8 +293,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void RefillHealth(int? upTo = null)
             {
-                int limit = upTo is int to ? healthIcons.Count + to : MaxHealth;
-                for (int i = healthIcons.Count; i < limit; i++)
+                int limit = upTo is int to ? Count + to : MaxHealth;
+                for (int i = Count; i < limit; i++)
                 {
                     IncreaseHealth(i);
                 }
@@ -326,7 +326,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void DecreaseHealth(int amount = 1)
             {
-                if (healthIcons.Count <= 0)
+                if (Count <= 0)
                 {
                     Logger.Log("Health Render", "No Health Icon to remove");
                     return;
