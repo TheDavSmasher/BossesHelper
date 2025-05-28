@@ -20,7 +20,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossPuppet Puppet { get; private set; }
 
-        private EntityID id;
+        private readonly EntityID id;
+
+        private readonly EntityData data;
 
         private int Health;
 
@@ -36,31 +38,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Coroutine ActivePattern;
 
+        private readonly List<Entity> activeEntities;
+
         private List<BossPattern> AllPatterns;
 
         private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
-
-        private readonly List<Entity> activeEntities;
-
-        private readonly string attacksPath;
-
-        private readonly string eventsPath;
-
-        private readonly string functionsPath;
-
-        private readonly string patternsPath;
 
         public BossController(EntityData data, Vector2 offset, EntityID id)
             : base(data.Position + offset)
         {
             this.id = id;
+            this.data = data;
             BossID = data.Attr("bossID");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
-            attacksPath = data.Attr("attacksPath");
-            eventsPath = data.Attr("eventsPath");
-            functionsPath = data.Attr("functionsPath");
-            patternsPath = data.Attr("patternsPath");
             isActing = false;
             currentPatternIndex = 0;
             Add(ActivePattern = new Coroutine());
@@ -86,10 +77,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            AllPatterns = ReadPatternFile(patternsPath, SceneAs<Level>().LevelOffset,
-                ReadLuaFiles(this, attacksPath, eventsPath),
+            AllPatterns = ReadPatternFile(data.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
+                ReadLuaFiles(this, data.Attr("attacksPath"), data.Attr("eventsPath")),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
-            ReadBossFunctions(this, functionsPath);
+            ReadBossFunctions(this, data.Attr("functionsPath"));
             Add(new Coroutine(CheckForPlayer()));
         }
 
