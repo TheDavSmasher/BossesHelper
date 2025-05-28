@@ -162,21 +162,21 @@ public partial class BossesHelperModule : EverestModule
             return;
         switch (HealthData.playerOnCrush)
         {
-            case HealthSystemManager.CrushEffect.PushOut:
+            case HealthSystemManager.DeathEffect.PlayerPush:
                 PlayerTakesDamage(Vector2.Zero);
                 if (!player.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
                     player.TrySquishWiggle(data, player.level.Bounds.Width, player.level.Bounds.Height);
                 break;
-            case HealthSystemManager.CrushEffect.InvincibleSolid:
+            case HealthSystemManager.DeathEffect.PlayerSafe:
                 if (evenIfInvincible) break;
                 PlayerTakesDamage(Vector2.Zero);
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
-            case HealthSystemManager.CrushEffect.FakeDeath:
+            case HealthSystemManager.DeathEffect.FakeDeath:
                 PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
                 FakeDie(player);
                 break;
-            default: //CrushEffect.InstantDeath
+            default: //DeathEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
                 break;
         }
@@ -224,21 +224,21 @@ public partial class BossesHelperModule : EverestModule
             return false;
         switch (HealthData.playerOffscreen)
         {
-            case HealthSystemManager.OffscreenEffect.BounceUp:
+            case HealthSystemManager.DeathEffect.PlayerPush:
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
                 player.Play("event:/game/general/assist_screenbottom");
                 player.Bounce(atY);
                 break;
-            case HealthSystemManager.OffscreenEffect.BubbleBack:
+            case HealthSystemManager.DeathEffect.PlayerSafe:
                 PlayerTakesDamage(Vector2.Zero, stagger: false);
                 if (!Session.alreadyFlying)
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
-            case HealthSystemManager.OffscreenEffect.FakeDeath:
+            case HealthSystemManager.DeathEffect.FakeDeath:
                 PlayerTakesDamage(Vector2.Zero, stagger: false, evenIfInvincible: true);
                 FakeDie(player);
                 break;
-            default: //OffscreenEffect.InstantDeath
+            default: //DeathEffect.InstantDeath
                 PlayerTakesDamage(Vector2.Zero, Session.currentPlayerHealth, evenIfInvincible: true);
                 break;
         }

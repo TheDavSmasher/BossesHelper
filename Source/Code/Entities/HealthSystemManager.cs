@@ -11,7 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
-        public enum CrushEffect
+        private enum CrushEffect
         {
             PushOut,
             InvincibleSolid,
@@ -19,10 +19,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        public enum OffscreenEffect
+        private enum OffscreenEffect
         {
             BounceUp,
             BubbleBack,
+            FakeDeath,
+            InstantDeath
+        }
+
+        public enum DeathEffect
+        {
+            PlayerPush,
+            PlayerSafe,
             FakeDeath,
             InstantDeath
         }
@@ -45,8 +53,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 globalHealth = IsGlobal && data.Bool("globalHealth"),
                 playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),
                 damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
-                playerOnCrush = data.Enum("crushEffect", HealthData.playerOnCrush),
-                playerOffscreen = data.Enum("offscreenEffect", HealthData.playerOffscreen),
+                playerOnCrush = (DeathEffect) data.Enum("crushEffect", (CrushEffect) HealthData.playerOnCrush),
+                playerOffscreen = (DeathEffect) data.Enum("offscreenEffect", (OffscreenEffect) HealthData.playerOffscreen),
                 fakeDeathMethods = [.. SeparateList(data.String("fakeDeathMethods", JoinList(HealthData.fakeDeathMethods ?? [])))],
                 onDamageFunction = data.String("onDamageFunction", HealthData.onDamageFunction),
                 activateInstantly = data.Bool("applySystemInstantly"),
