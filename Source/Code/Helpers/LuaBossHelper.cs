@@ -111,7 +111,7 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
             {
-                List<Collider> colliders = new List<Collider>();
+                List<Collider> colliders = [];
                 foreach (object colliderVal in luaTable.Values)
                 {
                     if (colliderVal is Collider collider)
@@ -119,12 +119,12 @@ namespace Celeste.Mod.BossesHelper.Code
                         colliders.Add(collider);
                     }
                 }
-                return new ColliderList(colliders.ToArray());
+                return new ColliderList([.. colliders]);
             }
 
             public static IEnumerator Say(string dialog, LuaTable luaEvents)
             {
-                List<Func<IEnumerator>> events = new();
+                List<Func<IEnumerator>> events = [];
                 foreach (object luaEvent in luaEvents.Values)
                 {
                     if (luaEvent is LuaFunction luaFunction)
@@ -341,7 +341,7 @@ namespace Celeste.Mod.BossesHelper.Code
             public float SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
             {
                 Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-                tween.OnUpdate = (Tween t) => Speed.X = start + (target - start) * t.Eased;
+                tween.OnUpdate = t => Speed.X = start + (target - start) * t.Eased;
                 Add(tween);
                 return time;
             }
@@ -349,7 +349,7 @@ namespace Celeste.Mod.BossesHelper.Code
             public float SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
             {
                 Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-                tween.OnUpdate = (Tween t) => Speed.Y = start + (target - start) * t.Eased;
+                tween.OnUpdate = t => Speed.Y = start + (target - start) * t.Eased;
                 Add(tween);
                 return time;
             }
