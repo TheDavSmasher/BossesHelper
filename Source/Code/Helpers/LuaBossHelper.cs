@@ -1,4 +1,7 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
 using System;
@@ -217,6 +220,161 @@ namespace Celeste.Mod.BossesHelper.Code
                 {
                     entity.RemoveSelf();
                 }
+            }
+        }
+
+        public partial class BossPuppet
+        {
+            public IEnumerator WaitBossAnim(string anim)
+            {
+                if (Sprite != null && Sprite.Has(anim))
+                {
+                    yield return Sprite.PlayAnim(anim);
+                }
+            }
+
+            public void SetGravityMult(float mult)
+            {
+                effectiveGravity = Gravity * mult;
+            }
+
+            public void SetXSpeed(float speed)
+            {
+                Speed.X = speed;
+            }
+
+            public void SetYSpeed(float speed)
+            {
+                Speed.Y = speed;
+            }
+
+            public void SetSpeed(float x, float y)
+            {
+                Speed.Y = y;
+                Speed.X = x;
+            }
+
+            public float SetXSpeedDuring(float speed, float time)
+            {
+                Add(new Coroutine(KeepXSpeed(speed, time)));
+                return time;
+            }
+
+            public float SetYSpeedDuring(float speed, float time)
+            {
+                Add(new Coroutine(KeepYSpeed(speed, time)));
+                return time;
+            }
+
+            public float SetSpeedDuring(float x, float y, float time)
+            {
+                SetXSpeedDuring(x, time);
+                SetYSpeedDuring(y, time);
+                return time;
+            }
+
+            private IEnumerator KeepXSpeed(float speed, float time)
+            {
+                float timer = 0;
+                while (timer < time)
+                {
+                    Speed.X = speed;
+                    timer += Engine.DeltaTime;
+                    yield return null;
+                }
+            }
+
+            private IEnumerator KeepYSpeed(float speed, float time)
+            {
+                float timer = 0;
+                while (timer < time)
+                {
+                    Speed.Y = speed;
+                    timer += Engine.DeltaTime;
+                    yield return null;
+                }
+            }
+
+            public void SetBossHitCooldown(float timer)
+            {
+                BossHitCooldown = timer;
+            }
+
+            public void ChangeHitboxOption(string tag)
+            {
+                Collider = GetTagOrDefault(ColliderOption.Hitboxes, tag, Sprite.Height);
+            }
+
+            public void ChangeHurtboxOption(string tag)
+            {
+                Hurtbox = GetTagOrDefault(ColliderOption.Hurtboxes, tag, Sprite.Height);
+                if (bossCollision is PlayerCollider collider)
+                {
+                    collider.Collider = Hurtbox;
+                }
+            }
+
+            public void ChangeBounceboxOption(string tag)
+            {
+                Bouncebox = GetTagOrDefault(ColliderOption.Bouncebox, tag, 6f);
+                if (bossCollision is PlayerCollider collider)
+                {
+                    collider.Collider = Bouncebox;
+                }
+            }
+
+            public void ChangeTargetOption(string tag)
+            {
+                Target = GetTagOrDefault(ColliderOption.Target, tag, null);
+                if (bossCollision is SidekickTarget target)
+                {
+                    target.Collider = Target;
+                }
+            }
+
+            public float PositionTween(Vector2 target, float time, Ease.Easer easer = null)
+            {
+                Tween.Position(this, target, time, easer);
+                return time;
+            }
+
+            public float SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
+            {
+                Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
+                tween.OnUpdate = (Tween t) => Speed.X = start + (target - start) * t.Eased;
+                Add(tween);
+                return time;
+            }
+
+            public float SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
+            {
+                Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
+                tween.OnUpdate = (Tween t) => Speed.Y = start + (target - start) * t.Eased;
+                Add(tween);
+                return time;
+            }
+
+            public float SpeedTween(float xStart, float yStart, float xTarget, float yTarget, float time, Ease.Easer easer = null)
+            {
+                SpeedXTween(xStart, xTarget, time, easer);
+                SpeedYTween(yStart, yTarget, time, easer);
+                return time;
+            }
+
+            public void StoreObject(string key, object toStore)
+            {
+                if (!storedObjects.ContainsKey(key))
+                    storedObjects.Add(key, toStore);
+            }
+
+            public object GetStoredObject(string key)
+            {
+                return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
+            }
+
+            public void DeleteStoredObject(string key)
+            {
+                storedObjects.Remove(key);
             }
         }
     }
