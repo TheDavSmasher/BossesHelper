@@ -21,9 +21,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public class BossAttack : IBossAction
         {
-            private readonly LuaFunction endFunction;
-
             private readonly LuaFunction attackFunction;
+
+            private readonly LuaFunction endFunction;
 
             public BossAttack(string filepath, Player player, BossController controller)
             {
