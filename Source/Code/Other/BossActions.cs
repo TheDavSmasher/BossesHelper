@@ -25,6 +25,8 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly LuaFunction endFunction;
 
+            private readonly Dictionary<MethodEndReason, LuaFunction> onEndMethods = [];
+
             public BossAttack(string filepath, Player player, BossController controller)
             {
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
@@ -35,9 +37,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "boss", controller },
                     { "modMetaData", BossesHelperModule.Instance.Metadata }
                 },
-                filepath, "getAttackData", 2);
+                filepath, "getAttackData", 5);
                 attackFunction = array[0];
                 endFunction = array[1];
+                foreach (var option in Enum.GetValues<MethodEndReason>())
+                {
+                    onEndMethods.Add(option, array[(int) option + 2]);
+                }
             }
 
             public IEnumerator Perform()
@@ -48,6 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public void EndAction(MethodEndReason reason)
             {
                 endFunction?.Call(reason);
+                onEndMethods[reason]?.Call();
             }
         }
 
