@@ -82,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
         {
             Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder = [];
-            foreach (BossPuppet.ColliderOption option in Enum.GetValues(typeof(BossPuppet.ColliderOption)))
+            foreach (var option in Enum.GetValues<BossPuppet.ColliderOption>())
             {
                 dataHolder.Add(option, []);
             }
