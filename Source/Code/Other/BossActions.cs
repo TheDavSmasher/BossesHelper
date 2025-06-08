@@ -16,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         {
             public IEnumerator Perform();
 
-            public void EndAction(MethodEndReason reason);
+            public virtual void EndAction(MethodEndReason reason) { }
         }
 
         public class BossAttack : IBossAction
@@ -123,8 +123,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 }
                 while (Running);
             }
-
-            public void EndAction(MethodEndReason reason) { }
         }
     }
 }
