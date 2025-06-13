@@ -356,3 +356,7 @@ MigrationBackup/
 # JetBrains Rider
 .idea
 
+# Inner Project
+**/.idea/
+**/.venv/
+
