@@ -1550,6 +1550,23 @@ function helpers.sayExt(dialog, ...)
     coroutine.yield(celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
 end
 
+---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
+---@param event string The name of the Event to play.
+---@param entity Entity The entity to add the SoundSource to.
+---@return Component newSound The newly created SoundSource
+function helpers.addSoundTo(event, entity)
+    local newSound = celeste.SoundSource()
+    entity:Add(newSound:Play(event))
+    return newSound
+end
+
+---Creates a new SoundSource and adds it to the Boss, starting the sound immediately
+---@param event string The name of the Event to play.
+---@return Component newSound The newly created SoundSource attached to the Boss
+function helpers.addSoundToBoss(event)
+    return helpers.addSoundTo(event, puppet)
+end
+
 ---Get a new EntityData object
 ---@param position Vector2 The vector2 position the entityData will hold.
 ---@param width? number The width the EntityData will hold. Defaults to 0.
