@@ -2,7 +2,7 @@
 
 ## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)
 
-Find the actual Lua file [here](Assets/LuaBossHelper/helper_functions.lua).
+[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).
 
 ## Entity Adding
 
@@ -1099,6 +1099,38 @@ Can be added to any Entity.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`...` (`function`)  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Functions that will be called whenever a trigger is activated through dialogue.  
+
+---
+
+### helpers.addSoundTo (event, entity)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`event` (`string`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Event to play.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`entity` (`Entity`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The entity to add the SoundSource to.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`newSound` (`Component`): The newly created SoundSource
+
+---
+
+### helpers.addSoundToBoss (event)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new SoundSource and adds it to the Boss, starting the sound immediately
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`event` (`string`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Event to play.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`newSound` (`Component`): The newly created SoundSource attached to the Boss
 
 ---
 

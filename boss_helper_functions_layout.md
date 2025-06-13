@@ -92,6 +92,8 @@
 ## [Misc. Functions](boss_helper_functions.md#misc-functions)
 
 - [helpers.sayExt (dialog, ...)](boss_helper_functions.md#helperssayext-dialog-)
+- [helpers.addSoundTo (event, entity)](boss_helper_functions.md#helpersaddsoundto-event-entity)
+- [helpers.addSoundToBoss (event)](boss_helper_functions.md#helpersaddsoundtoboss-event)
 - [helpers.getNewEntityData (position[, width=0[, height=0[, id=1000]]])](boss_helper_functions.md#helpersgetnewentitydata-position-width0-height0-id1000)
 - [helpers.setEntityDataAttributes (entityData)](boss_helper_functions.md#helperssetentitydataattributes-entitydata)
 - [helpers.storeObjectInBoss (key, object)](boss_helper_functions.md#helpersstoreobjectinboss-key-object)
