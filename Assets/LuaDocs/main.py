@@ -10,7 +10,7 @@ TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 all_functions = []
 
 
-def parse_lua_file(lua_file_path):
+def parse_lua_file(lua_path):
     """
     Parses a Lua file to extract function names, parameters, return values, and documentation comments.
     """
@@ -18,7 +18,7 @@ def parse_lua_file(lua_file_path):
 
     current_region = None
 
-    with open(lua_file_path, 'r') as file:
+    with open(lua_path, 'r') as file:
         lines = file.readlines()
 
     region_pattern = re.compile(r'--#region\s+(.*)')
@@ -157,15 +157,15 @@ def generate_markdown_documentation(regions):
     """
     Generates markdown documentation for a list of functions.
     """
-    markdown = "# [Bosses Helper](README.md): Lua Helper Functions\n"
+    markdown_text = "# [Bosses Helper](README.md): Lua Helper Functions\n"
 
     layout_markdown = "# [Bosses Helper](README.md): [Lua Helper Functions](boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n"
 
-    markdown += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\nFind the actual Lua file [here](Assets/LuaBossHelper/helper_functions.lua).\n"
+    markdown_text += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\nFind the actual Lua file [here](Assets/LuaBossHelper/helper_functions.lua).\n"
 
     for reg in regions:
         region_name = reg['region']
-        markdown += f"\n## {region_name}\n"
+        markdown_text += f"\n## {region_name}\n"
 
         layout_markdown += f"\n## [{region_name}](boss_helper_functions.md#{format_markdown_link(region_name)})\n\n"
 
@@ -174,17 +174,17 @@ def generate_markdown_documentation(regions):
 
             layout_markdown += f"- [{full_name}](boss_helper_functions.md#{format_markdown_link(full_name)})\n"
 
-            markdown += f"\n### {full_name}\n\n{TAB}{func['description']}\n"
+            markdown_text += f"\n### {full_name}\n\n{TAB}{func['description']}\n"
 
             if func['params']:
                 for param in func['params']:
-                    markdown += f"\n{TAB}`{param['name']}` (`{param['type']}`)"
+                    markdown_text += f"\n{TAB}`{param['name']}` (`{param['type']}`)"
                     if param['optional']:
                         if param['default']:
-                            markdown += f" (default `{param['default']}`)"
+                            markdown_text += f" (default `{param['default']}`)"
                         else:
-                            markdown += f" (optional)"
-                    markdown += f"  \n\n"
+                            markdown_text += f" (optional)"
+                    markdown_text += f"  \n\n"
 
                     param_description = param['description']
 
@@ -196,21 +196,21 @@ def generate_markdown_documentation(regions):
                                                                               f"[{function['name']}](#{format_markdown_link(function['full_name'])})")
                                 break
 
-                    markdown += f"{TAB}{TAB}{param_description}  \n"
+                    markdown_text += f"{TAB}{TAB}{param_description}  \n"
 
             if func['returns']:
-                markdown += f"\n{TAB}Returns:  \n"
+                markdown_text += f"\n{TAB}Returns:  \n"
                 for ret in func['returns']:
-                    markdown += f"\n{TAB}{TAB}`{ret['name']}` (`{ret['type']}`): {ret['description']}\n"
+                    markdown_text += f"\n{TAB}{TAB}`{ret['name']}` (`{ret['type']}`): {ret['description']}\n"
 
-            markdown += "\n---\n"
+            markdown_text += "\n---\n"
 
-    return markdown, layout_markdown
+    return markdown_text, layout_markdown
 
 
-def save_markdown_to_file(markdown, output_file_path):
-    with open(output_file_path, 'w') as f:
-        f.write(markdown)
+def save_markdown_to_file(markdown_text, output_path):
+    with open(output_path, 'w') as f:
+        f.write(markdown_text)
 
 
 # Press the green button in the gutter to run the script.
