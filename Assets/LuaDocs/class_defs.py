@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -30,4 +30,4 @@ class Function:
 @dataclass
 class Region:
     name: str
-    functions: list[Function]
+    functions: list[Function] = field(default_factory=list)
