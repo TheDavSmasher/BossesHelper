@@ -12,7 +12,9 @@
 ---@class EntityData An Everest EntityData object.
 ---@field Values any
 
----@alias Entity Entity A Monocle Entity object.
+---@class Entity A Monocle Entity object
+---@field Add fun(Component) Adds a component to the Entity
+
 ---@alias Component Component A Monocle Component object.
 ---@alias Collider Collider A Monocle Collider object.
 ---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
