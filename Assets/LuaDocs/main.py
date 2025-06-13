@@ -38,7 +38,6 @@ def parse_lua_file(lua_path):
         if region_match:
             if region_match.group(1).startswith('Original'):
                 skipping = True
-                continue
             if not (region_match.group(1).startswith('Type') or region_match.group(1).__contains__('Helper')):
                 current_region = {
                     'region': region_match.group(1),
