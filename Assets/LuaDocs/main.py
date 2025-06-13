@@ -215,9 +215,9 @@ def save_markdown_to_file(markdown_text, output_path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    lua_file_path = "C:/Program Files (x86)/Steam/steamapps/common/Celeste/Mods/BossesHelper/Assets/LuaBossHelper/helper_functions.lua"
-    output_file_path = "C:/Program Files (x86)/Steam/steamapps/common/Celeste/Mods/BossesHelper/boss_helper_functions.md"
-    layout_file_path = "C:/Program Files (x86)/Steam/steamapps/common/Celeste/Mods/BossesHelper/boss_helper_functions_layout.md"
+    lua_file_path = "../LuaBossHelper/helper_functions.lua"
+    output_file_path = "../../boss_helper_functions.md"
+    layout_file_path = "../../boss_helper_functions_layout.md"
 
     functions = parse_lua_file(lua_file_path)
     markdown, layout = generate_markdown_documentation(functions)
