@@ -18,9 +18,9 @@ class FunctionParam(FunctionType):
 class Function:
     name: str
     signature: str
+    description: str
     params: list[FunctionParam]
     returns: list[FunctionType]
-    description: str
 
     @property
     def full_name(self):
