@@ -161,7 +161,7 @@ def generate_markdown_documentation(regions):
 
     layout_markdown = "# [Bosses Helper](README.md): [Lua Helper Functions](boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n"
 
-    markdown_text += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\nFind the actual Lua file [here](Assets/LuaBossHelper/helper_functions.lua).\n"
+    markdown_text += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n"
 
     for reg in regions:
         region_name = reg['region']
