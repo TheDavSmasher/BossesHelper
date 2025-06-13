@@ -34,27 +34,27 @@ def parse_lua_file(lua_path):
     for i, line in enumerate(lines):
         line = line.strip()
 
-        if line.startswith('--#region Original'):
-            skipping = True
-
-        if skipping:
-            if line.startswith('--#endregion'):
-                skipping = False
-            continue
-
         region_match = region_pattern.match(line)
-        if region_match and not (
-                region_match.group(1).startswith('Type') or region_match.group(1).__contains__('Helper')):
-            current_region = {
-                'region': region_match.group(1),
-                'functions': []
-            }
+        if region_match:
+            if region_match.group(1).startswith('Original'):
+                skipping = True
+                continue
+            if not (region_match.group(1).startswith('Type') or region_match.group(1).__contains__('Helper')):
+                current_region = {
+                    'region': region_match.group(1),
+                    'functions': []
+                }
             continue
 
         end_match = end_pattern.match(line)
-        if end_match and current_region is not None:
-            regions.append(current_region)
-            current_region = None
+        if end_match:
+            skipping = False
+            if current_region is not None:
+                regions.append(current_region)
+                current_region = None
+            continue
+
+        if skipping:
             continue
 
         # Match function definitions (including object methods)
