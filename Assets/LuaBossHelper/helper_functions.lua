@@ -1633,6 +1633,7 @@ function helpers.getEaserByName(name, invert)
         return nil
     end
     local value = string.lower(name)
+    ---@enum
     local easers = {
         linear = ease.Linear,
         sinein = ease.SineIn,
@@ -1670,7 +1671,7 @@ function helpers.getEaserByName(name, invert)
         end
         return easers[value]
     else
-        return easers["default"]
+        return easers.default
     end
 end
 
