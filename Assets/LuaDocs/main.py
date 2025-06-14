@@ -1,8 +1,3 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import re
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -30,7 +25,6 @@ def parse_lua_file(lua_path):
 
     skipping = False
 
-    # Iterate over the lines of the Lua file
     for i, line in enumerate(lines):
         line = line.strip()
 
@@ -56,37 +50,29 @@ def parse_lua_file(lua_path):
         if skipping:
             continue
 
-        # Match function definitions (including object methods)
         func_match = func_pattern.match(line)
         if func_match:
-            # Initialize function data
             function_name = func_match.group(1)
 
-            # Prepare for backward pass to find documentation
-            doc_lines = []  # Temporary list to store description lines
-            params = []  # Temporary list to store parameters
-            returns = []  # Temporary list to store return values
+            doc_lines = []
+            params = []
+            returns = []
             optional_params = 0
 
-            # Backtrack to find the first --- line for the function's documentation
             j = i - 1
             while j >= 0 and lines[j].startswith('---'):
-                j -= 1  # Only update j during backtracking, no data collection yet
+                j -= 1
 
-            # Now, start moving forward from the current value of j (after backtracking)
-            # Loop until we reach the function's position (i)
             while j < i:
-                j += 1  # Move forward
+                j += 1
 
                 line = lines[j].strip()
 
-                # Collect documentation lines (description)
                 if line.startswith('---') and not line[3:].strip().startswith('@'):
                     doc_line = line[3:].strip()  # Remove "---" prefix
                     doc_lines.append(doc_line)
                     continue
 
-                # Collect @param annotations
                 param_match = param_pattern.match(line)
                 if param_match:
                     param_name = param_match.group(1)
@@ -108,7 +94,6 @@ def parse_lua_file(lua_path):
                          'description': param_desc})
                     continue
 
-                # Collect @return annotations
                 return_match = return_pattern.match(line)
                 if return_match:
                     return_type = return_match.group(1)
@@ -116,7 +101,6 @@ def parse_lua_file(lua_path):
                     return_desc = return_match.group(3)
                     returns.append({'name': return_name, 'type': return_type, 'description': return_desc})
 
-            # Get the function's signature
             first = True
             function_sig = "("
             for param in params:
@@ -212,7 +196,6 @@ def save_markdown_to_file(markdown_text, output_path):
         f.write(markdown_text)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     lua_file_path = "../LuaBossHelper/helper_functions.lua"
     output_file_path = "../../boss_helper_functions.md"
@@ -224,5 +207,3 @@ if __name__ == '__main__':
     save_markdown_to_file(layout, layout_file_path)
 
     print(f"Documentation saved to {output_file_path}")
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
