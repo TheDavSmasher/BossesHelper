@@ -1,17 +1,17 @@
 import re
+from class_defs import *
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-
-all_functions = []
 
 
 def parse_lua_file(lua_path):
     """
     Parses a Lua file to extract function names, parameters, return values, and documentation comments.
     """
-    regions = []
+    all_funcs: list[Function] = []
+    all_regions: list[Region] = []
 
-    current_region = None
+    current_region: Region | None = None
 
     with open(lua_path, 'r') as file:
         lines: list[str] = list(map(str.strip, file.readlines()))
@@ -19,6 +19,7 @@ def parse_lua_file(lua_path):
     region_pattern = re.compile(r'--#region\s+(.*)')
     end_pattern = re.compile(r'--#endregion+(.*)')
     func_pattern = re.compile(r'function\s+([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*\(([^)]*)\)')
+    comment_pattern = re.compile(r'(?:---\s?)+((?<!@)[^@]*)$')
     param_pattern = re.compile(r'---\s*@param\s+([a-zA-Z0-9_?.]+)\s+([a-zA-Z0-9_?.|]+(?:\([^)]*\))?)\s+(.*)')
     default_pattern = re.compile(r'---\s*@default\s+(.*)')
     return_pattern = re.compile(r'---\s*@return\s+([a-zA-Z0-9_|]+)\s+([a-zA-Z0-9_]+)\s+(.*)')
@@ -31,17 +32,14 @@ def parse_lua_file(lua_path):
             if region_match.group(1).startswith('Original'):
                 skipping = True
             if not (region_match.group(1).startswith('Type') or region_match.group(1).__contains__('Helper')):
-                current_region = {
-                    'region': region_match.group(1),
-                    'functions': []
-                }
+                current_region = Region(region_match.group(1))
             continue
 
         end_match = end_pattern.match(line)
         if end_match:
             skipping = False
             if current_region is not None:
-                regions.append(current_region)
+                all_regions.append(current_region)
                 current_region = None
             continue
 
@@ -52,9 +50,9 @@ def parse_lua_file(lua_path):
         if func_match:
             function_name = func_match.group(1)
 
-            doc_lines = []
-            params = []
-            returns = []
+            doc_lines: list[str] = []
+            params: list[FunctionParam] = []
+            returns: list[FunctionType] = []
             optional_params = 0
 
             j = i - 1
@@ -65,8 +63,9 @@ def parse_lua_file(lua_path):
                 j += 1
                 line = lines[j]
 
-                if line.startswith('---') and not line[3:].strip().startswith('@'):
-                    doc_line = line[3:].strip()  # Remove "---" prefix
+                comment_match = comment_pattern.match(line)
+                if comment_match:
+                    doc_line = comment_match.group(1)
                     doc_lines.append(doc_line)
                     continue
 
@@ -87,8 +86,7 @@ def parse_lua_file(lua_path):
                             j += 1
 
                     params.append(
-                        {'name': param_name, 'type': param_type, 'optional': optional, 'default': param_default,
-                         'description': param_desc})
+                        FunctionParam(param_name, param_type, param_desc, optional, param_default))
                     continue
 
                 return_match = return_pattern.match(line)
@@ -96,44 +94,38 @@ def parse_lua_file(lua_path):
                     return_type = return_match.group(1)
                     return_name = return_match.group(2)
                     return_desc = return_match.group(3)
-                    returns.append({'name': return_name, 'type': return_type, 'description': return_desc})
+                    returns.append(
+                        FunctionType(return_name, return_type, return_desc))
 
             first = True
             function_sig = "("
             for param in params:
-                optional = param['optional']
+                optional = param.optional
                 if optional:
                     function_sig += '['
                 if not first:
                     function_sig += ", "
-                function_sig += param['name']
-                if optional and len(param['default']) > 0:
-                    function_sig += '=' + param['default']
+                function_sig += param.name
+                if optional and len(param.default) > 0:
+                    function_sig += '=' + param.default
                 first = False
-            for i in range(optional_params):
+            for _ in range(optional_params):
                 function_sig += ']'
             function_sig += ')'
 
-            # Add the function to the list with its description, parameters, and return values
-            current_region['functions'].append({
-                'name': function_name,
-                'signature': function_sig,
-                'full_name': function_name + ' ' + function_sig,
-                'params': params,
-                'returns': returns,
-                'description': '\n'.join(doc_lines)  # Join description lines
-            })
+            new_function = Function(function_name, function_sig, '\n'.join(doc_lines), params, returns)
+            current_region.functions.append(new_function)
 
-            all_functions.append({'name': function_name, 'full_name': function_name + ' ' + function_sig})
+            all_funcs.append(new_function)
 
-    return regions
+    return all_regions, all_funcs
 
 
 def format_markdown_link(name):
     return re.sub(r'[^a-z0-9-]', '', name.replace(' ', '-').lower())
 
 
-def generate_markdown_documentation(regions):
+def generate_markdown_documentation(region_list: list[Region]):
     """
     Generates markdown documentation for a list of functions.
     """
@@ -143,45 +135,45 @@ def generate_markdown_documentation(regions):
 
     markdown_text += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n"
 
-    for reg in regions:
-        region_name = reg['region']
+    for reg in region_list:
+        region_name = reg.name
         markdown_text += f"\n## {region_name}\n"
 
         layout_markdown += f"\n## [{region_name}](boss_helper_functions.md#{format_markdown_link(region_name)})\n\n"
 
-        for func in reg['functions']:
-            full_name = func['full_name']
+        for func in reg.functions:
+            full_name = func.full_name
 
             layout_markdown += f"- [{full_name}](boss_helper_functions.md#{format_markdown_link(full_name)})\n"
 
-            markdown_text += f"\n### {full_name}\n\n{TAB}{func['description']}\n"
+            markdown_text += f"\n### {full_name}\n\n{TAB}{func.description}\n"
 
-            if func['params']:
-                for param in func['params']:
-                    markdown_text += f"\n{TAB}`{param['name']}` (`{param['type']}`)"
-                    if param['optional']:
-                        if param['default']:
-                            markdown_text += f" (default `{param['default']}`)"
+            if func.params:
+                for param in func.params:
+                    markdown_text += f"\n{TAB}`{param.name}` (`{param.type}`)"
+                    if param.optional:
+                        if param.default:
+                            markdown_text += f" (default `{param.default}`)"
                         else:
                             markdown_text += f" (optional)"
                     markdown_text += f"  \n\n"
 
-                    param_description = param['description']
+                    param_description = param.description
 
                     if param_description.__contains__("helpers."):
                         for function in all_functions:
-                            func_name = function['name']
+                            func_name = function.name
                             if param_description.__contains__(func_name):
-                                param_description = param_description.replace(function['name'],
-                                                                              f"[{function['name']}](#{format_markdown_link(function['full_name'])})")
+                                param_description = param_description.replace(function.name,
+                                                                              f"[{function.name}](#{format_markdown_link(function.full_name)})")
                                 break
 
                     markdown_text += f"{TAB}{TAB}{param_description}  \n"
 
-            if func['returns']:
+            if func.returns:
                 markdown_text += f"\n{TAB}Returns:  \n"
-                for ret in func['returns']:
-                    markdown_text += f"\n{TAB}{TAB}`{ret['name']}` (`{ret['type']}`): {ret['description']}\n"
+                for ret in func.returns:
+                    markdown_text += f"\n{TAB}{TAB}`{ret.name}` (`{ret.type}`): {ret.description}\n"
 
             markdown_text += "\n---\n"
 
@@ -198,8 +190,8 @@ if __name__ == '__main__':
     output_file_path = "../../boss_helper_functions.md"
     layout_file_path = "../../boss_helper_functions_layout.md"
 
-    functions = parse_lua_file(lua_file_path)
-    markdown, layout = generate_markdown_documentation(functions)
+    regions, all_functions = parse_lua_file(lua_file_path)
+    markdown, layout = generate_markdown_documentation(regions)
     save_markdown_to_file(markdown, output_file_path)
     save_markdown_to_file(layout, layout_file_path)
 
