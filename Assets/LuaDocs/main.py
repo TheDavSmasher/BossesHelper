@@ -125,14 +125,10 @@ def generate_markdown_documentation(region_list: list[Region], file_functions: l
                 for param in func.params:
                     markdown_text += f"\n{TAB}`{param.name}` (`{param.type}`)"
                     if param.optional:
-                        if param.default:
-                            markdown_text += f" (default `{param.default}`)"
-                        else:
-                            markdown_text += f" (optional)"
+                        markdown_text += f" (default `{param.default}`)" if param.default else f" (optional)"
                     markdown_text += f"  \n\n"
 
                     param_description = param.description
-
                     if "helpers." in param_description:
                         for function in [func for func in file_functions if func.name in param_description]:
                             param_description = param_description.replace(
