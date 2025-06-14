@@ -29,14 +29,14 @@ def parse_lua_file(lua_path):
     for i, line in enumerate(lines):
         region_match = region_pattern.match(line)
         if region_match:
-            if region_match.group(1).startswith('Original'):
+            region_name = region_match.group(1)
+            if region_name.startswith('Original'):
                 skipping = True
-            if not (region_match.group(1).startswith('Type') or region_match.group(1).__contains__('Helper')):
-                current_region = Region(region_match.group(1))
+            if not (region_name.startswith('Type') or region_name.__contains__('Helper')):
+                current_region = Region(region_name)
             continue
 
-        end_match = end_pattern.match(line)
-        if end_match:
+        if end_pattern.match(line):
             skipping = False
             if current_region is not None:
                 all_regions.append(current_region)
@@ -47,76 +47,76 @@ def parse_lua_file(lua_path):
             continue
 
         func_match = func_pattern.match(line)
-        if func_match:
-            function_name = func_match.group(1)
+        if func_match is None:
+            continue
 
-            doc_lines: list[str] = []
-            params: list[FunctionParam] = []
-            returns: list[FunctionType] = []
-            optional_params = 0
+        doc_lines: list[str] = []
+        params: list[FunctionParam] = []
+        returns: list[FunctionType] = []
+        optional_params = 0
 
-            j = i - 1
-            while j >= 0 and lines[j].startswith('---'):
-                j -= 1
+        j = i - 1
+        while j >= 0 and lines[j].startswith('---'):
+            j -= 1
 
-            while j < i:
-                j += 1
-                line = lines[j]
+        while j < i:
+            j += 1
+            line = lines[j]
 
-                comment_match = comment_pattern.match(line)
-                if comment_match:
-                    doc_line = comment_match.group(1)
-                    doc_lines.append(doc_line)
-                    continue
+            comment_match = comment_pattern.match(line)
+            if comment_match:
+                doc_line = comment_match.group(1)
+                doc_lines.append(doc_line)
+                continue
 
-                param_match = param_pattern.match(line)
-                if param_match:
-                    param_name = param_match.group(1)
-                    param_type = param_match.group(2)
-                    param_desc = param_match.group(3)
-                    param_default = ""
-                    optional = param_name.endswith('?')
-                    if optional:
-                        optional_params += 1
-                        param_name = param_name[:-1]
-
-                        default_match = default_pattern.match(lines[j + 1].strip())
-                        if default_match:
-                            param_default = default_match.group(1)
-                            j += 1
-
-                    params.append(
-                        FunctionParam(param_name, param_type, param_desc, optional, param_default))
-                    continue
-
-                return_match = return_pattern.match(line)
-                if return_match:
-                    return_type = return_match.group(1)
-                    return_name = return_match.group(2)
-                    return_desc = return_match.group(3)
-                    returns.append(
-                        FunctionType(return_name, return_type, return_desc))
-
-            first = True
-            function_sig = "("
-            for param in params:
-                optional = param.optional
+            param_match = param_pattern.match(line)
+            if param_match:
+                param_name = param_match.group(1)
+                param_type = param_match.group(2)
+                param_desc = param_match.group(3)
+                param_default = ""
+                optional = param_name.endswith('?')
                 if optional:
-                    function_sig += '['
-                if not first:
-                    function_sig += ", "
-                function_sig += param.name
-                if optional and len(param.default) > 0:
-                    function_sig += '=' + param.default
-                first = False
-            for _ in range(optional_params):
-                function_sig += ']'
-            function_sig += ')'
+                    optional_params += 1
+                    param_name = param_name[:-1]
 
-            new_function = Function(function_name, function_sig, '\n'.join(doc_lines), params, returns)
-            current_region.functions.append(new_function)
+                    default_match = default_pattern.match(lines[j + 1].strip())
+                    if default_match:
+                        param_default = default_match.group(1)
+                        j += 1
 
-            all_funcs.append(new_function)
+                params.append(
+                    FunctionParam(param_name, param_type, param_desc, optional, param_default))
+                continue
+
+            return_match = return_pattern.match(line)
+            if return_match:
+                return_type = return_match.group(1)
+                return_name = return_match.group(2)
+                return_desc = return_match.group(3)
+                returns.append(
+                    FunctionType(return_name, return_type, return_desc))
+
+        first = True
+        function_sig = "("
+        for param in params:
+            optional = param.optional
+            if optional:
+                function_sig += '['
+            if not first:
+                function_sig += ", "
+            function_sig += param.name
+            if optional and len(param.default) > 0:
+                function_sig += '=' + param.default
+            first = False
+        for _ in range(optional_params):
+            function_sig += ']'
+        function_sig += ')'
+
+        new_function = Function(func_match.group(1), function_sig, '\n'.join(doc_lines), params, returns)
+        current_region.functions.append(new_function)
+
+        all_funcs.append(new_function)
 
     return all_regions, all_funcs
 
