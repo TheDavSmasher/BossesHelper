@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 
 @dataclass
 class FunctionType:
-    name: str
     type: str
+    name: str
     description: str
 
 
