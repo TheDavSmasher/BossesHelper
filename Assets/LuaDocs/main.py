@@ -105,11 +105,11 @@ def generate_markdown_documentation(region_list: list[Region]):
     """
     Generates markdown documentation for a list of functions.
     """
-    markdown_text = "# [Bosses Helper](README.md): Lua Helper Functions\n"
+    markdown_text = ("# [Bosses Helper](README.md): Lua Helper Functions\n"
+                     "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n"
+                     "\n[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
 
     layout_markdown = "# [Bosses Helper](README.md): [Lua Helper Functions](boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n"
-
-    markdown_text += "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n"
 
     for reg in region_list:
         region_name = reg.name
