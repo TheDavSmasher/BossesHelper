@@ -53,7 +53,6 @@ def parse_lua_file(lua_path):
         doc_lines: list[str] = []
         params: list[FunctionParam] = []
         returns: list[FunctionType] = []
-        optional_params = 0
 
         j = i - 1
         while j >= 0 and lines[j].startswith('---'):
@@ -65,55 +64,32 @@ def parse_lua_file(lua_path):
 
             comment_match = comment_pattern.match(line)
             if comment_match:
-                doc_line = comment_match.group(1)
-                doc_lines.append(doc_line)
+                doc_lines.append(comment_match.group(1))
                 continue
 
             param_match = param_pattern.match(line)
             if param_match:
-                param_name = param_match.group(1)
-                param_type = param_match.group(2)
-                param_desc = param_match.group(3)
+                param_name, param_type, param_desc = param_match.groups()
                 param_default = ""
                 optional = param_name.endswith('?')
                 if optional:
-                    optional_params += 1
                     param_name = param_name[:-1]
 
-                    default_match = default_pattern.match(lines[j + 1].strip())
+                    default_match = default_pattern.match(lines[j + 1])
                     if default_match:
                         param_default = default_match.group(1)
                         j += 1
 
                 params.append(
-                    FunctionParam(param_name, param_type, param_desc, optional, param_default))
+                    FunctionParam(param_type, param_name, param_desc, optional, param_default))
                 continue
 
             return_match = return_pattern.match(line)
             if return_match:
-                return_type = return_match.group(1)
-                return_name = return_match.group(2)
-                return_desc = return_match.group(3)
                 returns.append(
-                    FunctionType(return_name, return_type, return_desc))
+                    FunctionType(*return_match.groups()))
 
-        first = True
-        function_sig = "("
-        for param in params:
-            optional = param.optional
-            if optional:
-                function_sig += '['
-            if not first:
-                function_sig += ", "
-            function_sig += param.name
-            if optional and len(param.default) > 0:
-                function_sig += '=' + param.default
-            first = False
-        for _ in range(optional_params):
-            function_sig += ']'
-        function_sig += ')'
-
-        new_function = Function(func_match.group(1), function_sig, '\n'.join(doc_lines), params, returns)
+        new_function = Function(func_match.group(1), '\n'.join(doc_lines), params, returns)
         current_region.functions.append(new_function)
 
         all_funcs.append(new_function)
@@ -160,13 +136,10 @@ def generate_markdown_documentation(region_list: list[Region]):
 
                     param_description = param.description
 
-                    if param_description.__contains__("helpers."):
-                        for function in all_functions:
-                            func_name = function.name
-                            if param_description.__contains__(func_name):
-                                param_description = param_description.replace(function.name,
-                                                                              f"[{function.name}](#{format_markdown_link(function.full_name)})")
-                                break
+                    if "helpers." in param_description:
+                        for function in [func for func in all_functions if func.name in param_description]:
+                            param_description = param_description.replace(
+                                function.name, f"[{function.name}](#{format_markdown_link(function.full_name)})")
 
                     markdown_text += f"{TAB}{TAB}{param_description}  \n"
 
