@@ -117,9 +117,9 @@ def generate_markdown_documentation(region_list: list[Region], file_functions: l
         layout_markdown += f"\n## [{region.name}](boss_helper_functions.md#{format_markdown_link(region.name)})\n\n"
 
         for func in region.functions:
-            layout_markdown += f"- [{func.full_name}](boss_helper_functions.md#{format_markdown_link(func.full_name)})\n"
-
             markdown_text += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
+
+            layout_markdown += f"- [{func.full_name}](boss_helper_functions.md#{format_markdown_link(func.full_name)})\n"
 
             if func.params:
                 for param in func.params:
