@@ -101,7 +101,7 @@ def format_markdown_link(name):
     return re.sub(r'[^a-z0-9-]', '', name.replace(' ', '-').lower())
 
 
-def generate_markdown_documentation(region_list: list[Region]):
+def generate_markdown_documentation(region_list: list[Region], file_functions: list[Function]):
     """
     Generates markdown documentation for a list of functions.
     """
@@ -137,7 +137,7 @@ def generate_markdown_documentation(region_list: list[Region]):
                     param_description = param.description
 
                     if "helpers." in param_description:
-                        for function in [func for func in all_functions if func.name in param_description]:
+                        for function in [func for func in file_functions if func.name in param_description]:
                             param_description = param_description.replace(
                                 function.name, f"[{function.name}](#{format_markdown_link(function.full_name)})")
 
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     layout_file_path = "../../boss_helper_functions_layout.md"
 
     regions, all_functions = parse_lua_file(lua_file_path)
-    markdown, layout = generate_markdown_documentation(regions)
+    markdown, layout = generate_markdown_documentation(regions, all_functions)
     save_markdown_to_file(markdown, output_file_path)
     save_markdown_to_file(layout, layout_file_path)
 
