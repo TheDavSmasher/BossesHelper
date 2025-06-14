@@ -14,7 +14,7 @@ def parse_lua_file(lua_path):
     current_region = None
 
     with open(lua_path, 'r') as file:
-        lines = file.readlines()
+        lines: list[str] = list(map(str.strip, file.readlines()))
 
     region_pattern = re.compile(r'--#region\s+(.*)')
     end_pattern = re.compile(r'--#endregion+(.*)')
@@ -26,8 +26,6 @@ def parse_lua_file(lua_path):
     skipping = False
 
     for i, line in enumerate(lines):
-        line = line.strip()
-
         region_match = region_pattern.match(line)
         if region_match:
             if region_match.group(1).startswith('Original'):
@@ -65,8 +63,7 @@ def parse_lua_file(lua_path):
 
             while j < i:
                 j += 1
-
-                line = lines[j].strip()
+                line = lines[j]
 
                 if line.startswith('---') and not line[3:].strip().startswith('@'):
                     doc_line = line[3:].strip()  # Remove "---" prefix
