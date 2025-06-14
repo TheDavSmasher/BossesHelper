@@ -163,8 +163,7 @@ if __name__ == '__main__':
     output_file_path = "../../boss_helper_functions.md"
     layout_file_path = "../../boss_helper_functions_layout.md"
 
-    regions, all_functions = parse_lua_file(lua_file_path)
-    markdown, layout = generate_markdown_documentation(regions, all_functions)
+    markdown, layout = generate_markdown_documentation(*parse_lua_file(lua_file_path))
     save_markdown_to_file(markdown, output_file_path)
     save_markdown_to_file(layout, layout_file_path)
 
