@@ -111,18 +111,15 @@ def generate_markdown_documentation(region_list: list[Region], file_functions: l
 
     layout_markdown = "# [Bosses Helper](README.md): [Lua Helper Functions](boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n"
 
-    for reg in region_list:
-        region_name = reg.name
-        markdown_text += f"\n## {region_name}\n"
+    for region in region_list:
+        markdown_text += f"\n## {region.name}\n"
 
-        layout_markdown += f"\n## [{region_name}](boss_helper_functions.md#{format_markdown_link(region_name)})\n\n"
+        layout_markdown += f"\n## [{region.name}](boss_helper_functions.md#{format_markdown_link(region.name)})\n\n"
 
-        for func in reg.functions:
-            full_name = func.full_name
+        for func in region.functions:
+            layout_markdown += f"- [{func.full_name}](boss_helper_functions.md#{format_markdown_link(func.full_name)})\n"
 
-            layout_markdown += f"- [{full_name}](boss_helper_functions.md#{format_markdown_link(full_name)})\n"
-
-            markdown_text += f"\n### {full_name}\n\n{TAB}{func.description}\n"
+            markdown_text += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
             if func.params:
                 for param in func.params:
