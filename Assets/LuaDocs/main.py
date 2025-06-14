@@ -146,9 +146,10 @@ def generate_markdown_documentation(region_list: list[Region], file_functions: l
     return markdown_text, layout_markdown
 
 
-def save_markdown_to_file(markdown_text, output_path):
+def save_markdown_to_file(markdown_text, output_path, desc):
     with open(output_path, 'w') as f:
         f.write(markdown_text)
+    print(f"{desc} saved to {f}")
 
 
 if __name__ == '__main__':
@@ -157,7 +158,5 @@ if __name__ == '__main__':
     layout_file_path = "../../boss_helper_functions_layout.md"
 
     markdown, layout = generate_markdown_documentation(*parse_lua_file(lua_file_path))
-    save_markdown_to_file(markdown, output_file_path)
-    save_markdown_to_file(layout, layout_file_path)
-
-    print(f"Documentation saved to {output_file_path}")
+    save_markdown_to_file(markdown, output_file_path, "Documentation")
+    save_markdown_to_file(layout, layout_file_path, "Layout")
