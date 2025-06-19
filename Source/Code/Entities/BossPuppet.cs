@@ -19,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Target
         }
 
-        public Sprite Sprite { get; private set; }
+        public readonly Sprite Sprite;
 
         private readonly Dictionary<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
 
@@ -46,9 +46,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         internal BossFunctions BossFunctions { get; set; }
 
-        private readonly float bossHitCooldownBase;
-
         public float BossHitCooldown { get; private set; }
+
+        private readonly float bossHitCooldownBase;
 
         public int Facing;
 

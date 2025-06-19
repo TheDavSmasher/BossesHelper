@@ -16,9 +16,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         public Random Random { get; private set; }
 
-        public string BossID { get; private set; }
+        public readonly string BossID;
 
-        public BossPuppet Puppet { get; private set; }
+        public readonly BossPuppet Puppet;
 
         private readonly EntityID entityId;
 

@@ -10,7 +10,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         protected readonly bool stateNeeded = stateNeeded;
 
         internal StateChecker(LuaFunction luaAction, bool stateNeeded = true, bool removeOnComplete = true)
-            : this((e) => luaAction.Call(e), stateNeeded, removeOnComplete) { }
+            : this(e => luaAction.Call(e), stateNeeded, removeOnComplete) { }
 
         public override void Update()
         {

@@ -7,7 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     internal class AttackEntity : Entity
     {
-        public Sprite Sprite { get; private set; }
+        public readonly Sprite Sprite;
 
         private readonly LuaFunction onCollide;
 
