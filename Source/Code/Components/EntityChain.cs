@@ -6,8 +6,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     public class EntityChain(Entity chained, bool chainPosition, bool removeTogether = false)
         : Component(active: true, visible: false)
     {
-        public Entity Chained => chained;
-
         public bool chainedPosition = chainPosition;
 
         public Vector2 positionOffset;
@@ -15,14 +13,14 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         public override void Added(Entity entity)
         {
             base.Added(entity);
-            positionOffset = Chained.Position - Entity.Position;
+            positionOffset = chained.Position - Entity.Position;
         }
 
         public override void Update()
         {
             if (chainedPosition)
             {
-                Chained.Position = Entity.Position + positionOffset;
+                chained.Position = Entity.Position + positionOffset;
             }
         }
 
@@ -30,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         {
             base.Removed(entity);
             if (removeTogether)
-                Chained.RemoveSelf();
+                chained.RemoveSelf();
         }
     }
 }
