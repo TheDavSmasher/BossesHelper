@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                     {
                         { "player", level.GetPlayer() },
-                        { "healthBar", HealthBar.healthIcons },
+                        { "healthBar", HealthBar },
                         { "modMetaData", BossesHelperModule.Instance.Metadata }
                     }, 
                     Filepath, "getFunctionData", 2);
@@ -94,13 +94,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Logger.Log("Bosses Helper", "No Health Bar has been initialized");
             }
-            HealthBar?.healthIcons.DecreaseHealth(amount);
+            HealthBar?.DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
         {
             BSession.currentPlayerHealth += amount;
-            HealthBar.healthIcons.RefillHealth(amount);
+            HealthBar.RefillHealth(amount);
             if (onRecover != null)
                 Add(new Coroutine(onRecover.ToIEnumerator()));
         }

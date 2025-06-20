@@ -113,7 +113,7 @@ public partial class BossesHelperModule : EverestModule
             intro == Player.IntroTypes.Respawn && !fromLoader && !Session.fakeDeathRespawn))
         {
             Session.currentPlayerHealth = HealthData.playerHealthVal;
-            Engine.Scene.GetEntity<PlayerHealthBar>().healthIcons.RefillHealth();
+            Engine.Scene.GetEntity<PlayerHealthBar>().RefillHealth();
         }
         Session.fakeDeathRespawn = false;
     }
