@@ -62,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 playerStagger = data.Bool("playerStagger", true),
                 activateFlag = data.String("activationFlag", HealthData.activateFlag),
                 isEnabled = false,
-                isCreated = HealthData.isCreated                
+                isCreated = HealthData.isCreated
             };
             if (!HealthData.isCreated)
                 ResetCurrentHealth();
