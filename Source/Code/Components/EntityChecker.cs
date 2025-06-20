@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         : StateChecker(action, stateNeeded, removeOnComplete)
     {
         public EntityChecker(LuaFunction checker, LuaFunction action, bool stateNeeded = true, bool removeOnComplete = true)
-            : this(() => (bool) checker.Call().FirstOrDefault(), (e) => action.Call(e), stateNeeded, removeOnComplete) { }
+            : this(() => (bool) checker.Call().FirstOrDefault(), e => action.Call(e), stateNeeded, removeOnComplete) { }
 
         protected override bool StateCheck() => checker();
     }

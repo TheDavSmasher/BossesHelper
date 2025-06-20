@@ -8,7 +8,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         : StateChecker(action, stateNeeded)
     {
         public EntityFlagger(string flag, LuaFunction action, bool stateNeeded, bool resetFlag)
-            : this(flag, (e) => action.Call(e), stateNeeded, resetFlag) { }
+            : this(flag, e => action.Call(e), stateNeeded, resetFlag) { }
 
         protected override bool StateCheck()
         {
