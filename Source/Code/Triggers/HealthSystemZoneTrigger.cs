@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 
@@ -12,26 +13,24 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (enableState)
+            if (SceneAs<Level>().GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.EnableHealthSystem();
-            }
-            else
-            {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.DisableHealthSystem();
+                if (enableState)
+                    manager.EnableHealthSystem();
+                else
+                    manager.DisableHealthSystem();
             }
         }
 
         public override void OnLeave(Player player)
         {
             base.OnLeave(player);
-            if (enableState)
+            if (SceneAs<Level>().GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.DisableHealthSystem();
-            }
-            else
-            {
-                SceneAs<Level>().Tracker.GetEntity<HealthSystemManager>()?.EnableHealthSystem();
+                if (enableState)
+                    manager.EnableHealthSystem();
+                else
+                    manager.DisableHealthSystem();
             }
         }
     }

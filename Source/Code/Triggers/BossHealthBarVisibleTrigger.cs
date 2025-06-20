@@ -16,8 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            BossHealthBar bar = SceneAs<Level>().Tracker.GetNearestEntity<BossHealthBar>(node);
-            if (bar != null)
+            if (SceneAs<Level>().Tracker.GetNearestEntity<BossHealthBar>(node) is BossHealthBar bar)
             {
                 bar.Visible = state;
                 if (onlyOnce)
