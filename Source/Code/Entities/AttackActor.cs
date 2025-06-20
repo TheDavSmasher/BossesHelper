@@ -17,10 +17,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool SolidCollidable;
 
-        private readonly Collision onCollideH;
-
-        private readonly Collision onCollideV;
-
         public bool Grounded { get; private set; }
 
         private readonly float maxFall;
@@ -42,8 +38,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Sprite.Scale = new Vector2(xScale, yScale);
                 Add(Sprite);
             }
-            onCollideH = OnCollideH;
-            onCollideV = OnCollideV;
             onCollide = onPlayer;
             Add(new PlayerCollider(OnPlayer));
         }
@@ -55,8 +49,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             //Move based on speed
             if (SolidCollidable)
             {
-                MoveH(Speed.X * Engine.DeltaTime, onCollideH);
-                MoveV(Speed.Y * Engine.DeltaTime, onCollideV);
+                MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
+                MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
             }
             else
             {
