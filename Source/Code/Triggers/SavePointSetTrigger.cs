@@ -6,40 +6,26 @@ using Monocle;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/SavePointSetTrigger")]
-    public class SavePointSetTrigger
-        : SingleUseTrigger
+    public class SavePointSetTrigger(EntityData data, Vector2 offset, EntityID id)
+                : SingleUseTrigger(data, offset, id, data.Bool("onlyOnce"))
     {
-        private readonly EntityID ID;
+        private readonly EntityID ID = id;
 
-        private readonly Player.IntroTypes spawnType;
+        private readonly Player.IntroTypes spawnType = data.Enum<Player.IntroTypes>("respawnType");
 
-        private readonly Vector2? spawnPosition;
+        private readonly Vector2? spawnPosition = data.FirstNodeNullable() + offset;
 
-        private readonly string flagTrigger;
+        private readonly string flagTrigger = data.String("flagTrigger");
 
-        private readonly bool invertFlag;
+        private readonly bool invertFlag = data.Bool("invertFlag");
 
         private GlobalSavePointChanger Changer;
-
-        public SavePointSetTrigger(EntityData data, Vector2 offset, EntityID id)
-            : base(data, offset, id, data.Bool("onlyOnce"))
-        {
-            this.ID = id;
-            spawnType = data.Enum<Player.IntroTypes>("respawnType");
-            if (data.FirstNodeNullable() is Vector2 spawn)
-            {
-                spawnPosition = spawn + offset;
-            }
-            flagTrigger = data.String("flagTrigger");
-            invertFlag = data.Bool("invertFlag");
-        }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Session session = (scene as Level).Session;
             Add(Changer = new(ID,
-                spawnPosition ?? session.GetSpawnPoint(Center),
+                spawnPosition ?? SceneAs<Level>().Session.GetSpawnPoint(Center),
                 spawnType));
         }
 
