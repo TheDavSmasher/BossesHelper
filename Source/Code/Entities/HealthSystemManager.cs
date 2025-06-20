@@ -64,13 +64,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 isEnabled = false,
                 isCreated = HealthData.isCreated                
             };
-            ResetCurrentHealth(!HealthData.isCreated);
+            if (!HealthData.isCreated)
+                ResetCurrentHealth();
             BossesHelperModule.Session.healthData.isCreated = true;
         }
 
         public HealthSystemManager() : base(false)
         {
-            ResetCurrentHealth(HealthData.isCreated && !HealthData.globalHealth);
+            if (HealthData.isCreated && !HealthData.globalHealth)
+                ResetCurrentHealth();
         }
 
         public override void Added(Scene scene)
@@ -123,12 +125,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             UnloadFakeDeathHooks();
         }
 
-        private static void ResetCurrentHealth(bool reset)
+        private static void ResetCurrentHealth()
         {
-            if (reset)
-            {
-                BossesHelperModule.Session.currentPlayerHealth = BossesHelperModule.Session.healthData.playerHealthVal;
-            }
+            BossesHelperModule.Session.currentPlayerHealth = HealthData.playerHealthVal;
         }
 
         private static partial void LoadFakeDeathHooks();
