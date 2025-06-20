@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Position = data.Position;
             BarPosition = new Vector2(data.Float("healthBarX"), data.Float("healthBarY"));
             BarScale = new Vector2(data.Float("healthScaleX", 1f), data.Float("healthScaleY", 1f));
-            barType = data.Enum<BarTypes>("barType", BarTypes.BarLeft);
+            barType = data.Enum("barType", BarTypes.BarLeft);
         }
 
         public override void Awake(Scene scene)
