@@ -32,14 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (flagTrigger == null)
-            {
-                Changer?.Update();
-                RemoveSelf();
-                return;
-            }
-            bool flagSet = player.SceneAs<Level>().Session.GetFlag(flagTrigger);
-            if (flagSet ^ invertFlag)
+            if (flagTrigger == null ||
+                (player.SceneAs<Level>().Session.GetFlag(flagTrigger) ^ invertFlag))
             {
                 Changer?.Update();
                 RemoveSelf();
