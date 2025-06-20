@@ -23,11 +23,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             get
             {
-                return Scene.GetEntity<PlayerHealthBar>().Visible;
+                return HealthBar.Visible;
             }
             set
             {
-                Scene.GetEntity<PlayerHealthBar>().Visible = value;
+                HealthBar.Visible = value;
             }
         }
 
@@ -192,6 +192,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
+        private PlayerHealthBar HealthBar;
+
+        private DamageController Controller;
+
         private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
             : base(isGlobal)
         {
@@ -280,29 +284,29 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
-            Scene.GetEntity<DamageController>().TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
-            Scene.GetEntity<PlayerHealthBar>().DecreaseHealth(amount);
+            Controller.TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
+            HealthBar.DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
         {
-            Scene.GetEntity<DamageController>().RecoverHealth(amount);
-            Scene.GetEntity<PlayerHealthBar>().RefillHealth(amount);
+            Controller.RecoverHealth(amount);
+            HealthBar.RefillHealth(amount);
         }
 
         public void RefillHealth()
         {
-            Scene.GetEntity<DamageController>().RefillHealth();
-            Scene.GetEntity<PlayerHealthBar>().RefillHealth();
+            Controller.RefillHealth();
+            HealthBar.RefillHealth();
         }
 
         public void EnableHealthSystem(bool withHooks = true)
         {
             HealthData.isEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
-                Scene.Add(new PlayerHealthBar());
+                Scene.Add(HealthBar = new PlayerHealthBar());
             if (Scene.GetEntity<DamageController>() == null)
-                Scene.Add(new DamageController());
+                Scene.Add(Controller = new DamageController());
             if (withHooks)
                 LoadFakeDeathHooks();
             Get<EntityFlagger>()?.RemoveSelf();
@@ -313,8 +317,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthData.isEnabled = false;
             if (withHooks)
                 UnloadFakeDeathHooks();
-            Scene.GetEntity<PlayerHealthBar>()?.RemoveSelf();
-            Scene.GetEntity<DamageController>()?.RemoveSelf();
+            Controller.RemoveSelf();
+            Controller = null;
+            HealthBar.RemoveSelf();
+            HealthBar = null;
         }
 
         private static partial void LoadFakeDeathHooks();
