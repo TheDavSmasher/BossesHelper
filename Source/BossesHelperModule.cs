@@ -259,7 +259,7 @@ public partial class BossesHelperModule : EverestModule
 
     public static void PlayerTakesDamage(Vector2? origin = null, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
     {
-        Engine.Scene.GetEntity<DamageController>()?.TakeDamage(origin ?? Vector2.Zero, amount, silent, stagger, evenIfInvincible);
+        Engine.Scene.GetEntity<HealthSystemManager>()?.TakeDamage(origin ?? Vector2.Zero, amount, silent, stagger, evenIfInvincible);
     }
 
     private static float? GetFromY(Player player)

@@ -1,8 +1,8 @@
-﻿using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
-using Celeste.Mod.Entities;
+﻿using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
+using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
@@ -15,9 +15,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (Scene.GetEntity<DamageController>() is DamageController controller)
+            if (Scene.GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                ConsumeAfter(() => controller.RecoverHealth(healAmount));
+                ConsumeAfter(() => manager.RecoverHealth(healAmount));
             }
         }
     }

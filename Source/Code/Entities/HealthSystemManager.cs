@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        public class DamageController : GlobalEntity
+        private class DamageController : GlobalEntity
         {
             private Level Level => SceneAs<Level>();
 
