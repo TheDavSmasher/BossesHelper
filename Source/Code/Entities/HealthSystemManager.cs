@@ -19,8 +19,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private static ref BossesHelperSession.HealthSystemData HealthData => ref ModSession.healthData;
 
+        public new bool Visible
+        {
+            get
+            {
+                return Scene.GetEntity<PlayerHealthBar>().Visible;
+            }
+            set
+            {
+                Scene.GetEntity<PlayerHealthBar>().Visible = value;
+            }
+        }
+
         [Tracked(false)]
-        public class PlayerHealthBar : HealthIconList
+        private class PlayerHealthBar : HealthIconList
         {
             internal PlayerHealthBar() : base(HealthData.globalController)
             {

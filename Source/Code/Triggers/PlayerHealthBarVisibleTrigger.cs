@@ -1,7 +1,7 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
@@ -14,9 +14,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (Scene.GetEntity<PlayerHealthBar>() is PlayerHealthBar bar)
+            if (Scene.GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                ConsumeAfter(() => bar.Visible = state);
+                ConsumeAfter(() => manager.Visible = state);
             }
         }
     }
