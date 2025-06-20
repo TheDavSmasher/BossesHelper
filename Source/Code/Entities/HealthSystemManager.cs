@@ -12,6 +12,26 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
+        [Tracked(false)]
+        public class PlayerHealthBar : HealthIconList
+        {
+            internal PlayerHealthBar() : base(HealthData.globalController)
+            {
+                Visible = HealthData.startVisible;
+            }
+
+            public override void Awake(Scene scene)
+            {
+                if (scene.GetEntity<PlayerHealthBar>() != this)
+                {
+                    RemoveSelf();
+                    return;
+                }
+                Clear();
+                base.Awake(scene);
+            }
+        }
+
         private PlayerHealthBar HealthBar => Scene.GetEntity<PlayerHealthBar>();
 
         private DamageController DamageController => Scene.GetEntity<DamageController>();

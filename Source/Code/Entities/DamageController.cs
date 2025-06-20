@@ -7,6 +7,7 @@ using NLua;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {

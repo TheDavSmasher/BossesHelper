@@ -6,6 +6,7 @@ using MonoMod.RuntimeDetour;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 
 namespace Celeste.Mod.BossesHelper;
 
