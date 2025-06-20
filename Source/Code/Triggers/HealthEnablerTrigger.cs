@@ -13,6 +13,11 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
+            ChangeManagerState();
+        }
+
+        protected void ChangeManagerState()
+        {
             if (SceneAs<Level>().GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
                 if (enableState)
