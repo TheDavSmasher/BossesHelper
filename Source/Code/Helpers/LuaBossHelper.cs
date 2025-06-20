@@ -69,7 +69,8 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public static IEnumerator ToIEnumerator(this LuaFunction func)
             {
-                LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaCoroutine;
+                LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction)
+                    .Call(func).ElementAtOrDefault(0) as LuaCoroutine;
                 while (routine != null && SafeMoveNext(routine))
                 {
                     if (routine.Current is double || routine.Current is long)
@@ -84,7 +85,8 @@ namespace Celeste.Mod.BossesHelper.Code
                 yield return null;
             }
 
-            public static LuaFunction[] LoadLuaFile(Dictionary<object, object> passedVals, string filename, string command, int count = 1)
+            public static LuaFunction[] LoadLuaFile(
+                Dictionary<object, object> passedVals, string filename, string command, int count = 1)
             {
                 LuaFunction[] funcs = null;
                 if (!string.IsNullOrEmpty(filename))
@@ -354,7 +356,8 @@ namespace Celeste.Mod.BossesHelper.Code
                 return time;
             }
 
-            public float SpeedTween(float xStart, float yStart, float xTarget, float yTarget, float time, Ease.Easer easer = null)
+            public float SpeedTween(
+                float xStart, float yStart, float xTarget, float yTarget, float time, Ease.Easer easer = null)
             {
                 SpeedXTween(xStart, xTarget, time, easer);
                 SpeedYTween(yStart, yTarget, time, easer);

@@ -45,18 +45,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void LoadFunction()
         {
-            if (!string.IsNullOrEmpty(Filepath))
+            LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
             {
-                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", Scene.GetPlayer() },
-                    { "healthBar", HealthBar },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                }, 
-                Filepath, "getFunctionData", 2);
-                onDamage = array[0];
-                onRecover = array[1];
-            }
+                { "player", Scene.GetPlayer() },
+                { "healthBar", HealthBar },
+                { "modMetaData", BossesHelperModule.Instance.Metadata }
+            }, 
+            Filepath, "getFunctionData", 2);
+            onDamage = array[0];
+            onRecover = array[1];
         }
 
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
