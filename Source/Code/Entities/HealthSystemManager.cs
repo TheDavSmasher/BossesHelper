@@ -33,8 +33,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
+        private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0) : base(isGlobal)
+        {
+            if (setHealthTo > 0)
+            {
+                BossesHelperModule.Session.healthData.playerHealthVal = setHealthTo;
+            }
+            if (resetHealth)
+            {
+                ResetCurrentHealth();
+            }
+        }
+
         public HealthSystemManager(EntityData data, Vector2 _)
-            : base(data.Bool("isGlobal"))
+            : this(HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"))
         {
             Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
             Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
@@ -49,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 frameSprite = data.String("frameSprite", HealthData.frameSprite),
                 globalController = IsGlobal,
                 globalHealth = IsGlobal && data.Bool("globalHealth"),
-                playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),
+                playerHealthVal = HealthData.playerHealthVal,
                 damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
                 playerOnCrush = (DeathEffect) data.Enum("crushEffect", (CrushEffect) HealthData.playerOnCrush),
                 playerOffscreen = (DeathEffect) data.Enum("offscreenEffect", (OffscreenEffect) HealthData.playerOffscreen),
@@ -62,18 +74,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 playerStagger = data.Bool("playerStagger", true),
                 activateFlag = data.String("activationFlag", HealthData.activateFlag),
                 isEnabled = false,
-                isCreated = HealthData.isCreated
+                isCreated = true
             };
-            if (!HealthData.isCreated)
-                ResetCurrentHealth();
-            BossesHelperModule.Session.healthData.isCreated = true;
         }
 
-        public HealthSystemManager() : base(false)
-        {
-            if (!HealthData.globalHealth)
-                ResetCurrentHealth();
-        }
+        public HealthSystemManager() : this(!HealthData.globalHealth, false) { }
 
         public override void Added(Scene scene)
         {
