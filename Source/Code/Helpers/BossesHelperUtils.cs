@@ -452,22 +452,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        public abstract class GlobalEntity : Entity
+        public abstract class GlobalEntity(bool isGlobal) : Entity
         {
-            protected readonly bool IsGlobal;
+            protected bool IsGlobal { get; private set; } = isGlobal;
 
-            public GlobalEntity(bool isGlobal)
+            public override void Added(Scene scene)
             {
-                if (IsGlobal = isGlobal)
-                {
-                    AddTag(Tags.Global);
-                }
+                base.Added(scene);
+                if (IsGlobal)
+                    ChangeGlobalState(true);
             }
 
             public void ChangeGlobalState(bool state)
             {
                 if (IsGlobal != state)
                 {
+                    IsGlobal = state;
                     if (state)
                         AddTag(Tags.Global);
                     else
