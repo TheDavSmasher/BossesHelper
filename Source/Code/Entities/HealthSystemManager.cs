@@ -2,6 +2,7 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using Celeste.Mod.BossesHelper.Code.Components;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -33,8 +34,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0) : base(isGlobal)
+        private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null) : base(isGlobal)
         {
+            if (activateFlag != null)
+            {
+                BossesHelperModule.Session.healthData.activateFlag = activateFlag;
+            }
             if (setHealthTo > 0)
             {
                 BossesHelperModule.Session.healthData.playerHealthVal = setHealthTo;
@@ -43,10 +48,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 ResetCurrentHealth();
             }
+            Add(new EntityFlagger(HealthData.activateFlag, _ => EnableHealthSystem()));
         }
 
         public HealthSystemManager(EntityData data, Vector2 _)
-            : this(HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"))
+            : this(HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"), data.String("activationFlag"))
         {
             Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
             Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
@@ -72,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 removeOnDamage = data.Bool("removeOnDamage", true),
                 playerBlink = data.Bool("playerBlink", true),
                 playerStagger = data.Bool("playerStagger", true),
-                activateFlag = data.String("activationFlag", HealthData.activateFlag),
+                activateFlag = HealthData.activateFlag,
                 isEnabled = false,
                 isCreated = true
             };
@@ -82,7 +88,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Added(Scene scene)
         {
-            base.Added(scene);
+            base.Added(scene); //old was enabled or new activates instantly
             if (HealthData.isEnabled || HealthData.activateInstantly)
                 EnableHealthSystem();
         }
@@ -92,13 +98,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Awake(scene);
             if (scene.GetEntity<HealthSystemManager>() != this)
                 RemoveSelf();
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (!HealthData.isEnabled && SceneAs<Level>().Session.GetFlag(HealthData.activateFlag))
-                EnableHealthSystem();
         }
 
         public override void Removed(Scene scene)
@@ -121,6 +120,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (DamageController == null)
                 Scene.Add(new DamageController());
             LoadFakeDeathHooks();
+            Get<EntityFlagger>()?.RemoveSelf();
         }
 
         public void DisableHealthSystem()
