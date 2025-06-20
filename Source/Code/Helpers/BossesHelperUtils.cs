@@ -405,11 +405,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return res;
         }
 
-        public static string JoinList(string[] list)
-        {
-            return string.Join(",", list);
-        }
-
         public static List<float> SeparateFloatList(string listString)
         {
             return SeparateList(listString).Select(float.Parse).ToList();

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using System.Collections.Generic;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -60,7 +61,9 @@ public class BossesHelperSession : EverestModuleSession
 
         public HealthSystemManager.DeathEffect playerOffscreen;
 
-        public string[] fakeDeathMethods;
+        public string fakeDeathMethods;
+
+        public readonly List<string> FakeDeathMethods => SeparateList(fakeDeathMethods);
 
         //Visual
         public string iconSprite;

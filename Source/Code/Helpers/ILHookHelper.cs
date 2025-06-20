@@ -95,7 +95,7 @@ namespace Celeste.Mod.BossesHelper
             {
                 private static partial void LoadFakeDeathHooks()
                 {
-                    foreach (string fakeMethod in HealthData.fakeDeathMethods)
+                    foreach (string fakeMethod in HealthData.FakeDeathMethods)
                     {
                         string[] opts = fakeMethod.Split(':');
                         if (opts.Length != 2)
@@ -120,7 +120,7 @@ namespace Celeste.Mod.BossesHelper
 
                 private static void UnloadFakeDeathHooks()
                 {
-                    foreach (string fakeMethod in HealthData.fakeDeathMethods)
+                    foreach (string fakeMethod in HealthData.FakeDeathMethods)
                     {
                         ILHookHelper.DisposeHook(fakeMethod);
                     }
