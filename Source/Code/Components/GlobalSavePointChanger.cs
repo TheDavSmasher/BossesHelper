@@ -13,8 +13,6 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public Vector2 spawnPoint = spawnPoint;
 
-        public readonly Player.IntroTypes spawnType = spawnType;
-
         private static string LevelName(object source)
         {
             return source switch
