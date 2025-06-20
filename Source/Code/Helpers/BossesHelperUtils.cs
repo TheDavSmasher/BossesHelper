@@ -120,9 +120,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
 
         #nullable enable
-        public static T Parse<T>(this string value, Func<string, IFormatProvider?, T> parser)
+        public static T Parse<T>(this string value) where T : IParsable<T>
         {
-            return parser(value, null);
+            return T.Parse(value, null);
         }
         #nullable disable
         #endregion
