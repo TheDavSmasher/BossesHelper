@@ -23,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            if (scene.Tracker.GetEntity<UpdateSafeBlocker>() != this)
+            if (scene.GetEntity<UpdateSafeBlocker>() != this)
                 RemoveSelf();
         }
 
