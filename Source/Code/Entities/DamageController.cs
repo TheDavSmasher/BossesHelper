@@ -13,15 +13,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [Tracked(false)]
     public class DamageController : GlobalEntity
     {
-        private static string Filepath => BossesHelperModule.Session.healthData.onDamageFunction;
-
         private static BossesHelperSession BSession => BossesHelperModule.Session;
 
-        private PlayerHealthBar HealthBar => Scene.Tracker.GetEntity<PlayerHealthBar>();
+        private static BossesHelperSession.HealthSystemData HealthData => BSession.healthData;
 
-        private readonly float baseCooldown;
+        private PlayerHealthBar HealthBar => Scene.GetEntity<PlayerHealthBar>();
 
         private Level Level => SceneAs<Level>();
+
+        private readonly float baseCooldown;
 
         private LuaFunction onRecover;
 
@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 { "player", Scene.GetPlayer() },
                 { "healthBar", HealthBar }
             },
-            Filepath, "getFunctionData", 2);
+            HealthData.onDamageFunction, "getFunctionData", 2);
             onDamage = array[0];
             onRecover = array[1];
         }
