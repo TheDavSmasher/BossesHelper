@@ -17,7 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     {
         private static BossesHelperSession ModSession => BossesHelperModule.Session;
 
-        private static BossesHelperSession.HealthSystemData HealthData => ModSession.healthData;
+        private static ref BossesHelperSession.HealthSystemData HealthData => ref ModSession.healthData;
 
         [Tracked(false)]
         public class PlayerHealthBar : HealthIconList
@@ -182,11 +182,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (activateFlag != null)
             {
-                ModSession.healthData.activateFlag = activateFlag;
+                HealthData.activateFlag = activateFlag;
             }
             if (setHealthTo > 0)
             {
-                ModSession.healthData.playerHealthVal = setHealthTo;
+                HealthData.playerHealthVal = setHealthTo;
             }
             if (resetHealth)
             {
@@ -206,7 +206,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void UpdateSessionData(EntityData data)
         {
             ChangeGlobalState(data.Bool("isGlobal"));
-            ModSession.healthData = new()
+            HealthData = new()
             {
                 iconSprite = data.String("healthIcons", HealthData.iconSprite),
                 startAnim = data.String("healthIconsCreateAnim", HealthData.startAnim),
@@ -259,13 +259,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (scene.GetEntity<HealthSystemManager>() == this)
             {
                 DisableHealthSystem();
-                ModSession.healthData.isCreated = false;
+                HealthData.isCreated = false;
             }
         }
 
         public void EnableHealthSystem(bool withHooks = true)
         {
-            ModSession.healthData.isEnabled = true;
+            HealthData.isEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(new PlayerHealthBar());
             if (Scene.GetEntity<DamageController>() == null)
@@ -277,7 +277,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void DisableHealthSystem(bool withHooks = true)
         {
-            ModSession.healthData.isEnabled = false;
+            HealthData.isEnabled = false;
             if (withHooks)
                 UnloadFakeDeathHooks();
             Scene.GetEntity<PlayerHealthBar>()?.RemoveSelf();
