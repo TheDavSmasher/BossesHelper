@@ -31,11 +31,37 @@ namespace Celeste.Mod.BossesHelper
 
     namespace Code
     {
+        namespace Components
+        {
+            public partial class GlobalSavePointChanger : Component
+            {
+                public void AddToEntityOnMethod<T>(T entity, string method,
+                    BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
+                {
+                    entity.Add(this);
+                    ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
+                }
+
+                private static void AddUpdateDelegate(ILContext il)
+                {
+                    //this.Get<GlobalSavePointChanger>()?.Update();
+                    new ILCursor(il)
+                        .EmitLdarg0()
+                        .EmitDelegate(UpdateSavePointChanger);
+                }
+
+                private static void UpdateSavePointChanger(Entity entity)
+                {
+                    entity.Get<GlobalSavePointChanger>()?.Update();
+                }
+            }
+        }
+
         namespace Helpers
         {
             public static class ILHookHelper
             {
-                private static readonly Dictionary<string, ILHook> createdILHooks = new();
+                private static readonly Dictionary<string, ILHook> createdILHooks = [];
 
                 public static void GenerateHookOn(Type classType, string method,
                     ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
@@ -124,32 +150,6 @@ namespace Celeste.Mod.BossesHelper
                     {
                         ILHookHelper.DisposeHook(fakeMethod);
                     }
-                }
-            }
-        }
-
-        namespace Components
-        {
-            public partial class GlobalSavePointChanger : Component
-            {
-                public void AddToEntityOnMethod<T>(T entity, string method,
-                    BindingFlags flags = BindingFlags.Default, bool stateMethod = false) where T : Entity
-                {
-                    entity.Add(this);
-                    ILHookHelper.GenerateHookOn(typeof(T), method, AddUpdateDelegate, flags, stateMethod);
-                }
-
-                private static void AddUpdateDelegate(ILContext il)
-                {
-                    //this.Get<GlobalSavePointChanger>()?.Update();
-                    new ILCursor(il)
-                        .EmitLdarg0()
-                        .EmitDelegate(UpdateSavePointChanger);
-                }
-
-                private static void UpdateSavePointChanger(Entity entity)
-                {
-                    entity.Get<GlobalSavePointChanger>()?.Update();
                 }
             }
         }
