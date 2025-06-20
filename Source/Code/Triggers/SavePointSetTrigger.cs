@@ -38,14 +38,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         {
             base.Added(scene);
             Session session = (scene as Level).Session;
-            if (spawnPosition is Vector2 node)
-            {
-                Add(Changer = new(ID, node, spawnType));
-            }
-            else
-            {
-                Add(Changer = new(ID, session.GetSpawnPoint(Center), spawnType));
-            }
+            Add(Changer = new(ID,
+                spawnPosition ?? session.GetSpawnPoint(Center),
+                spawnType));
         }
 
         public override void OnEnter(Player player)

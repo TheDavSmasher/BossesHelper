@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Added(scene);
             Add(Changer = new(ID,
-                spawnPosition is Vector2 node ? node : SceneAs<Level>().Session.RespawnPoint is Vector2 spawn ? spawn : Position,
+                spawnPosition ?? SceneAs<Level>().Session.RespawnPoint ?? Position,
                 spawnType));
         }
 
