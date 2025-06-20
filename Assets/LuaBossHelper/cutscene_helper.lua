@@ -3,7 +3,7 @@
 local cutsceneHelper = {}
 
 local celesteMod = require("#celeste.mod")
-local systemException = require("#System.Exception")
+local systemException = require("#system.systemexception")
 
 local function threadProxyResume(self, ...)
     local thread = self.value
@@ -16,7 +16,7 @@ local function threadProxyResume(self, ...)
 
     -- The error message should be returned as an exception and not a string
     if not success then
-        return success, message
+        return success, systemException(message)
     end
 
     return success, message
