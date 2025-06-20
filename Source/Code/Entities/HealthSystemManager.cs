@@ -120,21 +120,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public void EnableHealthSystem()
+        public void EnableHealthSystem(bool withHooks = true)
         {
             BossesHelperModule.Session.healthData.isEnabled = true;
             if (HealthBar == null)
                 Scene.Add(new PlayerHealthBar());
             if (DamageController == null)
                 Scene.Add(new DamageController());
-            LoadFakeDeathHooks();
+            if (withHooks)
+                LoadFakeDeathHooks();
             Get<EntityFlagger>()?.RemoveSelf();
         }
 
-        public void DisableHealthSystem()
+        public void DisableHealthSystem(bool withHooks = true)
         {
             BossesHelperModule.Session.healthData.isEnabled = false;
-            UnloadFakeDeathHooks();
+            if (withHooks)
+                UnloadFakeDeathHooks();
             HealthBar?.RemoveSelf();
             DamageController?.RemoveSelf();
         }
