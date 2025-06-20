@@ -122,17 +122,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
         {
-            return source.Attributes[tag]?.Value.Parse(T.Parse);
+            return source.GetAttributeValue(tag)?.Parse<T>();
         }
 
         private static T GetValueOrDefault<T>(this XmlNode source, string tag, T value) where T : struct, IParsable<T>
         {
-            return source.Attributes[tag]?.Value.Parse(T.Parse) ?? value;
+            return source.GetValueOrDefault<T>(tag) ?? value;
         }
 
         private static string GetValue(this XmlNode source, string tag)
         {
-            return source.Attributes[tag]?.Value ?? "main";
+            return source.GetAttributeValue(tag) ?? "main";
+        }
+
+        private static string GetAttributeValue(this XmlNode source, string tag)
+        {
+            return source.Attributes[tag]?.Value;
         }
 
         private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
@@ -250,7 +255,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             if (path == null) return "";
             return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
         }
-
+        /*
         private static int LCM(int a, int b)
         {
             return (a / GFC(a, b)) * b;
@@ -265,7 +270,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 a = temp;
             }
             return a;
-        }
+        }*/
         #endregion
     }
 }
