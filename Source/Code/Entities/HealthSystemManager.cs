@@ -71,7 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager() : base(false)
         {
-            if (HealthData.isCreated && !HealthData.globalHealth)
+            if (!HealthData.globalHealth)
                 ResetCurrentHealth();
         }
 
