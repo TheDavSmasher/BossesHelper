@@ -55,20 +55,32 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public HealthSystemManager(EntityData data, Vector2 _)
             : this(HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"), data.String("activationFlag"))
         {
-            Vector2 screenPosition = new(data.Float("healthIconsScreenX", HealthData.healthBarPos.X), data.Float("healthIconsScreenY", HealthData.healthBarPos.Y));
-            Vector2 iconScale = new(data.Float("healthIconsScaleX", HealthData.healthIconScale.X), data.Float("healthIconsScaleY", HealthData.healthIconScale.Y));
+            UpdateSessionData(data);
+        }
+
+        public HealthSystemManager() : this(!HealthData.globalHealth, HealthData.globalController) { }
+
+        public void UpdateSessionData(EntityData data)
+        {
+            ChangeGlobalState(data.Bool("isGlobal"));
             BossesHelperModule.Session.healthData = new()
             {
                 iconSprite = data.String("healthIcons", HealthData.iconSprite),
                 startAnim = data.String("healthIconsCreateAnim", HealthData.startAnim),
                 endAnim = data.String("healthIconsRemoveAnim", HealthData.endAnim),
-                healthBarPos = screenPosition,
-                healthIconScale = iconScale,
+                healthBarPos = new(
+                    data.Float("healthIconsScreenX", HealthData.healthBarPos.X),
+                    data.Float("healthIconsScreenY", HealthData.healthBarPos.Y)
+                ),
+                healthIconScale = new(
+                    data.Float("healthIconsScaleX", HealthData.healthIconScale.X),
+                    data.Float("healthIconsScaleY", HealthData.healthIconScale.Y)
+                ),
                 iconSeparation = data.String("healthIconsSeparation", HealthData.iconSeparation),
                 frameSprite = data.String("frameSprite", HealthData.frameSprite),
                 globalController = IsGlobal,
                 globalHealth = IsGlobal && data.Bool("globalHealth"),
-                playerHealthVal = HealthData.playerHealthVal,
+                playerHealthVal = data.Int("playerHealth", HealthData.playerHealthVal),
                 damageCooldown = data.Float("damageCooldown", HealthData.damageCooldown),
                 playerOnCrush = (DeathEffect) data.Enum("crushEffect", (CrushEffect) HealthData.playerOnCrush),
                 playerOffscreen = (DeathEffect) data.Enum("offscreenEffect", (OffscreenEffect) HealthData.playerOffscreen),
@@ -79,13 +91,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 removeOnDamage = data.Bool("removeOnDamage", true),
                 playerBlink = data.Bool("playerBlink", true),
                 playerStagger = data.Bool("playerStagger", true),
-                activateFlag = HealthData.activateFlag,
+                activateFlag = data.String("activationFlag", HealthData.activateFlag),
                 isEnabled = false,
                 isCreated = true
             };
         }
-
-        public HealthSystemManager() : this(!HealthData.globalHealth, false) { }
 
         public override void Awake(Scene scene)
         {
