@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 
@@ -14,8 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            PlayerHealthBar bar = SceneAs<Level>().Tracker.GetEntity<PlayerHealthBar>();
-            if (bar != null)
+            if (Scene.GetEntity() is PlayerHealthBar bar)
             {
                 bar.Visible = state;
                 if (onlyOnce)
