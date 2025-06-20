@@ -21,15 +21,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Level Level => SceneAs<Level>();
 
-        private readonly float baseCooldown;
-
         private LuaFunction onRecover;
 
         private LuaFunction onDamage;
 
-        internal DamageController() : base(BSession.healthData.globalController)
+        internal DamageController() : base(HealthData.globalController)
         {
-            baseCooldown = BSession.healthData.damageCooldown;
         }
 
         public override void Awake(Scene scene)
@@ -63,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 return;
             }
-            BSession.damageCooldown = baseCooldown;
+            BSession.damageCooldown = HealthData.damageCooldown;
             if ((BSession.currentPlayerHealth -= amount) > 0)
             {
                 if (!silent)
@@ -72,9 +69,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
                     Level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
-                    if (BSession.healthData.playerStagger && stagger)
+                    if (HealthData.playerStagger && stagger)
                         Add(new Coroutine(PlayerStagger(entity.Position, direction)));
-                    if (BSession.healthData.playerBlink)
+                    if (HealthData.playerBlink)
                         Add(new Coroutine(PlayerInvincible()));
                     if (onDamage != null)
                         Add(new Coroutine(onDamage.ToIEnumerator()));
@@ -84,12 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-
-            if (HealthBar == null)
-            {
-                Logger.Log("Bosses Helper", "No Health Bar has been initialized");
-            }
-            HealthBar?.DecreaseHealth(amount);
+            HealthBar.DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
@@ -131,7 +123,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
             int times = 1;
-            Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, BSession.damageCooldown, Ease.CubeOut, delegate
+            Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, HealthData.damageCooldown, Ease.CubeOut, delegate
             {
                 if (Scene.OnInterval(0.02f))
                 {
