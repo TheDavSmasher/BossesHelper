@@ -48,9 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private LuaFunction onDamage;
 
-            internal DamageController() : base(HealthData.globalController)
-            {
-            }
+            internal DamageController() : base(HealthData.globalController) { }
 
             public override void Awake(Scene scene)
             {
@@ -104,7 +102,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 {
                     entity.Die(direction);
                 }
-                Scene.GetEntity<PlayerHealthBar>().DecreaseHealth(amount);
             }
 
             public void RecoverHealth(int amount = 1)
@@ -267,6 +264,24 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 DisableHealthSystem();
                 HealthData.isCreated = false;
             }
+        }
+
+        public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
+        {
+            Scene.GetEntity<DamageController>().TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
+            Scene.GetEntity<PlayerHealthBar>().DecreaseHealth(amount);
+        }
+
+        public void RecoverHealth(int amount = 1)
+        {
+            Scene.GetEntity<DamageController>().RecoverHealth(amount);
+            Scene.GetEntity<PlayerHealthBar>().RefillHealth(amount);
+        }
+
+        public void RefillHealth()
+        {
+            Scene.GetEntity<DamageController>().RefillHealth();
+            Scene.GetEntity<PlayerHealthBar>().RefillHealth();
         }
 
         public void EnableHealthSystem(bool withHooks = true)
