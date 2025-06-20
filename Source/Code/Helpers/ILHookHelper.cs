@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper
                     }
                 }
 
-                private static void UnloadFakeDeathHooks()
+                private static partial void UnloadFakeDeathHooks()
                 {
                     foreach (string fakeMethod in HealthData.FakeDeathMethods)
                     {

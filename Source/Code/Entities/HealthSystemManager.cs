@@ -140,5 +140,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         private static partial void LoadFakeDeathHooks();
+        private static partial void UnloadFakeDeathHooks();
     }
 }
