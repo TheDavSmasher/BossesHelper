@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         {
             Scene.Tracker.GetEntity<HealthSystemManager>()?.RemoveSelf();
             yield return null;
-            SceneAs<Level>().Add(new HealthSystemManager(data, Vector2.Zero));
+            SceneAs<Level>().Add(new HealthSystemManager(entityData, Vector2.Zero));
             RemoveSelf();
         }
     }
