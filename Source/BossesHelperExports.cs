@@ -4,7 +4,7 @@ using MonoMod.ModInterop;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Components;
 using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Entities;
+using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 
 namespace Celeste.Mod.BossesHelper
 {

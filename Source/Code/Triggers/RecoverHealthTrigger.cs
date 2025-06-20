@@ -1,4 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Helpers;
