@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
             if (resetHealth)
             {
-                ResetCurrentHealth();
+                BossesHelperModule.Session.currentPlayerHealth = HealthData.playerHealthVal;
             }
             Add(new EntityFlagger(HealthData.activateFlag, _ => EnableHealthSystem()));
         }
@@ -127,11 +127,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             BossesHelperModule.Session.healthData.isEnabled = false;
             RemoveSelf();
             UnloadFakeDeathHooks();
-        }
-
-        private static void ResetCurrentHealth()
-        {
-            BossesHelperModule.Session.currentPlayerHealth = HealthData.playerHealthVal;
         }
 
         private static partial void LoadFakeDeathHooks();
