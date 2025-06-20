@@ -7,10 +7,8 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/SavePointSetTrigger")]
     public class SavePointSetTrigger(EntityData data, Vector2 offset, EntityID id)
-                : SingleUseTrigger(data, offset, id, data.Bool("onlyOnce"))
+                : SingleUseTrigger(data, offset, id, data.Bool("onlyOnce"), true)
     {
-        private readonly EntityID ID = id;
-
         private readonly Player.IntroTypes spawnType = data.Enum<Player.IntroTypes>("respawnType");
 
         private readonly Vector2? spawnPosition = data.FirstNodeNullable() + offset;
@@ -35,8 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             if (flagTrigger == null ||
                 (player.SceneAs<Level>().Session.GetFlag(flagTrigger) ^ invertFlag))
             {
-                Changer?.Update();
-                RemoveSelf();
+                ConsumeAfter(() => Changer?.Update());
             }
         }
     }

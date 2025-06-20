@@ -5,11 +5,10 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/BossHealthBarVisibleTrigger")]
-    public class BossHealthBarVisibleTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
+    public class BossHealthBarVisibleTrigger(EntityData data, Vector2 offset, EntityID id)
+        : SingleUseTrigger(data, offset, id, false, data.Bool("onlyOnce"))
     {
         private readonly bool state = data.Bool("visible");
-
-        private readonly bool onlyOnce = data.Bool("onlyOnce");
 
         private readonly Vector2 node = data.Nodes[0];
 
@@ -18,11 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             base.OnEnter(player);
             if (SceneAs<Level>().Tracker.GetNearestEntity<BossHealthBar>(node) is BossHealthBar bar)
             {
-                bar.Visible = state;
-                if (onlyOnce)
-                {
-                    RemoveSelf();
-                }
+                ConsumeAfter(() => bar.Visible = state);
             }
         }
     }

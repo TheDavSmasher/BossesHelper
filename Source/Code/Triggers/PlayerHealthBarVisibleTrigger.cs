@@ -6,22 +6,17 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/PlayerHealthBarVisibleTrigger")]
-    public class PlayerHealthBarVisibleTrigger(EntityData data, Vector2 offset) : Trigger(data, offset)
+    public class PlayerHealthBarVisibleTrigger(EntityData data, Vector2 offset, EntityID id)
+        : SingleUseTrigger(data, offset, id, false, data.Bool("onlyOnce"))
     {
         private readonly bool state = data.Bool("visible");
-
-        private readonly bool onlyOnce = data.Bool("onlyOnce");
 
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
             if (Scene.GetEntity<PlayerHealthBar>() is PlayerHealthBar bar)
             {
-                bar.Visible = state;
-                if (onlyOnce)
-                {
-                    RemoveSelf();
-                }
+                ConsumeAfter(() => bar.Visible = state);
             }
         }
     }
