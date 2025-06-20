@@ -34,8 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "player", player },
                     { "bossID", controller.BossID },
                     { "puppet", controller.Puppet },
-                    { "boss", controller },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                    { "boss", controller }
                 },
                 filepath, "getAttackData", 5);
                 attackFunction = array[0];
@@ -76,8 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "bossID", controller?.BossID },
                     { "puppet", controller?.Puppet },
                     { "boss", controller },
-                    { "cutsceneEntity", this },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                    { "cutsceneEntity", this }
                 },
                 filepath, "getCutsceneData", 2);
                 Cutscene = array[0]?.ToIEnumerator();

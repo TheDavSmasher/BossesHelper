@@ -34,8 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                     { "player", player },
                     { "bossID", controller.BossID },
                     { "puppet", controller.Puppet },
-                    { "boss", controller },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                    { "boss", controller }
                 },
                 filepath, "getInterruptData", 6);
             LuaFunction OnHitLua = array[0];

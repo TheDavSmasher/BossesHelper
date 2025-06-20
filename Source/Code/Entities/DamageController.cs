@@ -48,9 +48,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
             {
                 { "player", Scene.GetPlayer() },
-                { "healthBar", HealthBar },
-                { "modMetaData", BossesHelperModule.Instance.Metadata }
-            }, 
+                { "healthBar", HealthBar }
+            },
             Filepath, "getFunctionData", 2);
             onDamage = array[0];
             onRecover = array[1];

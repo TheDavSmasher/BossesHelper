@@ -35,8 +35,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 { "player", player },
                 { "savePoint", this },
-                { "spawnPoint", Changer.spawnPoint },
-                { "modMetaData", BossesHelperModule.Instance.Metadata }
+                { "spawnPoint", Changer.spawnPoint }
             },
             filename, "getSavePointData")[0];
         }

@@ -91,6 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code
                 LuaFunction[] funcs = null;
                 if (!string.IsNullOrEmpty(filename))
                 {
+                    passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
                     try
                     {
                         if ((cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
