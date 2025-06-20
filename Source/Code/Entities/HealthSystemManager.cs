@@ -34,7 +34,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             InstantDeath
         }
 
-        private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null) : base(isGlobal)
+        private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
+            : base(isGlobal)
         {
             if (activateFlag != null)
             {
@@ -106,8 +107,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 DisableHealthSystem();
                 BossesHelperModule.Session.healthData.isCreated = false;
-                HealthBar?.RemoveSelf();
-                DamageController?.RemoveSelf();
             }
         }
 
@@ -125,8 +124,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void DisableHealthSystem()
         {
             BossesHelperModule.Session.healthData.isEnabled = false;
-            RemoveSelf();
             UnloadFakeDeathHooks();
+            HealthBar?.RemoveSelf();
+            DamageController?.RemoveSelf();
         }
 
         private static partial void LoadFakeDeathHooks();
