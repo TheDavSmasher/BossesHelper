@@ -14,9 +14,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     [Tracked(false)]
     public class DamageController : GlobalEntity
     {
-        private static BossesHelperSession BSession => BossesHelperModule.Session;
+        private static BossesHelperSession ModSession => BossesHelperModule.Session;
 
-        private static BossesHelperSession.HealthSystemData HealthData => BSession.healthData;
+        private static BossesHelperSession.HealthSystemData HealthData => ModSession.healthData;
 
         private PlayerHealthBar HealthBar => Scene.GetEntity<PlayerHealthBar>();
 
@@ -56,13 +56,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
             if (Level.InCutscene ||
-                !evenIfInvincible && (BSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
+                !evenIfInvincible && (ModSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
                 Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
-            BSession.damageCooldown = HealthData.damageCooldown;
-            if ((BSession.currentPlayerHealth -= amount) > 0)
+            ModSession.damageCooldown = HealthData.damageCooldown;
+            if ((ModSession.currentPlayerHealth -= amount) > 0)
             {
                 if (!silent)
                 {
@@ -87,7 +87,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void RecoverHealth(int amount = 1)
         {
-            BSession.currentPlayerHealth += amount;
+            ModSession.currentPlayerHealth += amount;
             HealthBar.RefillHealth(amount);
             if (onRecover != null)
                 Add(new Coroutine(onRecover.ToIEnumerator()));
