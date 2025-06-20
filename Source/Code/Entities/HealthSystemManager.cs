@@ -86,18 +86,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public HealthSystemManager() : this(!HealthData.globalHealth, false) { }
 
-        public override void Added(Scene scene)
-        {
-            base.Added(scene); //old was enabled or new activates instantly
-            if (HealthData.isEnabled || HealthData.activateInstantly)
-                EnableHealthSystem();
-        }
-
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
             if (scene.GetEntity<HealthSystemManager>() != this)
+            {
                 RemoveSelf();
+            }
+            else if (HealthData.isEnabled || HealthData.activateInstantly)
+            {
+                EnableHealthSystem();
+            }
         }
 
         public override void Removed(Scene scene)
