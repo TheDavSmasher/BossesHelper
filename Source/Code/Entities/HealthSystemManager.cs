@@ -110,7 +110,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public void RecoverHealth(int amount = 1)
             {
                 ModSession.currentPlayerHealth += amount;
-                Scene.GetEntity<PlayerHealthBar>().RefillHealth(amount);
+                if (onRecover != null)
+                    Add(new Coroutine(onRecover.ToIEnumerator()));
+            }
+
+            public void RefillHealth()
+            {
+                ModSession.currentPlayerHealth = HealthData.playerHealthVal;
                 if (onRecover != null)
                     Add(new Coroutine(onRecover.ToIEnumerator()));
             }
