@@ -63,17 +63,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
             if (level.InCutscene ||
-                !evenIfInvincible && (BSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0))
+                !evenIfInvincible && (BSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
+                Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
             {
                 return;
             }
             BSession.damageCooldown = baseCooldown;
-            BSession.currentPlayerHealth -= amount;
-            if (Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
-            {
-                return;
-            }
-            if (BSession.currentPlayerHealth > 0)
+            if ((BSession.currentPlayerHealth -= amount) > 0)
             {
                 if (!silent)
                 {
@@ -93,14 +89,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-            if (HealthBar != null)
-            {
-                HealthBar.healthIcons.DecreaseHealth(amount);
-            }
-            else
+
+            if (HealthBar == null)
             {
                 Logger.Log("Bosses Helper", "No Health Bar has been initialized");
             }
+            HealthBar?.healthIcons.DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
