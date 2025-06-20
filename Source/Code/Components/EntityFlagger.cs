@@ -16,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             bool result = session.GetFlag(flag);
             if (result && resetFlag)
             {
-                session.SetFlag(flag, !stateNeeded);
+                session.SetFlag(flag, !state);
             }
             return result;
         }
