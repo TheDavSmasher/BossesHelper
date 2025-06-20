@@ -6,7 +6,8 @@ using Monocle;
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/SavePointSetTrigger")]
-    public class SavePointSetTrigger : Trigger
+    public class SavePointSetTrigger
+        : SingleUseTrigger
     {
         private readonly EntityID ID;
 
@@ -18,12 +19,10 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
 
         private readonly bool invertFlag;
 
-        private readonly bool onlyOnce;
-
         private GlobalSavePointChanger Changer;
 
         public SavePointSetTrigger(EntityData data, Vector2 offset, EntityID id)
-            : base(data, offset)
+            : base(data, offset, id, data.Bool("onlyOnce"))
         {
             this.ID = id;
             spawnType = data.Enum<Player.IntroTypes>("respawnType");
@@ -31,7 +30,6 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             {
                 spawnPosition = spawn + offset;
             }
-            onlyOnce = data.Bool("onlyOnce");
             flagTrigger = data.String("flagTrigger");
             invertFlag = data.Bool("invertFlag");
         }
@@ -65,13 +63,6 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
                 Changer?.Update();
                 RemoveSelf();
             }
-        }
-
-        public override void Removed(Scene scene)
-        {
-            base.Removed(scene);
-            if (onlyOnce)
-                (scene as Level).Session.DoNotLoad.Add(ID);
         }
     }
 }

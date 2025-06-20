@@ -2,17 +2,17 @@
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
     [CustomEntity("BossesHelper/RecoverHealthTrigger")]
-    public class RecoverHealthTrigger(EntityData data, Vector2 offset, EntityID entityID) : Trigger(data, offset)
+    public class RecoverHealthTrigger(EntityData data, Vector2 offset, EntityID entityID)
+        : SingleUseTrigger(data, offset, entityID, data.Bool("permanent"))
     {
         private readonly int healAmount = data.Int("healAmount", 1);
 
         private readonly bool onlyOnce = data.Bool("onlyOnce", true);
-
-        private readonly bool permanent = data.Bool("permanent");
 
         public override void OnEnter(Player player)
         {
@@ -22,10 +22,6 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
                 controller.RecoverHealth(healAmount);
                 if (onlyOnce)
                 {
-                    if (permanent)
-                    {
-                        SceneAs<Level>().Session.DoNotLoad.Add(entityID);
-                    }
                     RemoveSelf();
                 }
             }
