@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static Player GetPlayer(this Scene scene)
         {
-            return scene?.Tracker?.GetEntity<Player>();
+            return scene.GetEntity<Player>();
         }
 
         public static T GetEntity<T>(this Scene scene) where T : Entity => scene?.Tracker.GetEntity<T>();
