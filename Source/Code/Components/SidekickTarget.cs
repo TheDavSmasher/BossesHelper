@@ -1,6 +1,7 @@
 ﻿using Monocle;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -35,21 +36,22 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 
         public override void DebugRender(Camera camera)
         {
-            if (Collider != null)
+            if (Collider is Circle single)
             {
-                if (Collider is Circle single)
+                RenderTarget(single);
+            }
+            else if (Collider is ColliderList colliderList)
+            {
+                foreach (Circle collider in colliderList.colliders.Cast<Circle>())
                 {
-                    Draw.Circle(single.AbsolutePosition + Entity.Position, single.Radius, Color.AliceBlue, 10);
-                }
-                if (Collider is ColliderList colliderList)
-                {
-                    foreach (Collider collider in colliderList.colliders)
-                    {
-                        Circle target = collider as Circle;
-                        Draw.Circle(target.AbsolutePosition + Entity.Position, target.Radius, Color.AliceBlue, 10);
-                    }
+                    RenderTarget(collider);
                 }
             }
+        }
+
+        private void RenderTarget(Circle target)
+        {
+            Draw.Circle(target.AbsolutePosition + Entity.Position, target.Radius, Color.AliceBlue, 10);
         }
     }
 }
