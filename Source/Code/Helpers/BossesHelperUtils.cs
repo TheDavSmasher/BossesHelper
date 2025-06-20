@@ -463,6 +463,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     AddTag(Tags.Global);
                 }
             }
+
+            public void ChangeGlobalState(bool state)
+            {
+                if (IsGlobal != state)
+                {
+                    if (state)
+                        AddTag(Tags.Global);
+                    else
+                        RemoveTag(Tags.Global);
+                }
+            }
         }
         #endregion
     }
