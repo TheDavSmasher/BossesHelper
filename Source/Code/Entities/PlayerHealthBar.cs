@@ -36,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Awake(Scene scene)
         {
-            if (scene.Tracker.GetEntity<PlayerHealthBar>() != this)
+            if (scene.GetEntity<PlayerHealthBar>() != this)
             {
                 RemoveSelf();
                 return;
