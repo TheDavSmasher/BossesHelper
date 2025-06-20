@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        public readonly HealthIconList healthIcons;
+        private readonly HealthIconList healthIcons;
 
         internal PlayerHealthBar() : base(HealthData.globalController)
         {
@@ -50,6 +50,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Removed(scene);
             healthIcons.RemoveSelf();
+        }
+
+        public void RefillHealth(int? upTo = null)
+        {
+            healthIcons.RefillHealth(upTo);
+        }
+
+        public void IncreaseHealth(int amount = 1)
+        {
+            healthIcons.IncreaseHealth(amount);
+        }
+
+        public void DecreaseHealth(int amount = 1)
+        {
+            healthIcons.DecreaseHealth(amount);
         }
     }
 }
