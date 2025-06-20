@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (Scene.GetEntity() is PlayerHealthBar bar)
+            if (Scene.GetEntity<PlayerHealthBar>() is PlayerHealthBar bar)
             {
                 bar.Visible = state;
                 if (onlyOnce)
