@@ -18,8 +18,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private static BossesHelperSession.HealthSystemData HealthData => ModSession.healthData;
 
-        private PlayerHealthBar HealthBar => Scene.GetEntity<PlayerHealthBar>();
-
         private Level Level => SceneAs<Level>();
 
         private LuaFunction onRecover;
@@ -46,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
             {
                 { "player", Scene.GetPlayer() },
-                { "healthBar", HealthBar }
+                { "healthBar", Scene.GetEntity<PlayerHealthBar>() }
             },
             HealthData.onDamageFunction, "getFunctionData", 2);
             onDamage = array[0];
@@ -82,13 +80,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 entity.Die(direction);
             }
-            HealthBar.DecreaseHealth(amount);
+            Scene.GetEntity<PlayerHealthBar>().DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
         {
             ModSession.currentPlayerHealth += amount;
-            HealthBar.RefillHealth(amount);
+            Scene.GetEntity<PlayerHealthBar>().RefillHealth(amount);
             if (onRecover != null)
                 Add(new Coroutine(onRecover.ToIEnumerator()));
         }

@@ -34,10 +34,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private PlayerHealthBar HealthBar => Scene.GetEntity<PlayerHealthBar>();
-
-        private DamageController DamageController => Scene.GetEntity<DamageController>();
-
         private enum CrushEffect
         {
             PushOut, InvincibleSolid, FakeDeath, InstantDeath
@@ -145,9 +141,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void EnableHealthSystem(bool withHooks = true)
         {
             ModSession.healthData.isEnabled = true;
-            if (HealthBar == null)
+            if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(new PlayerHealthBar());
-            if (DamageController == null)
+            if (Scene.GetEntity<DamageController>() == null)
                 Scene.Add(new DamageController());
             if (withHooks)
                 LoadFakeDeathHooks();
@@ -159,8 +155,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             ModSession.healthData.isEnabled = false;
             if (withHooks)
                 UnloadFakeDeathHooks();
-            HealthBar?.RemoveSelf();
-            DamageController?.RemoveSelf();
+            Scene.GetEntity<PlayerHealthBar>()?.RemoveSelf();
+            Scene.GetEntity<DamageController>()?.RemoveSelf();
         }
 
         private static partial void LoadFakeDeathHooks();
