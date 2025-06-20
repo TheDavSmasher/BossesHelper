@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly float baseCooldown;
 
-        private Level level;
+        private Level Level => SceneAs<Level>();
 
         private LuaFunction onRecover;
 
@@ -34,8 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Awake(Scene scene)
         {
-            level = scene as Level;
-            if (scene.Tracker.GetEntity<DamageController>() != this)
+            if (scene.GetEntity<DamageController>() != this)
             {
                 RemoveSelf();
                 return;
@@ -49,12 +48,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!string.IsNullOrEmpty(Filepath))
             {
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                    {
-                        { "player", level.GetPlayer() },
-                        { "healthBar", HealthBar },
-                        { "modMetaData", BossesHelperModule.Instance.Metadata }
-                    }, 
-                    Filepath, "getFunctionData", 2);
+                {
+                    { "player", Scene.GetPlayer() },
+                    { "healthBar", HealthBar },
+                    { "modMetaData", BossesHelperModule.Instance.Metadata }
+                }, 
+                Filepath, "getFunctionData", 2);
                 onDamage = array[0];
                 onRecover = array[1];
             }
@@ -62,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
-            if (level.InCutscene ||
+            if (Level.InCutscene ||
                 !evenIfInvincible && (BSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
                 Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
             {
@@ -73,9 +72,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (!silent)
                 {
-                    level.Shake();
+                    Level.Shake();
                     Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
-                    level.Flash(Color.Red * 0.3f);
+                    Level.Flash(Color.Red * 0.3f);
                     Audio.Play("event:/char/madeline/predeath");
                     if (BSession.healthData.playerStagger && stagger)
                         Add(new Coroutine(PlayerStagger(entity.Position, direction)));
