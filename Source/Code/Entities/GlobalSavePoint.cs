@@ -21,8 +21,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly Sprite Sprite;
 
-        private TalkComponent talker;
-
         private readonly Rectangle talkerRect;
 
         private readonly Vector2 talkerOffset;
@@ -34,13 +32,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void LoadFunction(string filename, Player player)
         {
             onInteract = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "savePoint", this },
-                    { "spawnPoint", Changer.spawnPoint },
-                    { "modMetaData", BossesHelperModule.Instance.Metadata }
-                },
-                filename, "getSavePointData")[0];
+            {
+                { "player", player },
+                { "savePoint", this },
+                { "spawnPoint", Changer.spawnPoint },
+                { "modMetaData", BossesHelperModule.Instance.Metadata }
+            },
+            filename, "getSavePointData")[0];
         }
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset)
@@ -60,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            Add(talker = new TalkComponent(talkerRect, talkerOffset, OnTalk)
+            Add(new TalkComponent(talkerRect, talkerOffset, OnTalk)
             {
                 Enabled = true,
                 PlayerMustBeFacing = false
