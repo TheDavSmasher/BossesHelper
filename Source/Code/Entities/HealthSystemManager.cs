@@ -32,7 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class PlayerHealthBar() : HealthIconList()
+        private class PlayerHealthBar() : HealthIconList(HealthData.globalController)
         {
             public override void Awake(Scene scene)
             {
@@ -43,15 +43,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class DamageController() : GlobalEntity(false)
+        private class DamageController() : GlobalEntity(HealthData.globalController)
         {
             private LuaFunction onRecover;
 
             private LuaFunction onDamage;
 
-            public void UpdateState(bool isGlobal, Player player, PlayerHealthBar healthBar)
+            public void LoadFunctions(Player player, PlayerHealthBar healthBar)
             {
-                ChangeGlobalState(isGlobal);
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                 {
                     { "player", player },
