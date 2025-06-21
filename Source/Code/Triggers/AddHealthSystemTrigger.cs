@@ -2,7 +2,6 @@
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
-using System.Collections;
 using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
@@ -14,15 +13,9 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            Add(new Coroutine(RemoveAndReadd()));
-        }
-
-        private IEnumerator RemoveAndReadd()
-        {
             if (Scene.GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
                 manager.UpdateSessionData(entityData);
-                yield return null;
             }
             else
             {
