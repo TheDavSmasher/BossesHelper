@@ -49,9 +49,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private LuaFunction onDamage;
 
-            public void UpdateState(bool isGlobal, Player player, PlayerHealthBar healthBar)
+            public void UpdateState(Player player, PlayerHealthBar healthBar)
             {
-                ChangeGlobalState(isGlobal);
+                ChangeGlobalState(HealthData.globalController);
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                 {
                     { "player", player },
@@ -245,7 +245,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 HealthBar.ChangeGlobalState(IsGlobal);
                 HealthBar.UpdateState();
-                Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
+                Controller.UpdateState(Scene.GetPlayer(), HealthBar);
             }
         }
 
@@ -302,7 +302,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (Scene.GetEntity<DamageController>() == null)
             {
                 Scene.Add(Controller = new DamageController());
-                Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
+                Controller.UpdateState(Scene.GetPlayer(), HealthBar);
             }
 
             LoadFakeDeathHooks();
