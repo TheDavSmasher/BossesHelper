@@ -174,6 +174,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private DamageController Controller;
 
+        public bool IsEnabled => HealthData.isEnabled;
+
         private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
             : base(isGlobal)
         {
