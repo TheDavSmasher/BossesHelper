@@ -43,14 +43,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class DamageController() : GlobalEntity(HealthData.globalController)
+        private class DamageController() : GlobalEntity(false)
         {
             private LuaFunction onRecover;
 
             private LuaFunction onDamage;
 
-            public void LoadFunctions(Player player, PlayerHealthBar healthBar)
+            public void UpdateState(bool isGlobal, Player player, PlayerHealthBar healthBar)
             {
+                ChangeGlobalState(isGlobal);
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                 {
                     { "player", player },
@@ -242,6 +243,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             if (wasEnabled)
             {
+                HealthBar.ChangeGlobalState(IsGlobal);
                 HealthBar.UpdateState();
                 Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
             }
@@ -296,20 +298,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             IsEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(HealthBar = new PlayerHealthBar());
-            HealthBar.ChangeGlobalState(IsGlobal);
 
             if (Scene.GetEntity<DamageController>() == null)
+            {
                 Scene.Add(Controller = new DamageController());
-            Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
+                Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
+            }
 
-                LoadFakeDeathHooks();
+            LoadFakeDeathHooks();
             Get<EntityFlagger>()?.RemoveSelf();
         }
 
         public void DisableHealthSystem()
         {
             IsEnabled = false;
-                UnloadFakeDeathHooks();
+            UnloadFakeDeathHooks();
             Controller.RemoveSelf();
             HealthBar.RemoveSelf();
         }

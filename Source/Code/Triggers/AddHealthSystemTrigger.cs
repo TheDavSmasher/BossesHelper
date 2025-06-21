@@ -21,10 +21,8 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         {
             if (Scene.GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                manager.DisableHealthSystem(false);
                 manager.UpdateSessionData(entityData);
                 yield return null;
-                manager.EnableHealthSystem(false);
             }
             else
             {
