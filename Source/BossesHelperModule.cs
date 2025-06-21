@@ -6,7 +6,6 @@ using MonoMod.RuntimeDetour;
 using Celeste.Mod.BossesHelper.Code.Other;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
-using static Celeste.Mod.BossesHelper.Code.Entities.HealthSystemManager;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -107,7 +106,7 @@ public partial class BossesHelperModule : EverestModule
                 Session.travelingToSavePoint = false;
             }
         }
-        if (Engine.Scene.GetEntity<HealthSystemManager>() is not { } manager || !manager.IsEnabled)
+        if (Engine.Scene.GetEntity<HealthSystemManager>() == null || !HealthSystemManager.IsEnabled)
             return;
         if (HealthData.globalController &&
             (intro == Player.IntroTypes.Transition && !HealthData.globalHealth ||
@@ -133,7 +132,7 @@ public partial class BossesHelperModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
     {
-        bool damageTracked = self.Scene.GetEntity<HealthSystemManager>() is { } manager && manager.IsEnabled;
+        bool damageTracked = self.Scene.GetEntity<HealthSystemManager>() != null && HealthSystemManager.IsEnabled;
         if (always)
         {
             if (damageTracked)
@@ -158,7 +157,7 @@ public partial class BossesHelperModule : EverestModule
     #region Hook Helper Methods
     public static void KillOnCrush(Player player, CollisionData data, bool evenIfInvincible)
     {
-        if (player.Scene.GetEntity<HealthSystemManager>() is not { } manager || !manager.IsEnabled)
+        if (player.Scene.GetEntity<HealthSystemManager>() == null || !HealthSystemManager.IsEnabled)
             return;
         switch (HealthData.playerOnCrush)
         {

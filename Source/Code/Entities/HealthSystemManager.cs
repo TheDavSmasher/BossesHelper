@@ -174,7 +174,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private DamageController Controller;
 
-        public bool IsEnabled => HealthData.isEnabled;
+        public static bool IsEnabled
+        {
+            get => HealthData.isEnabled;
+            set => HealthData.isEnabled = value;
+        }
 
         private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
             : base(isGlobal)
@@ -204,7 +208,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void UpdateSessionData(EntityData data)
         {
-            bool wasEnabled = HealthData.isEnabled;
+            bool wasEnabled = IsEnabled;
             ChangeGlobalState(data.Bool("isGlobal"));
             HealthData = new()
             {
@@ -235,7 +239,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 playerBlink = data.Bool("playerBlink", true),
                 playerStagger = data.Bool("playerStagger", true),
                 activateFlag = data.String("activationFlag", HealthData.activateFlag),
-                isEnabled = false,
                 isCreated = true
             };
             if (wasEnabled)
@@ -252,7 +255,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 RemoveSelf();
             }
-            else if (HealthData.isEnabled || HealthData.activateInstantly)
+            else if (IsEnabled || HealthData.activateInstantly)
             {
                 EnableHealthSystem();
             }
@@ -288,7 +291,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void EnableHealthSystem(bool withHooks = true)
         {
-            HealthData.isEnabled = true;
+            IsEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(HealthBar = new PlayerHealthBar());
             HealthBar.ChangeGlobalState(IsGlobal);
@@ -304,7 +307,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void DisableHealthSystem(bool withHooks = true)
         {
-            HealthData.isEnabled = false;
+            IsEnabled = false;
             if (withHooks)
                 UnloadFakeDeathHooks();
             Controller.RemoveSelf();
