@@ -202,6 +202,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void UpdateSessionData(EntityData data)
         {
+            bool wasEnabled = HealthData.isEnabled;
             ChangeGlobalState(data.Bool("isGlobal"));
             HealthData = new()
             {
@@ -235,6 +236,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 isEnabled = false,
                 isCreated = true
             };
+            if (wasEnabled)
+            {
+                HealthBar.UpdateState();
+                Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
+            }
         }
 
         public override void Awake(Scene scene)
