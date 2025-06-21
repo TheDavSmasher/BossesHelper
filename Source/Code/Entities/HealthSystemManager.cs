@@ -273,18 +273,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
         {
+            if (!IsEnabled) return;
             Controller.TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
             HealthBar.DecreaseHealth(amount);
         }
 
         public void RecoverHealth(int amount = 1)
         {
+            if (!IsEnabled) return;
             Controller.RecoverHealth(amount);
             HealthBar.RefillHealth(amount);
-        }
+            }
 
         public void RefillHealth()
         {
+            if (!IsEnabled) return;
             Controller.RefillHealth();
             HealthBar.RefillHealth();
         }
