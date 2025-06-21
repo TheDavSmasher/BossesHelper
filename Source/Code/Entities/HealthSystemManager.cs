@@ -36,11 +36,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             public override void Awake(Scene scene)
             {
-                if (scene.GetEntity<PlayerHealthBar>() != this)
-                {
-                    RemoveSelf();
-                    return;
-                }
                 Clear();
                 base.Awake(scene);
             }
@@ -49,27 +44,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         [Tracked(false)]
         private class DamageController() : GlobalEntity(false)
         {
-            private Level Level => SceneAs<Level>();
-
             private LuaFunction onRecover;
 
             private LuaFunction onDamage;
 
-            public override void Awake(Scene scene)
-            {
-                if (scene.GetEntity<DamageController>() != this)
-                {
-                    RemoveSelf();
-                    return;
-                }
-                base.Awake(scene);
-            }
-
-            public void LoadFunction(PlayerHealthBar healthBar)
+            public void LoadFunction(Player player, PlayerHealthBar healthBar)
             {
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                 {
-                    { "player", Scene.GetPlayer() },
+                    { "player", player },
                     { "healthBar", healthBar }
                 },
                 HealthData.onDamageFunction, "getFunctionData", 2);
@@ -79,6 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
             {
+                Level Level = SceneAs<Level>();
                 if (Level.InCutscene ||
                     !evenIfInvincible && (ModSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
                     Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
@@ -303,7 +287,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (Scene.GetEntity<DamageController>() == null)
                 Scene.Add(Controller = new DamageController());
             Controller.ChangeGlobalState(IsGlobal);
-            Controller.LoadFunction(HealthBar);
+            Controller.LoadFunction(Scene.GetPlayer(), HealthBar);
 
             if (withHooks)
                 LoadFakeDeathHooks();
