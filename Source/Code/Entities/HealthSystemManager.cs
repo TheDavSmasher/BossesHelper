@@ -32,13 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class PlayerHealthBar : HealthIconList
+        private class PlayerHealthBar() : HealthIconList()
         {
-            internal PlayerHealthBar() : base(HealthData.globalController)
-            {
-                Visible = HealthData.startVisible;
-            }
-
             public override void Awake(Scene scene)
             {
                 if (scene.GetEntity<PlayerHealthBar>() != this)
@@ -52,15 +47,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class DamageController : GlobalEntity
+        private class DamageController() : GlobalEntity(false)
         {
             private Level Level => SceneAs<Level>();
 
             private LuaFunction onRecover;
 
             private LuaFunction onDamage;
-
-            internal DamageController() : base(HealthData.globalController) { }
 
             public override void Awake(Scene scene)
             {
@@ -70,16 +63,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     return;
                 }
                 base.Awake(scene);
-                LoadFunction();
             }
 
-            private void LoadFunction()
+            public void LoadFunction(PlayerHealthBar healthBar)
             {
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-            {
-                { "player", Scene.GetPlayer() },
-                { "healthBar", Scene.GetEntity<PlayerHealthBar>() }
-            },
+                {
+                    { "player", Scene.GetPlayer() },
+                    { "healthBar", healthBar }
+                },
                 HealthData.onDamageFunction, "getFunctionData", 2);
                 onDamage = array[0];
                 onRecover = array[1];
@@ -305,8 +297,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthData.isEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(HealthBar = new PlayerHealthBar());
+            HealthBar.ChangeGlobalState(IsGlobal);
+            HealthBar.Visible = HealthData.startVisible;
+
             if (Scene.GetEntity<DamageController>() == null)
                 Scene.Add(Controller = new DamageController());
+            Controller.ChangeGlobalState(IsGlobal);
+            Controller.LoadFunction(HealthBar);
+
             if (withHooks)
                 LoadFakeDeathHooks();
             Get<EntityFlagger>()?.RemoveSelf();
