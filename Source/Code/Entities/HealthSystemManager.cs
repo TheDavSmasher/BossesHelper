@@ -169,7 +169,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!IsEnabled) return;
             Controller.RecoverHealth(amount);
             HealthBar.RefillHealth(amount);
-            }
+        }
 
         public void RefillHealth()
         {
@@ -182,12 +182,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             IsEnabled = true;
             if (Scene.GetEntity<PlayerHealthBar>() == null)
-                Scene.Add(HealthBar = new PlayerHealthBar());
+                Scene.Add(HealthBar ??= new PlayerHealthBar());
 
             if (Scene.GetEntity<DamageController>() == null)
             {
-                Scene.Add(Controller = new DamageController());
-                Controller.UpdateState(Scene.GetPlayer(), HealthBar);
+                if (Controller == null)
+                {
+                    Controller = new DamageController();
+                    Controller.UpdateState(Scene.GetPlayer(), HealthBar);
+                }
+                Scene.Add(Controller);
             }
 
             LoadFakeDeathHooks();
