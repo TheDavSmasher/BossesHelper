@@ -36,6 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             public override void Awake(Scene scene)
             {
+                Visible = HealthData.startVisible;
                 Clear();
                 base.Awake(scene);
             }
@@ -48,8 +49,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private LuaFunction onDamage;
 
-            public void LoadFunction(Player player, PlayerHealthBar healthBar)
+            public void UpdateState(bool isGlobal, Player player, PlayerHealthBar healthBar)
             {
+                ChangeGlobalState(isGlobal);
                 LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
                 {
                     { "player", player },
@@ -282,12 +284,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (Scene.GetEntity<PlayerHealthBar>() == null)
                 Scene.Add(HealthBar = new PlayerHealthBar());
             HealthBar.ChangeGlobalState(IsGlobal);
-            HealthBar.Visible = HealthData.startVisible;
 
             if (Scene.GetEntity<DamageController>() == null)
                 Scene.Add(Controller = new DamageController());
-            Controller.ChangeGlobalState(IsGlobal);
-            Controller.LoadFunction(Scene.GetPlayer(), HealthBar);
+            Controller.UpdateState(IsGlobal, Scene.GetPlayer(), HealthBar);
 
             if (withHooks)
                 LoadFakeDeathHooks();
