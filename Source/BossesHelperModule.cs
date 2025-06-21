@@ -106,13 +106,13 @@ public partial class BossesHelperModule : EverestModule
                 Session.travelingToSavePoint = false;
             }
         }
-        if (Engine.Scene.GetEntity<HealthSystemManager>() == null || !HealthSystemManager.IsEnabled)
+        if (Engine.Scene.GetEntity<HealthSystemManager>() is not { } manager || !HealthSystemManager.IsEnabled)
             return;
         if (HealthData.globalController &&
             (intro == Player.IntroTypes.Transition && !HealthData.globalHealth ||
             intro == Player.IntroTypes.Respawn && !fromLoader && !Session.fakeDeathRespawn))
         {
-            Engine.Scene.GetEntity<HealthSystemManager>().RefillHealth();
+            manager.RefillHealth();
         }
         Session.fakeDeathRespawn = false;
     }
