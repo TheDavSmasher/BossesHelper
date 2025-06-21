@@ -320,7 +320,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public void UpdateState()
             {
-
+                ChangeGlobalState(HealthData.globalController);
             }
         }
 

@@ -243,7 +243,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             if (wasEnabled)
             {
-                HealthBar.ChangeGlobalState(IsGlobal);
                 HealthBar.UpdateState();
                 Controller.UpdateState(Scene.GetPlayer(), HealthBar);
             }
