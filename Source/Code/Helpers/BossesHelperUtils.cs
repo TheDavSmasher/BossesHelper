@@ -317,11 +317,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 healthIcons.Clear();
                 toRemove.Clear();
             }
-
-            public void UpdateState()
-            {
-                ChangeGlobalState(HealthData.globalController);
-            }
         }
 
         public class HealthNumber(Vector2 barPosition, Vector2 barScale, Func<int> bossHealth, Color color)

@@ -243,7 +243,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             if (wasEnabled)
             {
-                HealthBar.UpdateState();
+                HealthBar.RemoveSelf();
+                Scene.Add(HealthBar = new PlayerHealthBar());
                 Controller.UpdateState(Scene.GetPlayer(), HealthBar);
             }
         }
