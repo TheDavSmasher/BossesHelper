@@ -234,7 +234,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             protected override bool IsVisible => AllIcons.Any(icon => icon.Visible);
 
-            public HealthIconList(bool global)
+            public HealthIconList(bool global = false)
                 : this(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth,
                       global, SeparateList(HealthData.iconSprite), SeparateList(HealthData.startAnim),
                       SeparateList(HealthData.endAnim), SeparateFloatList(HealthData.iconSeparation), HealthData.removeOnDamage) { }
