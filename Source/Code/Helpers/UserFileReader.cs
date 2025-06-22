@@ -163,8 +163,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             if (newCollider == null || baseOptions.TryAdd(tag, newCollider))
                 return;
-            baseOptions[tag] = new ColliderList(
-                [.. baseOptions[tag] is ColliderList list ? list.colliders : [baseOptions[tag]], newCollider]);
+            if (baseOptions[tag] is ColliderList list)
+                list.Add(newCollider);
+            else
+                baseOptions[tag] = new ColliderList(baseOptions[tag], newCollider);
         }
 
         private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
