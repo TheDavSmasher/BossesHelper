@@ -19,7 +19,26 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public virtual void EndAction(MethodEndReason reason) { }
         }
 
-        public class BossAttack : IBossAction
+        public interface ILuaLoader
+        {
+            public (string Name, int Count) Command { get; }
+        }
+
+        public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, Player player = null, BossController controller = null, string selfName = null)
+        {
+            Dictionary<object, object> dict = new()
+            {
+                { "player", player },
+                { "bossID", controller?.BossID },
+                { "puppet", controller?.Puppet },
+                { "boss", controller }
+            };
+            if (selfName != null)
+                dict.Add(selfName, self);
+            return LoadLuaFile(dict, filepath, self.Command.Name, self.Command.Count);
+        }
+
+        public class BossAttack : IBossAction, ILuaLoader
         {
             private readonly LuaFunction attackFunction;
 
@@ -27,16 +46,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly Dictionary<MethodEndReason, LuaFunction> onEndMethods = [];
 
+            (string Name, int Count) ILuaLoader.Command => ("getAttackData", 5);
+
             public BossAttack(string filepath, Player player, BossController controller)
             {
-                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "bossID", controller.BossID },
-                    { "puppet", controller.Puppet },
-                    { "boss", controller }
-                },
-                filepath, "getAttackData", 5);
+                LuaFunction[] array = this.LoadFile(filepath, player, controller);
                 attackFunction = array[0];
                 endFunction = array[1];
                 foreach (var option in Enum.GetValues<MethodEndReason>())
@@ -57,7 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             }
         }
 
-        public class BossEvent : CutsceneEntity, IBossAction
+        public class BossEvent : CutsceneEntity, IBossAction, ILuaLoader
         {
             private readonly IEnumerator Cutscene;
 
@@ -65,19 +79,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly Action AddToScene;
 
+            public (string Name, int Count) Command => ("getCutsceneData", 2);
+
             public BossEvent(string filepath, Player player = null, BossController controller = null)
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
             {
                 AddToScene = () => controller.Scene.Add(this);
-                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "bossID", controller?.BossID },
-                    { "puppet", controller?.Puppet },
-                    { "boss", controller },
-                    { "cutsceneEntity", this }
-                },
-                filepath, "getCutsceneData", 2);
+                LuaFunction[] array = this.LoadFile(filepath, player, controller, "cutsceneEntity");
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
             }

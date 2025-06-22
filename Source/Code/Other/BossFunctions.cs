@@ -5,11 +5,12 @@ using NLua;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
+using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
-    internal class BossFunctions
+    internal class BossFunctions : ILuaLoader
     {
         public enum DamageSource
         {
@@ -27,16 +28,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly LuaFunction OnLaserLua;
 
+        public (string Name, int Count) Command => ("getInterruptData", 6);
+
         public BossFunctions(string filepath, Player player, BossController controller)
         {
-            LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-            {
-                { "player", player },
-                { "bossID", controller.BossID },
-                { "puppet", controller.Puppet },
-                { "boss", controller }
-            },
-            filepath, "getInterruptData", 6);
+            LuaFunction[] array = this.LoadFile(filepath, player, controller);
             LuaFunction OnHitLua = array[0];
             OnContactLua = array[1] ?? OnHitLua;
             OnDashLua = array[2] ?? OnHitLua;
