@@ -41,7 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name);
         }
 
-        public static object CallGenericOn(MethodInfo method, Type type, object on)
+        public static object CallGeneric(this object on, MethodInfo method, Type type)
         {
             return method.MakeGenericMethod(type).Invoke(on, null);
         }
@@ -56,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(getEntityMethodInfo, type, Tracker);
+                return Tracker.CallGeneric(getEntityMethodInfo, type);
             }
             catch (ArgumentNullException)
             {
@@ -82,7 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(getEntitiesMethodInfo, type, Tracker) as IList);
+                return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getEntitiesMethodInfo, type) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -108,7 +108,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(entitiesFindFirstMethodInfo, type, Entities);
+                return Entities.CallGeneric(entitiesFindFirstMethodInfo, type);
             }
             catch (ArgumentNullException)
             {
@@ -130,7 +130,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(entitiesFindAll, type, Entities) as IList);
+                return LuaBossHelper.ListToLuaTable(Entities.CallGeneric(entitiesFindAll, type) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -154,7 +154,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(getComponentMethodInfo, type, Tracker);
+                return Tracker.CallGeneric(getComponentMethodInfo, type);
             }
             catch (ArgumentNullException)
             {
@@ -180,7 +180,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(getComponentsMethodInfo, type, Tracker) as IList);
+                return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type ) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -206,9 +206,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                IList entities = ((bool) CallGenericOn(entityIsTracked, entityType, Tracker)
-                    ? CallGenericOn(getEntitiesMethodInfo, entityType, Tracker)
-                    : CallGenericOn(entitiesFindAll, entityType, Entities)) as IList;
+                IList entities = ((bool) Tracker.CallGeneric(entityIsTracked, entityType)
+                    ? Tracker.CallGeneric(getEntitiesMethodInfo, entityType)
+                    : Entities.CallGeneric(entitiesFindAll, entityType)) as IList;
                 foreach (Entity entity in entities)
                 {
                     if (GetComponentFromEntity(entity, type) is object res)
@@ -235,9 +235,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                IList entities = ((bool)CallGenericOn(entityIsTracked, entityType, Tracker)
-                    ? CallGenericOn(getEntitiesMethodInfo, entityType, Tracker)
-                    : CallGenericOn(entitiesFindAll, entityType, Entities)) as IList;
+                IList entities = ((bool)Tracker.CallGeneric(entityIsTracked, entityType)
+                    ? Tracker.CallGeneric(getEntitiesMethodInfo, entityType)
+                    : Entities.CallGeneric(entitiesFindAll, entityType)) as IList;
                 LuaTable luaTable = LuaBossHelper.GetEmptyTable();
                 int num = 1;
                 foreach (Entity entity in entities)
@@ -326,7 +326,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return CallGenericOn(componentsGetFirst, type, entity.Components);
+                return entity.Components.CallGeneric(componentsGetFirst, type);
             }
             catch (ArgumentNullException)
             {
@@ -348,7 +348,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(CallGenericOn(componentsGetAll, type, entity.Components) as IList);
+                return LuaBossHelper.ListToLuaTable(entity.Components.CallGeneric(componentsGetAll, type) as IList);
             }
             catch (ArgumentNullException)
             {

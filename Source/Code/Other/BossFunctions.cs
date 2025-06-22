@@ -30,13 +30,13 @@ namespace Celeste.Mod.BossesHelper.Code.Other
         public BossFunctions(string filepath, Player player, BossController controller)
         {
             LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "bossID", controller.BossID },
-                    { "puppet", controller.Puppet },
-                    { "boss", controller }
-                },
-                filepath, "getInterruptData", 6);
+            {
+                { "player", player },
+                { "bossID", controller.BossID },
+                { "puppet", controller.Puppet },
+                { "boss", controller }
+            },
+            filepath, "getInterruptData", 6);
             LuaFunction OnHitLua = array[0];
             OnContactLua = array[1] ?? OnHitLua;
             OnDashLua = array[2] ?? OnHitLua;
