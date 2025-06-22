@@ -43,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public SidekickBeam()
         {
             Add(beamSprite = GFX.SpriteBank.Create("badeline_beam"));
-            beamSprite.OnLastFrame = (string anim) =>
+            beamSprite.OnLastFrame = anim =>
             {
                 if (anim == "shoot")
                 {

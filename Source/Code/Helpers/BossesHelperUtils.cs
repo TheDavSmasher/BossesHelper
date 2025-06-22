@@ -252,7 +252,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public override void Removed(Scene scene)
             {
-                AllIcons.ForEach((x) => x.RemoveSelf());
+                AllIcons.ForEach(x => x.RemoveSelf());
                 base.Removed(scene);
             }
 
