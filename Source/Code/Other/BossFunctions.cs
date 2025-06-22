@@ -30,9 +30,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public (string Name, int Count) Command => ("getInterruptData", 6);
 
-        public BossFunctions(string filepath, Player player, BossController controller)
+        public BossFunctions(string filepath, BossController controller)
         {
-            LuaFunction[] array = this.LoadFile(filepath, player, controller);
+            LuaFunction[] array = this.LoadFile(filepath, controller);
             LuaFunction OnHitLua = array[0];
             OnContactLua = array[1] ?? OnHitLua;
             OnDashLua = array[2] ?? OnHitLua;

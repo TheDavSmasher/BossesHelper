@@ -202,7 +202,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static Dictionary<string, IBossAction> ReadLuaFiles(
             BossController controller, string attacksPath, string eventsPath)
         {
-            Player playerRef = controller.Scene.GetPlayer();
             Dictionary<string, IBossAction> actions = [];
             string[] paths = [attacksPath, eventsPath];
             for (int i = 0; i < 2; i++)
@@ -213,8 +212,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                     foreach (ModAsset luaFile in luaFiles.Children)
                     {
                         IBossAction action = i == 0
-                            ? new BossAttack(luaFile.PathVirtual, playerRef, controller)
-                            : new BossEvent(luaFile.PathVirtual, playerRef, controller);
+                            ? new BossAttack(luaFile.PathVirtual, controller)
+                            : new BossEvent(luaFile.PathVirtual, controller);
                         if (!actions.TryAdd(luaFile.PathVirtual.Substring(path.Length + 1), action))
                             Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
                     }
@@ -225,10 +224,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadBossFunctions(BossController controller, string filepath)
         {
-            Player playerRef = controller.Scene.GetPlayer();
             if (ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile))
             {
-                controller.Puppet.BossFunctions = new(setupFile.PathVirtual, playerRef, controller);
+                controller.Puppet.BossFunctions = new(setupFile.PathVirtual, controller);
             }
         }
 

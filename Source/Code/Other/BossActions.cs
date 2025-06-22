@@ -24,11 +24,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             public (string Name, int Count) Command { get; }
         }
 
-        public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, Player player = null, BossController controller = null, string selfName = null)
+        public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, BossController controller = null, string selfName = null)
         {
             Dictionary<object, object> dict = new()
             {
-                { "player", player },
+                { "player", controller?.Scene.GetPlayer() },
                 { "bossID", controller?.BossID },
                 { "puppet", controller?.Puppet },
                 { "boss", controller }
@@ -48,9 +48,9 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             (string Name, int Count) ILuaLoader.Command => ("getAttackData", 5);
 
-            public BossAttack(string filepath, Player player, BossController controller)
+            public BossAttack(string filepath, BossController controller)
             {
-                LuaFunction[] array = this.LoadFile(filepath, player, controller);
+                LuaFunction[] array = this.LoadFile(filepath, controller);
                 attackFunction = array[0];
                 endFunction = array[1];
                 foreach (var option in Enum.GetValues<MethodEndReason>())
@@ -81,11 +81,11 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public (string Name, int Count) Command => ("getCutsceneData", 2);
 
-            public BossEvent(string filepath, Player player = null, BossController controller = null)
+            public BossEvent(string filepath, BossController controller = null)
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
             {
                 AddToScene = () => controller.Scene.Add(this);
-                LuaFunction[] array = this.LoadFile(filepath, player, controller, "cutsceneEntity");
+                LuaFunction[] array = this.LoadFile(filepath, controller, "cutsceneEntity");
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
             }
