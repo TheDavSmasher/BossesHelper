@@ -16,7 +16,7 @@ local function threadProxyResume(self, ...)
 
     -- The error message should be returned as an exception and not a string
     if not success then
-        return success, systemException(message)
+        return success, codeHelpers.LuaException(message)
     end
 
     return success, message

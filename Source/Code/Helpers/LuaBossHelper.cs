@@ -14,6 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code
 {
     namespace Helpers
     {
+        public class LuaException(string message) : Exception(message) { }
 
         internal static class LuaBossHelper
         {
