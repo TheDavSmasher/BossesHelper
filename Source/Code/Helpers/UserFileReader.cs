@@ -200,7 +200,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         #region Lua Files
         public static Dictionary<string, IBossAction> ReadLuaFiles(
-            BossController controller, string attacksPath, string eventsPath)
+            this BossController controller, string attacksPath, string eventsPath)
         {
             Dictionary<string, IBossAction> actions = [];
             string[] paths = [attacksPath, eventsPath];
@@ -222,7 +222,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return actions;
         }
 
-        public static void ReadBossFunctions(BossController controller, string filepath)
+        public static void ReadBossFunctions(this BossController controller, string filepath)
         {
             if (ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile))
             {

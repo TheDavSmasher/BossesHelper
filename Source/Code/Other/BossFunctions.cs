@@ -3,7 +3,6 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using NLua;
 using System.Collections;
-using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 

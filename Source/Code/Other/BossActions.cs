@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly Dictionary<MethodEndReason, LuaFunction> onEndMethods = [];
 
-            (string Name, int Count) ILuaLoader.Command => ("getAttackData", 5);
+            public (string Name, int Count) Command => ("getAttackData", 5);
 
             public BossAttack(string filepath, BossController controller)
             {
