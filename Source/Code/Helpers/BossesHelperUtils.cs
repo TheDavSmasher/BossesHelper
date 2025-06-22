@@ -397,7 +397,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<string> SeparateList(string listString)
         {
-            List<string> res = listString.Split(',').ToList();
+            List<string> res = listString?.Split(',').ToList() ?? [];
             for (int i = 0; i < res.Count; i++)
             {
                 res[i] = res[i].Trim();
