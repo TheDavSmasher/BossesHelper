@@ -3,7 +3,6 @@
 local cutsceneHelper = {}
 
 local celesteMod = require("#celeste.mod")
-local codeHelpers = celesteMod[modName].Code.Helpers
 
 local function threadProxyResume(self, ...)
     local thread = self.value
@@ -16,7 +15,7 @@ local function threadProxyResume(self, ...)
 
     -- The error message should be returned as an exception and not a string
     if not success then
-        return success, codeHelpers.LuaException(message)
+        return success, celesteMod[modName].Code.Helpers.LuaException(message)
     end
 
     return success, message
@@ -105,7 +104,7 @@ function cutsceneHelper.setFuncAsCoroutine(func)
 end
 
 function cutsceneHelper.readFile(filename, modName)
-    return codeHelpers.LuaBossHelper.GetFileContent(filename)
+    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetFileContent(filename)
 end
 
 local function addHelperFunctions(data, env)
