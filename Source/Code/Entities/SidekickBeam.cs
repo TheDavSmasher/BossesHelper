@@ -129,20 +129,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Vector2 ClosestCollider(Collider source)
         {
-            if (source is ColliderList list)
-            {
-                List<Collider> colliders = new(list.colliders);
-                List<float> distances = new();
-                foreach (Collider collider in colliders)
-                {
-                    distances.Add(DistanceBetween(sidekick.BeamOrigin, collider.AbsolutePosition + source.Entity.Position));
-                }
-                return colliders[distances.IndexOf(distances.Min())].AbsolutePosition + source.Entity.Position;
-            }
-            else
-            {
-                return source.AbsolutePosition + source.Entity.Position;
-            }
+            return (source is ColliderList list ?
+                list.colliders.MinBy(
+                    collider => DistanceBetween(sidekick.BeamOrigin, collider.AbsolutePosition + source.Entity.Position)) :
+                source).AbsolutePosition + source.Entity.Position;
         }
 
         private void DissipateParticles()
@@ -187,15 +177,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private SidekickTarget CollideFirstComponent(Vector2 from, Vector2 to)
         {
-            List<Component> targets = base.Scene.Tracker.GetComponents<SidekickTarget>();
-            foreach (Component target in targets)
-            {
-                if ((target as SidekickTarget).CollideCheck(from, to))
-                {
-                    return target as SidekickTarget;
-                }
-            }
-            return null;
+            return Scene.Tracker.GetComponents<SidekickTarget>()
+                .Cast<SidekickTarget>().FirstOrDefault(target => target.CollideCheck(from, to));
         }
 
         public override void Render()

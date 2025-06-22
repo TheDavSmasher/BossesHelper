@@ -115,28 +115,13 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
             {
-                List<Collider> colliders = [];
-                foreach (object colliderVal in luaTable.Values)
-                {
-                    if (colliderVal is Collider collider)
-                    {
-                        colliders.Add(collider);
-                    }
-                }
-                return new ColliderList([.. colliders]);
+                return new ColliderList([.. luaTable.Values.OfType<Collider>()]);
             }
 
             public static IEnumerator Say(string dialog, LuaTable luaEvents)
             {
-                List<Func<IEnumerator>> events = [];
-                foreach (object luaEvent in luaEvents.Values)
-                {
-                    if (luaEvent is LuaFunction luaFunction)
-                    {
-                        events.Add(luaFunction.ToIEnumerator);
-                    }
-                }
-                yield return Textbox.Say(dialog, [.. events]);
+                yield return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>()
+                    .Select<LuaFunction, Func<IEnumerator>>(luaEv => luaEv.ToIEnumerator)]);
             }
 
             public static LuaTable GetEmptyTable()

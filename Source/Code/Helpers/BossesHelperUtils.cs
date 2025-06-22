@@ -259,10 +259,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             public override void Render()
             {
                 base.Render();
-                foreach (var icon in AllIcons)
-                {
-                    icon.Visible = ActiveVisible;
-                }
+                AllIcons.ForEach(icon => icon.Visible = ActiveVisible);
             }
 
             public void RefillHealth(int? upTo = null)
