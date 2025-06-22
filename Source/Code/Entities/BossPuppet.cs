@@ -148,8 +148,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Collider GetTagOrDefault(ColliderOption option, string key, float? value)
         {
-            Dictionary<string, Collider> dictionary = hitboxMetadata[option];
-            if (dictionary == null || dictionary.Count == 0 || !dictionary.ContainsKey(key))
+            if (hitboxMetadata[option] is not { } dictionary || dictionary.Count == 0 || !dictionary.ContainsKey(key))
             {
                 if (value == null)
                     return new Circle(4f);
