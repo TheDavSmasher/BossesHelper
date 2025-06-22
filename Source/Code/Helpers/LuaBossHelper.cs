@@ -96,7 +96,7 @@ namespace Celeste.Mod.BossesHelper.Code
                     {
                         if ((cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
                         {
-                            funcs = Array.ConvertAll(array.Skip(1).ToArray(), item => (LuaFunction)item);
+                            funcs = [.. array.Skip(1).Cast<LuaFunction>()];
                         }
                         else
                         {
