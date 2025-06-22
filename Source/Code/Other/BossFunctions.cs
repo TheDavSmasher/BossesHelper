@@ -27,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         private readonly LuaFunction OnLaserLua;
 
-        public (string Name, int Count) Command => ("getInterruptData", 6);
+        public LuaCommand Command => ("getInterruptData", 6);
 
         public BossFunctions(string filepath, BossController controller)
         {

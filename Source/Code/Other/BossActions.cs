@@ -1,4 +1,6 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿global using LuaCommand = (string Name, int Count);
+
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using NLua;
 using System;
@@ -21,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
         public interface ILuaLoader
         {
-            public (string Name, int Count) Command { get; }
+            public LuaCommand Command { get; }
         }
 
         public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, BossController controller = null, string selfName = null)
@@ -46,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly Dictionary<MethodEndReason, LuaFunction> onEndMethods = [];
 
-            public (string Name, int Count) Command => ("getAttackData", 5);
+            public LuaCommand Command => ("getAttackData", 5);
 
             public BossAttack(string filepath, BossController controller)
             {
@@ -79,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly Action AddToScene;
 
-            public (string Name, int Count) Command => ("getCutsceneData", 2);
+            public LuaCommand Command => ("getCutsceneData", 2);
 
             public BossEvent(string filepath, BossController controller = null)
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
