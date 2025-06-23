@@ -6,7 +6,6 @@ using Monocle;
 using System.Xml;
 using System.Linq;
 using System;
-using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {

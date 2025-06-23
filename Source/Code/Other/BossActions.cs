@@ -1,4 +1,4 @@
-﻿global using LuaCommand = (string Name, int Count);
+﻿using LuaCommand = (string Name, int Count);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
-using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {
