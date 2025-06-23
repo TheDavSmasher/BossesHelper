@@ -61,6 +61,12 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 }
             }
 
+            public static void WarmUp()
+            {
+                Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+                new BossAttack("Assets/LuaBossHelper/warmup_cutscene", null).Perform().MoveNext();
+            }
+
             public IEnumerator Perform()
             {
                 yield return attackFunction.ToIEnumerator();
@@ -83,7 +89,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public LuaCommand Command => ("getCutsceneData", 2);
 
-            public BossEvent(string filepath, BossController controller = null)
+            public BossEvent(string filepath, BossController controller)
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
             {
                 AddToScene = self => controller.Scene.Add(self);
@@ -92,23 +98,10 @@ namespace Celeste.Mod.BossesHelper.Code.Other
                 endMethod = array[1];
             }
 
-            public static void WarmUp()
-            {
-                Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-                Coroutine coroutine = new(new BossEvent("Assets/LuaBossHelper/warmup_cutscene").Coroutine(null));
-                while (!coroutine.Finished)
-                {
-                    coroutine.Update();
-                }
-            }
-
             private IEnumerator Coroutine(Level level)
             {
                 yield return Cutscene;
-                if (level != null)
-                {
-                    EndCutscene(level);
-                }
+                EndCutscene(level);
             }
 
             public override void OnBegin(Level level)

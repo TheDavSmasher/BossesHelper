@@ -51,7 +51,7 @@ public partial class BossesHelperModule : EverestModule
     public override void LoadContent(bool firstLoad)
     {
         base.LoadContent(firstLoad);
-        BossActions.BossEvent.WarmUp();
+        BossActions.BossAttack.WarmUp();
     }
 
     public override void Load()
