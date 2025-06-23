@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Monocle;
-using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 
 namespace Celeste.Mod.BossesHelper.Code.Other
 {

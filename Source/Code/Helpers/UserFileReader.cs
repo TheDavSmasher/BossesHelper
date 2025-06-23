@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
 using System.Linq;
 using System;
-using static Celeste.Mod.BossesHelper.Code.Other.BossActions;
 using static Celeste.Mod.BossesHelper.Code.Other.BossPatterns;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
