@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
             {
                 string nodeType = patternNode.LocalName.ToLower();
-                List<Method> methodList = new();
+                List<Method> methodList = [];
                 if (nodeType.Equals("event"))
                 {
                     targetOut.Add(new EventCutscene(
@@ -109,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 Logger.Log(LogLevel.Error, "Bosses Helper", error);
                 return;
             }
-            XmlDocument document = new XmlDocument();
+            XmlDocument document = new();
             document.Load(xml.Stream);
             foreach (XmlNode xmlNode in document.SelectSingleNode(node).ChildNodes)
             {
@@ -149,7 +149,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static ColliderList GetAllColliders(this XmlNode source)
         {
-            List<Collider> baseOptions = new();
+            List<Collider> baseOptions = [];
             foreach (XmlElement baseOption in source.ChildNodes)
             {
                 baseOptions.Add(baseOption.LocalName.ToLower().Equals("circle")
@@ -213,7 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                         IBossAction action = i == 0
                             ? new BossAttack(luaFile.PathVirtual, controller)
                             : new BossEvent(luaFile.PathVirtual, controller);
-                        if (!actions.TryAdd(luaFile.PathVirtual.Substring(path.Length + 1), action))
+                        if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
                             Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
                     }
                 }
@@ -252,7 +252,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static string CleanPath(string path, string extension)
         {
             if (path == null) return "";
-            return path.EndsWith(extension) ? path.Substring(0, path.Length - 4) : path;
+            return path.EndsWith(extension) ? path[..^4] : path;
         }
         /*
         private static int LCM(int a, int b)
