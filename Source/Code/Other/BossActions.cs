@@ -79,14 +79,14 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             private readonly LuaFunction endMethod;
 
-            private readonly Action AddToScene;
+            private readonly Action<Entity> AddToScene;
 
             public LuaCommand Command => ("getCutsceneData", 2);
 
             public BossEvent(string filepath, BossController controller = null)
                 : base(fadeInOnSkip: true, endingChapterAfter: false)
             {
-                AddToScene = () => controller.Scene.Add(this);
+                AddToScene = self => controller.Scene.Add(self);
                 LuaFunction[] array = this.LoadFile(filepath, controller, "cutsceneEntity");
                 Cutscene = array[0]?.ToIEnumerator();
                 endMethod = array[1];
@@ -131,7 +131,7 @@ namespace Celeste.Mod.BossesHelper.Code.Other
 
             public IEnumerator Perform()
             {
-                AddToScene();
+                AddToScene(this);
                 do
                 {
                     yield return null;
