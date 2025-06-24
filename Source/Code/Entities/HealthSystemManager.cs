@@ -84,7 +84,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         public HealthSystemManager(EntityData data, Vector2 _)
-            : this(HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"), data.String("activationFlag"))
+            : this(!HealthData.isCreated, data.Bool("isGlobal"), data.Int("playerHealth"), data.String("activationFlag"))
         {
             UpdateSessionData(data);
         }
