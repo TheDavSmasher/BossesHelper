@@ -202,8 +202,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             IsEnabled = false;
             UnloadFakeDeathHooks();
-            Controller.RemoveSelf();
-            HealthBar.RemoveSelf();
+            Controller?.RemoveSelf();
+            HealthBar?.RemoveSelf();
         }
 
         private static partial void LoadFakeDeathHooks();
