@@ -62,13 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Dictionary<string, object> storedObjects = [];
 
-        public bool Grounded
-        {
-            get
-            {
-                return Speed.Y >= 0 && OnGround();
-            }
-        }
+        public bool Grounded => Speed.Y >= 0 && OnGround();
 
         public Collider Hurtbox { get; private set; }
 
@@ -122,23 +116,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void SetHitboxesAndColliders(string bossID)
         {
-            Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
+                Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
 
-            Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
+                Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
 
-            bossCollision = HurtMode switch
-            {
-                HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
-                        Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
+                bossCollision = HurtMode switch
+                {
+                    HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
+                            Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
                 HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, bossID,
-                        Target = GetMainOrDefault(ColliderOption.Target, null)),
-                HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
-                HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
-                _ => null //Custom depends on Setup.lua's code, does nothing by default
-            };
+                            Target = GetMainOrDefault(ColliderOption.Target, null)),
+                    HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
+                    HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
+                    _ => null //Custom depends on Setup.lua's code, does nothing by default
+                };
 
-            if (bossCollision != null)
-                Add(bossCollision);
+                if (bossCollision != null)
+                    Add(bossCollision);
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)

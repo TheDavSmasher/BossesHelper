@@ -34,14 +34,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public new bool Visible
         {
-            get
-            {
-                return barEntity.Visible;
-            }
-            set
-            {
-                barEntity.Visible = value;
-            }
+            get => barEntity.Visible;
+            set => barEntity.Visible = value;
         }
 
         public BossHealthBar(EntityData data, Vector2 _) : base()

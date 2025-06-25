@@ -25,18 +25,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private SidekickSprite currentSprite;
 
-        public Sprite ActiveSprite
+        public Sprite ActiveSprite => currentSprite switch
         {
-            get
-            {
-                return currentSprite switch
-                {
-                    SidekickSprite.Boss => Boss,
-                    SidekickSprite.Custom => Custom,
-                    _ => Dummy,
-                };
-            }
-        }
+            SidekickSprite.Boss => Boss,
+            SidekickSprite.Custom => Custom,
+            _ => Dummy,
+        };
 
         private readonly PlayerSprite Dummy;
 
@@ -52,13 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly SoundSource laserSfx;
 
-        public Vector2 BeamOrigin
-        {
-            get
-            {
-                return base.Center + Boss.Position + new Vector2(0f, -20f);
-            }
-        }
+        public Vector2 BeamOrigin => Center + Boss.Position + new Vector2(0f, -20f);
 
         private bool CanAttack;
 
