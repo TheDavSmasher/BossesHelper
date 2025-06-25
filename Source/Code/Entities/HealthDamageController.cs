@@ -12,6 +12,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
     public partial class HealthSystemManager
     {
         [Tracked(false)]
+        private class PlayerHealthBar() : HealthIconList(HealthData.globalController)
+        {
+            public override void Awake(Scene scene)
+            {
+                Visible = HealthData.startVisible;
+                Clear();
+                base.Awake(scene);
+            }
+        }
+
+        [Tracked(false)]
         private class DamageController() : GlobalEntity(false)
         {
             private LuaFunction onRecover;

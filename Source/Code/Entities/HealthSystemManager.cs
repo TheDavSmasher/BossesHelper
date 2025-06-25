@@ -26,17 +26,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        [Tracked(false)]
-        private class PlayerHealthBar() : HealthIconList(HealthData.globalController)
-        {
-            public override void Awake(Scene scene)
-            {
-                Visible = HealthData.startVisible;
-                Clear();
-                base.Awake(scene);
-            }
-        }
-
         public enum DeathEffect
         {
             PlayerPush,
