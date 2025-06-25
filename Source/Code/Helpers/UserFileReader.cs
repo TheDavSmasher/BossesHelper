@@ -254,22 +254,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             if (path == null) return "";
             return path.EndsWith(extension) ? path[..^4] : path;
         }
-        /*
-        private static int LCM(int a, int b)
-        {
-            return (a / GFC(a, b)) * b;
-        }
-
-        private static int GFC(int a, int b)
-        {
-            while (b != 0)
-            {
-                int temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
-        }*/
         #endregion
     }
 }
