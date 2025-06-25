@@ -16,14 +16,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public new bool Visible
         {
-            get
-            {
-                return HealthBar.Visible;
-            }
-            set
-            {
-                HealthBar.Visible = value;
-            }
+            get => HealthBar.Visible;
+            set => HealthBar.Visible = value;
         }
 
         public enum DeathEffect

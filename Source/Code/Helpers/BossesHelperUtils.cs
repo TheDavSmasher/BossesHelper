@@ -183,14 +183,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
                 public new bool Visible
                 {
-                    get
-                    {
-                        return icon.Visible;
-                    }
-                    set
-                    {
-                        icon.Visible = value;
-                    }
+                    get => icon.Visible;
+                    set => icon.Visible = value;
                 }
 
                 public override void Added(Scene scene)
