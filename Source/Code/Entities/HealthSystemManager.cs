@@ -37,16 +37,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
         }
 
-        private enum CrushEffect
-        {
-            PushOut, InvincibleSolid, FakeDeath, InstantDeath
-        }
-
-        private enum OffscreenEffect
-        {
-            BounceUp, BubbleBack, FakeDeath, InstantDeath
-        }
-
         public enum DeathEffect
         {
             PlayerPush,
