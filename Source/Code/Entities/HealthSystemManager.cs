@@ -189,12 +189,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             if (Scene.GetEntity<DamageController>() == null)
             {
-                if (Controller == null)
-                {
-                    Controller = new DamageController();
-                    Controller.UpdateState(Scene.GetPlayer(), HealthBar);
-                }
-                Scene.Add(Controller);
+                Scene.Add(Controller ??= new DamageController());
+                Controller.UpdateState(Scene.GetPlayer(), HealthBar);
             }
 
             LoadFakeDeathHooks();
