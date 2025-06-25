@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Monocle;
 using System;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -9,8 +10,8 @@ namespace Celeste.Mod.BossesHelper.Code.Components
     {
         protected readonly bool state = stateNeeded;
 
-        internal StateChecker(LuaFunction luaAction, bool stateNeeded = true, bool removeOnComplete = true)
-            : this(e => luaAction.Call(e), stateNeeded, removeOnComplete) { }
+        internal StateChecker(LuaFunction action, bool stateNeeded = true, bool removeOnComplete = true)
+            : this(action.ToAction<Entity>(), stateNeeded, removeOnComplete) { }
 
         public override void Update()
         {

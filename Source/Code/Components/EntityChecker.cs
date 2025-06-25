@@ -1,7 +1,7 @@
 ﻿using NLua;
 using Monocle;
 using System;
-using System.Linq;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         : StateChecker(action, stateNeeded, removeOnComplete)
     {
         public EntityChecker(LuaFunction checker, LuaFunction action, bool stateNeeded = true, bool removeOnComplete = true)
-            : this(() => (bool) checker.Call().FirstOrDefault(), e => action.Call(e), stateNeeded, removeOnComplete) { }
+            : this(checker.ToFunc<bool>(), action.ToAction<Entity>(), stateNeeded, removeOnComplete) { }
 
         protected override bool StateCheck() => checker();
     }

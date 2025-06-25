@@ -1,6 +1,7 @@
 ﻿using NLua;
 using Monocle;
 using System;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
@@ -8,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
         : StateChecker(action, stateNeeded)
     {
         public EntityFlagger(string flag, LuaFunction action, bool stateNeeded = true, bool resetFlag = false)
-            : this(flag, e => action.Call(e), stateNeeded, resetFlag) { }
+            : this(flag, action.ToAction<Entity>(), stateNeeded, resetFlag) { }
 
         protected override bool StateCheck()
         {
