@@ -32,9 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SolidCollidable = solidCollidable;
             effectiveGravity = gravMult * Gravity;
             this.maxFall = maxFall;
-            if (GFX.SpriteBank.TryCreate(spriteName, out Sprite sprite))
+            if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
             {
-                Sprite = sprite;
                 Sprite.Scale = new Vector2(xScale, yScale);
                 Add(Sprite);
             }
