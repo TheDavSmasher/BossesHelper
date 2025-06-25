@@ -20,11 +20,7 @@ public class BossesHelperSession : EverestModuleSession
 
     public Vector2 SafeSpawn
     {
-        set
-        {
-            lastSafePosition = value;
-            lastSpawnPoint = value;
-        }
+        set => lastSafePosition = lastSpawnPoint = value;
     }
 
     public bool alreadyFlying;
