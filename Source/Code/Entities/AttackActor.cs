@@ -17,7 +17,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool SolidCollidable;
 
-        public bool Grounded { get; private set; }
+        public bool Grounded => Speed.Y >= 0 && OnGround();
 
         private readonly float maxFall;
 
@@ -43,7 +43,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public override void Update()
         {
-            Grounded = Speed.Y >= 0 && OnGround();
             base.Update();
             //Move based on speed
             if (SolidCollidable)
