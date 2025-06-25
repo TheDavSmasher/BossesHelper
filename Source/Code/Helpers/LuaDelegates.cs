@@ -42,5 +42,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static Action<T1, T2, T3, T4, T5, T6> ToAction<T1, T2, T3, T4, T5, T6>(this LuaFunction function) =>
             (t1, t2, t3, t4, t5, t6) => function.Call(t1, t2, t3, t4, t5, t6);
         #endregion
+
+        #region To Func
+        public static Func<T> ToFunc<T>(this LuaFunction function) => () => (T) function.Call().FirstOrDefault();
+        #endregion
     }
 }
