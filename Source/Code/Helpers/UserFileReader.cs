@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Other;
 using Monocle;
 using System.Xml;
 using System.Linq;

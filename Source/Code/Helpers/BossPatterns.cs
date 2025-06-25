@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Monocle;
 
-namespace Celeste.Mod.BossesHelper.Code.Other
+namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public struct Method(string name, float? duration)
     {
@@ -143,6 +143,6 @@ namespace Celeste.Mod.BossesHelper.Code.Other
             yield return base.Perform();
         }
 
-        protected override int UpdateLoop() => loop += (base.UpdateLoop() % StatePatternOrder.Count == 0) ? 1 : 0;
+        protected override int UpdateLoop() => loop += base.UpdateLoop() % StatePatternOrder.Count == 0 ? 1 : 0;
     }
 }

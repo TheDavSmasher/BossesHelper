@@ -1,6 +1,5 @@
 ﻿using LuaCommand = (string Name, int Count);
 using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using NLua;
 using System;
@@ -8,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
-namespace Celeste.Mod.BossesHelper.Code.Other
+namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public static class BossActions
     {
