@@ -47,7 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Level Level = SceneAs<Level>();
                 if (Level.InCutscene ||
                     !evenIfInvincible && (ModSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
-                    Engine.Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
+                    Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
                 {
                     return;
                 }
@@ -98,7 +98,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, delegate (Tween t)
                     {
                         Vector2 val = from + (to - from) * t.Eased;
-                        if (Engine.Scene.GetPlayer() is Player player)
+                        if (Scene.GetPlayer() is Player player)
                         {
                             player.MoveToX(val.X);
                             player.MoveToY(val.Y);
@@ -111,9 +111,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private IEnumerator PlayerInvincible()
             {
-                static void ChangeVisible(bool state)
+                void ChangeVisible(bool state)
                 {
-                    if (Engine.Scene.GetPlayer() is Player player)
+                    if (Scene.GetPlayer() is Player player)
                     {
                         player.Sprite.Visible = state;
                         player.Hair.Visible = state;
