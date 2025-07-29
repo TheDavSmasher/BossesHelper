@@ -53,9 +53,9 @@ public class BossesHelperSession : EverestModuleSession
 
         public string onDamageFunction;
 
-        public HealthSystemManager.DeathEffect playerOnCrush;
+        public HealthSystemManager.CrushEffect playerOnCrush;
 
-        public HealthSystemManager.DeathEffect playerOffscreen;
+        public HealthSystemManager.OffscreenEffect playerOffscreen;
 
         public string fakeDeathMethods;
 

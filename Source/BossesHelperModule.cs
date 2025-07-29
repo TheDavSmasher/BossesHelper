@@ -160,18 +160,18 @@ public partial class BossesHelperModule : EverestModule
             return;
         switch (HealthData.playerOnCrush)
         {
-            case HealthSystemManager.DeathEffect.PlayerPush:
+            case HealthSystemManager.CrushEffect.PushOut:
                 PlayerTakesDamage();
                 if (!player.TrySquishWiggle(data, (int)data.Pusher.Width, (int)data.Pusher.Height))
                     player.TrySquishWiggle(data, player.level.Bounds.Width, player.level.Bounds.Height);
                 break;
-            case HealthSystemManager.DeathEffect.PlayerSafe:
+            case HealthSystemManager.CrushEffect.InvincibleSolid:
                 if (evenIfInvincible) break;
                 PlayerTakesDamage();
                 data.Pusher.Add(new SolidOnInvinciblePlayer());
                 break;
             default:
-                SharedDeath(player, HealthData.playerOnCrush);
+                SharedDeath(player, HealthData.playerOnCrush == HealthSystemManager.CrushEffect.FakeDeath);
                 break;
         }
     }
@@ -183,26 +183,26 @@ public partial class BossesHelperModule : EverestModule
             return false;
         switch (HealthData.playerOffscreen)
         {
-            case HealthSystemManager.DeathEffect.PlayerPush:
+            case HealthSystemManager.OffscreenEffect.BounceUp:
                 PlayerTakesDamage(stagger: false);
                 player.Play("event:/game/general/assist_screenbottom");
                 player.Bounce(atY);
                 break;
-            case HealthSystemManager.DeathEffect.PlayerSafe:
+            case HealthSystemManager.OffscreenEffect.BubbleBack:
                 PlayerTakesDamage(stagger: false);
                 if (!Session.alreadyFlying)
                     player.Add(new Coroutine(PlayerFlyBack(player)));
                 break;
             default:
-                SharedDeath(player, HealthData.playerOffscreen);
+                SharedDeath(player, HealthData.playerOffscreen == HealthSystemManager.OffscreenEffect.FakeDeath);
                 break;
         }
         return true;
     }
 
-    private static void SharedDeath(Player player, HealthSystemManager.DeathEffect effect)
+    private static void SharedDeath(Player player, bool fakeDeath)
     {
-        if (effect == HealthSystemManager.DeathEffect.FakeDeath)
+        if (fakeDeath)
         {
             PlayerTakesDamage(stagger: false, evenIfInvincible: true);
             FakeDie(player);
