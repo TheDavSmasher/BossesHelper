@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.RuntimeDetour;
-using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Helpers;
+using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -236,11 +237,39 @@ public partial class BossesHelperModule : EverestModule
                     level.DoScreenWipe(true);
                 }
             };
-            fakeDeadBody.Get<Coroutine>().Replace(BossesHelperUtils.FakeDeathRoutine(fakeDeadBody));
+            fakeDeadBody.Get<Coroutine>().Replace(FakeDeathRoutine(fakeDeadBody));
             level.Add(fakeDeadBody);
             level.Remove(self);
         }
         return null;
+    }
+
+    private static IEnumerator FakeDeathRoutine(PlayerDeadBody self)
+    {
+        Level level = self.SceneAs<Level>();
+        if (self.bounce != Vector2.Zero)
+        {
+            Audio.Play("event:/char/madeline/predeath", self.Position);
+            self.scale = 1.5f;
+            Celeste.Freeze(0.05f);
+            yield return null;
+            Vector2 from = self.Position;
+            Vector2 to = from + self.bounce * 24f;
+            Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.5f, start: true);
+            self.Add(tween);
+            tween.OnUpdate = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
+            {
+                self.Position = from + (to - from) * t.Eased;
+                self.scale = 1.5f - t.Eased * 0.5f;
+                self.sprite.Rotation = (float)(Math.Floor(t.Eased * 4f) * 6.2831854820251465);
+            };
+            yield return tween.Duration * 0.75f;
+            tween.Stop();
+        }
+        self.Position += Vector2.UnitY * -5f;
+        level.Shake();
+        Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
+        self.End();
     }
 
     private static IEnumerator PlayerFlyBack(Player player)
