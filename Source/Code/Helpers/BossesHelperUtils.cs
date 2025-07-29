@@ -95,6 +95,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             return T.Parse(value, null);
         }
+
+        public static Vector2 NearestWhole(this Vector2 value)
+        {
+            return new Vector2((int) value.X, (int) value.Y);
+        }
         #endregion
 
         #region Health Displays

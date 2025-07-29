@@ -121,7 +121,7 @@ public partial class BossesHelperModule : EverestModule
     {
         orig(self);
         if (self.OnSafeGround && self.Scene.GetEntity<UpdateSafeBlocker>() == null)
-            Session.lastSafePosition = self.Position;
+            Session.lastSafePosition = self.Position.NearestWhole();
         if (self.StateMachine.State != Player.StCassetteFly)
             Session.alreadyFlying = false;
         if (self.SceneAs<Level>().Session.RespawnPoint is Vector2 spawn && Session.lastSpawnPoint != spawn)
