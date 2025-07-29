@@ -240,6 +240,7 @@ public partial class BossesHelperModule : EverestModule
             fakeDeadBody.Get<Coroutine>().Replace(FakeDeathRoutine(fakeDeadBody));
             level.Add(fakeDeadBody);
             level.Remove(self);
+            level.Tracker.GetEntity<Lookout>()?.StopInteracting();
         }
         return null;
     }
