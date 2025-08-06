@@ -5,6 +5,7 @@ using Monocle;
 using System.Xml;
 using System.Linq;
 using System;
+using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -77,22 +78,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return targetOut;
         }
 
-        public static Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
+        public static Dictionary<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
         {
-            Dictionary<BossPuppet.ColliderOption, Dictionary<string, Collider>> dataHolder = [];
-            foreach (var option in Enum.GetValues<BossPuppet.ColliderOption>())
+            Dictionary<ColliderOption, Dictionary<string, Collider>> dataHolder = [];
+            foreach (var option in Enum.GetValues<ColliderOption>())
             {
                 dataHolder.Add(option, []);
             }
 
             ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
             {
-                BossPuppet.ColliderOption option = Enum.Parse<BossPuppet.ColliderOption>(hitboxNode.LocalName, true);
+                ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
                 dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag"), option switch
                 {
-                    BossPuppet.ColliderOption.Hitboxes or BossPuppet.ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
-                    BossPuppet.ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
-                    BossPuppet.ColliderOption.Target => hitboxNode.GetCircle(),
+                    ColliderOption.Hitboxes or ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
+                    ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
+                    ColliderOption.Target => hitboxNode.GetCircle(),
                     _ => null
                 });
             });
