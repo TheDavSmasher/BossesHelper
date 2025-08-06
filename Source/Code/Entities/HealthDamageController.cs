@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using NLua;
+using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
