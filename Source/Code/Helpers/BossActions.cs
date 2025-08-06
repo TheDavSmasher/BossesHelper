@@ -141,13 +141,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Laser
         }
 
-        private readonly LuaFunction OnContactLua;
-
-        private readonly LuaFunction OnDashLua;
-
-        private readonly LuaFunction OnBounceLua;
-
-        private readonly LuaFunction OnLaserLua;
+        private readonly Dictionary<DamageSource, LuaFunction> onDamageMethods = [];
 
         public LuaCommand Command => ("getInterruptData", 6);
 
@@ -155,23 +149,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             LuaFunction[] array = this.LoadFile(filepath, controller);
             LuaFunction OnHitLua = array[0];
-            OnContactLua = array[1] ?? OnHitLua;
-            OnDashLua = array[2] ?? OnHitLua;
-            OnBounceLua = array[3] ?? OnHitLua;
-            OnLaserLua = array[4] ?? OnHitLua;
+            foreach (var option in Enum.GetValues<DamageSource>())
+            {
+                onDamageMethods.Add(option, array[(int)option + 1] ?? OnHitLua);
+            }
             array[5]?.Call();
         }
 
         public IEnumerator OnDamage(DamageSource source)
         {
-            yield return (source switch
-            {
-                DamageSource.Contact => OnContactLua,
-                DamageSource.Dash => OnDashLua,
-                DamageSource.Bounce => OnBounceLua,
-                DamageSource.Laser => OnLaserLua,
-                _ => null
-            })?.ToIEnumerator();
+            yield return onDamageMethods[source].ToIEnumerator();
         }
     }
 }
