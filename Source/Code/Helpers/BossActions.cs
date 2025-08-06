@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -38,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly LuaFunction endFunction;
 
-        private readonly Dictionary<MethodEndReason, LuaFunction> onEndMethods = [];
+        private readonly EnumDict<MethodEndReason, LuaFunction> onEndMethods;
 
         public LuaCommand Command => ("getAttackData", 5);
 
@@ -47,10 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             LuaFunction[] array = this.LoadFile(filepath, controller);
             attackFunction = array[0];
             endFunction = array[1];
-            foreach (var option in Enum.GetValues<MethodEndReason>())
-            {
-                onEndMethods.Add(option, array[(int)option + 2]);
-            }
+            onEndMethods = new(option => array[(int)option + 2]);
         }
 
         public IEnumerator Perform()
@@ -141,7 +139,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             Laser
         }
 
-        private readonly Dictionary<DamageSource, LuaFunction> onDamageMethods = [];
+        private readonly EnumDict<DamageSource, LuaFunction> onDamageMethods;
 
         public LuaCommand Command => ("getInterruptData", 6);
 
@@ -149,10 +147,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             LuaFunction[] array = this.LoadFile(filepath, controller);
             LuaFunction OnHitLua = array[0];
-            foreach (var option in Enum.GetValues<DamageSource>())
-            {
-                onDamageMethods.Add(option, array[(int)option + 1] ?? OnHitLua);
-            }
+            onDamageMethods = new(option => array[(int)option + 1] ?? OnHitLua);
             array[5]?.Call();
         }
 

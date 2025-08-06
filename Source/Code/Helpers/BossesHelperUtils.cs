@@ -383,6 +383,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return SeparateList(listString).Select(float.Parse).ToList();
         }
 
+        public class EnumDict<TKey, TValue> : Dictionary<TKey, TValue> where TKey : struct, Enum
+        {
+            public EnumDict(Func<TKey, TValue> populator) : base()
+            {
+                foreach (var option in Enum.GetValues<TKey>())
+                {
+                    Add(option, populator(option));
+                }
+            }
+        }
+
         public class Crc32
         {
             private const UInt32 s_generator = 0xEDB88320;

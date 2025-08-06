@@ -5,6 +5,7 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -20,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly Sprite Sprite;
 
-        private readonly Dictionary<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
+        private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
 
         private Component bossCollision;
 

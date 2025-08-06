@@ -6,6 +6,7 @@ using System.Xml;
 using System.Linq;
 using System;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -78,13 +79,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return targetOut;
         }
 
-        public static Dictionary<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
+        public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
         {
-            Dictionary<ColliderOption, Dictionary<string, Collider>> dataHolder = [];
-            foreach (var option in Enum.GetValues<ColliderOption>())
-            {
-                dataHolder.Add(option, []);
-            }
+            EnumDict<ColliderOption, Dictionary<string, Collider>> dataHolder = new(_ => []);
 
             ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
             {
