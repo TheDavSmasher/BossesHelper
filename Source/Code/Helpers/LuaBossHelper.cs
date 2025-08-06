@@ -245,13 +245,13 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public float SetXSpeedDuring(float speed, float time)
             {
-                Add(new Coroutine(KeepXSpeed(speed, time)));
+                KeepXSpeed(speed, time).Coroutine(this);
                 return time;
             }
 
             public float SetYSpeedDuring(float speed, float time)
             {
-                Add(new Coroutine(KeepYSpeed(speed, time)));
+                KeepYSpeed(speed, time).Coroutine(this);
                 return time;
             }
 

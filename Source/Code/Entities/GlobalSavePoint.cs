@@ -69,7 +69,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         public void OnTalk(Player _)
         {
             Changer.Update();
-            Add(new Coroutine(SaveRoutine()));
+            SaveRoutine().Coroutine(this);
         }
 
         private IEnumerator SaveRoutine()

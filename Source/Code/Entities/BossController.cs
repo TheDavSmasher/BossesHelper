@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 this.ReadLuaFiles(entityData.Attr("attacksPath"), entityData.Attr("eventsPath")),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
             this.ReadBossFunctions(entityData.Attr("functionsPath"));
-            Add(new Coroutine(CheckForPlayer()));
+            CheckForPlayer().Coroutine(this);
         }
 
         public override void Removed(Scene scene)

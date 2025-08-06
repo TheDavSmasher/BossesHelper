@@ -191,7 +191,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossHitCooldown <= 0)
             {
                 ResetBossHitCooldown();
-                Add(BossFunctions.OnDamageCoroutine(source));
+                BossFunctions.OnDamage(source).Coroutine(this);
             }
         }
 

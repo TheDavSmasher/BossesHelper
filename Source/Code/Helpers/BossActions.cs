@@ -92,7 +92,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public override void OnBegin(Level level)
         {
-            Add(new Coroutine(Coroutine(level)));
+            Coroutine(level).Coroutine(this);
         }
 
         public override void OnEnd(Level level)
@@ -162,12 +162,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             array[5]?.Call();
         }
 
-        public Coroutine OnDamageCoroutine(DamageSource source)
-        {
-            return new Coroutine(OnDamage(source));
-        }
-
-        private IEnumerator OnDamage(DamageSource source)
+        public IEnumerator OnDamage(DamageSource source)
         {
             yield return (source switch
             {

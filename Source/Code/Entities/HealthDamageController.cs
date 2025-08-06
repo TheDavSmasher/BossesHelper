@@ -61,9 +61,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                         Level.Flash(Color.Red * 0.3f);
                         Audio.Play("event:/char/madeline/predeath");
                         if (HealthData.playerStagger && stagger)
-                            entity.Add(new Coroutine(PlayerStagger(entity.Position, direction)));
+                            PlayerStagger(entity.Position, direction).Coroutine(entity);
                         if (HealthData.playerBlink)
-                            entity.Add(new Coroutine(PlayerInvincible()));
+                            PlayerInvincible().Coroutine(entity);
                         if (onDamage != null)
                             Add(new Coroutine(onDamage.ToIEnumerator()));
                     }

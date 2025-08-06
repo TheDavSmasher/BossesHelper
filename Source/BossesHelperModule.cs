@@ -192,7 +192,7 @@ public partial class BossesHelperModule : EverestModule
             case HealthSystemManager.OffscreenEffect.BubbleBack:
                 PlayerTakesDamage(stagger: false);
                 if (!Session.alreadyFlying)
-                    player.Add(new Coroutine(PlayerFlyBack(player)));
+                    PlayerFlyBack(player).Coroutine(player);
                 break;
             default:
                 SharedDeath(player, HealthData.playerOffscreen == HealthSystemManager.OffscreenEffect.FakeDeath);

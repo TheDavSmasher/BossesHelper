@@ -182,12 +182,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 public void DrawIcon(Vector2? position = null)
                 {
                     Position = position ?? Position;
-                    Add(new Coroutine(IconRoutine(startAnim)));
+                    IconRoutine(startAnim).Coroutine(this);
                 }
 
                 public void RemoveIcon(bool remove = true)
                 {
-                    Add(new Coroutine(IconRoutine(endAnim, remove)));
+                    IconRoutine(endAnim, remove).Coroutine(this);
                 }
 
                 private IEnumerator IconRoutine(string anim, bool remove = false)

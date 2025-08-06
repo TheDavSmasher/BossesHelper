@@ -149,7 +149,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && CanAttack)
             {
                 CanAttack = false;
-                Add(new Coroutine(AttackSequence()));
+                AttackSequence().Coroutine(this);
             }
             oldX = X;
             base.Update();
