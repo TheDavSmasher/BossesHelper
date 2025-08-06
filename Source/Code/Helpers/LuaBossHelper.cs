@@ -125,7 +125,7 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public static IEnumerator Say(string dialog, LuaTable luaEvents)
             {
-                yield return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>()
+                return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>()
                     .Select<LuaFunction, Func<IEnumerator>>(luaEv => luaEv.ToIEnumerator)]);
             }
 

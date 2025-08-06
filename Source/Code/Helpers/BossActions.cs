@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public IEnumerator Perform()
         {
-            yield return attackFunction.ToIEnumerator();
+            return attackFunction.ToIEnumerator();
         }
 
         public void EndAction(MethodEndReason reason)
@@ -158,7 +158,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public IEnumerator OnDamage(DamageSource source)
         {
-            yield return onDamageMethods[source].ToIEnumerator();
+            return onDamageMethods[source].ToIEnumerator();
         }
     }
 }
