@@ -186,7 +186,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthBar?.RemoveSelf();
         }
 
-        private static partial void LoadFakeDeathHooks();
-        private static partial void UnloadFakeDeathHooks();
+        public static partial void LoadFakeDeathHooks();
+        public static partial void UnloadFakeDeathHooks();
     }
 }

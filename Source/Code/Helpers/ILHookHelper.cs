@@ -119,7 +119,7 @@ namespace Celeste.Mod.BossesHelper
         {
             public partial class HealthSystemManager
             {
-                private static partial void LoadFakeDeathHooks()
+                public static partial void LoadFakeDeathHooks()
                 {
                     foreach (string fakeMethod in HealthData.FakeDeathMethods)
                     {
@@ -144,7 +144,7 @@ namespace Celeste.Mod.BossesHelper
                     }
                 }
 
-                private static partial void UnloadFakeDeathHooks()
+                public static partial void UnloadFakeDeathHooks()
                 {
                     foreach (string fakeMethod in HealthData.FakeDeathMethods)
                     {
