@@ -1,5 +1,4 @@
-﻿using LuaCommand = (string Name, int Count);
-using LuaTableItem = (object Name, object Value);
+﻿using LuaTableItem = (object Name, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using NLua;
 using System;
@@ -19,10 +18,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public abstract class LuaFileLoader
+    public abstract class LuaFileLoader(string command, int functionCount)
     {
-        protected abstract LuaCommand Command { get; }
-
         public LuaFunction[] LoadFile(string filepath, BossController controller = null,
             params LuaTableItem[] values)
         {
@@ -37,11 +34,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 dict.Add(Name, Value);
             }
-            return LoadLuaFile(dict, filepath, Command.Name, Command.Count);
+            return LoadLuaFile(dict, filepath, command, functionCount);
         }
     }
 
-    public abstract class BossAction : LuaFileLoader
+    public abstract class BossAction(string command, int functionCount)
+        : LuaFileLoader(command, functionCount)
     {
         public abstract IEnumerator Perform();
 
@@ -56,9 +54,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly EnumDict<MethodEndReason, LuaFunction> onEndMethods;
 
-        protected override LuaCommand Command => ("getAttackData", 5);
-
         public BossAttack(string filepath, BossController controller)
+            : base("getAttackData", 5)
         {
             LuaFunction[] array = LoadFile(filepath, controller);
             attackFunction = array[0];
@@ -115,9 +112,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly BossController controller;
 
-        protected override LuaCommand Command => ("getCutsceneData", 2);
-
         public BossEvent(string filepath, BossController controller)
+            : base("getCutsceneData", 2)
         {
             this.controller = controller;
             cutscene = new(LoadFile(filepath, controller, ("cutsceneEntity", cutscene)));
@@ -146,9 +142,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly EnumDict<DamageSource, LuaFunction> onDamageMethods;
 
-        protected override LuaCommand Command => ("getInterruptData", 6);
-
         public BossFunctions(string filepath, BossController controller)
+            : base("getInterruptData", 6)
         {
             LuaFunction[] array = LoadFile(filepath, controller);
             LuaFunction OnHitLua = array[0];
