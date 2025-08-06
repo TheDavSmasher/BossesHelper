@@ -15,7 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #region XML Files
         #region XML Reading
         public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset,
-            Dictionary<string, BossAction> actions, ControllerDelegates delegates)
+            Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
             List<BossPattern> targetOut = [];
 
@@ -195,10 +195,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region Lua Files
-        public static Dictionary<string, BossAction> ReadLuaFiles(
+        public static Dictionary<string, IBossAction> ReadLuaFiles(
             this BossController controller, string attacksPath, string eventsPath)
         {
-            Dictionary<string, BossAction> actions = [];
+            Dictionary<string, IBossAction> actions = [];
             string[] paths = [attacksPath, eventsPath];
             for (int i = 0; i < 2; i++)
             {
@@ -207,7 +207,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 {
                     foreach (ModAsset luaFile in luaFiles.Children)
                     {
-                        BossAction action = i == 0
+                        IBossAction action = i == 0
                             ? new BossAttack(luaFile.PathVirtual, controller)
                             : new BossEvent(luaFile.PathVirtual, controller);
                         if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
