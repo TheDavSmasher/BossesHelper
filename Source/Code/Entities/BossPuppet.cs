@@ -119,7 +119,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
 
-            bossCollision = HurtMode switch
+            (bossCollision = HurtMode switch
             {
                 HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
                         Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
@@ -128,10 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
                 _ => null //Custom depends on Setup.lua's code, does nothing by default
-            };
-
-            if (bossCollision != null)
-                Add(bossCollision);
+            })?.AddTo(this);
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)

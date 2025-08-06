@@ -103,7 +103,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void Coroutine(this IEnumerator enumerator, Entity target)
         {
-            target.Add(new Coroutine(enumerator));
+            new Coroutine(enumerator).AddTo(target);
+        }
+
+        public static void AddTo(this Component self, Entity target)
+        {
+            target.Add(self);
         }
         #endregion
 
