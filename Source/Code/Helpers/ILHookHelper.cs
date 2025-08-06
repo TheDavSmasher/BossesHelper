@@ -133,7 +133,7 @@ namespace Celeste.Mod.BossesHelper
                             ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, il =>
                             {
                                 ILCursor cursor = new(il);
-                                cursor.EmitDelegate(BossesHelperExports.UseFakeDeath);
+                                cursor.EmitDelegate(FakeDeathHook);
                                 while (cursor.TryGotoNext(instr => instr.MatchRet()))
                                 {
                                     cursor.EmitDelegate(BossesHelperExports.ClearFakeDeath);
@@ -141,6 +141,14 @@ namespace Celeste.Mod.BossesHelper
                                 }
                             });
                         }
+                    }
+                }
+
+                private static void FakeDeathHook()
+                {
+                    if (IsEnabled)
+                    {
+                        ModSession.useFakeDeath = true;
                     }
                 }
 
