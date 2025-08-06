@@ -123,7 +123,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
                         Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
-            HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, bossID,
+                HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, bossID,
                         Target = GetMainOrDefault(ColliderOption.Target, null)),
                 HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
@@ -141,13 +141,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private Collider GetTagOrDefault(ColliderOption option, string key, float? value)
         {
-            if (hitboxMetadata[option] is not { } dictionary || dictionary.Count == 0 || !dictionary.ContainsKey(key))
-            {
-                if (value == null)
-                    return new Circle(4f);
-                return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
-            }
-            return (dictionary.Count > 1) ? dictionary[key] : dictionary.Values.First();
+            var dictionary = hitboxMetadata[option];
+            if (dictionary.TryGetValue(key, out var result))
+                return result;
+
+            if (value == null)
+                return new Circle(4f);
+            return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
         }
 
         #region Collision Methods
