@@ -10,11 +10,13 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-    public interface IBossAction
+    public static class BossActions
     {
-        public IEnumerator Perform();
-
-        public virtual void EndAction(MethodEndReason reason) { }
+        public static void WarmUp()
+        {
+            Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+            new BossAttack("Assets/LuaBossHelper/warmup_cutscene", null).Perform().MoveNext();
+        }
     }
 
     public abstract class LuaFileLoader
@@ -39,16 +41,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public static class BossActions
+    public abstract class BossAction : LuaFileLoader
     {
-        public static void WarmUp()
-        {
-            Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-            new BossAttack("Assets/LuaBossHelper/warmup_cutscene", null).Perform().MoveNext();
-        }
+        public abstract IEnumerator Perform();
+
+        public virtual void EndAction(MethodEndReason reason) { }
     }
 
-    public class BossAttack : LuaFileLoader, IBossAction
+    public class BossAttack : BossAction
     {
         private readonly LuaFunction attackFunction;
 
@@ -66,19 +66,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             onEndMethods = new(option => array[(int)option + 2]);
         }
 
-        public IEnumerator Perform()
+        public override IEnumerator Perform()
         {
             yield return attackFunction.ToIEnumerator();
         }
 
-        public void EndAction(MethodEndReason reason)
+        public override void EndAction(MethodEndReason reason)
         {
             endFunction?.Call(reason);
             onEndMethods[reason]?.Call();
         }
     }
 
-    public class BossEvent : LuaFileLoader, IBossAction
+    public class BossEvent : BossAction
     {
         private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
         {
@@ -123,7 +123,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             cutscene = new(LoadFile(filepath, controller, ("cutsceneEntity", cutscene)));
         }
 
-        public IEnumerator Perform()
+        public override IEnumerator Perform()
         {
             controller.Scene.Add(cutscene);
             do
