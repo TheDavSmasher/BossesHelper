@@ -10,16 +10,16 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
+    public interface ILuaLoader
+    {
+        public LuaCommand Command { get; }
+    }
+
     public interface IBossAction
     {
         public IEnumerator Perform();
 
         public virtual void EndAction(MethodEndReason reason) { }
-    }
-
-    public interface ILuaLoader
-    {
-        public LuaCommand Command { get; }
     }
 
     public static class BossActions
