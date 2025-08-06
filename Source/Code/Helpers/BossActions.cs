@@ -1,6 +1,6 @@
 ﻿using LuaCommand = (string Name, int Count);
+using LuaTableItem = (object Name, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
-using Monocle;
 using NLua;
 using System;
 using System.Collections;
@@ -17,14 +17,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public virtual void EndAction(MethodEndReason reason) { }
     }
 
-    public interface ILuaLoader
+    public abstract class LuaFileLoader
     {
-        public LuaCommand Command { get; }
-    }
+        protected abstract LuaCommand Command { get; }
 
-    public static class BossActions
-    {
-        public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, BossController controller = null, string selfName = null)
+        public LuaFunction[] LoadFile(string filepath, BossController controller = null,
+            params LuaTableItem[] values)
         {
             Dictionary<object, object> dict = new()
             {
@@ -33,11 +31,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 { "puppet", controller?.Puppet },
                 { "boss", controller }
             };
-            if (selfName != null)
-                dict.Add(selfName, self);
-            return LoadLuaFile(dict, filepath, self.Command.Name, self.Command.Count);
+            foreach (var (Name, Value) in values)
+            {
+                dict.Add(Name, Value);
+            }
+            return LoadLuaFile(dict, filepath, Command.Name, Command.Count);
         }
+    }
 
+    public static class BossActions
+    {
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
@@ -45,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public class BossAttack : IBossAction, ILuaLoader
+    public class BossAttack : LuaFileLoader, IBossAction
     {
         private readonly LuaFunction attackFunction;
 
@@ -53,11 +56,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly EnumDict<MethodEndReason, LuaFunction> onEndMethods;
 
-        public LuaCommand Command => ("getAttackData", 5);
+        protected override LuaCommand Command => ("getAttackData", 5);
 
         public BossAttack(string filepath, BossController controller)
         {
-            LuaFunction[] array = this.LoadFile(filepath, controller);
+            LuaFunction[] array = LoadFile(filepath, controller);
             attackFunction = array[0];
             endFunction = array[1];
             onEndMethods = new(option => array[(int)option + 2]);
@@ -75,61 +78,63 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public class BossEvent : CutsceneEntity, IBossAction, ILuaLoader
+    public class BossEvent : LuaFileLoader, IBossAction
     {
-        private readonly IEnumerator Cutscene;
+        private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
+        {
+            private readonly IEnumerator Cutscene = functions[0]?.ToIEnumerator();
 
-        private readonly LuaFunction endMethod;
+            private readonly LuaFunction endMethod = functions[1];
 
-        private readonly Action<Entity> AddToScene;
+            public override void OnBegin(Level level)
+            {
+                Coroutine(level).Coroutine(this);
+            }
 
-        public LuaCommand Command => ("getCutsceneData", 2);
+            private IEnumerator Coroutine(Level level)
+            {
+                yield return Cutscene;
+                EndCutscene(level);
+            }
+
+            public override void OnEnd(Level level)
+            {
+                try
+                {
+                    endMethod?.Call(level, WasSkipped);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to call OnEnd");
+                    Logger.LogDetailed(e);
+                }
+            }
+        }
+
+        private readonly CutsceneWrapper cutscene;
+
+        private readonly BossController controller;
+
+        protected override LuaCommand Command => ("getCutsceneData", 2);
 
         public BossEvent(string filepath, BossController controller)
-            : base(fadeInOnSkip: true, endingChapterAfter: false)
         {
-            AddToScene = self => controller.Scene.Add(self);
-            LuaFunction[] array = this.LoadFile(filepath, controller, "cutsceneEntity");
-            Cutscene = array[0]?.ToIEnumerator();
-            endMethod = array[1];
-        }
-
-        private IEnumerator Coroutine(Level level)
-        {
-            yield return Cutscene;
-            EndCutscene(level);
-        }
-
-        public override void OnBegin(Level level)
-        {
-            Coroutine(level).Coroutine(this);
-        }
-
-        public override void OnEnd(Level level)
-        {
-            try
-            {
-                endMethod?.Call(level, WasSkipped);
-            }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to call OnEnd");
-                Logger.LogDetailed(e);
-            }
+            this.controller = controller;
+            cutscene = new(LoadFile(filepath, controller, ("cutsceneEntity", cutscene)));
         }
 
         public IEnumerator Perform()
         {
-            AddToScene(this);
+            controller.Scene.Add(cutscene);
             do
             {
                 yield return null;
             }
-            while (Running);
+            while (cutscene.Running);
         }
     }
 
-    internal class BossFunctions : ILuaLoader
+    internal class BossFunctions : LuaFileLoader
     {
         public enum DamageSource
         {
@@ -141,11 +146,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private readonly EnumDict<DamageSource, LuaFunction> onDamageMethods;
 
-        public LuaCommand Command => ("getInterruptData", 6);
+        protected override LuaCommand Command => ("getInterruptData", 6);
 
         public BossFunctions(string filepath, BossController controller)
         {
-            LuaFunction[] array = this.LoadFile(filepath, controller);
+            LuaFunction[] array = LoadFile(filepath, controller);
             LuaFunction OnHitLua = array[0];
             onDamageMethods = new(option => array[(int)option + 1] ?? OnHitLua);
             array[5]?.Call();
