@@ -358,8 +358,7 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public void StoreObject(string key, object toStore)
             {
-                if (!storedObjects.ContainsKey(key))
-                    storedObjects.Add(key, toStore);
+                storedObjects.TryAdd(key, toStore);
             }
 
             public object GetStoredObject(string key)
