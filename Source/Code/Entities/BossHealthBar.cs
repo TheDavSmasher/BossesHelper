@@ -31,8 +31,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private HealthDisplay barEntity;
 
-        private readonly EntityData entityData;
-
         public new bool Visible
         {
             get => barEntity.Visible;
@@ -41,7 +39,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public BossHealthBar(EntityData data, Vector2 _) : base()
         {
-            entityData = data;
             Position = data.Position;
             BarPosition = new Vector2(data.Float("healthBarX"), data.Float("healthBarY"));
             BarScale = new Vector2(data.Float("healthScaleX", 1f), data.Float("healthScaleY", 1f));
@@ -52,20 +49,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Awake(scene);
             Level level = SceneAs<Level>();
-            if (level.Tracker.GetNearestComponent<BossHealthTracker>(entityData.Nodes[0]) is not { } component)
+            if (level.Tracker.GetNearestComponent<BossHealthTracker>(SourceData.Nodes[0]) is not { } component)
             {
                 RemoveSelf();
                 return;
             }
             BossHealth = component.Health;
-            Color baseColor = entityData.HexColor("baseColor", Color.White);
+            Color baseColor = SourceData.HexColor("baseColor", Color.White);
             level.Add(barEntity = barType switch
             {
-                BarTypes.Icons => new HealthIconList(entityData, BarPosition, BarScale, BossHealth),
+                BarTypes.Icons => new HealthIconList(SourceData, BarPosition, BarScale, BossHealth),
                 BarTypes.Countdown => new HealthNumber(BarPosition, BarScale, BossHealth, baseColor),
                 _ => new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType)
             });
-            Visible = entityData.Bool("startVisible");
+            Visible = SourceData.Bool("startVisible");
         }
 
         public override void Update()

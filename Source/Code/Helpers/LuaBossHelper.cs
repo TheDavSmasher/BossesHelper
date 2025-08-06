@@ -169,7 +169,7 @@ namespace Celeste.Mod.BossesHelper.Code
                 RemoveSelf();
                 if (permanent)
                 {
-                    Scene.DoNotLoad(entityId);
+                    Scene.DoNotLoad(SourceId);
                 }
             }
 

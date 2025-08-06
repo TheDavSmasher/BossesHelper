@@ -15,11 +15,11 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             base.OnEnter(player);
             if (Scene.GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                manager.UpdateSessionData(entityData);
+                manager.UpdateSessionData(SourceData);
             }
             else
             {
-                Scene.Add(new HealthSystemManager(entityData, Vector2.Zero));
+                Scene.Add(new HealthSystemManager(SourceData, Vector2.Zero));
             }
             RemoveSelf();
         }
