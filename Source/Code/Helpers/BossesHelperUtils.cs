@@ -143,7 +143,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static List<float> SeparateFloatList(string listString)
         {
-            return SeparateList(listString).Select(float.Parse).ToList();
+            return [.. SeparateList(listString).Select(float.Parse)];
         }
 
         public class EnumDict<TKey, TValue> : Dictionary<TKey, TValue> where TKey : struct, Enum
@@ -163,7 +163,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             public Crc32()
             {
-                m_checksumTable = Enumerable.Range(0, 256).Select(i =>
+                m_checksumTable = [.. Enumerable.Range(0, 256).Select(i =>
                 {
                     var tableEntry = (uint)i;
                     for (var j = 0; j < 8; ++j)
@@ -173,7 +173,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                             : (tableEntry >> 1);
                     }
                     return tableEntry;
-                }).ToArray();
+                })];
             }
 
             public int Get(string value)
