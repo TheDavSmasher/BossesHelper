@@ -22,7 +22,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             base.Removed(scene);
             if (onlyOnce)
             {
-                SceneAs<Level>().Session.DoNotLoad.Add(id); 
+                scene.DoNotLoad(id);
             }
         }
     }

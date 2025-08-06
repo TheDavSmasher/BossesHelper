@@ -110,6 +110,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             target.Add(self);
         }
+
+        public static void DoNotLoad(this Scene scene, EntityID entityID)
+        {
+            (scene as Level).Session.DoNotLoad.Add(entityID);
+        }
         #endregion
 
         #region Health Displays

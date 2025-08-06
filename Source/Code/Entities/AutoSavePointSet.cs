@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -35,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             base.Removed(scene);
             if (onlyOnce)
-                (scene as Level).Session.DoNotLoad.Add(ID);
+                scene.DoNotLoad(ID);
         }
     }
 }

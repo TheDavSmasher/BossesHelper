@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 
@@ -25,7 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
             base.Removed(scene);
             if (permanent)
             {
-                SceneAs<Level>().Session.DoNotLoad.Add(ID);
+                scene.DoNotLoad(ID);
             }
         }
     }
