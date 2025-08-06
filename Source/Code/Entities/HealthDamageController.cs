@@ -64,8 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                             PlayerStagger(entity.Position, direction).Coroutine(entity);
                         if (HealthData.playerBlink)
                             PlayerInvincible().Coroutine(entity);
-                        if (onDamage != null)
-                            Add(new Coroutine(onDamage.ToIEnumerator()));
+                        onDamage?.AddAsCoroutine(this);
                     }
                 }
                 else
@@ -77,15 +76,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public void RecoverHealth(int amount = 1)
             {
                 ModSession.currentPlayerHealth += amount;
-                if (onRecover != null)
-                    Add(new Coroutine(onRecover.ToIEnumerator()));
+                onRecover?.AddAsCoroutine(this);
             }
 
             public void RefillHealth()
             {
                 ModSession.currentPlayerHealth = HealthData.playerHealthVal;
-                if (onRecover != null)
-                    Add(new Coroutine(onRecover.ToIEnumerator()));
+                onRecover?.AddAsCoroutine(this);
             }
 
             private IEnumerator PlayerStagger(Vector2 from, Vector2 bounce)

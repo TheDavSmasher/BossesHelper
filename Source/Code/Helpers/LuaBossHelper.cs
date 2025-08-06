@@ -86,6 +86,11 @@ namespace Celeste.Mod.BossesHelper.Code
                 yield return null;
             }
 
+            public static void AddAsCoroutine(this LuaFunction function, Entity target)
+            {
+                function.ToIEnumerator().Coroutine(target);
+            }
+
             public static LuaFunction[] LoadLuaFile(
                 Dictionary<object, object> passedVals, string filename, string command, int count = 1)
             {
@@ -136,7 +141,7 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
             {
-                puppet.Add(new Coroutine(func.ToIEnumerator()));
+                func.AddAsCoroutine(puppet);
             }
         }
     }
