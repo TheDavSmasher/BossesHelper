@@ -10,6 +10,18 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
+    public interface IBossAction
+    {
+        public IEnumerator Perform();
+
+        public virtual void EndAction(MethodEndReason reason) { }
+    }
+
+    public interface ILuaLoader
+    {
+        public LuaCommand Command { get; }
+    }
+
     public static class BossActions
     {
         public static LuaFunction[] LoadFile(this ILuaLoader self, string filepath, BossController controller = null, string selfName = null)
@@ -115,18 +127,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             while (Running);
         }
-    }
-
-    public interface IBossAction
-    {
-        public IEnumerator Perform();
-
-        public virtual void EndAction(MethodEndReason reason) { }
-    }
-
-    public interface ILuaLoader
-    {
-        public LuaCommand Command { get; }
     }
 
     internal class BossFunctions : ILuaLoader
