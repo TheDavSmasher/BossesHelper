@@ -5,6 +5,7 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossFunctions;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -155,12 +156,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnSidekickLaser()
         {
-            OnDamage(BossFunctions.DamageSource.Laser);
+            OnDamage(DamageSource.Laser);
         }
 
         private void OnPlayerBounce(Player player)
         {
-            OnDamage(BossFunctions.DamageSource.Bounce);
+            OnDamage(DamageSource.Bounce);
             if (BossHitCooldown <= 0)
             {
                 Audio.Play("event:/game/general/thing_booped", Position);
@@ -173,16 +174,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (player.DashAttacking && player.Speed != Vector2.Zero)
             {
-                OnDamage(BossFunctions.DamageSource.Dash);
+                OnDamage(DamageSource.Dash);
             }
         }
 
         private void OnPlayerContact(Player _)
         {
-            OnDamage(BossFunctions.DamageSource.Contact);
+            OnDamage(DamageSource.Contact);
         }
 
-        private void OnDamage(BossFunctions.DamageSource source)
+        private void OnDamage(DamageSource source)
         {
             if (BossHitCooldown <= 0)
             {
