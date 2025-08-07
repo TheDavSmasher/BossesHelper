@@ -40,11 +40,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private DamageController Controller;
 
-        public static bool IsEnabled
-        {
-            get => HealthData.isEnabled;
-            set => HealthData.isEnabled = value;
-        }
+        public static ref bool IsEnabled => ref HealthData.isEnabled;
 
         private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
             : base(isGlobal)
