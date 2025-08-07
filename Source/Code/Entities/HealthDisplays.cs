@@ -68,18 +68,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
                 private readonly string endAnim;
 
-                public HealthIcon(Vector2 scale, string iconSprite, string startAnim, string endAnim)
+                public HealthIcon(Vector2 scale, Vector2 offset, string iconSprite, string startAnim, string endAnim)
                     : base()
                 {
                     this.startAnim = startAnim;
                     this.endAnim = endAnim;
                     GFX.SpriteBank.CreateOn(this, iconSprite);
                     Scale = scale;
+                    RenderPosition = offset;
                 }
 
-                public IEnumerator DrawIcon(Vector2? position = null)
+                public IEnumerator DrawIcon()
                 {
-                    RenderPosition = position ?? RenderPosition;
                     return IconRoutine(startAnim);
                 }
 
@@ -96,9 +96,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private readonly List<HealthIcon> healthIcons = [];
+            private readonly Stack<HealthIcon> healthIcons = [];
 
-            private readonly List<HealthIcon> toRemove = [];
+            private readonly Stack<HealthIcon> toRemove = [];
 
             private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
 
@@ -145,22 +145,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public void IncreaseHealth(int i)
             {
-                Vector2? iconPosition = null;
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    healthIcon = new(BarScale, icons.ElementAtOrLast(i),
-                        createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
-
                     float sum = 0f;
                     for (int index = 0; index < i; index++)
                     {
                         sum += iconSeparations.ElementAtOrLast(index);
                     }
-                    iconPosition = Vector2.UnitX * sum;
+
+                    healthIcon = new(BarScale, Vector2.UnitX * sum, icons.ElementAtOrLast(i),
+                        createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
                 }
-                healthIcons.Add(healthIcon);
+                healthIcons.Push(healthIcon);
                 Add(healthIcon);
-                healthIcon.DrawIcon(iconPosition);
+                healthIcon.DrawIcon();
             }
 
             public void DecreaseHealth(int amount = 1)
@@ -176,7 +174,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     removed.RemoveIcon(removeIconOnDamage);
                     if (!removeIconOnDamage)
                     {
-                        toRemove.Add(removed);
+                        toRemove.Push(removed);
                     }
                 }
             }
