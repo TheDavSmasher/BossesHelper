@@ -6,14 +6,8 @@ using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-    public struct ControllerDelegates(Action changeToPattern,
-        Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
-    {
-        public Action ChangeToPattern = changeToPattern;
-        public Func<int> RandomNext = randomNext;
-        public Action<bool> SetIsAttacking = setIsAttacking;
-        public Func<int?> AttackIndexForced = attackIndexForced;
-    }
+    public record ControllerDelegates(Action ChangeToPattern,
+        Func<int> RandomNext, Action<bool> SetIsAttacking, Func<int?> AttackIndexForced) {}
 
     public enum MethodEndReason
     {
