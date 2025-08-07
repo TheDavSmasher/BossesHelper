@@ -65,12 +65,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
 
-                public new bool Visible
-                {
-                    get => icon.Visible;
-                    set => icon.Visible = value;
-                }
-
                 public override void Added(Scene scene)
                 {
                     base.Added(scene);
