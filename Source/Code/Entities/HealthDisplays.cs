@@ -159,14 +159,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public void DecreaseHealth(int amount = 1)
             {
-                if (Count <= 0)
-                {
-                    Logger.Log("Health Render", "No Health Icon to remove");
-                    return;
-                }
                 for (int i = 0; i < amount; i++)
                 {
-                    HealthIcon removed = healthIcons.Pop();
+                    if (!healthIcons.TryPop(out HealthIcon removed))
+                    {
+                        Logger.Log("Health Render", "No Health Icon to remove");
+                        return;
+                    }
                     removed.RemoveIcon(removeIconOnDamage);
                     if (!removeIconOnDamage)
                     {
