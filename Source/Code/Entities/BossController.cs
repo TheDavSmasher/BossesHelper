@@ -49,9 +49,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Puppet = new BossPuppet(data, offset, () => Health);
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
-                Health = phase.bossHealthAt;
-                currentPatternIndex = phase.startWithPatternIndex;
-                startAttackingImmediately = phase.startImmediately;
+                Health = phase.BossHealthAt;
+                currentPatternIndex = phase.StartWithPatternIndex;
+                startAttackingImmediately = phase.StartImmediately;
             }
         }
 

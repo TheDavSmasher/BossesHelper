@@ -91,7 +91,7 @@ public class BossesHelperSession : EverestModuleSession
     #endregion
 
     #region Boss Phase
-    public record BossPhase(int bossHealthAt, bool startImmediately, int startWithPatternIndex) {}
+    public record BossPhase(int BossHealthAt, bool StartImmediately, int StartWithPatternIndex) {}
 
     public Dictionary<string, BossPhase> BossPhasesSaved = [];
     #endregion
