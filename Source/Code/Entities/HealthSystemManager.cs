@@ -186,6 +186,26 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthBar?.RemoveSelf();
         }
 
+        public void PauseHealthSystem()
+        {
+            SetActiveState(false);
+        }
+
+        public void UnpauseHealthSystem()
+        {
+            SetActiveState(true);
+        }
+
+        private void SetActiveState(bool active)
+        {
+            IsEnabled = active;
+            Active = active;
+            if (Controller != null)
+                Controller.Active = active;
+            if (HealthBar != null)
+                HealthBar.Active = active;
+        }
+
         public static partial void LoadFakeDeathHooks();
         public static partial void UnloadFakeDeathHooks();
     }
