@@ -100,6 +100,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private readonly Stack<HealthIcon> toRemove = [];
 
+            private readonly List<Vector2> iconSeparations = iconSeparations.ConvertAll(f => Vector2.UnitX * f);
+
             private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
 
             public int Count => healthIcons.Count;
@@ -147,13 +149,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    float sum = 0f;
+                    Vector2 sum = Vector2.Zero;
                     for (int index = 0; index < i; index++)
                     {
                         sum += iconSeparations.ElementAtOrLast(index);
                     }
 
-                    healthIcon = new(BarScale, Vector2.UnitX * sum, icons.ElementAtOrLast(i),
+                    healthIcon = new(BarScale, sum, icons.ElementAtOrLast(i),
                         createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
                 }
                 healthIcons.Push(healthIcon);
