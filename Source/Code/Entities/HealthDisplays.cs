@@ -41,8 +41,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private bool ActiveVisibility = true;
 
-            protected bool IsActiveAndVisible => !Scene.Paused && ActiveVisibility;
-
             public override void Added(Scene scene)
             {
                 base.Added(scene);
@@ -56,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public override void Update()
             {
                 base.Update();
-                IsVisible = IsActiveAndVisible;
+                IsVisible = !Scene.Paused && ActiveVisibility;
             }
         }
 
