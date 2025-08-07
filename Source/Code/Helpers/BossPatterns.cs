@@ -1,17 +1,11 @@
-﻿using System;
+﻿global using Method = (string ActionName, float? Duration);
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-    public struct Method(string name, float? duration)
-    {
-        public string ActionName = name;
-
-        public float? Duration = duration;
-    }
-
     public struct ControllerDelegates(Action changeToPattern,
         Func<int> randomNext, Action<bool> setIsAttacking, Func<int?> attackIndexForced)
     {
