@@ -15,26 +15,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
         }
 
-        public static bool TryPop<T>(this List<T> list, out T value, int? at = null)
-        {
-            int index = at is int i ? i : list.Count - 1;
-            if (index < 0 || index >= list.Count)
-            {
-                value = default;
-                return false;
-            }
-            value = list.Pop(index);
-            return true;
-        }
-
-        public static T Pop<T>(this List<T> list, int? at = null)
-        {
-            int index = at is int i ? i : list.Count - 1;
-            T popped = list.ElementAt(index);
-            list.RemoveAt(index);
-            return popped;
-        }
-
         public static Player GetPlayer(this Scene scene)
         {
             return scene.GetEntity<Player>();
@@ -185,7 +165,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             private readonly UInt32[] m_checksumTable;
         }
+        #endregion
 
+        #region Celeste Classes
         public abstract class HudEntity : GlobalEntity
         {
             public HudEntity(bool isGlobal = false) : base(isGlobal)
