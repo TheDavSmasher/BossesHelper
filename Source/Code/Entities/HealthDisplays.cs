@@ -37,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private bool ActiveVisibility = true;
 
-            protected bool ActiveVisible => !Scene.Paused && ActiveVisibility;
+            protected bool IsActiveAndVisible => !Scene.Paused && ActiveVisibility;
 
             public override void Added(Scene scene)
             {
@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public override void Update()
             {
                 base.Update();
-                base.Visible = ActiveVisible;
+                base.Visible = IsActiveAndVisible;
             }
         }
 
@@ -139,7 +139,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public override void Render()
             {
                 base.Render();
-                AllIcons.ForEach(icon => icon.Visible = ActiveVisible);
+                AllIcons.ForEach(icon => icon.Visible = IsActiveAndVisible);
             }
 
             public void RefillHealth(int? upTo = null)
