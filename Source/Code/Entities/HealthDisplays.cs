@@ -96,20 +96,20 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private readonly Stack<HealthIcon> healthIcons = [];
+            private readonly ComponentStack<HealthIcon> healthIcons = [];
 
-            private readonly Stack<HealthIcon> toRemove = [];
+            private readonly ComponentStack<HealthIcon> toRemove = [];
 
             private readonly List<Vector2> iconSeparations = iconSeparations.ConvertAll(f => Vector2.UnitX * f);
 
-            private List<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
+            private IMonocleCollection<HealthIcon> AllIcons => (IMonocleCollection<HealthIcon>) healthIcons.Concat(toRemove);
 
             public int Count => healthIcons.Count;
 
             protected override bool IsVisible
             {
-                get => AllIcons.Any(icon => icon.Visible);
-                set => AllIcons.ForEach(icon => icon.Visible = value);
+                get => AllIcons.Visible;
+                set => AllIcons.Visible = value;
             }
 
             public HealthIconList(bool global = false)
@@ -128,12 +128,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 base.Awake(scene);
                 RefillHealth();
-            }
-
-            public override void Removed(Scene scene)
-            {
-                AllIcons.ForEach(x => x.RemoveSelf());
-                base.Removed(scene);
             }
 
             public void RefillHealth(int? upTo = null)

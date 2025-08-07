@@ -199,6 +199,39 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
                 }
             }
         }
+
+        public interface IMonocleCollection<T> : IReadOnlyCollection<T>
+        {
+            public bool Active
+            {
+                get => this.Any(i => ItemActive(i));
+                set
+                {
+                    foreach (var item in this)
+                        ItemActive(item) = value;
+                }
+            }
+
+            public bool Visible
+            {
+                get => this.Any(i => ItemVisible(i));
+                set
+                {
+                    foreach (var item in this)
+                        ItemVisible(item) = value;
+                }
+            }
+
+            ref bool ItemActive(T item);
+            ref bool ItemVisible(T item);
+        }
+
+        public class ComponentStack<T> : Stack<T>, IMonocleCollection<T> where T : Component
+        {
+            public ref bool ItemActive(T item) => ref item.Active;
+
+            public ref bool ItemVisible(T item) => ref item.Visible;
+        }
         #endregion
     }
 }
