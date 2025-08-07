@@ -10,6 +10,8 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
     {
         private readonly bool enableState = data.Bool("enableState");
 
+        private readonly bool pauseState = data.Bool("pauseState");
+
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
@@ -20,10 +22,10 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
         {
             if (SceneAs<Level>().GetEntity<HealthSystemManager>() is HealthSystemManager manager)
             {
-                if (enableState)
-                    manager.EnableHealthSystem();
+                if (pauseState)
+                    manager.SetActiveState(enableState);
                 else
-                    manager.DisableHealthSystem();
+                    manager.SetEnableState(enableState);
             }
         }
     }

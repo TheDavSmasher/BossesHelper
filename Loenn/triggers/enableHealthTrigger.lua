@@ -1,13 +1,23 @@
-local enableHealthTrigger = {}
-
-enableHealthTrigger.name = "BossesHelper/HealthEnableTrigger"
-enableHealthTrigger.depth = 0
-enableHealthTrigger.nodeLimits = {0, 0}
-enableHealthTrigger.placements = {
-    name = "Enable Health Trigger",
-    data = {
-        enableState = true
+local function createTable(innerName, outerName)
+    return {
+        name = "BossesHelper/"..innerName,
+        depth = 0,
+        nodeLimits = {0, 0},
+        placements = {
+            name = outerName,
+            data = {
+                enableState = true,
+                pauseState = false
+            }
+        }
     }
-}
+end
 
-return enableHealthTrigger
+local enableHealthTrigger = createTable("HealthEnableTrigger", "Enable Health Trigger")
+
+local healthSystemZoneTrigger = createTable("HealthSystemZoneTrigger", "Health System Enabled-Zone Trigger")
+
+return {
+    enableHealthTrigger,
+    healthSystemZoneTrigger
+}
