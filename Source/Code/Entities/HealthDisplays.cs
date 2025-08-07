@@ -33,7 +33,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 set => ActiveVisibility = value;
             }
 
-            protected virtual bool IsVisible => base.Visible;
+            protected virtual bool IsVisible
+            {
+                get => base.Visible;
+                set => base.Visible = value;
+            }
 
             private bool ActiveVisibility = true;
 
@@ -52,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             public override void Update()
             {
                 base.Update();
-                base.Visible = IsActiveAndVisible;
+                IsVisible = IsActiveAndVisible;
             }
         }
 
@@ -104,7 +108,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public int Count => healthIcons.Count;
 
-            protected override bool IsVisible => AllIcons.Any(icon => icon.Visible);
+            protected override bool IsVisible
+            {
+                get => AllIcons.Any(icon => icon.Visible);
+                set => AllIcons.ForEach(icon => icon.Visible = value);
+            }
 
             public HealthIconList(bool global = false)
                 : this(HealthData.healthBarPos, HealthData.healthIconScale, () => BossesHelperModule.Session.currentPlayerHealth,
@@ -128,12 +136,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 AllIcons.ForEach(x => x.RemoveSelf());
                 base.Removed(scene);
-            }
-
-            public override void Render()
-            {
-                base.Render();
-                AllIcons.ForEach(icon => icon.Visible = IsActiveAndVisible);
             }
 
             public void RefillHealth(int? upTo = null)
