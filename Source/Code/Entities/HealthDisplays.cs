@@ -100,7 +100,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private readonly ComponentStack<HealthIcon> toRemove = [];
 
-            private readonly List<Vector2> iconSeparations = iconSeparations.ConvertAll(f => Vector2.UnitX * f);
+            private readonly List<Vector2> iconSeparations = [Vector2.Zero, ..iconSeparations.ConvertAll(f => Vector2.UnitX * f)];
 
             private IMonocleCollection<HealthIcon> AllIcons => (IMonocleCollection<HealthIcon>) healthIcons.Concat(toRemove);
 
@@ -132,29 +132,25 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public void RefillHealth(int? upTo = null)
             {
-                int limit = upTo + Count ?? MaxHealth;
-                for (int i = Count; i < limit; i++)
-                {
-                    IncreaseHealth(i);
-                }
+                IncreaseHealth((upTo ?? MaxHealth) - Count);
             }
 
-            public void IncreaseHealth(int i)
+            public void IncreaseHealth(int amount = 1)
             {
-                if (!toRemove.TryPop(out HealthIcon healthIcon))
+                for (int i = 0; i < amount; i++)
                 {
-                    Vector2 sum = Vector2.Zero;
-                    for (int index = 0; index < i; index++)
+                    if (!toRemove.TryPop(out HealthIcon healthIcon))
                     {
-                        sum += iconSeparations.ElementAtOrLast(index);
-                    }
+                        int index = Count;
+                        Vector2 offset = (healthIcons.TryPeek(out HealthIcon lastIcon) ? lastIcon.RenderPosition : Vector2.Zero)
+                            + iconSeparations.ElementAtOrLast(index);
 
-                    healthIcon = new(BarScale, sum, icons.ElementAtOrLast(i),
-                        createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
+                        Add(healthIcon = new(BarScale, offset, icons.ElementAtOrLast(index),
+                            createAnims.ElementAtOrLast(index), removeAnims.ElementAtOrLast(index)));
+                    }
+                    healthIcons.Push(healthIcon);
+                    healthIcon.DrawIcon();
                 }
-                healthIcons.Push(healthIcon);
-                Add(healthIcon);
-                healthIcon.DrawIcon();
             }
 
             public void DecreaseHealth(int amount = 1)
