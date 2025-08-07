@@ -182,6 +182,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             HealthBar?.RemoveSelf();
         }
 
+        public void SetEnableState(bool value)
+        {
+            if (value)
+                EnableHealthSystem();
+            else
+                DisableHealthSystem();
+        }
+
         public void PauseHealthSystem()
         {
             SetActiveState(false);
@@ -192,7 +200,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SetActiveState(true);
         }
 
-        private void SetActiveState(bool active)
+        public void SetActiveState(bool active)
         {
             IsEnabled = active;
             Active = active;
