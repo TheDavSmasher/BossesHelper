@@ -25,10 +25,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             public readonly int MaxHealth = getHealth();
 
-            private bool ActiveVisibility = true;
-
-            protected bool ActiveVisible => !Scene.Paused && ActiveVisibility;
-
             public Color Color = color;
 
             public new bool Visible
@@ -38,6 +34,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             }
 
             protected virtual bool IsVisible => base.Visible;
+
+            private bool ActiveVisibility = true;
+
+            protected bool ActiveVisible => !Scene.Paused && ActiveVisibility;
 
             public override void Added(Scene scene)
             {
