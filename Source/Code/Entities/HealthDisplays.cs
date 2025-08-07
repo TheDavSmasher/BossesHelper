@@ -62,39 +62,37 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 List<string> createAnims, List<string> removeAnims, List<float> iconSeparations, bool removeIconOnDamage)
             : HealthDisplay(barPosition, barScale, getHealth, isGlobal: isGlobal)
         {
-            private class HealthIcon(Vector2 barScale, bool isGlobal, string iconSprite, string startAnim, string endAnim)
-            : HudEntity(isGlobal)
+            private class HealthIcon : Sprite
             {
-                private readonly Sprite icon = GFX.SpriteBank.TryCreate(iconSprite);
+                private readonly string startAnim;
 
-                public override void Added(Scene scene)
+                private readonly string endAnim;
+
+                public HealthIcon(Vector2 scale, string iconSprite, string startAnim, string endAnim)
+                    : base()
                 {
-                    base.Added(scene);
-                    if (icon.Width > 0 && icon.Height > 0)
-                    {
-                        icon.Scale = barScale;
-                        Add(icon);
-                    }
+                    this.startAnim = startAnim;
+                    this.endAnim = endAnim;
+                    GFX.SpriteBank.CreateOn(this, iconSprite);
+                    Scale = scale;
                 }
 
-                public void DrawIcon(Vector2? position = null)
+                public IEnumerator DrawIcon(Vector2? position = null)
                 {
-                    Position = position ?? Position;
-                    IconRoutine(startAnim).Coroutine(this);
+                    RenderPosition = position ?? RenderPosition;
+                    return IconRoutine(startAnim);
                 }
 
-                public void RemoveIcon(bool remove = true)
+                public IEnumerator RemoveIcon(bool remove = false)
                 {
-                    IconRoutine(endAnim, remove).Coroutine(this);
+                    return IconRoutine(endAnim, remove);
                 }
 
                 private IEnumerator IconRoutine(string anim, bool remove = false)
                 {
-                    yield return icon.PlayAnim(anim);
+                    yield return this.PlayAnim(anim);
                     if (remove)
-                    {
                         RemoveSelf();
-                    }
                 }
             }
 
@@ -150,7 +148,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Vector2? iconPosition = null;
                 if (!toRemove.TryPop(out HealthIcon healthIcon))
                 {
-                    healthIcon = new(BarScale, IsGlobal, icons.ElementAtOrLast(i),
+                    healthIcon = new(BarScale, icons.ElementAtOrLast(i),
                         createAnims.ElementAtOrLast(i), removeAnims.ElementAtOrLast(i));
 
                     float sum = 0f;
@@ -158,10 +156,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     {
                         sum += iconSeparations.ElementAtOrLast(index);
                     }
-                    iconPosition = Position + Vector2.UnitX * sum;
+                    iconPosition = Vector2.UnitX * sum;
                 }
                 healthIcons.Add(healthIcon);
-                Scene.Add(healthIcon);
+                Add(healthIcon);
                 healthIcon.DrawIcon(iconPosition);
             }
 
