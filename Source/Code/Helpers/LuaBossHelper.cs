@@ -160,8 +160,8 @@ namespace Celeste.Mod.BossesHelper.Code
 
             public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
             {
-                BossesHelperModule.Session.BossPhasesSaved.Add(BossID,
-                    new BossesHelperSession.BossPhase(health, startImmediately, patternIndex));
+                BossesHelperModule.Session.BossPhasesSaved[BossID] =
+                    new BossesHelperSession.BossPhase(health, startImmediately, patternIndex);
             }
 
             public void RemoveBoss(bool permanent)
