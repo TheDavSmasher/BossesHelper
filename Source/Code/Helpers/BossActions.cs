@@ -12,14 +12,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public interface ILuaLoader
     {
-        public LuaCommand Command { get; }
+        LuaCommand Command { get; }
     }
 
     public interface IBossAction
     {
-        public IEnumerator Perform();
+        IEnumerator Perform();
 
-        public virtual void EndAction(MethodEndReason reason) { }
+        void EndAction(MethodEndReason reason) { }
     }
 
     public static class BossActions
