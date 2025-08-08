@@ -39,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
 
-        public BossController(EntityData data, Vector2 offset, EntityID id)
+        public BossController(EntityData data, Vector2 offset, EntityID _)
             : base(data.Position + offset)
         {
             BossID = data.Attr("bossID");
