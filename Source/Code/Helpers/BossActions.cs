@@ -45,10 +45,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public virtual LuaTableItem[] Values =>
         [
-            ( "player", controller?.Scene.GetPlayer() ),
-            ( "bossID", controller?.BossID ),
-            ( "puppet", controller?.Puppet ),
-            ( "boss", controller )
+            ( "boss", controller ),
+            ( "bossID", controller.BossID ),
+            ( "puppet", controller.Puppet ),
+            ( "player", controller.Scene.GetPlayer() ),
+            ( "sidekick", controller.Scene.GetEntity<BadelineSidekick>() )
         ];
 
         protected LuaFunction[] LoadLuaBossFile()
