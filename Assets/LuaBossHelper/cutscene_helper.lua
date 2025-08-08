@@ -65,7 +65,7 @@ local function prepareInterruption(env, func)
         onLaser = onLaser or env.onLaser
         setup = setup or env.setup
 
-        return onHit, onContact, onDash, onBounce, onLaser, setup
+        return setup, onHit, onContact, onDash, onBounce, onLaser
     else
         celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
         return success
