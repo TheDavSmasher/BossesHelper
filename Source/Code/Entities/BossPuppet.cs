@@ -33,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
 
-        private Component bossCollision;
+        private readonly Component BossCollision;
 
         private readonly bool DynamicFacing;
 
@@ -77,8 +77,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private float effectiveGravity;
 
-        private readonly string metadataPath;
-
         public bool killOnContact;
 
         public BossPuppet(EntityData data, Vector2 offset)
@@ -93,7 +91,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             airFriction = data.Float("airFriction");
             freezeSidekickOnAttack = data.Bool("sidekickFreeze");
             sidekickCooldown = data.Float("sidekickCooldown");
-            metadataPath = data.Attr("hitboxMetadataPath");
             SolidCollidable = data.Bool("startSolidCollidable");
             Collidable = data.Bool("startCollidable");
             HurtMode = data.Enum("hurtMode", HurtModes.PlayerContact);
@@ -110,10 +107,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = sprite;
             }
-            hitboxMetadata = UserFileReader.ReadMetadataFile(metadataPath);
+            hitboxMetadata = UserFileReader.ReadMetadataFile(data.Attr("hitboxMetadataPath"));
             Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
             Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
-            (bossCollision = HurtMode switch
+            (BossCollision = HurtMode switch
             {
                 HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
                         Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
