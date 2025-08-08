@@ -218,10 +218,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return actions;
         }
 
-        public static void ReadBossFunctions(this BossController controller, string filepath)
+        public static BossFunctions ReadBossFunctions(this BossController controller, string filepath)
         {
-            if (!ReadLuaPath(filepath, true, out ModAsset setupFile)) return;
-            controller.Puppet.BossFunctions = new(setupFile.PathVirtual, controller);
+            if (!ReadLuaPath(filepath, true, out ModAsset setupFile)) return null;
+            return new(setupFile.PathVirtual, controller);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
