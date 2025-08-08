@@ -218,16 +218,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return actions;
         }
 
-        public static BossFunctions ReadBossFunctions(this BossController controller, string filepath)
+        public static string ReadLuaFilePath(string filepath)
         {
-            if (!ReadLuaPath(filepath, true, out ModAsset setupFile)) return null;
-            return new(setupFile.PathVirtual, controller);
-        }
-
-        public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
-        {
-            if (!ReadLuaPath(filepath, true, out ModAsset saveFile)) return;
-            savePoint.LoadFunction(saveFile.PathVirtual, playerRef);
+            return ReadLuaPath(filepath, true, out ModAsset saveFile) ? saveFile.PathVirtual : null;
         }
 
         private static bool ReadLuaPath(string path, bool isFile, out ModAsset asset)

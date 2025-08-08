@@ -121,7 +121,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
                 _ => null //Custom depends on Setup.lua's code, does nothing by default
             })?.AddTo(this);
-            BossFunctions = controller.ReadBossFunctions(controller.SourceData.Attr("functionsPath"));
+            BossFunctions = new(UserFileReader.ReadLuaFilePath(data.Attr("functionsPath")), controller);
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)
@@ -177,7 +177,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossHitCooldown <= 0 && (predicate?.Invoke() ?? true))
             {
                 ResetBossHitCooldown();
-                BossFunctions?.OnDamage(source).Coroutine(this);
+                BossFunctions.OnDamage(source).Coroutine(this);
                 postLua?.Invoke();
             }
         }

@@ -65,7 +65,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 PlayerMustBeFacing = false
             });
             if (scene.GetPlayer() is Player player)
-                this.ReadSavePointFunction(filepath, player);
+            {
+                string path = ReadLuaFilePath(filepath);
+                LoadFunction(path, player);
+            }
         }
 
         public void OnTalk(Player _)
