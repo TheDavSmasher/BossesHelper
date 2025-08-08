@@ -4,7 +4,6 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
@@ -15,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     [Tracked(false)]
     [CustomEntity("BossesHelper/PlayerSavePoint")]
-    public class GlobalSavePoint : Actor
+    public class GlobalSavePoint : Actor, ILuaLoader
     {
         private readonly GlobalSavePointChanger Changer;
 
@@ -29,15 +28,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private LuaFunction onInteract;
 
+        public LuaCommand Command => ("getSavePointData", 1);
+
+        public LuaTableItem[] Values { get; set; }
+
         public void LoadFunction(string filename, Player player)
         {
-            onInteract = LoadLuaFile(new Dictionary<object, object>
-            {
-                { "player", player },
-                { "savePoint", this },
-                { "spawnPoint", Changer.spawnPoint }
-            },
-            filename, "getSavePointData")[0];
+            Values = [
+                ("player", player),
+                ("savePoint", this),
+                ("spawnPoint", Changer.spawnPoint)
+            ];
+            onInteract = this.LoadFile(filename)[0];
         }
 
         public GlobalSavePoint(EntityData entityData, Vector2 offset)
