@@ -158,7 +158,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             LuaFunction[] array = LoadLuaBossFile();
             LuaFunction OnHitLua = array[0];
-            onDamageMethods = new(option => array[(int)option + 1] ?? OnHitLua);
+            onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 1) ?? OnHitLua);
             array[5]?.Call();
         }
 
