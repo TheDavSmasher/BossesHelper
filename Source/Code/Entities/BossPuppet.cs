@@ -111,20 +111,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 Sprite = sprite;
             }
             hitboxMetadata = UserFileReader.ReadMetadataFile(metadataPath);
-            SetHitboxesAndColliders(data.Attr("bossID"));
-        }
-
-        private void SetHitboxesAndColliders(string bossID)
-        {
             Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
-
             Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
-
             (bossCollision = HurtMode switch
             {
                 HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
                         Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
-                HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, bossID,
+                HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, data.Attr("bossID"),
                         Target = GetMainOrDefault(ColliderOption.Target, null)),
                 HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
