@@ -152,21 +152,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnPlayerBounce(Player player)
         {
-            OnDamage(HurtModes.HeadBonk);
-            if (BossHitCooldown <= 0)
+            OnDamage(HurtModes.HeadBonk, postLua: () =>
             {
                 Audio.Play("event:/game/general/thing_booped", Position);
                 Celeste.Freeze(0.2f);
-                player.Bounce(base.Top + 2f);
-            }
+                player.Bounce(Top + 2f);
+            });
         }
 
         private void OnPlayerDash(Player player)
         {
-            if (player.DashAttacking && player.Speed != Vector2.Zero)
-            {
-                OnDamage(HurtModes.PlayerDash);
-            }
+            OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
         }
 
         private void OnPlayerContact(Player _)
@@ -174,12 +170,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             OnDamage(HurtModes.PlayerContact);
         }
 
-        private void OnDamage(HurtModes source)
+        private void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
         {
-            if (BossHitCooldown <= 0)
+            if (BossHitCooldown <= 0 && (predicate?.Invoke() ?? true))
             {
                 ResetBossHitCooldown();
                 BossFunctions.OnDamage(source).Coroutine(this);
+                postLua?.Invoke();
             }
         }
 
