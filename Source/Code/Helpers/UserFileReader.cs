@@ -220,10 +220,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadBossFunctions(this BossController controller, string filepath)
         {
-            if (ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile))
-            {
-                controller.Puppet.BossFunctions = new(setupFile.PathVirtual, controller);
-            }
+            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile)) return;
+            controller.Puppet.BossFunctions = new(setupFile.PathVirtual, controller);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
