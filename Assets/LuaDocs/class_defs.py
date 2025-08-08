@@ -22,7 +22,8 @@ class Function:
     params: list[FunctionParam]
     returns: list[FunctionType]
 
-    def __init__(self, name: str, description: str, params: list[FunctionParam], returns: list[FunctionType]):
+    def __init__(self, name: str, description: str,
+                 params: list[FunctionParam], returns: list[FunctionType]):
         self.name = name
         self.description = description
         self.params = params

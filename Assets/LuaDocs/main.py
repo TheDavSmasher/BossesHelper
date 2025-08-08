@@ -1,12 +1,13 @@
 import re
-from class_defs import *
+from class_defs import Function, FunctionParam, FunctionType, Region
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
 
 def parse_lua_file(lua_path):
     """
-    Parses a Lua file to extract function names, parameters, return values, and documentation comments.
+    Parses a Lua file to extract function names,
+    parameters, return values, and documentation comments.
     """
     all_funcs: list[Function] = []
     all_regions: list[Region] = []
@@ -20,7 +21,8 @@ def parse_lua_file(lua_path):
     end_pattern = re.compile(r'--#endregion+(.*)')
     func_pattern = re.compile(r'function\s+([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*\(([^)]*)\)')
     comment_pattern = re.compile(r'(?:---\s?)+((?<!@)[^@]*)$')
-    param_pattern = re.compile(r'---\s*@param\s+([a-zA-Z0-9_?.]+)\s+([a-zA-Z0-9_?.|]+(?:\([^)]*\))?)\s+(.*)')
+    param_pattern = re.compile(
+        r'---\s*@param\s+([a-zA-Z0-9_?.]+)\s+([a-zA-Z0-9_?.|]+(?:\([^)]*\))?)\s+(.*)')
     default_pattern = re.compile(r'---\s*@default\s+(.*)')
     return_pattern = re.compile(r'---\s*@return\s+([a-zA-Z0-9_|]+)\s+([a-zA-Z0-9_]+)\s+(.*)')
 
@@ -32,7 +34,7 @@ def parse_lua_file(lua_path):
             region_name = region_match.group(1)
             if region_name.startswith('Original'):
                 skipping = True
-            if not (region_name.startswith('Type') or region_name.__contains__('Helper')):
+            if not (region_name.startswith('Type') or 'Helper' in region_name):
                 current_region = Region(region_name)
             continue
 
@@ -101,40 +103,46 @@ def format_markdown_link(name):
     return re.sub(r'[^a-z0-9-]', '', name.replace(' ', '-').lower())
 
 
-def generate_markdown_documentation(region_list: list[Region], file_functions: list[Function]):
+def generate_markdown_documentation(region_list: list[Region], file_funcs: list[Function]):
     """
     Generates markdown documentation for a list of functions.
     """
-    markdown_text = ("# [Bosses Helper](README.md): Lua Helper Functions\n"
-                     "\n## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n"
-                     "\n[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
+    markdown_text = """
+    # [Bosses Helper](README.md): Lua Helper Functions
+    ## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)
+    [Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n
+    """
 
-    layout_markdown = "# [Bosses Helper](README.md): [Lua Helper Functions](boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n"
+    layout_markdown = ("# [Bosses Helper](README.md): [Lua Helper Functions]"
+                       + "(boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n")
 
     for region in region_list:
         markdown_text += f"\n## {region.name}\n"
 
-        layout_markdown += f"\n## [{region.name}](boss_helper_functions.md#{format_markdown_link(region.name)})\n\n"
+        layout_markdown += (f"\n## [{region.name}](boss_helper_functions.md"
+                            + f"#{format_markdown_link(region.name)})\n\n")
 
         for func in region.functions:
             markdown_text += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
-            layout_markdown += f"- [{func.full_name}](boss_helper_functions.md#{format_markdown_link(func.full_name)})\n"
+            layout_markdown += (f"- [{func.full_name}](boss_helper_functions.md"
+                                + f"#{format_markdown_link(func.full_name)})\n")
 
             if func.params:
                 for param in func.params:
                     markdown_text += f"\n{TAB}`{param.name}` (`{param.type}`)"
                     if param.optional:
-                        markdown_text += f" (default `{param.default}`)" if param.default else f" (optional)"
-                    markdown_text += f"  \n\n"
+                        markdown_text += (f" (default `{param.default}`)"
+                                          if param.default else " (optional)")
+                    markdown_text += "  \n\n"
 
-                    param_description = param.description
-                    if "helpers." in param_description:
-                        for function in [func for func in file_functions if func.name in param_description]:
-                            param_description = param_description.replace(
-                                function.name, f"[{function.name}](#{format_markdown_link(function.full_name)})")
+                    param_desc = param.description
+                    if "helpers." in param_desc:
+                        for function in [func for func in file_funcs if func.name in param_desc]:
+                            param_desc = param_desc.replace(function.name,
+                                f"[{function.name}](#{format_markdown_link(function.full_name)})")
 
-                    markdown_text += f"{TAB}{TAB}{param_description}  \n"
+                    markdown_text += f"{TAB}{TAB}{param_desc}  \n"
 
             if func.returns:
                 markdown_text += f"\n{TAB}Returns:  \n"
