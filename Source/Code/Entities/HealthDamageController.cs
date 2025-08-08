@@ -1,9 +1,9 @@
 ﻿using Monocle;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using NLua;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
@@ -24,21 +24,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         }
 
         [Tracked(false)]
-        private class DamageController() : GlobalEntity(false)
+        private class DamageController() : GlobalEntity(false), ILuaLoader
         {
             private LuaFunction onRecover;
 
             private LuaFunction onDamage;
 
-            public void UpdateState(Player player, PlayerHealthBar healthBar)
+            public LuaCommand Command => ("getFunctionData", 2);
+
+            public LuaTableItem[] Values { get; set; }
+
+            public void UpdateState(PlayerHealthBar healthBar)
             {
                 ChangeGlobalState(HealthData.globalController);
-                LuaFunction[] array = LoadLuaFile(new Dictionary<object, object>
-                {
-                    { "player", player },
-                    { "healthBar", healthBar }
-                },
-                HealthData.onDamageFunction, "getFunctionData", 2);
+                Values = [("player", Scene.GetPlayer()), ("healthBar", healthBar)];
+                LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
                 onDamage = array[0];
                 onRecover = array[1];
             }

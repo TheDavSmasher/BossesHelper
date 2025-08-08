@@ -110,7 +110,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     HealthBar.RemoveSelf();
                     Scene.Add(HealthBar = new PlayerHealthBar());
                 }
-                Controller?.UpdateState(Scene.GetPlayer(), HealthBar);
+                Controller?.UpdateState(HealthBar);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (Scene.GetEntity<DamageController>() == null)
             {
                 Scene.Add(Controller ??= new DamageController());
-                Controller.UpdateState(Scene.GetPlayer(), HealthBar);
+                Controller.UpdateState(HealthBar);
             }
 
             LoadFakeDeathHooks();
