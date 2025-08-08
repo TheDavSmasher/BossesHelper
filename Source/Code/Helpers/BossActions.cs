@@ -1,10 +1,10 @@
 ﻿using LuaCommand = (string Name, int Count);
-using LuaTableItem = (object Name, object Value);
+using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using NLua;
 using System;
+using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
@@ -15,6 +15,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         LuaCommand Command { get; }
 
         LuaTableItem[] Values { get; }
+
+        public LuaFunction[] LoadFile(string filepath)
+        {
+            return LoadLuaFile(Values.ToDictionary(), filepath, Command.Name, Command.Count);
+        }
     }
 
     public interface IBossAction
@@ -47,12 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         protected LuaFunction[] LoadLuaBossFile()
         {
-            Dictionary<object, object> dict = [];
-            foreach (var (Name, Value) in Values)
-            {
-                dict.Add(Name, Value);
-            }
-            return LoadLuaFile(dict, filepath, Command.Name, Command.Count);
+            return (this as ILuaLoader).LoadFile(filepath);
         }
     }
 
