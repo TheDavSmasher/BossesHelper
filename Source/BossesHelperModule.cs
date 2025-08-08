@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -64,6 +65,7 @@ public partial class BossesHelperModule : EverestModule
         On.Celeste.Player.Update += UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish += ILOnSquish;
         On.Celeste.Player.Die += OnPlayerDie;
+        On.Celeste.Player.Die += NotifyOfDeath;
     }
 
     public override void Unload()
@@ -73,6 +75,7 @@ public partial class BossesHelperModule : EverestModule
         On.Celeste.Player.Update -= UpdatePlayerLastSafe;
         IL.Celeste.Player.OnSquish -= ILOnSquish;
         On.Celeste.Player.Die -= OnPlayerDie;
+        On.Celeste.Player.Die -= NotifyOfDeath;
         ILHookHelper.DisposeAll();
     }
 
@@ -128,6 +131,14 @@ public partial class BossesHelperModule : EverestModule
             Session.SafeSpawn = spawn;
         if (Session.damageCooldown > 0)
             Session.damageCooldown -= Engine.DeltaTime;
+    }
+
+    public static PlayerDeadBody NotifyOfDeath(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
+    {
+        PlayerDeadBody deadPlayer = orig(self, dir, always, register);
+        if (deadPlayer != null)
+            Engine.Scene.Tracker.GetComponents<PlayerAliveChecker>().ForEach(c => (c as PlayerAliveChecker).OnPlayerDeath());
+        return deadPlayer;
     }
 
     public static PlayerDeadBody OnPlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
