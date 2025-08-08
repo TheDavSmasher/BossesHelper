@@ -35,8 +35,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Component BossCollision;
 
-        private readonly BossController controller;
-
         private readonly bool DynamicFacing;
 
         private readonly bool MirrorSprite;
@@ -47,7 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HurtModes HurtMode;
 
-        private BossFunctions BossFunctions;
+        private readonly BossFunctions BossFunctions;
 
         public float BossHitCooldown { get; private set; }
 
@@ -81,10 +79,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool killOnContact;
 
-        public BossPuppet(EntityData data, Vector2 offset, BossController controller)
-            : base(data.Position + offset)
+        public BossPuppet(BossController controller)
+            : base(controller.Position)
         {
-            this.controller = controller;
+            EntityData data = controller.SourceData;
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
@@ -123,6 +121,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
                 _ => null //Custom depends on Setup.lua's code, does nothing by default
             })?.AddTo(this);
+            BossFunctions = controller.ReadBossFunctions(controller.SourceData.Attr("functionsPath"));
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)
@@ -178,7 +177,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (BossHitCooldown <= 0 && (predicate?.Invoke() ?? true))
             {
                 ResetBossHitCooldown();
-                BossFunctions.OnDamage(source).Coroutine(this);
+                BossFunctions?.OnDamage(source).Coroutine(this);
                 postLua?.Invoke();
             }
         }
@@ -210,7 +209,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
             }
-            BossFunctions = controller.ReadBossFunctions(controller.SourceData.Attr("functionsPath"));
         }
 
         public override void Update()
