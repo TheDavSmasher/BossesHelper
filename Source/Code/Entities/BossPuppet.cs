@@ -80,7 +80,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool killOnContact;
 
-        public BossPuppet(EntityData data, Vector2 offset, Func<int> health) : base(data.Position + offset)
+        public BossPuppet(EntityData data, Vector2 offset)
+            : base(data.Position + offset)
         {
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
@@ -95,7 +96,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SolidCollidable = data.Bool("startSolidCollidable");
             Collidable = data.Bool("startCollidable");
             HurtMode = data.Enum("hurtMode", HurtModes.PlayerContact);
-            Add(new BossHealthTracker(health));
             killOnContact = data.Bool("killOnContact");
             Add(new PlayerCollider(KillOnContact));
             Facing = 1;

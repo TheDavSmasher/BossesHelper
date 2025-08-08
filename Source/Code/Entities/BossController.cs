@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -46,7 +47,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             Add(ActivePattern = new Coroutine());
-            Puppet = new BossPuppet(data, offset, () => Health);
+            Puppet = new BossPuppet(data, offset);
+            Puppet.Add(new BossHealthTracker(() => Health));
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
                 Health = phase.BossHealthAt;
