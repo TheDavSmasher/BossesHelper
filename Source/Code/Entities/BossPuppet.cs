@@ -35,6 +35,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private readonly Component BossCollision;
 
+        private readonly BossController controller;
+
         private readonly bool DynamicFacing;
 
         private readonly bool MirrorSprite;
@@ -45,7 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HurtModes HurtMode;
 
-        internal BossFunctions BossFunctions { get; set; }
+        private BossFunctions BossFunctions;
 
         public float BossHitCooldown { get; private set; }
 
@@ -79,9 +81,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public bool killOnContact;
 
-        public BossPuppet(EntityData data, Vector2 offset)
+        public BossPuppet(EntityData data, Vector2 offset, BossController controller)
             : base(data.Position + offset)
         {
+            this.controller = controller;
             DynamicFacing = data.Bool("dynamicFacing");
             MirrorSprite = data.Bool("mirrorSprite");
             bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
@@ -207,6 +210,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 (scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
             }
+            BossFunctions = controller.ReadBossFunctions(controller.SourceData.Attr("functionsPath"));
         }
 
         public override void Update()

@@ -46,7 +46,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
             Add(ActivePattern = new Coroutine());
-            Puppet = new(data, offset)
+            Puppet = new(data, offset, this)
             {
                 new BossHealthTracker(() => Health)
             };
@@ -74,7 +74,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
                 this.ReadLuaFiles(SourceData.Attr("attacksPath"), SourceData.Attr("eventsPath")),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
-            this.ReadBossFunctions(SourceData.Attr("functionsPath"));
         }
 
         public override void Removed(Scene scene)
