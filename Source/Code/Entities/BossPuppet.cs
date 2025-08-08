@@ -27,14 +27,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickAttack,
             Custom
         }
-
-        public enum DamageSource
-        {
-            Contact,
-            Dash,
-            Bounce,
-            Laser
-        }
         #endregion
 
         public readonly Sprite Sprite;
@@ -165,12 +157,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private void OnSidekickLaser()
         {
-            OnDamage(DamageSource.Laser);
+            OnDamage(HurtModes.SidekickAttack);
         }
 
         private void OnPlayerBounce(Player player)
         {
-            OnDamage(DamageSource.Bounce);
+            OnDamage(HurtModes.HeadBonk);
             if (BossHitCooldown <= 0)
             {
                 Audio.Play("event:/game/general/thing_booped", Position);
@@ -183,16 +175,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         {
             if (player.DashAttacking && player.Speed != Vector2.Zero)
             {
-                OnDamage(DamageSource.Dash);
+                OnDamage(HurtModes.PlayerDash);
             }
         }
 
         private void OnPlayerContact(Player _)
         {
-            OnDamage(DamageSource.Contact);
+            OnDamage(HurtModes.PlayerContact);
         }
 
-        private void OnDamage(DamageSource source)
+        private void OnDamage(HurtModes source)
         {
             if (BossHitCooldown <= 0)
             {
