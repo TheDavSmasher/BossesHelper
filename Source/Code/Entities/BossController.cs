@@ -75,7 +75,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 this.ReadLuaFiles(SourceData.Attr("attacksPath"), SourceData.Attr("eventsPath")),
                 new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced));
             this.ReadBossFunctions(SourceData.Attr("functionsPath"));
-            CheckForPlayer().Coroutine(this);
         }
 
         public override void Removed(Scene scene)
@@ -101,6 +100,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     InterruptPattern();
                     ChangeToPattern();
                 }
+            }
+            else
+            {
+                CurrentPattern.EndAction(MethodEndReason.PlayerDied);
             }
         }
 
@@ -137,15 +140,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private void ChangeToPattern()
         {
             StartAttackPattern(CurrentPattern.GoToPattern ?? currentPatternIndex + 1);
-        }
-
-        private IEnumerator CheckForPlayer()
-        {
-            while (Scene.GetPlayer() is not null)
-            {
-                yield return null;
-            }
-            CurrentPattern.EndAction(MethodEndReason.PlayerDied);
         }
 
         public void InterruptPattern()
