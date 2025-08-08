@@ -4,7 +4,6 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
@@ -57,6 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 currentPatternIndex = phase.StartWithPatternIndex;
                 startAttackingImmediately = phase.StartImmediately;
             }
+            Add(new PlayerAliveChecker(() => CurrentPattern.EndAction(MethodEndReason.PlayerDied)));
         }
 
         public override void Added(Scene scene)
@@ -100,10 +100,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     InterruptPattern();
                     ChangeToPattern();
                 }
-            }
-            else
-            {
-                CurrentPattern.EndAction(MethodEndReason.PlayerDied);
             }
         }
 
