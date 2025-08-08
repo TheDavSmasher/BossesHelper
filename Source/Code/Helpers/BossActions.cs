@@ -1,5 +1,5 @@
-﻿using LuaCommand = (string Name, int Count);
-using LuaTableItem = (object Key, object Value);
+﻿global using LuaCommand = (string Name, int Count);
+global using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using NLua;
 using System;
