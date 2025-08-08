@@ -15,12 +15,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         LuaCommand Command { get; }
 
         LuaTableItem[] Values { get; }
-
-        public LuaFunction[] LoadFile(string filepath)
-        {
-            return LoadLuaFile(Values.ToDictionary(), filepath, Command.Name, Command.Count);
         }
-    }
 
     public interface IBossAction
     {
@@ -31,6 +26,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
     public static class BossActions
     {
+        public static LuaFunction[] LoadFile<T>(this T self, string filepath) where T : ILuaLoader
+        {
+            return LoadLuaFile(self.Values.ToDictionary(), filepath, self.Command.Name, self.Command.Count);
+        }
+
         public static void WarmUp()
         {
             Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
@@ -52,7 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         protected LuaFunction[] LoadLuaBossFile()
         {
-            return (this as ILuaLoader).LoadFile(filepath);
+            return this.LoadFile(filepath);
         }
     }
 
