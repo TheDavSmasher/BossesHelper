@@ -165,7 +165,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public IEnumerator OnDamage(BossPuppet.HurtModes source)
         {
-            return onDamageMethods[source].ToIEnumerator();
+            return onDamageMethods[source]?.ToIEnumerator();
         }
     }
 }
