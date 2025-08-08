@@ -14,7 +14,7 @@ def parse_lua_file(lua_path):
 
     current_region: Region | None = None
 
-    with open(lua_path, 'r') as file:
+    with open(lua_path, 'r', encoding='utf-8') as file:
         lines: list[str] = list(map(str.strip, file.readlines()))
 
     region_pattern = re.compile(r'--#region\s+(.*)')
@@ -155,7 +155,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
 
 
 def save_markdown_to_file(markdown_text, output_path, desc):
-    with open(output_path, 'w') as f:
+    with open(output_path, 'w', encoding='utf-8') as f:
         f.write(markdown_text)
     print(f"{desc} saved to {f}")
 
