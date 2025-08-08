@@ -161,10 +161,10 @@ def save_markdown_to_file(markdown_text, output_path, desc):
 
 
 if __name__ == '__main__':
-    lua_file_path = "../LuaBossHelper/helper_functions.lua"
-    output_file_path = "../../boss_helper_functions.md"
-    layout_file_path = "../../boss_helper_functions_layout.md"
+    LUA_PATH = "../LuaBossHelper/helper_functions.lua"
+    DOCUMENTATION_PATH = "../../boss_helper_functions.md"
+    LAYOUT_PATH = "../../boss_helper_functions_layout.md"
 
-    markdown, layout = generate_markdown_documentation(*parse_lua_file(lua_file_path))
-    save_markdown_to_file(markdown, output_file_path, "Documentation")
-    save_markdown_to_file(layout, layout_file_path, "Layout")
+    markdown, layout = generate_markdown_documentation(*parse_lua_file(LUA_PATH))
+    save_markdown_to_file(markdown, DOCUMENTATION_PATH, "Documentation")
+    save_markdown_to_file(layout, LAYOUT_PATH, "Layout")
