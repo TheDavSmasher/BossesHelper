@@ -203,7 +203,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             for (int i = 0; i < 2; i++)
             {
                 string path = paths[i];
-                if (ReadLuaPath(path, out ModAsset luaFiles))
+                if (ReadLuaPath(path, false, out ModAsset luaFiles))
                 {
                     foreach (ModAsset luaFile in luaFiles.Children)
                     {
@@ -220,19 +220,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static void ReadBossFunctions(this BossController controller, string filepath)
         {
-            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset setupFile)) return;
+            if (!ReadLuaPath(filepath, true, out ModAsset setupFile)) return;
             controller.Puppet.BossFunctions = new(setupFile.PathVirtual, controller);
         }
 
         public static void ReadSavePointFunction(this GlobalSavePoint savePoint, string filepath, Player playerRef)
         {
-            if (!ReadLuaPath(CleanPath(filepath, ".lua"), out ModAsset saveFile)) return;
+            if (!ReadLuaPath(filepath, true, out ModAsset saveFile)) return;
             savePoint.LoadFunction(saveFile.PathVirtual, playerRef);
         }
 
-        private static bool ReadLuaPath(string path, out ModAsset asset)
+        private static bool ReadLuaPath(string path, bool isFile, out ModAsset asset)
         {
             asset = null;
+            if (isFile)
+                path = CleanPath(path, ".lua");
             if (!Everest.Content.TryGet(path, out ModAsset luaPath))
             {
                 Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
