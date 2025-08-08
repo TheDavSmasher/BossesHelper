@@ -149,15 +149,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
     internal class BossFunctions : BossLuaLoader
     {
-        public enum DamageSource
-        {
-            Contact,
-            Dash,
-            Bounce,
-            Laser
-        }
-
-        private readonly EnumDict<DamageSource, LuaFunction> onDamageMethods;
+        private readonly EnumDict<BossPuppet.DamageSource, LuaFunction> onDamageMethods;
 
         public override LuaCommand Command => ("getInterruptData", 6);
 
@@ -170,7 +162,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             array[5]?.Call();
         }
 
-        public IEnumerator OnDamage(DamageSource source)
+        public IEnumerator OnDamage(BossPuppet.DamageSource source)
         {
             return onDamageMethods[source].ToIEnumerator();
         }

@@ -5,12 +5,12 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using static Celeste.Mod.BossesHelper.Code.Helpers.BossFunctions;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
     public partial class BossPuppet : Actor
     {
+        #region Enums
         public enum ColliderOption
         {
             Hitboxes,
@@ -27,6 +27,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             SidekickAttack,
             Custom
         }
+
+        public enum DamageSource
+        {
+            Contact,
+            Dash,
+            Bounce,
+            Laser
+        }
+        #endregion
 
         public readonly Sprite Sprite;
 
