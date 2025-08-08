@@ -1,5 +1,4 @@
-﻿global using Method = (string ActionName, float? Duration);
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Monocle;
@@ -7,7 +6,9 @@ using Monocle;
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
     public record ControllerDelegates(Action ChangeToPattern,
-        Func<int> RandomNext, Action<bool> SetIsAttacking, Func<int?> AttackIndexForced) {}
+        Func<int> RandomNext, Action<bool> SetIsAttacking, Func<int?> AttackIndexForced);
+
+    public readonly record struct Method(string ActionName, float? Duration);
 
     public enum MethodEndReason
     {
