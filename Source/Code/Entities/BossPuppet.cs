@@ -19,6 +19,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Target
         }
 
+        public enum HurtModes
+        {
+            PlayerContact,
+            PlayerDash,
+            HeadBonk,
+            SidekickAttack,
+            Custom
+        }
+
         public readonly Sprite Sprite;
 
         private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
@@ -32,15 +41,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
         private readonly bool freezeSidekickOnAttack;
 
         private readonly float sidekickCooldown;
-
-        public enum HurtModes
-        {
-            PlayerContact,
-            PlayerDash,
-            HeadBonk,
-            SidekickAttack,
-            Custom
-        }
 
         public readonly HurtModes HurtMode;
 
