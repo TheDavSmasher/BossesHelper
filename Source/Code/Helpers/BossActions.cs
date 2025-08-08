@@ -26,11 +26,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
     public static class BossActions
     {
-        public static LuaFunction[] LoadFile<T>(this T self, string filepath) where T : ILuaLoader
-        {
-            return LoadLuaFile(self.Values.ToDictionary(), filepath, self.Command.Name, self.Command.Count);
-        }
-
         public class LuaWarmer : ILuaLoader
         {
             public LuaCommand Command => ("getCutsceneData", 2);

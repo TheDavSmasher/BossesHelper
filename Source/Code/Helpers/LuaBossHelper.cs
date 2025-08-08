@@ -91,16 +91,17 @@ namespace Celeste.Mod.BossesHelper.Code
                 function.ToIEnumerator().Coroutine(target);
             }
 
-            public static LuaFunction[] LoadLuaFile(
-                Dictionary<object, object> passedVals, string filename, string command, int count = 1)
+            public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
             {
+                Dictionary<object, object> passedVals = self.Values.ToDictionary();
                 LuaFunction[] funcs = null;
                 if (!string.IsNullOrEmpty(filename))
                 {
                     passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
                     try
                     {
-                        if ((cutsceneHelper[command] as LuaFunction).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
+                        if ((cutsceneHelper[self.Command.Name] as LuaFunction)
+                            .Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
                         {
                             funcs = [.. array.Skip(1).Cast<LuaFunction>()];
                         }
@@ -114,7 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code
                         Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
                     }
                 }
-                Array.Resize(ref funcs, count);
+                Array.Resize(ref funcs, self.Command.Count);
                 return funcs;
             }
 
