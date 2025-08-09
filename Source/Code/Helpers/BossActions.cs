@@ -28,18 +28,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         abstract static T Create(string filepath, BossController controller);
     }
 
-    public static class BossActions
+    public class LuaWarmer : ILuaLoader
     {
-        public class LuaWarmer : ILuaLoader
-        {
-            public LuaCommand Command => ("getCutsceneData", 2);
+        public LuaCommand Command => ("getCutsceneData", 2);
 
-            public void WarmUp()
-            {
-                Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-                _ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
-                    .Select(func => func.ToIEnumerator().MoveNext());
-            }
+        public void WarmUp()
+        {
+            Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+            _ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
+                .Select(func => func.ToIEnumerator().MoveNext());
         }
     }
 

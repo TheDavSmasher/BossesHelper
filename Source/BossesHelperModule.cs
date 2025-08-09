@@ -52,7 +52,7 @@ public partial class BossesHelperModule : EverestModule
     public override void LoadContent(bool firstLoad)
     {
         base.LoadContent(firstLoad);
-        new BossActions.LuaWarmer().WarmUp();
+        new LuaWarmer().WarmUp();
     }
 
     public override void Load()
