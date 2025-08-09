@@ -39,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public abstract class BossLuaLoader(string filepath, BossController controller) : ILuaLoader
+    public abstract class BossLuaLoader(BossController controller) : ILuaLoader
     {
         public abstract LuaCommand Command { get; }
 
@@ -51,11 +51,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ( "player", controller.Scene.GetPlayer() ),
             ( "sidekick", controller.Scene.GetEntity<BadelineSidekick>() )
         ];
-
-        protected LuaFunction[] LoadLuaBossFile()
-        {
-            return this.LoadFile(filepath);
-        }
     }
 
     public class BossAttack : BossLuaLoader, IBossAction
@@ -69,9 +64,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public override LuaCommand Command => ("getAttackData", 5);
 
         public BossAttack(string filepath, BossController controller)
-            : base(filepath, controller)
+            : base(controller)
         {
-            LuaFunction[] array = LoadLuaBossFile();
+            LuaFunction[] array = this.LoadFile(filepath);
             attackFunction = array[0];
             endFunction = array[1];
             onEndMethods = new(option => array[(int)option + 2]);
@@ -131,10 +126,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public override LuaTableItem[] Values => [("cutsceneEntity", cutscene), ..base.Values];
 
         public BossEvent(string filepath, BossController controller)
-            : base(filepath, controller)
+            : base(controller)
         {
             this.controller = controller;
-            cutscene = new(LoadLuaBossFile());
+            cutscene = new(this.LoadFile(filepath));
         }
 
         public IEnumerator Perform()
@@ -155,9 +150,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public override LuaCommand Command => ("getInterruptData", 6);
 
         public BossFunctions(string filepath, BossController controller)
-            : base(filepath, controller)
+            : base(controller)
         {
-            LuaFunction[] array = LoadLuaBossFile();
+            LuaFunction[] array = this.LoadFile(filepath);
             array[0]?.Call();
             LuaFunction OnHitLua = array[1];
             onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? OnHitLua);
