@@ -5,7 +5,6 @@ using NLua;
 using System;
 using System.Linq;
 using System.Collections;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
@@ -22,6 +21,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         IEnumerator Perform();
 
         void EndAction(MethodEndReason reason) { }
+    }
+
+    public interface IBossActionCreator<T> : IBossAction where T : IBossAction
+    {
+        abstract static T Create(string filepath, BossController controller);
     }
 
     public static class BossActions
@@ -53,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         ];
     }
 
-    public class BossAttack : BossLuaLoader, IBossAction
+    public class BossAttack : BossLuaLoader, IBossActionCreator<BossAttack>
     {
         private readonly LuaFunction attackFunction;
 
@@ -82,9 +86,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             endFunction?.Call(reason);
             onEndMethods[reason]?.Call();
         }
+
+        public static BossAttack Create(string filepath, BossController controller) => new(filepath, controller);
     }
 
-    public class BossEvent : BossLuaLoader, IBossAction
+    public class BossEvent : BossLuaLoader, IBossActionCreator<BossEvent>
     {
         private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
         {
@@ -141,6 +147,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
             while (cutscene.Running);
         }
+
+        public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
     }
 
     internal class BossFunctions : BossLuaLoader

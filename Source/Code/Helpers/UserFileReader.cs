@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿global using LuaPathReader = (string Path, System.Func<string,
+    Celeste.Mod.BossesHelper.Code.Entities.BossController, Celeste.Mod.BossesHelper.Code.Helpers.IBossAction> Creator);
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
@@ -196,22 +198,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         #region Lua Files
         public static Dictionary<string, IBossAction> ReadLuaFiles(
-            this BossController controller, string attacksPath, string eventsPath)
+            this BossController controller, params LuaPathReader[] readers)
         {
             Dictionary<string, IBossAction> actions = [];
-            string[] paths = [attacksPath, eventsPath];
-            for (int i = 0; i < 2; i++)
+            foreach (var (path, creator) in readers)
             {
-                string path = paths[i];
                 if (ReadLuaPath(path, false, out ModAsset luaFiles))
                 {
                     foreach (ModAsset luaFile in luaFiles.Children)
                     {
-                        IBossAction action = i == 0
-                            ? new BossAttack(luaFile.PathVirtual, controller)
-                            : new BossEvent(luaFile.PathVirtual, controller);
+                        IBossAction action = creator(luaFile.PathVirtual, controller);
                         if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
-                            Logger.Log(LogLevel.Warn, "Bosses Helper", "Dictionary cannot have duplicate keys.\nTwo Lua files with the same name were given.");
+                            Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
                     }
                 }
             }
