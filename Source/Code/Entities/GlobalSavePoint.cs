@@ -61,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     ("savePoint", this),
                     ("spawnPoint", Changer.spawnPoint)
                 ];
-                onInteract = this.LoadFile(ReadLuaFilePath(filepath))[0];
+                onInteract = ReadLuaFilePath(filepath, this.LoadFile)[0];
             }
         }
 

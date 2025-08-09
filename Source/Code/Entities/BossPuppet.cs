@@ -5,6 +5,7 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -108,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 Sprite = sprite;
             }
-            hitboxMetadata = UserFileReader.ReadMetadataFile(data.Attr("hitboxMetadataPath"));
+            hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
             Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
             Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
             (BossCollision = HurtMode switch
@@ -121,7 +122,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
                 _ => null //Custom depends on Setup.lua's code, does nothing by default
             })?.AddTo(this);
-            BossFunctions = new(UserFileReader.ReadLuaFilePath(data.Attr("functionsPath")), controller);
+            BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, controller));
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)

@@ -216,9 +216,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return actions;
         }
 
-        public static string ReadLuaFilePath(string filepath)
+        public static T ReadLuaFilePath<T>(string filepath, Func<string, T> parser)
         {
-            return ReadLuaPath(filepath, true, out ModAsset saveFile) ? saveFile.PathVirtual : null;
+            return parser(ReadLuaPath(filepath, true, out ModAsset saveFile) ? saveFile.PathVirtual : null);
         }
 
         private static bool ReadLuaPath(string path, bool isFile, out ModAsset asset)

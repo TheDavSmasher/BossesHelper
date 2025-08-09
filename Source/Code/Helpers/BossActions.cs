@@ -23,7 +23,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         void EndAction(MethodEndReason reason) { }
     }
 
-    public interface IBossActionCreator<T> : IBossAction where T : IBossAction
+    public interface IBossActionCreator<T> : IBossAction where T : IBossActionCreator<T>
     {
         abstract static T Create(string filepath, BossController controller);
     }
