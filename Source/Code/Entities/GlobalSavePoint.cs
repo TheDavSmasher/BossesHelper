@@ -32,16 +32,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public LuaTableItem[] Values { get; set; }
 
-        public void LoadFunction(string filename, Player player)
-        {
-            Values = [
-                ("player", player),
-                ("savePoint", this),
-                ("spawnPoint", Changer.spawnPoint)
-            ];
-            onInteract = this.LoadFile(filename)[0];
-        }
-
         public GlobalSavePoint(EntityData entityData, Vector2 offset)
             : base(entityData.Position + offset)
         {
@@ -66,8 +56,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             });
             if (scene.GetPlayer() is Player player)
             {
-                string path = ReadLuaFilePath(filepath);
-                LoadFunction(path, player);
+                Values = [
+                    ("player", player),
+                    ("savePoint", this),
+                    ("spawnPoint", Changer.spawnPoint)
+                ];
+                onInteract = this.LoadFile(ReadLuaFilePath(filepath))[0];
             }
         }
 
