@@ -1,6 +1,4 @@
-﻿global using LuaPathReader = (string Path, System.Func<string,
-    Celeste.Mod.BossesHelper.Code.Entities.BossController, Celeste.Mod.BossesHelper.Code.Helpers.IBossAction> Creator);
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
@@ -12,6 +10,8 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
+    using LuaPathReader = (string Path, Func<string, BossController, IBossAction> Creator);
+
     internal static class UserFileReader
     {
         #region XML Files
