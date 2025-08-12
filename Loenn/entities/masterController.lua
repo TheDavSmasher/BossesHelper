@@ -74,40 +74,29 @@ bossMasterController.fieldInformation = {
 }
 
 function bossMasterController.fieldOrder(entity)
+    local baseTable = {
+        "x", "y",
+        "bossID", "bossSprite",
+        "hurtMode", "startingAnim",
+        "bossHealthMax", "bossHitCooldown",
+        "maxFall", "baseGravityMultiplier",
+        "groundFriction", "airFriction",
+
+        "hitboxMetadataPath", "patternsPath",
+        "attacksPath", "eventsPath",
+        "functionsPath", "__Boss_pad_",
+
+        "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately",
+        "startCollidable", "startSolidCollidable"
+    }
+
     if entity.hurtMode == "sidekickAttack" then
-        return {
-            "x", "y",
-            "bossID", "bossSprite",
-            "hurtMode", "startingAnim",
-            "bossHealthMax", "bossHitCooldown",
-            "maxFall", "baseGravityMultiplier",
-            "groundFriction", "airFriction",
-            "sidekickCooldown", "__Boss_pad_",
-
-            "hitboxMetadataPath", "patternsPath",
-            "attacksPath", "eventsPath",
-            "functionsPath", "__Boss_pad",
-
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately",
-            "startCollidable", "startSolidCollidable", "sidekickFreeze"
-        }
-    else
-        return {
-            "x", "y",
-            "bossID", "bossSprite",
-            "hurtMode", "startingAnim",
-            "bossHealthMax", "bossHitCooldown",
-            "maxFall", "baseGravityMultiplier",
-            "groundFriction", "airFriction",
-
-            "hitboxMetadataPath", "patternsPath",
-            "attacksPath", "eventsPath",
-            "functionsPath", "__Boss_pad_",
-
-            "dynamicFacing", "mirrorSprite", "killOnContact", "startAttackingImmediately",
-            "startCollidable", "startSolidCollidable"
-        }
+        table.insert(baseTable, 13, "sidekickCooldown")
+        table.insert(baseTable, 14, "__Boss_pad_")
+        table.insert(baseTable, "sidekickFreeze")
     end
+
+    return baseTable
 end
 
 bossMasterController.placements = {
