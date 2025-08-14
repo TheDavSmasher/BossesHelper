@@ -8,7 +8,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     public record ControllerDelegates(Action ChangeToPattern,
         Func<int> RandomNext, Action<bool> SetIsAttacking, Func<int?> AttackIndexForced);
 
-    public readonly record struct Method(string ActionName, float? Duration);
+    public readonly record struct Method(string ActionName, float? Duration)
+    {
+        public bool IsWait => ActionName.ToLower().Equals("wait");
+    }
 
     public enum MethodEndReason
     {
@@ -23,7 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         protected IEnumerator PerformMethod(Method method)
         {
-            if (!method.ActionName.ToLower().Equals("wait"))
+            if (!method.IsWait)
             {
                 if (Actions.TryGetValue(method.ActionName, out CurrentAction))
                 {

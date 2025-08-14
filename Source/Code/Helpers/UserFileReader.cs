@@ -19,12 +19,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset,
             Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
         {
+            Dictionary<string, BossPattern> namedPatterns = [];
             List<BossPattern> targetOut = [];
 
             ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
             {
                 BossPattern newPattern = patternNode.ParseNewPattern(offset, actions, delegates);
                 targetOut.Add(newPattern);
+                if (patternNode.GetAttributeValue("name") is string name)
+                    namedPatterns[name] = newPattern;
             });
             return targetOut;
         }
