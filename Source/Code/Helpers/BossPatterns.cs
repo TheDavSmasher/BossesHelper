@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         PlayerDied
     }
 
-    public abstract record BossPattern(string GoToPattern, Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
+    public abstract record BossPattern(string Name, string GoToPattern, Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
     {
         public IBossAction CurrentAction { get; private set; }
 
@@ -63,17 +63,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         }
     }
 
-    public record EventCutscene(Method Event, string GoToPattern,
+    public record EventCutscene(string Name, Method Event, string GoToPattern,
         Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
-        : BossPattern(GoToPattern, Actions, Delegates)
+        : BossPattern(Name, GoToPattern, Actions, Delegates)
     {
         public override IEnumerator Perform() => PerformAndChange(() => Event, () => true);
     }
 
-    public abstract record AttackPattern(List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
+    public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
         int? MinRandomIter, int? IterationCount, string GoToPattern, 
         Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
-        : BossPattern(GoToPattern, Actions, Delegates)
+        : BossPattern(Name, GoToPattern, Actions, Delegates)
     {
         protected virtual int AttackIndex => currentAction;
 
@@ -95,18 +95,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         protected virtual int UpdateLoop() => currentAction++;
     }
 
-    public record RandomPattern(List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
+    public record RandomPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
         int? MinRandomIter, int? IterationCount, string GoToPattern,
         Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
-        : AttackPattern(StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Actions, Delegates)
+        : AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Actions, Delegates)
     {
         protected override int AttackIndex => Delegates.AttackIndexForced() ?? Delegates.RandomNext();
     }
 
-    public record SequentialPattern(List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
+    public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
         int? MinRandomIter, int? IterationCount, string GoToPattern,
         Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
-        : AttackPattern(StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Actions, Delegates)
+        : AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Actions, Delegates)
     {
         private int loop;
 
