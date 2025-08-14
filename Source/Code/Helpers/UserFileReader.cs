@@ -37,14 +37,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             string nodeType = patternNode.LocalName.ToLower();
             List<Method> methodList = [];
+
+            int? goTo = patternNode.GetValueOrDefault<int>("goto");
             if (nodeType.Equals("event"))
             {
-                return new EventCutscene(patternNode.GetMethod(true),
-                    patternNode.GetValueOrDefault<int>("goto"), actions, delegates);
+                return new EventCutscene(patternNode.GetMethod(true), goTo, actions, delegates);
             }
 
             Hitbox trigger = patternNode.GetHitbox(offset);
-            int? goTo = patternNode.GetValueOrDefault<int>("goto");
             int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
             int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? goTo * 0;
             minCount ??= count;
