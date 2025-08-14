@@ -37,6 +37,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private List<BossPattern> AllPatterns;
 
+        private readonly Dictionary<string, int> NamedPatterns = [];
+
         private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
 
         public BossController(EntityData data, Vector2 offset, EntityID id)
@@ -80,6 +82,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     (SourceData.Attr("eventsPath"), BossEvent.Create)
                 ), new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
             );
+            for (int i = 0; i < AllPatterns.Count; i++)
+            {
+                if (AllPatterns[i].Name is string name)
+                    NamedPatterns.Add(name, i);
+        }
         }
 
         public override void Removed(Scene scene)
