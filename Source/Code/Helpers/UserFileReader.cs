@@ -23,62 +23,62 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
             ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
             {
-                string nodeType = patternNode.LocalName.ToLower();
-                List<Method> methodList = [];
-                if (nodeType.Equals("event"))
-                {
-                    targetOut.Add(new EventCutscene(
-                        patternNode.GetMethod(true), patternNode.GetValueOrDefault<int>("goto"), actions, delegates
-                    ));
-                    return;
-                }
-
-                Hitbox trigger = patternNode.GetHitbox(offset);
-                int? goTo = patternNode.GetValueOrDefault<int>("goto");
-                int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
-                int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? goTo * 0;
-                minCount ??= count;
-                if (count < minCount)
-                    count = minCount;
-
-                if (nodeType.Equals("random"))
-                {
-                    foreach (XmlNode action in patternNode.ChildNodes)
-                    {
-                        methodList.AddRange(Enumerable.Repeat(
-                            action.GetMethod(true, true),
-                            Math.Max(action.GetValueOrDefault("weight", 0), 1)
-                        ));
-                    }
-                    targetOut.Add(new RandomPattern(
-                        methodList, trigger, minCount, count, goTo, actions, delegates
-                    ));
-                    return;
-                }
-
-                List<Method> preLoopList = [];
-                foreach (XmlNode action in patternNode.ChildNodes)
-                {
-                    switch (action.LocalName.ToLower())
-                    {
-                        case "wait":
-                            methodList.Add(action.GetMethod(false));
-                            break;
-                        case "loop":
-                            preLoopList = [.. methodList];
-                            methodList.Clear();
-                            break;
-                        default:
-                            methodList.Add(action.GetMethod(true));
-                            break;
-                    }
-                }
-
-                targetOut.Add(new SequentialPattern(
-                    methodList, preLoopList, trigger, minCount, count, goTo, actions, delegates)
-                );
+                BossPattern newPattern = patternNode.ParseNewPattern(offset, actions, delegates);
+                targetOut.Add(newPattern);
             });
             return targetOut;
+        }
+
+        private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset,
+            Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+        {
+            string nodeType = patternNode.LocalName.ToLower();
+            List<Method> methodList = [];
+            if (nodeType.Equals("event"))
+            {
+                return new EventCutscene(patternNode.GetMethod(true),
+                    patternNode.GetValueOrDefault<int>("goto"), actions, delegates);
+            }
+
+            Hitbox trigger = patternNode.GetHitbox(offset);
+            int? goTo = patternNode.GetValueOrDefault<int>("goto");
+            int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
+            int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? goTo * 0;
+            minCount ??= count;
+            if (count < minCount)
+                count = minCount;
+
+            if (nodeType.Equals("random"))
+            {
+                foreach (XmlNode action in patternNode.ChildNodes)
+                {
+                    methodList.AddRange(Enumerable.Repeat(
+                        action.GetMethod(true, true),
+                        Math.Max(action.GetValueOrDefault("weight", 0), 1)
+                    ));
+                }
+                return new RandomPattern(methodList, trigger, minCount, count, goTo, actions, delegates);
+            }
+
+            List<Method> preLoopList = [];
+            foreach (XmlNode action in patternNode.ChildNodes)
+            {
+                switch (action.LocalName.ToLower())
+                {
+                    case "wait":
+                        methodList.Add(action.GetMethod(false));
+                        break;
+                    case "loop":
+                        preLoopList = [.. methodList];
+                        methodList.Clear();
+                        break;
+                    default:
+                        methodList.Add(action.GetMethod(true));
+                        break;
+                }
+            }
+
+            return new SequentialPattern(methodList, preLoopList, trigger, minCount, count, goTo, actions, delegates);
         }
 
         public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
