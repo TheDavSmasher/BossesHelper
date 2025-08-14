@@ -96,20 +96,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 }
             }
 
-            private readonly ComponentStack<HealthIcon> healthIcons = [];
+            private readonly Stack<HealthIcon> healthIcons = [];
 
-            private readonly ComponentStack<HealthIcon> toRemove = [];
+            private readonly Stack<HealthIcon> toRemove = [];
 
             private readonly List<Vector2> iconSeparations = [Vector2.Zero, ..iconSeparations.ConvertAll(f => Vector2.UnitX * f)];
 
-            private IMonocleCollection<HealthIcon> AllIcons => (IMonocleCollection<HealthIcon>) healthIcons.Concat(toRemove);
+            private IEnumerable<HealthIcon> AllIcons => [..healthIcons, ..toRemove];
 
             public int Count => healthIcons.Count;
 
             protected override bool IsVisible
             {
-                get => AllIcons.Visible;
-                set => AllIcons.Visible = value;
+                get => AllIcons.Any(i => i.Visible);
+                set {
+                    foreach (var icon in AllIcons)
+                        icon.Visible = value;
+                }
             }
 
             public HealthIconList(bool global = false)
