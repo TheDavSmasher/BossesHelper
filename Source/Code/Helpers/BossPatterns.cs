@@ -22,14 +22,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
     public abstract record BossPattern(int? GoToPattern, Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
     {
-        public IBossAction CurrentAction;
+        public IBossAction CurrentAction { get; private set; }
 
         protected IEnumerator PerformMethod(Method method)
         {
             if (!method.IsWait)
             {
-                if (Actions.TryGetValue(method.ActionName, out CurrentAction))
+                if (Actions.TryGetValue(method.ActionName, out IBossAction _currentAct))
                 {
+                    CurrentAction = _currentAct;
                     Delegates.SetIsAttacking(true);
                     yield return CurrentAction.Perform();
                     Delegates.SetIsAttacking(false);

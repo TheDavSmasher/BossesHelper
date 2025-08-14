@@ -121,14 +121,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             }
         }
 
-        private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
-        {
-            return source.GetAttributeValue(tag)?.Parse<T>();
-        }
-
         private static T GetValueOrDefault<T>(this XmlNode source, string tag, T value) where T : struct, IParsable<T>
         {
             return source.GetValueOrDefault<T>(tag) ?? value;
+        }
+
+        private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
+        {
+            return source.GetAttributeValue(tag)?.Parse<T>();
         }
 
         private static string GetValue(this XmlNode source, string tag)
