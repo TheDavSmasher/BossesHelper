@@ -26,7 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             {
                 BossPattern newPattern = patternNode.ParseNewPattern(offset, actions, delegates);
                 targetOut.Add(newPattern);
-                if (patternNode.GetAttributeValue("name") is string name)
+                if (patternNode.GetValue("name") is string name)
                     namedPatterns[name] = newPattern;
             });
             return targetOut;
@@ -91,7 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
             {
                 ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
-                dataHolder[option].InsertNewCollider(hitboxNode.GetAttributeValue("tag") ?? "main", option switch
+                dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag") ?? "main", option switch
                 {
                     ColliderOption.Hitboxes or ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
                     ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
@@ -128,10 +128,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         private static T? GetValueOrDefault<T>(this XmlNode source, string tag) where T : struct, IParsable<T>
         {
-            return source.GetAttributeValue(tag)?.Parse<T>();
+            return source.GetValue(tag)?.Parse<T>();
         }
 
-        private static string GetAttributeValue(this XmlNode source, string tag)
+        private static string GetValue(this XmlNode source, string tag)
         {
             return source.Attributes[tag]?.Value;
         }
@@ -139,7 +139,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
         {
             return new Method(
-                isFile ? source.GetAttributeValue("file") : "wait",
+                isFile ? source.GetValue("file") : "wait",
                 source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
             );
         }
