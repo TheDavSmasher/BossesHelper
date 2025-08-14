@@ -39,9 +39,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
 
-        public BossController(EntityData data, Vector2 offset, EntityID _)
+        public BossController(EntityData data, Vector2 offset, EntityID id)
             : base(data.Position + offset)
         {
+            SourceData = data;
+            SourceId = id;
             BossID = data.Attr("bossID");
             Health = data.Int("bossHealthMax", -1);
             startAttackingImmediately = data.Bool("startAttackingImmediately");
@@ -50,6 +52,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 new BossHealthTracker(() => Health)
             };
+            Puppet.LoadAfterCtor();
             if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
             {
                 Health = phase.BossHealthAt;

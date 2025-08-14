@@ -46,7 +46,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public readonly HurtModes HurtMode;
 
-        private readonly BossFunctions BossFunctions;
+        private BossFunctions BossFunctions;
+
+        public readonly Action LoadAfterCtor;
 
         public float BossHitCooldown { get; private set; }
 
@@ -122,7 +124,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                 HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
                 _ => null //Custom depends on Setup.lua's code, does nothing by default
             })?.AddTo(this);
-            BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, controller));
+            LoadAfterCtor = () => BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, controller));
         }
 
         private Collider GetMainOrDefault(ColliderOption option, float? value)
