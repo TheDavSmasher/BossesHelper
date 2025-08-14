@@ -91,7 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
             {
                 ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
-                dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag"), option switch
+                dataHolder[option].InsertNewCollider(hitboxNode.GetAttributeValue("tag") ?? "main", option switch
                 {
                     ColliderOption.Hitboxes or ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
                     ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
@@ -131,11 +131,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
             return source.GetAttributeValue(tag)?.Parse<T>();
         }
 
-        private static string GetValue(this XmlNode source, string tag)
-        {
-            return source.GetAttributeValue(tag) ?? "main";
-        }
-
         private static string GetAttributeValue(this XmlNode source, string tag)
         {
             return source.Attributes[tag]?.Value;
@@ -144,7 +139,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
         {
             return new Method(
-                isFile ? source.GetValue("file") : "wait",
+                isFile ? source.GetAttributeValue("file") : "wait",
                 source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
             );
         }
