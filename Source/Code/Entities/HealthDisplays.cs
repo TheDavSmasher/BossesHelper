@@ -75,7 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     this.endAnim = endAnim;
                     GFX.SpriteBank.CreateOn(this, iconSprite);
                     Scale = scale;
-                    RenderPosition = offset;
+                    Position = offset;
                 }
 
                 public IEnumerator DrawIcon()
@@ -142,7 +142,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
                     if (!toRemove.TryPop(out HealthIcon healthIcon))
                     {
                         int index = Count;
-                        Vector2 offset = (healthIcons.TryPeek(out HealthIcon lastIcon) ? lastIcon.RenderPosition : Vector2.Zero)
+                        Vector2 offset = (healthIcons.TryPeek(out HealthIcon lastIcon) ? lastIcon.Position : Vector2.Zero)
                             + iconSeparations.ElementAtOrLast(index);
 
                         Add(healthIcon = new(BarScale, offset, icons.ElementAtOrLast(index),
