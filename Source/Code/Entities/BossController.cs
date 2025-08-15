@@ -150,6 +150,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             StartAttackPattern(CurrentPattern.GoToPattern ?? currentPatternIndex + 1);
         }
 
+        public int GetPatternIndex(string goTo)
+        {
+            return NamedPatterns.TryGetValue(goTo, out int index) ? index : -1;
+        }
+
+        public string GetCurrentPatternName()
+        {
+            return CurrentPattern.Name;
+        }
+
         public void InterruptPattern()
         {
             ActivePattern.Active = false;

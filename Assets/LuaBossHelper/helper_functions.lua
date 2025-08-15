@@ -997,6 +997,19 @@ function helpers.getCurrentPatternID()
     return boss:GetCurrentPatternIndex()
 end
 
+---Gets the currently set pattern index
+---@return string Name The current pattern's name, if any.
+function helpers.getCurrentPatternName()
+    return boss:GetCurrentPatternName()
+end
+
+---Get the index of the Pattern that is identified by the given name, if any.
+---@param name string The name of the Pattern to search for.
+---@return integer index The index of the pattern with the given name, or -1 if not found.
+function helpers.getPatternIndex(name)
+    return boss:GetPatternIndex(name)
+end
+
 ---Start a new boss action pattern.
 ---@param goTo? integer The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
 ---@default -1
