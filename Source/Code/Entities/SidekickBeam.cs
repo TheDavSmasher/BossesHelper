@@ -221,24 +221,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private void Quad(ref int v, Vector2 offset, Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color ab, Color cd)
 		{
-			fade[v].Position.X = offset.X + a.X;
-			fade[v].Position.Y = offset.Y + a.Y;
-			fade[v++].Color = ab;
-			fade[v].Position.X = offset.X + b.X;
-			fade[v].Position.Y = offset.Y + b.Y;
-			fade[v++].Color = ab;
-			fade[v].Position.X = offset.X + c.X;
-			fade[v].Position.Y = offset.Y + c.Y;
-			fade[v++].Color = cd;
-			fade[v].Position.X = offset.X + a.X;
-			fade[v].Position.Y = offset.Y + a.Y;
-			fade[v++].Color = ab;
-			fade[v].Position.X = offset.X + c.X;
-			fade[v].Position.Y = offset.Y + c.Y;
-			fade[v++].Color = cd;
-			fade[v].Position.X = offset.X + d.X;
-			fade[v].Position.Y = offset.Y + d.Y;
-			fade[v++].Color = cd;
+			ModifyFromV2Color(ref fade[v++], offset + a, ab);
+			ModifyFromV2Color(ref fade[v++], offset + b, ab);
+			ModifyFromV2Color(ref fade[v++], offset + c, cd);
+			ModifyFromV2Color(ref fade[v++], offset + a, ab);
+			ModifyFromV2Color(ref fade[v++], offset + c, cd);
+			ModifyFromV2Color(ref fade[v++], offset + d, cd);
+		}
+
+		private static void ModifyFromV2Color(ref VertexPositionColor self, Vector2 source, Color color)
+		{
+			self.Position.X = source.X;
+			self.Position.Y = source.Y;
+			self.Color = color;
 		}
 	}
 }
