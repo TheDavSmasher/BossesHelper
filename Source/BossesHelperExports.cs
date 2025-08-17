@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
+using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.ModInterop;
-using Microsoft.Xna.Framework;
-using Celeste.Mod.BossesHelper.Code.Components;
+using System;
 using System.Reflection;
-using Celeste.Mod.BossesHelper.Code.Entities;
 
 namespace Celeste.Mod.BossesHelper
 {

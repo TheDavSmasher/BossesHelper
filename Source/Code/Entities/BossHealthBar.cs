@@ -60,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             {
                 BarTypes.Icons => new HealthIconList(SourceData, BarPosition, BarScale, BossHealth),
                 BarTypes.Countdown => new HealthNumber(BarPosition, BarScale, BossHealth, baseColor),
-                _ => new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment) barType)
+                _ => new HealthBar(BarPosition, BarScale, BossHealth, baseColor, (Alignment)barType)
             });
             Visible = SourceData.Bool("startVisible");
         }

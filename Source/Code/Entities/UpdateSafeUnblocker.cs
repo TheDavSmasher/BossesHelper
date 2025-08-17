@@ -1,7 +1,7 @@
-﻿using Celeste.Mod.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {

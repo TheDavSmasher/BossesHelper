@@ -3,8 +3,8 @@ global using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using NLua;
 using System;
-using System.Linq;
 using System.Collections;
+using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
@@ -126,7 +126,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public override LuaCommand Command => ("getCutsceneData", 2);
 
-        public override LuaTableItem[] Values => [("cutsceneEntity", cutscene), ..base.Values];
+        public override LuaTableItem[] Values => [("cutsceneEntity", cutscene), .. base.Values];
 
         public BossEvent(string filepath, BossController controller)
             : base(controller)

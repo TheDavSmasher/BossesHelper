@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Reflection;
-using Celeste.Mod.Helpers;
+﻿using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
+using System;
+using System.Collections;
+using System.Reflection;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -180,7 +180,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type ) as IList);
+                return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type) as IList);
             }
             catch (ArgumentNullException)
             {
@@ -206,7 +206,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         {
             try
             {
-                IList entities = ((bool) Tracker.CallGeneric(entityIsTracked, entityType)
+                IList entities = ((bool)Tracker.CallGeneric(entityIsTracked, entityType)
                     ? Tracker.CallGeneric(getEntitiesMethodInfo, entityType)
                     : Entities.CallGeneric(entitiesFindAll, entityType)) as IList;
                 foreach (Entity entity in entities)

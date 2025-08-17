@@ -6,7 +6,6 @@ using Monocle;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -147,7 +146,7 @@ public partial class BossesHelperModule : EverestModule
         if (always)
         {
             if (damageTracked)
-                PlayerTakesDamage(amount: Session.currentPlayerHealth, evenIfInvincible: true);        
+                PlayerTakesDamage(amount: Session.currentPlayerHealth, evenIfInvincible: true);
             return orig(self, dir, always, register);
         }
         if (damageTracked && Session.currentPlayerHealth <= 0)
@@ -269,7 +268,7 @@ public partial class BossesHelperModule : EverestModule
             Vector2 to = from + self.bounce * 24f;
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.CubeOut, 0.5f, start: true);
             self.Add(tween);
-            tween.OnUpdate = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
+            tween.OnUpdate = t =>
             {
                 self.Position = from + (to - from) * t.Eased;
                 self.scale = 1.5f - t.Eased * 0.5f;

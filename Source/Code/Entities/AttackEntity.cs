@@ -1,7 +1,7 @@
-﻿using NLua;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
-using Celeste.Mod.BossesHelper.Code.Helpers;
+using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {

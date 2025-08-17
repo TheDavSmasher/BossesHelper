@@ -1,5 +1,5 @@
-﻿using System;
-using NLua;
+﻿using NLua;
+using System;
 using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
@@ -44,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
         #endregion
 
         #region To Func
-        public static Func<T> ToFunc<T>(this LuaFunction function) => () => (T) function.Call().FirstOrDefault();
+        public static Func<T> ToFunc<T>(this LuaFunction function) => () => (T)function.Call().FirstOrDefault();
         #endregion
     }
 }

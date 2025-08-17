@@ -1,8 +1,8 @@
-﻿using System;
-using Monocle;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Microsoft.Xna.Framework;
+using Monocle;
+using System;
 using System.Collections;
-using Celeste.Mod.BossesHelper.Code.Components;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities

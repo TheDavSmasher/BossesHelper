@@ -1,5 +1,6 @@
 namespace Celeste.Mod.BossesHelper;
 
-public class BossesHelperSaveData : EverestModuleSaveData {
+public class BossesHelperSaveData : EverestModuleSaveData
+{
 
 }

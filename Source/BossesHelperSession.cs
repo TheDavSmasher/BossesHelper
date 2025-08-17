@@ -1,5 +1,5 @@
-using Microsoft.Xna.Framework;
 using Celeste.Mod.BossesHelper.Code.Entities;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 

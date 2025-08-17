@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.Entities;
+using Microsoft.Xna.Framework;
 using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers

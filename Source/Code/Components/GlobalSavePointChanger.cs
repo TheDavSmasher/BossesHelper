@@ -1,6 +1,6 @@
-﻿using Monocle;
+﻿using Microsoft.Xna.Framework;
+using Monocle;
 using System;
-using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Components

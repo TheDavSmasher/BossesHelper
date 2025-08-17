@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Monocle;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -71,7 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
     }
 
     public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-        int? MinRandomIter, int? IterationCount, string GoToPattern, 
+        int? MinRandomIter, int? IterationCount, string GoToPattern,
         Dictionary<string, IBossAction> Actions, ControllerDelegates Delegates)
         : BossPattern(Name, GoToPattern, Actions, Delegates)
     {

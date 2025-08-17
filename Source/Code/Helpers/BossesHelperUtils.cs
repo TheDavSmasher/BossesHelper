@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Monocle;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Monocle;
-using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
         public static Vector2 NearestWhole(this Vector2 value)
         {
-            return new Vector2((int) value.X, (int) value.Y);
+            return new Vector2((int)value.X, (int)value.Y);
         }
 
         public static void Coroutine(this IEnumerator enumerator, Entity target)

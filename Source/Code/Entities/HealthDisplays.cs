@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Monocle;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Monocle;
-using Microsoft.Xna.Framework;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
@@ -100,16 +100,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
             private readonly Stack<HealthIcon> toRemove = [];
 
-            private readonly List<Vector2> iconSeparations = [Vector2.Zero, ..iconSeparations.ConvertAll(f => Vector2.UnitX * f)];
+            private readonly List<Vector2> iconSeparations = [Vector2.Zero, .. iconSeparations.ConvertAll(f => Vector2.UnitX * f)];
 
-            private IEnumerable<HealthIcon> AllIcons => [..healthIcons, ..toRemove];
+            private IEnumerable<HealthIcon> AllIcons => [.. healthIcons, .. toRemove];
 
             public int Count => healthIcons.Count;
 
             protected override bool IsVisible
             {
                 get => AllIcons.Any(i => i.Visible);
-                set {
+                set
+                {
                     foreach (var icon in AllIcons)
                         icon.Visible = value;
                 }

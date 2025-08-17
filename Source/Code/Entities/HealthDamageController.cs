@@ -1,12 +1,12 @@
-﻿using Monocle;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Microsoft.Xna.Framework;
+using Monocle;
+using NLua;
 using System;
 using System.Collections;
-using Microsoft.Xna.Framework;
-using NLua;
-using Celeste.Mod.BossesHelper.Code.Helpers;
 using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {

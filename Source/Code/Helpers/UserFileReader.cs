@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Microsoft.Xna.Framework;
-using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
-using System.Xml;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
