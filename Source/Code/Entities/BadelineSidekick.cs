@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Add(Boss = GFX.SpriteBank.Create("badeline_boss"));
             Add(Custom = GFX.SpriteBank.Create("badeline_sidekick"));
             Add(Wave = new SineWave(0.25f, 0f));
-            Wave.OnUpdate = (float f) =>
+            Wave.OnUpdate = f =>
             {
                 Dummy.Position = Custom.Position = Boss.Position = Vector2.UnitY * f * 2f;
             };

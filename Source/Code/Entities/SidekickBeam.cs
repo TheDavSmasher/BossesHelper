@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             };
             Add(beamStartSprite = GFX.SpriteBank.Create("badeline_beam_start"));
             beamStartSprite.Visible = false;
-            base.Depth = -1000000;
+            Depth = -1000000;
         }
 
         public SidekickBeam Init(BadelineSidekick sidekick, SidekickTarget target)
@@ -215,7 +215,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             Quad(ref v, beamOrigin, -vector2 + vector3, vector2 + vector3, vector2, -vector2, color, transparent);
             Quad(ref v, beamOrigin, -vector2, vector2, vector2 - vector3, -vector2 - vector3, transparent, color);
             Quad(ref v, beamOrigin, -vector2 - vector3, vector2 - vector3, vector2 - vector3 * 2f, -vector2 - vector3 * 2f, color, color);
-            GFX.DrawVertices((base.Scene as Level).Camera.Matrix, fade, fade.Length);
+            GFX.DrawVertices((Scene as Level).Camera.Matrix, fade, fade.Length);
             GameplayRenderer.Begin();
         }
 

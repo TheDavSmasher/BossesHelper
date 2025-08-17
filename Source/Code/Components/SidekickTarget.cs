@@ -19,10 +19,10 @@ namespace Celeste.Mod.BossesHelper.Code.Components
             if (Entity == null) return false;
             if (Entity.Collidable)
             {
-                Collider original = base.Entity.Collider;
-                base.Entity.Collider = Collider;
+                Collider original = Entity.Collider;
+                Entity.Collider = Collider;
                 bool hit = Entity.CollideLine(from, to);
-                base.Entity.Collider = original;
+                Entity.Collider = original;
                 return hit;
             }
             return false;

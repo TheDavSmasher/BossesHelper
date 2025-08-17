@@ -27,8 +27,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             bool solidCollidable, string spriteName, float gravMult, float maxFall, float xScale = 1f, float yScale = 1f)
             : base(position)
         {
-            base.Collider = attackbox;
-            base.Collidable = startCollidable;
+            Collider = attackbox;
+            Collidable = startCollidable;
             SolidCollidable = solidCollidable;
             effectiveGravity = gravMult * Gravity;
             this.maxFall = maxFall;
@@ -99,7 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
         public void SetCollisionActive(bool active)
         {
-            base.Collidable = active;
+            Collidable = active;
         }
 
         public void SetEffectiveGravityMult(float mult)

@@ -256,8 +256,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
             if (!DynamicFacing)
                 return false;
             if (Facing == -1)
-                return pos < base.X - base.Collider.Width / 4;
-            return pos > base.X + base.Collider.Width / 4;
+                return pos < X - Collider.Width / 4;
+            return pos > X + Collider.Width / 4;
         }
 
         public override void Render()

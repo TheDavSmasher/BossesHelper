@@ -25,7 +25,7 @@ public partial class BossesHelperModule : EverestModule
     public override Type SaveDataType => typeof(BossesHelperSaveData);
     public static BossesHelperSaveData BossSaveData => (BossesHelperSaveData)Instance._SaveData;
 
-    private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
+    private static BossesHelperSession.HealthSystemData HealthData => Session.healthData;
 
     public int TASSeed;
 
