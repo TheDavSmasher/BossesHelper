@@ -5,14 +5,14 @@ using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Triggers
 {
-    [CustomEntity("BossesHelper/AddHealthSystemTrigger")]
-    public class AddHealthSystemTrigger(EntityData data, Vector2 offset, EntityID id)
-        : SingleUseTrigger(data, offset, id, data.Bool("onlyOnce", true), true)
-    {
-        public override void OnEnter(Player player)
-        {
-            base.OnEnter(player);
-            ConsumeAfter(() => Scene.Add(new HealthSystemManager(SourceData, Vector2.Zero)));
-        }
-    }
+	[CustomEntity("BossesHelper/AddHealthSystemTrigger")]
+	public class AddHealthSystemTrigger(EntityData data, Vector2 offset, EntityID id)
+		: SingleUseTrigger(data, offset, id, data.Bool("onlyOnce", true), true)
+	{
+		public override void OnEnter(Player player)
+		{
+			base.OnEnter(player);
+			ConsumeAfter(() => Scene.Add(new HealthSystemManager(SourceData, Vector2.Zero)));
+		}
+	}
 }

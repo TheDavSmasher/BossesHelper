@@ -5,42 +5,42 @@ using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    internal class AttackEntity : Entity
-    {
-        public readonly Sprite Sprite;
+	internal class AttackEntity : Entity
+	{
+		public readonly Sprite Sprite;
 
-        private readonly LuaFunction onCollide;
+		private readonly LuaFunction onCollide;
 
-        public AttackEntity(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float xScale = 1f, float yScale = 1f)
-            : base(position)
-        {
-            Collider = attackbox;
-            Collidable = startCollidable;
-            if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
-            {
-                Sprite.Scale = new Vector2(xScale, yScale);
-                Add(Sprite);
-            }
-            onCollide = onPlayer;
-            Add(new PlayerCollider(OnPlayer));
-        }
+		public AttackEntity(Vector2 position, Collider attackbox, LuaFunction onPlayer, bool startCollidable, string spriteName, float xScale = 1f, float yScale = 1f)
+			: base(position)
+		{
+			Collider = attackbox;
+			Collidable = startCollidable;
+			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
+			{
+				Sprite.Scale = new Vector2(xScale, yScale);
+				Add(Sprite);
+			}
+			onCollide = onPlayer;
+			Add(new PlayerCollider(OnPlayer));
+		}
 
-        public void PlayAnim(string anim)
-        {
-            if (!Sprite.TryPlay(anim))
-            {
-                Logger.Log(LogLevel.Warn, "BossesHelper/AttackEntity", "Animation specified does not exist!");
-            }
-        }
+		public void PlayAnim(string anim)
+		{
+			if (!Sprite.TryPlay(anim))
+			{
+				Logger.Log(LogLevel.Warn, "BossesHelper/AttackEntity", "Animation specified does not exist!");
+			}
+		}
 
-        private void OnPlayer(Player player)
-        {
-            onCollide.Call(this, player);
-        }
+		private void OnPlayer(Player player)
+		{
+			onCollide.Call(this, player);
+		}
 
-        public void SetCollisionActive(bool active)
-        {
-            Collidable = active;
-        }
-    }
+		public void SetCollisionActive(bool active)
+		{
+			Collidable = active;
+		}
+	}
 }

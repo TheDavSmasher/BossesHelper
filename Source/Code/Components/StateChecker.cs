@@ -5,24 +5,24 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Components
 {
-    public abstract class StateChecker(Action<Entity> action, bool stateNeeded = true, bool removeOnComplete = true)
-        : Component(active: true, visible: false)
-    {
-        protected readonly bool state = stateNeeded;
+	public abstract class StateChecker(Action<Entity> action, bool stateNeeded = true, bool removeOnComplete = true)
+		: Component(active: true, visible: false)
+	{
+		protected readonly bool state = stateNeeded;
 
-        internal StateChecker(LuaFunction action, bool stateNeeded = true, bool removeOnComplete = true)
-            : this(action.ToAction<Entity>(), stateNeeded, removeOnComplete) { }
+		internal StateChecker(LuaFunction action, bool stateNeeded = true, bool removeOnComplete = true)
+			: this(action.ToAction<Entity>(), stateNeeded, removeOnComplete) { }
 
-        public override void Update()
-        {
-            if (StateCheck() == state)
-            {
-                action.Invoke(Entity);
-                if (removeOnComplete)
-                    RemoveSelf();
-            }
-        }
+		public override void Update()
+		{
+			if (StateCheck() == state)
+			{
+				action.Invoke(Entity);
+				if (removeOnComplete)
+					RemoveSelf();
+			}
+		}
 
-        protected abstract bool StateCheck();
-    }
+		protected abstract bool StateCheck();
+	}
 }
