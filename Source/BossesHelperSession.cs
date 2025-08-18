@@ -25,8 +25,6 @@ public class BossesHelperSession : EverestModuleSession
 
 	public bool alreadyFlying;
 
-	public float damageCooldown;
-
 	public struct HealthSystemData
 	{
 		//Overhead

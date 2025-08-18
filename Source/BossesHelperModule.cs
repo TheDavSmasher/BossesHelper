@@ -6,6 +6,7 @@ using Monocle;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper;
 
@@ -107,6 +108,8 @@ public partial class BossesHelperModule : EverestModule
 				self.TeleportTo(entity, Session.savePointLevel, Session.savePointSpawnType, Session.savePointSpawn);
 				Session.travelingToSavePoint = false;
 			}
+			if (entity.Get<Stopwatch>() is null)
+				entity.AddIFramesWatch();
 		}
 		if (Engine.Scene.GetEntity<HealthSystemManager>() is not { } manager || !HealthSystemManager.IsEnabled)
 			return;
@@ -128,8 +131,6 @@ public partial class BossesHelperModule : EverestModule
 			Session.alreadyFlying = false;
 		if (self.SceneAs<Level>().Session.RespawnPoint is Vector2 spawn && Session.lastSpawnPoint != spawn)
 			Session.SafeSpawn = spawn;
-		if (Session.damageCooldown > 0)
-			Session.damageCooldown -= Engine.DeltaTime;
 	}
 
 	public static PlayerDeadBody NotifyOfDeath(On.Celeste.Player.orig_Die orig, Player self, Vector2 dir, bool always, bool register)
@@ -153,7 +154,7 @@ public partial class BossesHelperModule : EverestModule
 			return orig(self, dir, always, register);
 		if (Session.useFakeDeath)
 			return FakeDie(self, dir);
-		if (Session.damageCooldown > 0)
+		if (!self.Get<Stopwatch>().Finished)
 			return null;
 		if (!damageTracked)
 			return orig(self, dir, always, register);
@@ -329,6 +330,6 @@ public partial class BossesHelperModule : EverestModule
 
 	public static void GiveIFrames(float time)
 	{
-		Session.damageCooldown += time;
+		Engine.Scene.GetPlayer().Get<Stopwatch>().TimeLeft += time;
 	}
 }

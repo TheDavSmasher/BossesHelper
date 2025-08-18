@@ -243,6 +243,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
+		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
+		{
+			if (player.Get<Stopwatch>() is var watch)
+			{
+				if (onlyOnNull)
+					return;
+				watch.RemoveSelf();
+			}
+			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
+		}
+
 		public interface IMonocleCollection<T> : IReadOnlyCollection<T>
 		{
 			public bool Active

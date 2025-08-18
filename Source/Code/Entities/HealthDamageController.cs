@@ -30,6 +30,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			private LuaFunction onDamage;
 
+			private Stopwatch DamageCooldown => Scene.GetPlayer()?.Get<Stopwatch>();
+
 			public LuaCommand Command => ("getFunctionData", 2);
 
 			public LuaTableItem[] Values { get; set; }
@@ -37,22 +39,24 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
 				ChangeGlobalState(HealthData.globalController);
-				Values = [("player", Scene.GetPlayer()), ("healthBar", healthBar)];
+				Player player = Scene.GetPlayer();
+				Values = [("player", player), ("healthBar", healthBar)];
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
 				onDamage = array[0];
 				onRecover = array[1];
+				player.AddIFramesWatch(true);
 			}
 
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
 			{
 				Level Level = SceneAs<Level>();
 				if (Level.InCutscene ||
-					!evenIfInvincible && (ModSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
+					!evenIfInvincible && (!DamageCooldown.Finished || SaveData.Instance.Assists.Invincible || amount <= 0) ||
 					Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
 				{
 					return 0;
 				}
-				ModSession.damageCooldown = HealthData.damageCooldown;
+				DamageCooldown.Reset();
 				if ((ModSession.currentPlayerHealth -= amount) > 0)
 				{
 					if (!silent)
