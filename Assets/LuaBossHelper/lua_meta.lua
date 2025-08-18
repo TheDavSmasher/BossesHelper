@@ -25,13 +25,16 @@
 ---@field X number The x component of the vector
 ---@field Y number The y component of the vector
 ---@field Length fun(self: Vector2): number
+---@field SafeNormalize fun(self: Vector2): Vector2
 ---@field SafeNormalize fun(self: Vector2, length: number): Vector2
+---@operator sub(Vector2): Vector2
 
 ---@class EntityData An Everest EntityData object.
 ---@field Values any
 
 ---@class Entity A Monocle Entity object
 ---@field Add fun(self: Entity, component: Component) Adds a component to the Entity
+---@field Position Vector2
 ---@field Collidable boolean
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
 

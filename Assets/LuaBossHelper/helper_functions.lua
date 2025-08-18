@@ -515,7 +515,7 @@ end
 -- @bool[opt=false] skipScreenWipe Whether this wipe is skipped or not.
 -- @bool[opt=false] skipCompleteScreen Whether this skips the complete screen.
 function helpers.completeArea(spotlightWipe, skipScreenWipe, skipCompleteScreen)
-    engine.scene:CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
+    engine.Scene:CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
 end
 
 --- Plays a sound.
@@ -1361,8 +1361,10 @@ function helpers.addConstantBackgroundCoroutine(func, ...)
     luaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
 end
 
+---@param entity Entity
+---@param player Entity
 local function killPlayer(entity, player)
-    helpers.die(helpers.normalize(player.Position - entity.Position))
+    helpers.die((player.Position - entity.Position):SafeNormalize())
 end
 
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
