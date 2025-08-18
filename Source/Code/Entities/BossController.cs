@@ -54,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			{
 				new BossHealthTracker(() => Health)
 			};
-			Puppet.LoadAfterCtor();
+			Puppet.LoadFunctions(this);
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
