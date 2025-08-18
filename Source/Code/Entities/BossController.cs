@@ -83,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
 			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-				new(this, ChangeToPattern, Random.Next, AttackIndexForced)
+				new(this, ChangeToPattern, AttackIndexForced)
 			);
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{

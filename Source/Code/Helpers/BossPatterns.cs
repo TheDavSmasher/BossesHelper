@@ -6,8 +6,7 @@ using System.Collections.Generic;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public record ControllerDelegates(BossController Controller, Action ChangeToPattern,
-		Func<int> RandomNext, Func<int?> AttackIndexForced);
+	public record ControllerDelegates(BossController Controller, Action ChangeToPattern, Func<int?> AttackIndexForced);
 
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
@@ -88,7 +87,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				yield return PerformAndChange(() => StatePatternOrder[AttackIndex % StatePatternOrder.Count], () =>
 				{
 					int counter = UpdateLoop();
-					return counter > MinRandomIter && (counter > IterationCount || Delegates.RandomNext() % 2 == 1);
+					return counter > MinRandomIter && (counter > IterationCount || Delegates.Controller.Random.Next() % 2 == 1);
 				});
 			}
 		}
@@ -100,7 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
 		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Delegates)
 	{
-		protected override int AttackIndex => Delegates.AttackIndexForced() ?? Delegates.RandomNext();
+		protected override int AttackIndex => Delegates.AttackIndexForced() ?? Delegates.Controller.Random.Next();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
