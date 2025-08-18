@@ -975,20 +975,20 @@ end
 ---Get the Boss' current health value
 ---@return integer health The Boss's current health value
 function helpers.getHealth()
-    return boss:GetHealth()
+    return boss.Health
 end
 
 ---Set the Boss' health value to a new value.
 ---@param health integer The value to set the health to.
 function helpers.setHealth(health)
-    boss:SetHealth(health)
+    boss.Health = health
 end
 
 ---Decrease the Boss' health by the given value
 ---@param health? integer The amount of health lost. Defaults to 1.
 ---@default 1
 function helpers.decreaseHealth(health)
-    boss:DecreaseHealth(health or 1)
+    boss.Health = boss.Health - (health or 1)
 end
 
 --- Wait for the current attack coroutine to end
@@ -1004,13 +1004,13 @@ end
 ---Gets the currently set pattern index
 ---@return integer ID The current pattern's index, base 0
 function helpers.getCurrentPatternID()
-    return boss:GetCurrentPatternIndex()
+    return boss.CurrentPatternIndex
 end
 
 ---Gets the currently set pattern index
 ---@return string Name The current pattern's name, if any.
 function helpers.getCurrentPatternName()
-    return boss:GetCurrentPatternName()
+    return boss.CurrentPatternName
 end
 
 ---Get the index of the Pattern that is identified by the given name, if any.
@@ -1059,10 +1059,10 @@ end
 
 --#region Position and Movement
 
---- Set the gravity multiplier to the fiven value. Gravity constant is 900.
+--- Set the gravity multiplier to the given value. Gravity constant is 900.
 --- @param mult number The multiplier to apply to the Gravity constant which the Boss will use.
 function helpers.setEffectiveGravityMult(mult)
-    puppet:SetGravityMult(mult)
+    puppet.gravityMult = mult
 end
 
 ---Set the Boss's horizontal ground friction deceleration rate.

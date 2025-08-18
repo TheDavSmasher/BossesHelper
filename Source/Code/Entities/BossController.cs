@@ -19,13 +19,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public readonly BossPuppet Puppet;
 
-		private int Health;
+		public int Health;
 
 		private bool playerHasMoved;
 
 		private bool isActing;
 
-		private int currentPatternIndex;
+		public int CurrentPatternIndex { get; private set; }
+
+		public string CurrentPatternName => CurrentPattern.Name;
 
 		private int? forcedAttackIndex;
 
@@ -39,7 +41,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly Dictionary<string, int> NamedPatterns = [];
 
-		private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
+		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
 
 		public BossController(EntityData data, Vector2 offset, EntityID id)
 			: base(data.Position + offset)
@@ -58,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
-				currentPatternIndex = phase.StartWithPatternIndex;
+				CurrentPatternIndex = phase.StartWithPatternIndex;
 				startAttackingImmediately = phase.StartImmediately;
 			}
 			Add(new PlayerAliveChecker(() => CurrentPattern.EndAction(MethodEndReason.PlayerDied)));
@@ -105,7 +107,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				{
 					playerHasMoved = true;
 					if (!isActing)
-						StartAttackPattern(currentPatternIndex);
+						StartAttackPattern(CurrentPatternIndex);
 				}
 				if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
 				{
@@ -126,13 +128,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			if (goTo >= AllPatterns.Count)
 			{
-				currentPatternIndex = -1;
+				CurrentPatternIndex = -1;
 				ActivePattern.Active = false;
 				return;
 			}
 			if (goTo > 0)
 			{
-				currentPatternIndex = goTo;
+				CurrentPatternIndex = goTo;
 			}
 			ActivePattern.Replace(CurrentPattern.Perform());
 		}
@@ -148,17 +150,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		private void ChangeToPattern()
 		{
 			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
-				GetPatternIndex(CurrentPattern.GoToPattern, currentPatternIndex + 1));
+				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern, CurrentPatternIndex + 1));
 		}
 
-		public int GetPatternIndex(string goTo, int defaultIndex = -1)
+		public int GetPatternIndex(string goTo)
 		{
-			return NamedPatterns.GetValueOrDefault(goTo, defaultIndex);
-		}
-
-		public string GetCurrentPatternName()
-		{
-			return CurrentPattern.Name;
+			return NamedPatterns.GetValueOrDefault(goTo, -1);
 		}
 
 		public void InterruptPattern()

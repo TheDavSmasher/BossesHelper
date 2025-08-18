@@ -176,22 +176,7 @@ namespace Celeste.Mod.BossesHelper.Code
 
 			public int GetCurrentPatternIndex()
 			{
-				return currentPatternIndex;
-			}
-
-			public int GetHealth()
-			{
-				return Health;
-			}
-
-			public void SetHealth(int val)
-			{
-				Health = val;
-			}
-
-			public void DecreaseHealth(int val = 1)
-			{
-				Health -= val;
+				return CurrentPatternIndex;
 			}
 
 			public void ForceNextAttackIndex(int index)
@@ -226,11 +211,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				{
 					yield return Sprite.PlayAnim(anim);
 				}
-			}
-
-			public void SetGravityMult(float mult)
-			{
-				effectiveGravity = Gravity * mult;
 			}
 
 			public void SetXSpeed(float speed)

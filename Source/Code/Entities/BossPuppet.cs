@@ -56,6 +56,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public const float Gravity = 900f;
 
+		public float gravityMult;
+
 		public Vector2 Speed;
 
 		public float groundFriction;
@@ -76,8 +78,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly float maxFall;
 
-		private float effectiveGravity;
-
 		public bool killOnContact;
 
 		public BossPuppet(BossController controller)
@@ -88,7 +88,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			MirrorSprite = data.Bool("mirrorSprite");
 			bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
 			maxFall = data.Float("maxFall", 90f);
-			effectiveGravity = data.Float("baseGravityMultiplier", 1f) * Gravity;
+			gravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
 			airFriction = data.Float("airFriction");
 			freezeSidekickOnAttack = data.Bool("sidekickFreeze");
@@ -241,7 +241,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			//Apply gravity
 			if (!Grounded)
 			{
-				Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
+				Speed.Y = Calc.Approach(Speed.Y, maxFall, Gravity * gravityMult * Engine.DeltaTime);
 			}
 			//Apply friction
 			Speed.X = Calc.Approach(Speed.X, 0f, (Grounded ? groundFriction : airFriction) * Engine.DeltaTime);
