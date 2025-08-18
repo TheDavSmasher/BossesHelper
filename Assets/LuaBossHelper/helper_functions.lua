@@ -1,6 +1,31 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
+--#region Mod Imports
+
+---@diagnostic disable-next-line: undefined-field
+local luanet = _G.luanet
+
+local monocle = require("#monocle")
+local celeste = require("#celeste")
+local csharpVector2 = require("#microsoft.xna.framework.vector2")
+
+local ease = monocle.Ease
+local celesteMod = celeste.Mod
+local engine = monocle.Engine
+
+local modName = modMetaData.Name
+local classNamePrefix = "Celeste."
+
+local bossesHelper = celesteMod[modName]
+local modModule = bossesHelper.BossesHelperModule
+local modComponents = bossesHelper.Code.Components
+local modEntities = bossesHelper.Code.Entities
+local luaBossHelper = bossesHelper.Code.Helpers.LuaBossHelper
+local luaMethodWrappers = bossesHelper.Code.Helpers.LuaMethodWrappers
+
+--#endregion
+
 --#region Type Aliases
 
 ---Mostly used for lua-language-server annotations and VS Code support
@@ -29,18 +54,6 @@
 -- For example "helpers.say" will be just "say".
 -- Return values starting with # are from C#.
 -- @module helper_functions
-
----@diagnostic disable-next-line: undefined-field
-local luanet = _G.luanet
-
-local celeste = require("#celeste")
-local celesteMod = celeste.mod
-local csharpVector2 = require("#microsoft.xna.framework.vector2")
-local monocle = require("#monocle")
-local engine = monocle.Engine
-
-local modName = modMetaData.Name
-local classNamePrefix = "Celeste."
 
 local helpers = {}
 
@@ -99,7 +112,7 @@ end
 --- Get the content of a file from a Celeste asset.
 -- @string filename Filename to load. Filename should not have a extention.
 function helpers.readCelesteAsset(filename)
-    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetFileContent(filename)
+    return luaBossHelper.GetFileContent(filename)
 end
 
 --- Loads and returns the result of a Lua asset.
@@ -464,10 +477,10 @@ function helpers.teleportTo(x, y, room, introType)
         end
 
         if x and y then
-            celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
+            luaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
 
         else
-            celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
+            luaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
         end
 
 	else
@@ -493,11 +506,11 @@ end
 function helpers.instantTeleportTo(x, y, room)
     if x and y then
         -- Provide own position
-        celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
+        luaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
 
     else
         -- Keep releative room position
-        celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
+        luaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
     end
 end
 
@@ -542,7 +555,7 @@ end
 -- @string[opt] prefix Overrides the global class name prefix.
 -- @treturn {#Monocle.Entity...} Tracked entities of given class.
 function helpers.getEntities(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked entity by class name.
@@ -550,7 +563,7 @@ end
 -- @string[opt] prefix Overrides the global class name prefix.
 -- @treturn #Monocle.Entity First entity of given class.
 function helpers.getEntity(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
 end
 
 --- Gets all entities by class name.
@@ -558,7 +571,7 @@ end
 -- @string[opt] prefix Overrides the global class name prefix.
 -- @treturn {#Monocle.Entity...} Tracked entities of given class.
 function helpers.getAllEntities(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first entity by class name.
@@ -566,7 +579,7 @@ end
 -- @string[opt] prefix Overrides the global class name prefix.
 -- @treturn #Monocle.Entity First entity of given class.
 function helpers.getFirstEntity(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
 end
 
 --- Puts player in feather state.
@@ -917,9 +930,6 @@ end
 --#region Bosses Helper functions
 
 --- Bosses Helper Attack specific functions and helper methods for the player
-
-local ease = require("#monocle.ease")
-
 
 --#region Entity Adding
 
@@ -1326,7 +1336,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-    return celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
+    return luaBossHelper.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -1357,7 +1367,7 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
+    luaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
 end
 
 local function killPlayer(entity, player)
@@ -1374,7 +1384,7 @@ end
 ---@default true
 ---@return Component checker The Entity Checker that can be added to any Entity.
 function helpers.getEntityChecker(checker, func, state, remove)
-    return celeste.Mod.BossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
+    return modComponents.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
 end
 
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
@@ -1384,7 +1394,7 @@ end
 ---@default helpers.destroyEntity
 ---@return Component timer The Entity Timer that can be added to any Entity.
 function helpers.getEntityTimer(timer, func)
-    return celeste.Mod.BossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
+    return modComponents.EntityTimer(timer, func or helpers.destroyEntity)
 end
 
 ---Returns an EntityFlagger Component that will execute the passed function when the given session flag's state matches the required state.
@@ -1398,7 +1408,7 @@ end
 ---@default true
 ---@return Component flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
-    return celeste.Mod.BossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
+    return modComponents.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 ---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
@@ -1409,7 +1419,7 @@ end
 ---@default false
 ---@return Component the Entity Chain component that can be added to any Entity.
 function helpers.getEntityChain(entity, startChained, remove)
-    return celeste.Mod.BossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
+    return modComponents.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
 ---Create and return a basic entity to use in attacks.
@@ -1425,7 +1435,7 @@ end
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
 function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
-    return celeste.Mod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+    return modEntities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
 end
 
 ---Create and return a basic entity to use in attacks.
@@ -1447,7 +1457,7 @@ end
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
-    return celeste.Mod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
+    return modEntities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
@@ -1460,7 +1470,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components Tracked components of given class.
 function helpers.getComponents(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked component by class name.
@@ -1468,7 +1478,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First tracked component of given class.
 function helpers.getComponent(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name.
@@ -1476,7 +1486,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene.
 function helpers.getAllComponents(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first component by class name.
@@ -1484,7 +1494,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class.
 function helpers.getFirstComponent(name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name added to an entity of given class name.
@@ -1494,7 +1504,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component[] components All components of given class on scene attached to the entity type.
 function helpers.getAllComponentsOnType(name, entity, prefix, entityPre)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return luaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Gets the first component by class name added to an entity of the given class name.
@@ -1504,7 +1514,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component component First component of given class attached to the entity type.
 function helpers.getFirstComponentOnType(name, entity, prefix, entityPre)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return luaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Returns all the components of the given class name from the entity given, if any.
@@ -1513,7 +1523,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene sored on the entity, if any.
 function helpers.getComponentsFromEntity(entity, name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Returns the component of the given class name from the entity given, if any.
@@ -1522,7 +1532,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class stored on the entity, if any.
 function helpers.getComponentFromEntity(entity, name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
+    return luaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Checks if the entity given has a component of the given class name.
@@ -1531,7 +1541,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return boolean componentFound If the Entity does have a Component of the type specified.
 function helpers.entityHasComponent(entity, name, prefix)
-    return celeste.Mod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
+    return luaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
 
 --#endregion
@@ -1541,7 +1551,7 @@ end
 ---Get the Player's current health value on the active Health System
 ---@return number health The player's health value, or -1 if there's no active Health System
 function helpers.getPlayerHealth()
-    local controller = celeste.Mod.BossesHelper.BossesHelperModule.Session.mapDamageController
+    local controller = modModule.Session.mapDamageController
     if controller then
        return controller.health
     end
@@ -1551,7 +1561,7 @@ end
 ---Gives additional time where the player is invincible to taking damage.
 ---@param time number The time to add to the invincible timer.
 function helpers.giveInvincibleFrames(time)
-    celeste.Mod.BossesHelper.BossesHelperModule.GiveIFrames(time)
+    modModule.GiveIFrames(time)
 end
 
 --#endregion
@@ -1562,7 +1572,7 @@ end
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
 function helpers.sayExt(dialog, ...)
-    coroutine.yield(celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+    coroutine.yield(luaBossHelper.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
@@ -1592,7 +1602,7 @@ end
 ---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
-    newData = celeste.Mod.BossesHelper.BossesHelperModule.MakeEntityData()
+    newData = modModule.MakeEntityData()
     newData.ID = id or 1000
     newData.Level = engine.Scene
     newData.Position = position or vector2(0,0)
@@ -1634,7 +1644,7 @@ end
 ---@param func fun() The function to execute. Takes no parameters.
 ---@param delay number The time in seconds the function will be called after.
 function helpers.doMethodAfterDelay(func, delay)
-    celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
+    luaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
 ---Get the length of the provided vector2
