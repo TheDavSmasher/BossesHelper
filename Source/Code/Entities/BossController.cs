@@ -65,7 +65,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				CurrentPatternIndex = phase.StartWithPatternIndex;
 				startAttackingImmediately = phase.StartImmediately;
 			}
-			Add(new PlayerAliveChecker(() => CurrentPattern.EndAction(MethodEndReason.PlayerDied)));
+			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(MethodEndReason.PlayerDied);
 		}
 
 		public override void Added(Scene scene)
