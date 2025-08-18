@@ -37,15 +37,43 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					SidekickSprite.Custom => Custom,
 					_ => Dummy
 				};
-				Dummy.Visible = DummyHair.Visible = value == SidekickSprite.Dummy;
+				Dummy.Visible = value == SidekickSprite.Dummy;
 				Boss.Visible = value == SidekickSprite.Boss;
 				Custom.Visible = value == SidekickSprite.Custom;
 			}
 		}
 
-		private readonly PlayerSprite Dummy;
+		private class DummySprite : PlayerSprite
+		{
+			public readonly PlayerHair Hair;
 
-		private readonly PlayerHair DummyHair;
+			public new bool Visible
+			{
+				get => base.Visible && Hair.Visible;
+				set => base.Visible = Hair.Visible = value;
+			}
+
+			public DummySprite()
+				: base(PlayerSpriteMode.Badeline)
+			{
+				Scale.X = -1f;
+				Play("fallslow");
+				Hair = new(this)
+				{
+					Color = BadelineOldsite.HairColor,
+					Border = Color.Black,
+					Facing = Facings.Left
+				};
+			}
+
+			public override void Added(Entity entity)
+			{
+				base.Added(entity);
+				entity.Add(Hair);
+			}
+		}
+
+		private readonly DummySprite Dummy;
 
 		private readonly Sprite Boss;
 
@@ -67,17 +95,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public BadelineSidekick(Vector2 position, bool freezeOnAttack, float cooldown) : base(position)
 		{
-			Dummy = new PlayerSprite(PlayerSpriteMode.Badeline);
-			Dummy.Scale.X = -1f;
-			Dummy.Play("fallslow");
-			DummyHair = new(Dummy)
-			{
-				Color = BadelineOldsite.HairColor,
-				Border = Color.Black,
-				Facing = Facings.Left
-			};
-			Add(DummyHair);
-			Add(Dummy);
+			Add(Dummy = new());
 			Add(Boss = GFX.SpriteBank.Create("badeline_boss"));
 			Add(Custom = GFX.SpriteBank.Create("badeline_sidekick"));
 			Add(Wave = new SineWave(0.25f, 0f));
@@ -181,7 +199,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			else if ((oldX - X) * ActiveSprite.Scale.X > 0)
 			{
 				ActiveSprite.Scale.X *= -1;
-				DummyHair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
+				Dummy.Hair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
 			}
 			base.Render();
 			ActiveSprite.RenderPosition = renderPosition;
