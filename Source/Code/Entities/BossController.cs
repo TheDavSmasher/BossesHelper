@@ -41,6 +41,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly Dictionary<string, int> NamedPatterns = [];
 
+		private Dictionary<string, IBossAction> BossActions;
+
 		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
 
 		public BossController(EntityData data, Vector2 offset, EntityID id)
@@ -78,11 +80,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
+			BossActions = this.ReadLuaFiles(
+				(SourceData.Attr("attacksPath"), BossAttack.Create),
+				(SourceData.Attr("eventsPath"), BossEvent.Create)
+			);
 			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-				this.ReadLuaFiles(
-					(SourceData.Attr("attacksPath"), BossAttack.Create),
-					(SourceData.Attr("eventsPath"), BossEvent.Create)
-				), new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
+				new(this, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
 			);
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
@@ -142,6 +145,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		private int? AttackIndexForced()
 		{
 			return ForcedAttackIndex.Value;
+		}
+
+		public bool TryGet(string key, out IBossAction action)
+		{
+			return BossActions.TryGetValue(key, out action);
 		}
 
 		private void ChangeToPattern()

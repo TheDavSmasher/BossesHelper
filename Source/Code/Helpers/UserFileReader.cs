@@ -16,21 +16,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		#region XML Files
 		#region XML Reading
-		public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset,
-			Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+		public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset, ControllerDelegates delegates)
 		{
 			List<BossPattern> targetOut = [];
 
 			ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
 			{
-				BossPattern newPattern = patternNode.ParseNewPattern(offset, actions, delegates);
+				BossPattern newPattern = patternNode.ParseNewPattern(offset, delegates);
 				targetOut.Add(newPattern);
 			});
 			return targetOut;
 		}
 
-		private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset,
-			Dictionary<string, IBossAction> actions, ControllerDelegates delegates)
+		private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset, ControllerDelegates delegates)
 		{
 			string nodeType = patternNode.LocalName.ToLower();
 			List<Method> methodList = [];
@@ -39,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			string goTo = patternNode.GetValue("goto");
 			if (nodeType.Equals("event"))
 			{
-				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, actions, delegates);
+				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, delegates);
 			}
 
 			Hitbox trigger = patternNode.GetHitbox(offset);
@@ -58,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 						Math.Max(action.GetValueOrDefault("weight", 0), 1)
 					));
 				}
-				return new RandomPattern(patternName, methodList, trigger, minCount, count, goTo, actions, delegates);
+				return new RandomPattern(patternName, methodList, trigger, minCount, count, goTo, delegates);
 			}
 
 			List<Method> preLoopList = [];
@@ -79,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 			}
 
-			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, actions, delegates);
+			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, delegates);
 		}
 
 		public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
