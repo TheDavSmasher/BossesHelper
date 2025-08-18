@@ -205,21 +205,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-#nullable enable
-		public class SingleUse<T>
+		public class SingleUse<T> where T : struct
 		{
 			public T? Value
 			{
 				get
 				{
 					T? value = field;
-					field = default;
+					field = null;
 					return value;
 				}
 				set;
 			}
 		}
-#nullable disable
 
 		public interface IMonocleCollection<T> : IReadOnlyCollection<T>
 		{

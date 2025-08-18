@@ -172,7 +172,7 @@ namespace Celeste.Mod.BossesHelper.Code
 		{
 			public IEnumerator WaitForAttackToEnd()
 			{
-				while (isActing)
+				while (IsActing)
 				{
 					yield return null;
 				}
