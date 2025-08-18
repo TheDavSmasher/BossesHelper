@@ -197,14 +197,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			Vector2 renderPosition = ActiveSprite.RenderPosition;
 			ActiveSprite.RenderPosition = ActiveSprite.RenderPosition.Floor();
-			if (beam != null)
-			{
-				if ((beam.oldX - X) * ActiveSprite.Scale.X < 0)
-				{
-					ActiveSprite.Scale.X *= -1;
-				}
-			}
-			else if ((oldX - X) * ActiveSprite.Scale.X > 0)
+			if (beam != null && (beam.oldX - X) * ActiveSprite.Scale.X < 0 ||
+				(oldX - X) * ActiveSprite.Scale.X > 0)
 			{
 				ActiveSprite.Scale.X *= -1;
 			}
