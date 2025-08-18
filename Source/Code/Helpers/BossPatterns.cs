@@ -48,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public void EndAction(MethodEndReason reason)
 		{
 			IsActing = false;
-			CurrentAction?.EndAction(reason);
+			CurrentAction?.End(reason);
 		}
 
 		public abstract IEnumerator Perform();

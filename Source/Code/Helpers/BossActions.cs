@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		IEnumerator Perform();
 
-		void EndAction(MethodEndReason reason) { }
+		void End(MethodEndReason reason) { }
 	}
 
 	public interface IBossActionCreator<TSelf> : IBossAction where TSelf : IBossActionCreator<TSelf>
@@ -59,7 +59,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return attackFunction.ToIEnumerator();
 		}
 
-		public void EndAction(MethodEndReason reason)
+		public void End(MethodEndReason reason)
 		{
 			endFunction?.Call(reason);
 			onEndMethods[reason]?.Call();
