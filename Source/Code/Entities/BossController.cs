@@ -23,8 +23,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private bool playerHasMoved;
 
-		private bool isActing;
-
 		public int CurrentPatternIndex { get; private set; }
 
 		public string CurrentPatternName => CurrentPattern.Name;
@@ -85,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
 			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-				new(this, ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
+				new(this, ChangeToPattern, Random.Next, AttackIndexForced)
 			);
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
@@ -101,18 +99,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Puppet.RemoveSelf();
 		}
 
+		private bool IsActing => CurrentPattern.IsActing;
+
 		public override void Update()
 		{
 			base.Update();
 			if (Scene.GetPlayer() is Player entity)
 			{
-				if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately || isActing))
+				bool IsActing = CurrentPattern.IsActing;
+				if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately || IsActing))
 				{
 					playerHasMoved = true;
-					if (!isActing)
+					if (!IsActing)
 						StartAttackPattern(CurrentPatternIndex);
 				}
-				if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
+				if (!IsActing && IsPlayerWithinSpecifiedRegion(entity.Position))
 				{
 					InterruptPattern();
 					ChangeToPattern();
@@ -166,7 +167,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void InterruptPattern()
 		{
 			ActivePattern.Active = false;
-			isActing = false;
 			CurrentPattern.EndAction(MethodEndReason.Interrupted);
 		}
 
