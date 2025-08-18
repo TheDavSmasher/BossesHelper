@@ -941,7 +941,6 @@ end
 
 --#endregion
 
-
 --#region Fight Logic
 
 ---Plan an animation on the Boss's given sprite
@@ -1046,10 +1045,6 @@ function helpers.removeBoss(permanent)
 end
 
 --#endregion
-
-
---#region Other Helper Functions
-
 
 --#region Position and Movement
 
@@ -1706,8 +1701,6 @@ function helpers.getEaserByName(name, invert)
         return easers.default
     end
 end
-
---#endregion
 
 --#endregion
 
