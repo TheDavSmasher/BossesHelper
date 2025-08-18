@@ -23,6 +23,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private bool playerHasMoved;
 
+		public bool IsActing => CurrentPattern.IsActing;
+
 		public int CurrentPatternIndex { get; private set; }
 
 		public string CurrentPatternName => CurrentPattern.Name;
@@ -97,8 +99,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Puppet.RemoveSelf();
 		}
 
-		private bool IsActing => CurrentPattern.IsActing;
-
 		public override void Update()
 		{
 			base.Update();
@@ -150,17 +150,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
 				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern, CurrentPatternIndex + 1));
-		}
-
-		public int GetPatternIndex(string goTo)
-		{
-			return NamedPatterns.GetValueOrDefault(goTo, -1);
-		}
-
-		public void ForceNextAttack(int index)
-		{
-			if (CurrentPattern is RandomPattern Random)
-				Random.ForceNextAttack(index);
 		}
 
 		public void InterruptPattern()

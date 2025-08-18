@@ -170,14 +170,6 @@ namespace Celeste.Mod.BossesHelper.Code
 	{
 		public partial class BossController
 		{
-			public IEnumerator WaitForAttackToEnd()
-			{
-				while (IsActing)
-				{
-					yield return null;
-				}
-			}
-
 			public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
 			{
 				BossesHelperModule.Session.BossPhasesSaved[BossID] =
@@ -193,9 +185,15 @@ namespace Celeste.Mod.BossesHelper.Code
 				}
 			}
 
-			public int GetCurrentPatternIndex()
+			public int GetPatternIndex(string goTo)
 			{
-				return CurrentPatternIndex;
+				return NamedPatterns.GetValueOrDefault(goTo, -1);
+			}
+
+			public void ForceNextAttack(int index)
+			{
+				if (CurrentPattern is RandomPattern Random)
+					Random.ForceNextAttack(index);
 			}
 
 			public void AddEntity(Entity entity)
@@ -219,11 +217,6 @@ namespace Celeste.Mod.BossesHelper.Code
 
 		public partial class BossPuppet
 		{
-			public IEnumerator WaitBossAnim(string anim)
-			{
-				return Sprite.PlayAnim(anim);
-			}
-
 			public void SetXSpeed(float speed)
 			{
 				Speed.X = speed;

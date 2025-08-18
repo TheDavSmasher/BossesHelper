@@ -1,9 +1,35 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
+--#region Type Aliases
+
+---Mostly used for lua-language-server annotations and VS Code support
+
+---@class Vector2 A Vector2 object.
+---@field X number The x component of the vector
+---@field Y number The y component of the vector
+
+---@class EntityData An Everest EntityData object.
+---@field Values any
+
+---@class Entity A Monocle Entity object
+---@field Add fun(Component) Adds a component to the Entity
+
+---@class BossPuppet : Entity
+---@field Speed Vector2 
+
+---@alias Component Component A Monocle Component object.
+---@alias Collider Collider A Monocle Collider object.
+---@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
+---@alias Easer Easer A Monocle Easer, used for Tweens.
+
+---@class _G
+---@field luanet any Luanet server
+
+--#endregion
+
 --#region Mod Imports
 
----@diagnostic disable-next-line: undefined-field
 local luanet = _G.luanet
 
 local monocle = require("#monocle")
@@ -21,29 +47,9 @@ local bossesHelper = celesteMod[modName]
 local modModule = bossesHelper.BossesHelperModule
 local modComponents = bossesHelper.Code.Components
 local modEntities = bossesHelper.Code.Entities
+local modUtils = bossesHelper.Code.Helpers.BossesHelperUtils
 local luaBossHelper = bossesHelper.Code.Helpers.LuaBossHelper
 local luaMethodWrappers = bossesHelper.Code.Helpers.LuaMethodWrappers
-
---#endregion
-
---#region Type Aliases
-
----Mostly used for lua-language-server annotations and VS Code support
-
----@class Vector2 A Vector2 object.
----@field X number The x component of the vector
----@field Y number The y component of the vector
-
----@class EntityData An Everest EntityData object.
----@field Values any
-
----@class Entity A Monocle Entity object
----@field Add fun(Component) Adds a component to the Entity
-
----@alias Component Component A Monocle Component object.
----@alias Collider Collider A Monocle Collider object.
----@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
----@alias Easer Easer A Monocle Easer, used for Tweens.
 
 --#endregion
 
@@ -963,7 +969,7 @@ end
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 ---@param anim string The animation to play
 function helpers.playAndWaitPuppetAnim(anim)
-    coroutine.yield(boss:WaitBossAnim(anim))
+    coroutine.yield(modUtils.PlayAnim(boss.Sprite, anim))
 end
 
 ---Get a random number based on the boss's random seed.
@@ -993,7 +999,9 @@ end
 
 --- Wait for the current attack coroutine to end
 function helpers.waitForAttackToEnd()
-    return coroutine.yield(boss:WaitForAttackToEnd())
+    while boss.IsActing do
+        wait()
+    end
 end
 
 ---Interrupt the current boss action pattern
@@ -1080,7 +1088,8 @@ end
 ---Set the Boss' x speed to the given value
 ---@param value number The value to set the Boss' speed x component to.
 function helpers.setXSpeed(value)
-    puppet:SetXSpeed(value)
+    
+    puppet.Speed.X = value
 end
 
 ---Set the Boss' y speed to the given value
