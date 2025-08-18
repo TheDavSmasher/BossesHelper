@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public record ControllerDelegates(BossController Controller, Action ChangeToPattern, Func<int?> AttackIndexForced);
+	public record ControllerDelegates(BossController Controller, Action ChangeToPattern);
 
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
@@ -99,7 +99,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
 		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Delegates)
 	{
-		protected override int AttackIndex => Delegates.AttackIndexForced() ?? Delegates.Controller.Random.Next();
+		protected override int AttackIndex => Delegates.Controller.ForcedAttackIndex.Value ?? Delegates.Controller.Random.Next();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
