@@ -173,32 +173,6 @@ namespace Celeste.Mod.BossesHelper.Code
 
 			public bool IsActing => CurrentPattern.IsActing;
 
-			public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
-			{
-				BossesHelperModule.Session.BossPhasesSaved[BossID] =
-					new(health, startImmediately, patternIndex);
-			}
-
-			public void RemoveBoss(bool permanent)
-			{
-				RemoveSelf();
-				if (permanent)
-				{
-					Scene.DoNotLoad(SourceId);
-				}
-			}
-
-			public int GetPatternIndex(string goTo)
-			{
-				return NamedPatterns.GetValueOrDefault(goTo, -1);
-			}
-
-			public void ForceNextAttack(int index)
-			{
-				if (CurrentPattern is RandomPattern Random)
-					Random.ForceNextAttack(index);
-			}
-
 			public void AddEntity(Entity entity)
 			{
 				if (!activeEntities.Contains(entity))
@@ -214,6 +188,32 @@ namespace Celeste.Mod.BossesHelper.Code
 				if (activeEntities.Remove(entity))
 				{
 					entity.RemoveSelf();
+				}
+			}
+
+			public int GetPatternIndex(string goTo)
+			{
+				return NamedPatterns.GetValueOrDefault(goTo, -1);
+			}
+
+			public void ForceNextAttack(int index)
+			{
+				if (CurrentPattern is RandomPattern Random)
+					Random.ForceNextAttack(index);
+			}
+
+			public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
+			{
+				BossesHelperModule.Session.BossPhasesSaved[BossID] =
+					new(health, startImmediately, patternIndex);
+			}
+
+			public void RemoveBoss(bool permanent)
+			{
+				RemoveSelf();
+				if (permanent)
+				{
+					Scene.DoNotLoad(SourceId);
 				}
 			}
 
@@ -253,6 +253,13 @@ namespace Celeste.Mod.BossesHelper.Code
 				}
 			}
 
+			public void Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
+			{
+				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
+				tween.OnUpdate = t => (isX ? ref Speed.X : ref Speed.Y) = start + (target - start) * t.Eased;
+				Add(tween);
+			}
+
 			public void ChangeHitboxOption(string tag)
 			{
 				Collider = GetTagOrDefault(ColliderOption.Hitboxes, tag, Sprite.Height);
@@ -283,13 +290,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				{
 					target.Collider = Target;
 				}
-			}
-
-			public void Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
-			{
-				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-				tween.OnUpdate = t => (isX ? ref Speed.X : ref Speed.Y) = start + (target - start) * t.Eased;
-				Add(tween);
 			}
 		}
 	}

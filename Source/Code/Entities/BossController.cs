@@ -122,6 +122,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				&& positionTrigger.Collide(entityPos);
 		}
 
+		public void DestroyAll()
+		{
+			activeEntities.ForEach(entity => entity.RemoveSelf());
+			activeEntities.Clear();
+		}
+
+		public void InterruptPattern()
+		{
+			ActivePattern.Active = false;
+			CurrentPattern.EndAction(MethodEndReason.Interrupted);
+		}
+
 		public void StartAttackPattern(int goTo = -1)
 		{
 			if (goTo >= AllPatterns.Count)
@@ -137,27 +149,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			ActivePattern.Replace(CurrentPattern.Perform());
 		}
 
-		public bool TryGet(string key, out IBossAction action)
+		internal bool TryGet(string key, out IBossAction action)
 		{
 			return BossActions.TryGetValue(key, out action);
 		}
 
-		public void ChangeToPattern()
+		internal void ChangeToPattern()
 		{
 			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
 				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern, CurrentPatternIndex + 1));
-		}
-
-		public void InterruptPattern()
-		{
-			ActivePattern.Active = false;
-			CurrentPattern.EndAction(MethodEndReason.Interrupted);
-		}
-
-		public void DestroyAll()
-		{
-			activeEntities.ForEach(entity => entity.RemoveSelf());
-			activeEntities.Clear();
 		}
 	}
 }

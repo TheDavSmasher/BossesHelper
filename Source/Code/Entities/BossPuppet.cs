@@ -120,11 +120,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			})?.AddTo(this);
 		}
 
-		internal void LoadFunctions(BossController controller)
-		{
-			BossFunctions = ReadLuaFilePath(controller.SourceData.Attr("functionsPath"), path => new BossFunctions(path, controller));
-		}
-
 		private Collider GetMainOrDefault(ColliderOption option, float? value)
 		{
 			return GetTagOrDefault(option, "main", value);
@@ -141,66 +136,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
 		}
 
-		#region Collision Methods
-		private void KillOnContact(Player player)
+		internal void LoadFunctions(BossController controller)
 		{
-			if (killOnContact)
-				player.Die((player.Position - Position).SafeNormalize());
+			BossFunctions = ReadLuaFilePath(controller.SourceData.Attr("functionsPath"), path => new BossFunctions(path, controller));
 		}
-
-		private void OnSidekickLaser()
-		{
-			OnDamage(HurtModes.SidekickAttack);
-		}
-
-		private void OnPlayerBounce(Player player)
-		{
-			OnDamage(HurtModes.HeadBonk, postLua: () =>
-			{
-				Audio.Play("event:/game/general/thing_booped", Position);
-				Celeste.Freeze(0.2f);
-				player.Bounce(Top + 2f);
-			});
-		}
-
-		private void OnPlayerDash(Player player)
-		{
-			OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
-		}
-
-		private void OnPlayerContact(Player _)
-		{
-			OnDamage(HurtModes.PlayerContact);
-		}
-
-		private void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
-		{
-			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
-			{
-				BossHitCooldown.Reset();
-				BossFunctions.OnDamage(source).Coroutine(this);
-				postLua?.Invoke();
-			}
-		}
-
-		public void OnCollideH(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.X = 0;
-		}
-
-		public void OnCollideV(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.Y = 0;
-		}
-		#endregion
 
 		public override void Awake(Scene scene)
 		{
@@ -268,5 +207,66 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
 			}
 		}
+
+		#region Collision Methods
+		private void KillOnContact(Player player)
+		{
+			if (killOnContact)
+				player.Die((player.Position - Position).SafeNormalize());
+		}
+
+		private void OnSidekickLaser()
+		{
+			OnDamage(HurtModes.SidekickAttack);
+		}
+
+		private void OnPlayerBounce(Player player)
+		{
+			OnDamage(HurtModes.HeadBonk, postLua: () =>
+			{
+				Audio.Play("event:/game/general/thing_booped", Position);
+				Celeste.Freeze(0.2f);
+				player.Bounce(Top + 2f);
+			});
+		}
+
+		private void OnPlayerDash(Player player)
+		{
+			OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
+		}
+
+		private void OnPlayerContact(Player _)
+		{
+			OnDamage(HurtModes.PlayerContact);
+		}
+
+		private void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
+		{
+			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
+			{
+				BossHitCooldown.Reset();
+				BossFunctions.OnDamage(source).Coroutine(this);
+				postLua?.Invoke();
+			}
+		}
+
+		private void OnCollideH(CollisionData data)
+		{
+			if (data.Hit != null && data.Hit.OnCollide != null)
+			{
+				data.Hit.OnCollide(data.Direction);
+			}
+			Speed.X = 0;
+		}
+
+		private void OnCollideV(CollisionData data)
+		{
+			if (data.Hit != null && data.Hit.OnCollide != null)
+			{
+				data.Hit.OnCollide(data.Direction);
+			}
+			Speed.Y = 0;
+		}
+		#endregion
 	}
 }
