@@ -1,34 +1,10 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
---#region Type Aliases
+--#region Mod Imports
 
 ---Mostly used for lua-language-server annotations and VS Code support
-
----@class Vector2 A Vector2 object.
----@field X number The x component of the vector
----@field Y number The y component of the vector
-
----@class EntityData An Everest EntityData object.
----@field Values any
-
----@class Entity A Monocle Entity object
----@field Add fun(Component) Adds a component to the Entity
-
----@class BossPuppet : Entity
----@field Speed Vector2 
-
----@alias Component Component A Monocle Component object.
----@alias Collider Collider A Monocle Collider object.
----@alias ColliderList ColliderList A Monocle ColliderList object, combining multiple Colliders.
----@alias Easer Easer A Monocle Easer, used for Tweens.
-
----@class _G
----@field luanet any Luanet server
-
---#endregion
-
---#region Mod Imports
+---@module "CelesteMod"
 
 local luanet = _G.luanet
 
@@ -1088,7 +1064,6 @@ end
 ---Set the Boss' x speed to the given value
 ---@param value number The value to set the Boss' speed x component to.
 function helpers.setXSpeed(value)
-    
     puppet.Speed.X = value
 end
 
