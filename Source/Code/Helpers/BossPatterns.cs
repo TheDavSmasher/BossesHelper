@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
 	public record ControllerDelegates(BossController Controller, Action ChangeToPattern,
-		Func<int> RandomNext, Action<bool> SetIsAttacking, Func<int?> AttackIndexForced);
+		Func<int> RandomNext, Action<bool> SetIsActing, Func<int?> AttackIndexForced);
 
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
@@ -32,9 +32,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				if (Delegates.Controller.TryGet(method.ActionName, out IBossAction _currentAct))
 				{
 					CurrentAction = _currentAct;
-					Delegates.SetIsAttacking(true);
+					Delegates.SetIsActing(true);
 					yield return CurrentAction.Perform();
-					Delegates.SetIsAttacking(false);
 					EndAction(MethodEndReason.Completed);
 					CurrentAction = null;
 				}
@@ -48,6 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public void EndAction(MethodEndReason reason)
 		{
+			Delegates.SetIsActing(false);
 			CurrentAction?.EndAction(reason);
 		}
 

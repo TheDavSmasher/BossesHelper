@@ -23,9 +23,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		void EndAction(MethodEndReason reason) { }
 	}
 
-	public interface IBossActionCreator<T> : IBossAction where T : IBossActionCreator<T>
+	public interface IBossActionCreator<TSelf> : IBossAction where TSelf : IBossActionCreator<TSelf>
 	{
-		abstract static T Create(string filepath, BossController controller);
+		abstract static TSelf Create(string filepath, BossController controller);
 	}
 
 	public class LuaWarmer : ILuaLoader
