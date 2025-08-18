@@ -179,11 +179,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				return CurrentPatternIndex;
 			}
 
-			public void ForceNextAttackIndex(int index)
-			{
-				forcedAttackIndex = index;
-			}
-
 			public void AddEntity(Entity entity)
 			{
 				if (!activeEntities.Contains(entity))

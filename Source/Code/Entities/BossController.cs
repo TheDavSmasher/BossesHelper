@@ -29,7 +29,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public string CurrentPatternName => CurrentPattern.Name;
 
-		private int? forcedAttackIndex;
+		public readonly SingleUse<int> ForcedAttackIndex = new();
 
 		private readonly bool startAttackingImmediately;
 
@@ -141,10 +141,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private int? AttackIndexForced()
 		{
-			if (forcedAttackIndex is not int index)
-				return null;
-			forcedAttackIndex = null;
-			return index;
+			return ForcedAttackIndex.Value;
 		}
 
 		private void ChangeToPattern()
