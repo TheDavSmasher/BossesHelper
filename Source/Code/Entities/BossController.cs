@@ -23,12 +23,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private bool playerHasMoved;
 
-		public bool IsActing => CurrentPattern.IsActing;
-
-		public int CurrentPatternIndex { get; private set; }
-
-		public string CurrentPatternName => CurrentPattern.Name;
-
 		public readonly SingleUse<int> ForcedAttackIndex = new();
 
 		private readonly bool startAttackingImmediately;
@@ -37,13 +31,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly List<Entity> activeEntities = [];
 
-		private List<BossPattern> AllPatterns;
+		private readonly List<BossPattern> AllPatterns = [];
 
 		private readonly Dictionary<string, int> NamedPatterns = [];
 
 		private Dictionary<string, IBossAction> BossActions;
 
+		public int CurrentPatternIndex { get; private set; }
+
 		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
+
+		public string CurrentPatternName => CurrentPattern.Name;
+
+		public bool IsActing => CurrentPattern.IsActing;
 
 		public BossController(EntityData data, Vector2 offset, EntityID id)
 			: base(data.Position + offset)
@@ -84,7 +84,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(SourceData.Attr("attacksPath"), BossAttack.Create),
 				(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
-			AllPatterns = this.ReadPatternFile(SourceData.Attr("patternsPath"));
+			AllPatterns.AddRange(this.ReadPatternFile(SourceData.Attr("patternsPath")));
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
 				if (AllPatterns[i].Name is string name)
