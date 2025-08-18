@@ -221,7 +221,7 @@ namespace Celeste.Mod.BossesHelper.Code
 		{
 			public IEnumerator WaitBossAnim(string anim)
 			{
-				return Sprite?.PlayAnim(anim);
+				return Sprite.PlayAnim(anim);
 			}
 
 			public void SetXSpeed(float speed)

@@ -26,6 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			bool singleLoop = false;
 			void waitUntilDone(string _) => singleLoop = true;
+			if (sprite is null) yield break;
 			sprite.OnLastFrame += waitUntilDone;
 			if (sprite.TryPlay(anim))
 			{
