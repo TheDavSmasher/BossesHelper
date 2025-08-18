@@ -7,8 +7,6 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public record ControllerDelegates(BossController Controller, Action ChangeToPattern);
-
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
 		public bool IsWait => ActionName.ToLower().Equals("wait");
@@ -21,7 +19,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		PlayerDied
 	}
 
-	public abstract record BossPattern(string Name, string GoToPattern, ControllerDelegates Delegates)
+	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
 		public IBossAction CurrentAction { get; private set; }
 
@@ -31,7 +29,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			if (!method.IsWait)
 			{
-				if (Delegates.Controller.TryGet(method.ActionName, out IBossAction _currentAct))
+				if (Controller.TryGet(method.ActionName, out IBossAction _currentAct))
 				{
 					CurrentAction = _currentAct;
 					IsActing = true;
@@ -60,21 +58,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			yield return PerformMethod(getMethod());
 			if (changePattern())
 			{
-				Delegates.ChangeToPattern();
+				Controller.ChangeToPattern();
 				yield return null;
 			}
 		}
 	}
 
-	public record EventCutscene(string Name, Method Event, string GoToPattern, ControllerDelegates Delegates)
-		: BossPattern(Name, GoToPattern, Delegates)
+	public record EventCutscene(string Name, Method Event, string GoToPattern, BossController Controller)
+		: BossPattern(Name, GoToPattern, Controller)
 	{
 		public override IEnumerator Perform() => PerformAndChange(() => Event, () => true);
 	}
 
 	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
-		: BossPattern(Name, GoToPattern, Delegates)
+		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
+		: BossPattern(Name, GoToPattern, Controller)
 	{
 		protected virtual int AttackIndex => currentAction;
 
@@ -88,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				yield return PerformAndChange(() => StatePatternOrder[AttackIndex % StatePatternOrder.Count], () =>
 				{
 					int counter = UpdateLoop();
-					return counter > MinRandomIter && (counter > IterationCount || Delegates.Controller.Random.Next() % 2 == 1);
+					return counter > MinRandomIter && (counter > IterationCount || Controller.Random.Next() % 2 == 1);
 				});
 			}
 		}
@@ -97,8 +95,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	}
 
 	public record RandomPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Delegates)
+		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
 	{
 		private readonly SingleUse<int> ForcedAttackIndex = new();
 
@@ -107,12 +105,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			ForcedAttackIndex.Value = value;
 		}
 
-		protected override int AttackIndex => ForcedAttackIndex.Value ?? Delegates.Controller.Random.Next();
+		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Delegates)
+		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
 	{
 		private int loop;
 

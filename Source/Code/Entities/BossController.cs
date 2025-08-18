@@ -82,9 +82,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(SourceData.Attr("attacksPath"), BossAttack.Create),
 				(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
-			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-				new(this, ChangeToPattern)
-			);
+			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset, this);
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
 				if (AllPatterns[i].Name is string name)
@@ -148,7 +146,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			return BossActions.TryGetValue(key, out action);
 		}
 
-		private void ChangeToPattern()
+		public void ChangeToPattern()
 		{
 			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
 				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern, CurrentPatternIndex + 1));

@@ -16,19 +16,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		#region XML Files
 		#region XML Reading
-		public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset, ControllerDelegates delegates)
+		public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset, BossController controller)
 		{
 			List<BossPattern> targetOut = [];
 
 			ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
 			{
-				BossPattern newPattern = patternNode.ParseNewPattern(offset, delegates);
+				BossPattern newPattern = patternNode.ParseNewPattern(offset, controller);
 				targetOut.Add(newPattern);
 			});
 			return targetOut;
 		}
 
-		private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset, ControllerDelegates delegates)
+		private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset, BossController controller)
 		{
 			string nodeType = patternNode.LocalName.ToLower();
 			List<Method> methodList = [];
@@ -37,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			string goTo = patternNode.GetValue("goto");
 			if (nodeType.Equals("event"))
 			{
-				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, delegates);
+				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, controller);
 			}
 
 			Hitbox trigger = patternNode.GetHitbox(offset);
@@ -56,7 +56,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 						Math.Max(action.GetValueOrDefault("weight", 0), 1)
 					));
 				}
-				return new RandomPattern(patternName, methodList, trigger, minCount, count, goTo, delegates);
+				return new RandomPattern(patternName, methodList, trigger, minCount, count, goTo, controller);
 			}
 
 			List<Method> preLoopList = [];
@@ -77,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 			}
 
-			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, delegates);
+			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, controller);
 		}
 
 		public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
@@ -192,7 +192,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		#region Lua Files
 		public static Dictionary<string, IBossAction> ReadLuaFiles(
-			this BossController controller, params LuaPathReader[] readers)
+			this Entities.BossController controller, params LuaPathReader[] readers)
 		{
 			Dictionary<string, IBossAction> actions = [];
 			foreach (var (path, creator) in readers)
