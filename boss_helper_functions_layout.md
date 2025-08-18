@@ -17,6 +17,8 @@
 - [helpers.waitForAttackToEnd ()](boss_helper_functions.md#helperswaitforattacktoend-)
 - [helpers.interruptPattern ()](boss_helper_functions.md#helpersinterruptpattern-)
 - [helpers.getCurrentPatternID ()](boss_helper_functions.md#helpersgetcurrentpatternid-)
+- [helpers.getCurrentPatternName ()](boss_helper_functions.md#helpersgetcurrentpatternname-)
+- [helpers.getPatternIndex (name)](boss_helper_functions.md#helpersgetpatternindex-name)
 - [helpers.startAttackPattern ([goTo=-1])](boss_helper_functions.md#helpersstartattackpattern-goto-1)
 - [helpers.startNextAttackPattern ()](boss_helper_functions.md#helpersstartnextattackpattern-)
 - [helpers.forceNextAttackIndex (index)](boss_helper_functions.md#helpersforcenextattackindex-index)
@@ -100,6 +102,9 @@
 - [helpers.getStoredObjectFromBoss (key)](boss_helper_functions.md#helpersgetstoredobjectfromboss-key)
 - [helpers.deleteStoredObjectFromBoss (key)](boss_helper_functions.md#helpersdeletestoredobjectfromboss-key)
 - [helpers.doMethodAfterDelay (func, delay)](boss_helper_functions.md#helpersdomethodafterdelay-func-delay)
+- [helpers.getEaserByName ([name[, invert]])](boss_helper_functions.md#helpersgeteaserbyname-name-invert)
+
+## [Deprecated](boss_helper_functions.md#deprecated)
+
 - [helpers.v2L (vector)](boss_helper_functions.md#helpersv2l-vector)
 - [helpers.normalize (vector[, length=1])](boss_helper_functions.md#helpersnormalize-vector-length1)
-- [helpers.getEaserByName ([name[, invert]])](boss_helper_functions.md#helpersgeteaserbyname-name-invert)

@@ -116,6 +116,30 @@
 
 ---
 
+### helpers.getCurrentPatternName ()
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the currently set pattern index
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Name` (`string`): The current pattern's name, if any.
+
+---
+
+### helpers.getPatternIndex (name)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the index of the Pattern that is identified by the given name, if any.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` (`string`)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Pattern to search for.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`index` (`integer`): The index of the pattern with the given name, or -1 if not found.
+
+---
+
 ### helpers.startAttackPattern ([goTo=-1])
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a new boss action pattern.
@@ -176,7 +200,7 @@ This function also Works in Cutscene files
 
 ### helpers.setEffectiveGravityMult (mult)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the gravity multiplier to the fiven value. Gravity constant is 900.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the gravity multiplier to the given value. Gravity constant is 900.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`mult` (`number`)  
 
@@ -1222,6 +1246,26 @@ Can be added to any Entity.
 
 ---
 
+### helpers.getEaserByName ([name[, invert]])
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` (`string`) (optional)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Easer to get.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (optional)  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer returned should be inverted.  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`nil|Easer`): The Easer found or nil if not found.
+
+---
+
+## Deprecated
+
 ### helpers.v2L (vector)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the length of the provided vector2
@@ -1251,23 +1295,5 @@ Can be added to any Entity.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`normal` (`Vector2`): The normalized vector2
-
----
-
-### helpers.getEaserByName ([name[, invert]])
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` (`string`) (optional)  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the Easer to get.  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`invert` (`boolean`) (optional)  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the easer returned should be inverted.  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns:  
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`easer` (`nil|Easer`): The Easer found or nil if not found.
 
 ---
