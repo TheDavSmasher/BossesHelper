@@ -16,19 +16,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		#region XML Files
 		#region XML Reading
-		public static List<BossPattern> ReadPatternFile(string filepath, Vector2 offset, BossController controller)
+		public static List<BossPattern> ReadPatternFile(this BossController controller, string filepath)
 		{
 			List<BossPattern> targetOut = [];
 
 			ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
 			{
-				BossPattern newPattern = patternNode.ParseNewPattern(offset, controller);
+				BossPattern newPattern = patternNode.ParseNewPattern(controller);
 				targetOut.Add(newPattern);
 			});
 			return targetOut;
 		}
 
-		private static BossPattern ParseNewPattern(this XmlNode patternNode, Vector2 offset, BossController controller)
+		private static BossPattern ParseNewPattern(this XmlNode patternNode, BossController controller)
 		{
 			string nodeType = patternNode.LocalName.ToLower();
 			List<Method> methodList = [];
@@ -40,6 +40,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, controller);
 			}
 
+			Vector2 offset = controller.SceneAs<Level>().LevelOffset;
 			Hitbox trigger = patternNode.GetHitbox(offset);
 			int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
 			int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo is null ? null : 0);
