@@ -44,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
 				onDamage = array[0];
 				onRecover = array[1];
-				player.AddIFramesWatch(true);
+				player.AddIFramesWatch();
 			}
 
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)

@@ -108,8 +108,7 @@ public partial class BossesHelperModule : EverestModule
 				self.TeleportTo(entity, Session.savePointLevel, Session.savePointSpawnType, Session.savePointSpawn);
 				Session.travelingToSavePoint = false;
 			}
-			if (entity.Get<Stopwatch>() is null)
-				entity.AddIFramesWatch();
+			entity.AddIFramesWatch(true);
 		}
 		if (Engine.Scene.GetEntity<HealthSystemManager>() is not { } manager || !HealthSystemManager.IsEnabled)
 			return;
