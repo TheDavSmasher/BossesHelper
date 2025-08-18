@@ -71,6 +71,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				base.Added(entity);
 				entity.Add(Hair);
 			}
+
+			public override void Render()
+			{
+				base.Render();
+				Hair.Facing = (Facings)Math.Sign(Scale.X);
+			}
 		}
 
 		private readonly DummySprite Dummy;
@@ -199,7 +205,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			else if ((oldX - X) * ActiveSprite.Scale.X > 0)
 			{
 				ActiveSprite.Scale.X *= -1;
-				Dummy.Hair.Facing = (Facings)Math.Sign(ActiveSprite.Scale.X);
 			}
 			base.Render();
 			ActiveSprite.RenderPosition = renderPosition;
