@@ -266,10 +266,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Render();
 			int realFacing = Facing * (MirrorSprite ? -1 : 1);
-			if (Sprite != null)
-			{
-				Sprite.Scale.X = realFacing;
-			}
+			Sprite?.Scale.X = realFacing;
 		}
 
 		public void PlayBossAnim(string name)
