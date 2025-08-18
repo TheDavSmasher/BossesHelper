@@ -3,6 +3,7 @@ using Monocle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -99,7 +100,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		int? MinRandomIter, int? IterationCount, string GoToPattern, ControllerDelegates Delegates)
 		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Delegates)
 	{
-		protected override int AttackIndex => Delegates.Controller.ForcedAttackIndex.Value ?? Delegates.Controller.Random.Next();
+		private readonly SingleUse<int> ForcedAttackIndex = new();
+
+		public void ForceNextAttack(int value)
+		{
+			ForcedAttackIndex.Value = value;
+		}
+
+		protected override int AttackIndex => ForcedAttackIndex.Value ?? Delegates.Controller.Random.Next();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,

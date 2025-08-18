@@ -159,6 +159,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			return NamedPatterns.GetValueOrDefault(goTo, -1);
 		}
 
+		public void ForceNextAttack(int index)
+		{
+			if (CurrentPattern is RandomPattern Random)
+				Random.ForceNextAttack(index);
+		}
+
 		public void InterruptPattern()
 		{
 			ActivePattern.Active = false;
