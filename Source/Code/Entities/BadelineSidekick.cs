@@ -31,15 +31,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			set
 			{
 				field = value;
-				ActiveSprite = field switch
+				ActiveSprite = SidekickSprites[value];
+				foreach (var sprite in SidekickSprites)
 				{
-					SidekickSprite.Boss => Boss,
-					SidekickSprite.Custom => Custom,
-					_ => Dummy
-				};
-				Dummy.Visible = value == SidekickSprite.Dummy;
-				Boss.Visible = value == SidekickSprite.Boss;
-				Custom.Visible = value == SidekickSprite.Custom;
+					sprite.Value.Visible = value == sprite.Key;
+				}
 			}
 		}
 
@@ -79,11 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			}
 		}
 
-		private readonly DummySprite Dummy;
-
-		private readonly Sprite Boss;
-
-		private readonly Sprite Custom;
+		private readonly EnumDict<SidekickSprite, Sprite> SidekickSprites;
 
 		private readonly SineWave Wave;
 
@@ -91,7 +83,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly SoundSource laserSfx;
 
-		public Vector2 BeamOrigin => Center + Boss.Position + new Vector2(0f, -20f);
+		public Vector2 BeamOrigin => Center + SidekickSprites[SidekickSprite.Boss].Position + new Vector2(0f, -20f);
 
 		private bool CanAttack;
 
@@ -101,13 +93,23 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public BadelineSidekick(Vector2 position, bool freezeOnAttack, float cooldown) : base(position)
 		{
-			Add(Dummy = new());
-			Add(Boss = GFX.SpriteBank.Create("badeline_boss"));
-			Add(Custom = GFX.SpriteBank.Create("badeline_sidekick"));
+			SidekickSprites = new(sprite => sprite switch
+			{
+				SidekickSprite.Boss => GFX.SpriteBank.Create("badeline_boss"),
+				SidekickSprite.Custom => GFX.SpriteBank.Create("badeline_sidekick"),
+				_ => new DummySprite()
+			});
+
+			foreach (var sprite in SidekickSprites.Values)
+				Add(sprite);
+
 			Add(Wave = new SineWave(0.25f, 0f));
 			Wave.OnUpdate = f =>
 			{
-				Dummy.Position = Custom.Position = Boss.Position = Vector2.UnitY * f * 2f;
+				foreach (var sprite in SidekickSprites.Values)
+				{
+					sprite.Position = Vector2.UnitY * f * 2f;
+				}
 			};
 			Add(Light = new VertexLight(new Vector2(0f, -8f), Color.PaleVioletRed, 1f, 20, 60));
 			Add(Follower = new Follower());
@@ -134,7 +136,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Follower.MoveTowardsLeader = false;
 			}
 			Wave.Active = false;
-			Dummy.Position = Vector2.Zero;
+			ActiveSprite.Position = Vector2.Zero;
 			ActiveSidekickSprite = SidekickSprite.Custom;
 			yield return ActiveSprite.PlayAnim("normal_to_boss");
 
@@ -197,9 +199,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			ActiveSprite.RenderPosition = ActiveSprite.RenderPosition.Floor();
 			if (beam != null)
 			{
-				if ((beam.oldX - X) * Boss.Scale.X < 0)
+				if ((beam.oldX - X) * ActiveSprite.Scale.X < 0)
 				{
-					Boss.Scale.X *= -1;
+					ActiveSprite.Scale.X *= -1;
 				}
 			}
 			else if ((oldX - X) * ActiveSprite.Scale.X > 0)
