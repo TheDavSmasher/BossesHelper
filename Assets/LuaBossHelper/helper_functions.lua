@@ -1640,24 +1640,6 @@ function helpers.doMethodAfterDelay(func, delay)
     luaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
----@deprecated Use Vector2:Length instead
----Get the length of the provided vector2
----@param vector Vector2 Vector to get length of
----@return number length The length of the vector2
-function helpers.v2L(vector)
-    return vector:Length()
-end
-
----@deprecated Use Vector2:SafeNormalize instead
----Normalizes the vector provided to the given length or 1.
----@param vector Vector2 The vector to normalize
----@param length? number The new length of the vector or 1
----@default 1
----@return Vector2 normal The normalized vector2
-function helpers.normalize(vector, length)
-    return vector:SafeNormalize(length or 1)
-end
-
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 ---@param name? string The name of the Easer to get.
 ---@param invert? boolean If the easer returned should be inverted.
@@ -1708,6 +1690,28 @@ function helpers.getEaserByName(name, invert)
     else
         return easers.default
     end
+end
+
+--#endregion
+
+--#region Deprecated
+
+---@deprecated Use Vector2:Length instead
+---Get the length of the provided vector2
+---@param vector Vector2 Vector to get length of
+---@return number length The length of the vector2
+function helpers.v2L(vector)
+    return vector:Length()
+end
+
+---@deprecated Use Vector2:SafeNormalize instead
+---Normalizes the vector provided to the given length or 1.
+---@param vector Vector2 The vector to normalize
+---@param length? number The new length of the vector or 1
+---@default 1
+---@return Vector2 normal The normalized vector2
+function helpers.normalize(vector, length)
+    return vector:SafeNormalize(length or 1)
 end
 
 --#endregion
