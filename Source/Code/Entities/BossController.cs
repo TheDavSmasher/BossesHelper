@@ -10,167 +10,168 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-    [CustomEntity("BossesHelper/BossController")]
-    public partial class BossController : Entity
-    {
-        public Random Random { get; private set; }
+	[CustomEntity("BossesHelper/BossController")]
+	public partial class BossController : Entity
+	{
+		public Random Random { get; private set; }
 
-        public readonly string BossID;
+		public readonly string BossID;
 
-        public readonly BossPuppet Puppet;
+		public readonly BossPuppet Puppet;
 
-        private int Health;
+		private int Health;
 
-        private bool playerHasMoved;
+		private bool playerHasMoved;
 
-        private bool isActing;
+		private bool isActing;
 
-        private int currentPatternIndex;
+		private int currentPatternIndex;
 
-        private int? forcedAttackIndex;
+		private int? forcedAttackIndex;
 
-        private readonly bool startAttackingImmediately;
+		private readonly bool startAttackingImmediately;
 
-        private readonly Coroutine ActivePattern;
+		private readonly Coroutine ActivePattern;
 
-        private readonly List<Entity> activeEntities = [];
+		private readonly List<Entity> activeEntities = [];
 
-        private List<BossPattern> AllPatterns;
+		private List<BossPattern> AllPatterns;
 
-        private readonly Dictionary<string, int> NamedPatterns = [];
+		private readonly Dictionary<string, int> NamedPatterns = [];
 
-        private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
+		private BossPattern CurrentPattern => AllPatterns[currentPatternIndex];
 
-        public BossController(EntityData data, Vector2 offset, EntityID id)
-            : base(data.Position + offset)
-        {
-            SourceData = data;
-            SourceId = id;
-            BossID = data.Attr("bossID");
-            Health = data.Int("bossHealthMax", -1);
-            startAttackingImmediately = data.Bool("startAttackingImmediately");
-            Add(ActivePattern = new Coroutine());
-            Puppet = new(this)
-            {
-                new BossHealthTracker(() => Health)
-            };
-            Puppet.LoadAfterCtor();
-            if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
-            {
-                Health = phase.BossHealthAt;
-                currentPatternIndex = phase.StartWithPatternIndex;
-                startAttackingImmediately = phase.StartImmediately;
-            }
-            Add(new PlayerAliveChecker(() => CurrentPattern.EndAction(MethodEndReason.PlayerDied)));
-        }
+		public BossController(EntityData data, Vector2 offset, EntityID id)
+			: base(data.Position + offset)
+		{
+			SourceData = data;
+			SourceId = id;
+			BossID = data.Attr("bossID");
+			Health = data.Int("bossHealthMax", -1);
+			startAttackingImmediately = data.Bool("startAttackingImmediately");
+			Add(ActivePattern = new Coroutine());
+			Puppet = new(this)
+			{
+				new BossHealthTracker(() => Health)
+			};
+			Puppet.LoadAfterCtor();
+			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
+			{
+				Health = phase.BossHealthAt;
+				currentPatternIndex = phase.StartWithPatternIndex;
+				startAttackingImmediately = phase.StartImmediately;
+			}
+			Add(new PlayerAliveChecker(() => CurrentPattern.EndAction(MethodEndReason.PlayerDied)));
+		}
 
-        public override void Added(Scene scene)
-        {
-            base.Added(scene);
-            Scene.Add(Puppet);
-            int tasSeed = BossesHelperModule.Instance.TASSeed;
-            int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
-            Random = new Random(generalSeed * 37 + new Crc32().Get(SourceId.Key));
-        }
+		public override void Added(Scene scene)
+		{
+			base.Added(scene);
+			Scene.Add(Puppet);
+			int tasSeed = BossesHelperModule.Instance.TASSeed;
+			int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
+			Random = new Random(generalSeed * 37 + new Crc32().Get(SourceId.Key));
+		}
 
-        public override void Awake(Scene scene)
-        {
-            base.Awake(scene);
-            AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
-                this.ReadLuaFiles(
-                    (SourceData.Attr("attacksPath"), BossAttack.Create),
-                    (SourceData.Attr("eventsPath"), BossEvent.Create)
-                ), new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
-            );
-            for (int i = 0; i < AllPatterns.Count; i++)
-            {
-                if (AllPatterns[i].Name is string name)
-                    NamedPatterns.Add(name, i);
-        }
-        }
+		public override void Awake(Scene scene)
+		{
+			base.Awake(scene);
+			AllPatterns = ReadPatternFile(SourceData.Attr("patternsPath"), SceneAs<Level>().LevelOffset,
+				this.ReadLuaFiles(
+					(SourceData.Attr("attacksPath"), BossAttack.Create),
+					(SourceData.Attr("eventsPath"), BossEvent.Create)
+				), new(ChangeToPattern, Random.Next, val => isActing = val, AttackIndexForced)
+			);
+			for (int i = 0; i < AllPatterns.Count; i++)
+			{
+				if (AllPatterns[i].Name is string name)
+					NamedPatterns.Add(name, i);
+			}
+		}
 
-        public override void Removed(Scene scene)
-        {
-            base.Removed(scene);
-            DestroyAll();
-            Puppet.RemoveSelf();
-        }
+		public override void Removed(Scene scene)
+		{
+			base.Removed(scene);
+			DestroyAll();
+			Puppet.RemoveSelf();
+		}
 
-        public override void Update()
-        {
-            base.Update();
-            if (Scene.GetPlayer() is Player entity)
-            {
-                if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately || isActing))
-                {
-                    playerHasMoved = true;
-                    if (!isActing)
-                        StartAttackPattern(currentPatternIndex);
-                }
-                if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
-                {
-                    InterruptPattern();
-                    ChangeToPattern();
-                }
-            }
-        }
+		public override void Update()
+		{
+			base.Update();
+			if (Scene.GetPlayer() is Player entity)
+			{
+				if (!playerHasMoved && (entity.Speed != Vector2.Zero || startAttackingImmediately || isActing))
+				{
+					playerHasMoved = true;
+					if (!isActing)
+						StartAttackPattern(currentPatternIndex);
+				}
+				if (!isActing && IsPlayerWithinSpecifiedRegion(entity.Position))
+				{
+					InterruptPattern();
+					ChangeToPattern();
+				}
+			}
+		}
 
-        private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
-        {
-            return CurrentPattern is AttackPattern attack
-                && attack.PlayerPositionTrigger is Hitbox positionTrigger 
-                && positionTrigger.Collide(entityPos);
-        }
+		private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
+		{
+			return CurrentPattern is AttackPattern attack
+				&& attack.PlayerPositionTrigger is Hitbox positionTrigger
+				&& positionTrigger.Collide(entityPos);
+		}
 
-        public void StartAttackPattern(int goTo = -1)
-        {
-            if (goTo >= AllPatterns.Count)
-            {
-                currentPatternIndex = -1;
-                ActivePattern.Active = false;
-                return;
-            }
-            if (goTo > 0)
-            {
-                currentPatternIndex = goTo;
-            }
-            ActivePattern.Replace(CurrentPattern.Perform());
-        }
+		public void StartAttackPattern(int goTo = -1)
+		{
+			if (goTo >= AllPatterns.Count)
+			{
+				currentPatternIndex = -1;
+				ActivePattern.Active = false;
+				return;
+			}
+			if (goTo > 0)
+			{
+				currentPatternIndex = goTo;
+			}
+			ActivePattern.Replace(CurrentPattern.Perform());
+		}
 
-        private int? AttackIndexForced()
-        {
-            if (forcedAttackIndex is not int index)
-                return null;
-            forcedAttackIndex = null;
-            return index;
-        }
+		private int? AttackIndexForced()
+		{
+			if (forcedAttackIndex is not int index)
+				return null;
+			forcedAttackIndex = null;
+			return index;
+		}
 
-        private void ChangeToPattern()
-        {
-            StartAttackPattern(CurrentPattern.GoToPattern ?? currentPatternIndex + 1);
-        }
+		private void ChangeToPattern()
+		{
+			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
+				GetPatternIndex(CurrentPattern.GoToPattern, currentPatternIndex + 1));
+		}
 
 		public int GetPatternIndex(string goTo, int defaultIndex = -1)
-        {
+		{
 			return NamedPatterns.GetValueOrDefault(goTo, defaultIndex);
-        }
+		}
 
-        public string GetCurrentPatternName()
-        {
-            return CurrentPattern.Name;
-        }
+		public string GetCurrentPatternName()
+		{
+			return CurrentPattern.Name;
+		}
 
-        public void InterruptPattern()
-        {
-            ActivePattern.Active = false;
-            isActing = false;
-            CurrentPattern.EndAction(MethodEndReason.Interrupted);
-        }
+		public void InterruptPattern()
+		{
+			ActivePattern.Active = false;
+			isActing = false;
+			CurrentPattern.EndAction(MethodEndReason.Interrupted);
+		}
 
-        public void DestroyAll()
-        {
-            activeEntities.ForEach(entity => entity.RemoveSelf());
-            activeEntities.Clear();
-        }
-    }
+		public void DestroyAll()
+		{
+			activeEntities.ForEach(entity => entity.RemoveSelf());
+			activeEntities.Clear();
+		}
+	}
 }
