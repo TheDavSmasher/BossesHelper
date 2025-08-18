@@ -14,6 +14,10 @@
 ---@class Sprite : Component
 ---@field PlayAnim fun(self: Sprite, anim: string): any
 
+---@class Stopwatch : Component
+---@field TimeLeft number
+---@field Reset fun(self: Stopwatch)
+
 ---@class Random
 ---@field Next fun(self: Random): integer
 
@@ -25,7 +29,7 @@
 ---@field Values any
 
 ---@class Entity A Monocle Entity object
----@field Add fun(component: Component) Adds a component to the Entity
+---@field Add fun(self: Entity, component: Component) Adds a component to the Entity
 ---@field Collidable boolean
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
 
@@ -52,9 +56,15 @@
 ---@field airFriction number
 ---@field Sprite Sprite
 ---@field SolidCollidable boolean
+---@field BossHitCooldown Stopwatch
 ---@field PlayBossAnim fun(self : BossPuppet, anim: string)
 ---@field Set1DSpeedDuring fun(self: BossPuppet, speed: number, isX: boolean, time: number)
 ---@field Speed1DTween fun(self: BossPuppet, start: number, target: number, time: number, isX: boolean, easer: Easer?)
+---@field ChangeHitboxOption fun(self : BossPuppet, tag: string)
+---@field ChangeHurtboxOption fun(self : BossPuppet, tag: string)
+---@field ChangeBounceboxOption fun(self : BossPuppet, tag: string)
+---@field ChangeTargetOption fun(self : BossPuppet, tag: string)
+
 
 ---@diagnostic disable: missing-fields
 

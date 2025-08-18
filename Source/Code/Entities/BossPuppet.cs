@@ -48,9 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private BossFunctions BossFunctions;
 
-		public float BossHitCooldown { get; private set; }
-
-		private readonly float bossHitCooldownBase;
+		public readonly Stopwatch BossHitCooldown;
 
 		public int Facing;
 
@@ -86,7 +84,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			EntityData data = controller.SourceData;
 			DynamicFacing = data.Bool("dynamicFacing");
 			MirrorSprite = data.Bool("mirrorSprite");
-			bossHitCooldownBase = data.Float("bossHitCooldown", 0.5f);
+			Add(BossHitCooldown = new(data.Float("bossHitCooldown", 0.5f)));
 			maxFall = data.Float("maxFall", 90f);
 			gravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
@@ -179,9 +177,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
 		{
-			if (BossHitCooldown <= 0 && (predicate?.Invoke() ?? true))
+			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
-				ResetBossHitCooldown();
+				BossHitCooldown.Reset();
 				BossFunctions.OnDamage(source).Coroutine(this);
 				postLua?.Invoke();
 			}
@@ -222,10 +220,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (Scene.GetPlayer() is Player entity && DynamicPositionOver_Quarter(entity.X))
 			{
 				Facing *= -1;
-			}
-			if (BossHitCooldown > 0)
-			{
-				BossHitCooldown -= Engine.DeltaTime;
 			}
 			base.Update();
 			//Move based on speed
@@ -275,11 +269,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			{
 				Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
 			}
-		}
-
-		public void ResetBossHitCooldown()
-		{
-			BossHitCooldown = bossHitCooldownBase;
 		}
 	}
 }

@@ -232,11 +232,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				}
 			}
 
-			public void SetBossHitCooldown(float timer)
-			{
-				BossHitCooldown = timer;
-			}
-
 			public void ChangeHitboxOption(string tag)
 			{
 				Collider = GetTagOrDefault(ColliderOption.Hitboxes, tag, Sprite.Height);
