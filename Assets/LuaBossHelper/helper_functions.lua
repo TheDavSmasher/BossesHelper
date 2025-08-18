@@ -1615,20 +1615,20 @@ end
 ---@param key string The key to store the object with. Must be unique, or the object will not be stored.
 ---@param object any The object to store
 function helpers.storeObjectInBoss(key, object)
-    puppet:StoreObject(key, object)
+    boss:StoreObject(key, object)
 end
 
 ---Return an item that was stored within the Boss by key.
 ---@param key string The key the object is stored under.
 ---@return nil|any object The object stored, or nil if key is not found.
 function helpers.getStoredObjectFromBoss(key)
-    return puppet:GetStoredObject(key)
+    return boss:GetStoredObject(key)
 end
 
 ---Remove the object stored under the specified key from the Boss' stored objects.
 ---@param key string The key the object is stored under.
 function helpers.deleteStoredObjectFromBoss(key)
-    puppet:DeleteStoredObject(key)
+    boss:DeleteStoredObject(key)
 end
 
 ---Set a method that will execute after a given delay.
@@ -1638,24 +1638,22 @@ function helpers.doMethodAfterDelay(func, delay)
     luaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
+---@deprecated Use Vector2:Length instead
 ---Get the length of the provided vector2
 ---@param vector Vector2 Vector to get length of
 ---@return number length The length of the vector2
 function helpers.v2L(vector)
-    return math.sqrt(vector.X * vector.X + vector.Y * vector.Y)
+    return vector:Length()
 end
 
+---@deprecated Use Vector2:SafeNormalize instead
 ---Normalizes the vector provided to the given length or 1.
 ---@param vector Vector2 The vector to normalize
 ---@param length? number The new length of the vector or 1
 ---@default 1
 ---@return Vector2 normal The normalized vector2
 function helpers.normalize(vector, length)
-    local len = helpers.v2L(vector)
-    if length and length <= 0 then return vector2(0, 0) end
-
-    if len == 0 then return vector end
-    return vector2(vector.X / len, vector.Y / len) * (length or 1)
+    return vector:SafeNormalize(length or 1)
 end
 
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.

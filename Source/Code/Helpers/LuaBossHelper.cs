@@ -212,6 +212,23 @@ namespace Celeste.Mod.BossesHelper.Code
 					entity.RemoveSelf();
 				}
 			}
+
+			private readonly Dictionary<string, object> storedObjects = [];
+
+			public void StoreObject(string key, object toStore)
+			{
+				storedObjects.TryAdd(key, toStore);
+			}
+
+			public object GetStoredObject(string key)
+			{
+				return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
+			}
+
+			public void DeleteStoredObject(string key)
+			{
+				storedObjects.Remove(key);
+			}
 		}
 
 		public partial class BossPuppet
@@ -269,21 +286,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
 				tween.OnUpdate = t => (isX ? ref Speed.X : ref Speed.Y) = start + (target - start) * t.Eased;
 				Add(tween);
-			}
-
-			public void StoreObject(string key, object toStore)
-			{
-				storedObjects.TryAdd(key, toStore);
-			}
-
-			public object GetStoredObject(string key)
-			{
-				return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
-			}
-
-			public void DeleteStoredObject(string key)
-			{
-				storedObjects.Remove(key);
 			}
 		}
 	}

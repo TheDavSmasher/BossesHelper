@@ -62,8 +62,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public float airFriction;
 
-		private readonly Dictionary<string, object> storedObjects = [];
-
 		public bool Grounded => Speed.Y >= 0 && OnGround();
 
 		public Collider Hurtbox { get; private set; }

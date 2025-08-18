@@ -24,6 +24,8 @@
 ---@class Vector2 A Vector2 object.
 ---@field X number The x component of the vector
 ---@field Y number The y component of the vector
+---@field Length fun(self: Vector2): number
+---@field SafeNormalize fun(self: Vector2, length: number): Vector2
 
 ---@class EntityData An Everest EntityData object.
 ---@field Values any
@@ -48,6 +50,9 @@
 ---@field ForceNextAttack fun(self: BossController, index: number)
 ---@field SavePhaseChangeToSession fun(self: BossController, health: integer, index: integer, startImmediately: boolean)
 ---@field RemoveBoss fun(self: BossController, permanent: boolean)
+---@field StoreObject fun(self: BossController, key: string, value: any)
+---@field GetStoredObject fun(self: BossController, key: string): any
+---@field DeleteStoredObject fun(self: BossController, key: string)
 
 ---@class BossPuppet : Entity
 ---@field Speed Vector2
