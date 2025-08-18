@@ -169,6 +169,10 @@ namespace Celeste.Mod.BossesHelper.Code
 	{
 		public partial class BossController
 		{
+			public string CurrentPatternName => CurrentPattern.Name;
+
+			public bool IsActing => CurrentPattern.IsActing;
+
 			public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
 			{
 				BossesHelperModule.Session.BossPhasesSaved[BossID] =

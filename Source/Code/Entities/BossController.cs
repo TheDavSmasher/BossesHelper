@@ -41,10 +41,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
 
-		public string CurrentPatternName => CurrentPattern.Name;
-
-		public bool IsActing => CurrentPattern.IsActing;
-
 		public BossController(EntityData data, Vector2 offset, EntityID id)
 			: base(data.Position + offset)
 		{
