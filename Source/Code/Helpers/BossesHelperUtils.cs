@@ -100,6 +100,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			(scene as Level).Session.DoNotLoad.Add(entityID);
 		}
+
+		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		{
+			Tween.Position(self, target, time, easer);
+		}
 		#endregion
 
 		#region Helpers

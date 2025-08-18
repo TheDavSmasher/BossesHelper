@@ -23,7 +23,6 @@ local bossesHelper = celesteMod[modName]
 local modModule = bossesHelper.BossesHelperModule
 local modComponents = bossesHelper.Code.Components
 local modEntities = bossesHelper.Code.Entities
-local modUtils = bossesHelper.Code.Helpers.BossesHelperUtils
 local luaBossHelper = bossesHelper.Code.Helpers.LuaBossHelper
 local luaMethodWrappers = bossesHelper.Code.Helpers.LuaMethodWrappers
 
@@ -945,7 +944,7 @@ end
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 ---@param anim string The animation to play
 function helpers.playAndWaitPuppetAnim(anim)
-    coroutine.yield(modUtils.PlayAnim(boss.Sprite, anim))
+    coroutine.yield(puppet.Sprite:PlayAnim(anim))
 end
 
 ---Get a random number based on the boss's random seed.
@@ -976,7 +975,7 @@ end
 --- Wait for the current attack coroutine to end
 function helpers.waitForAttackToEnd()
     while boss.IsActing do
-        wait()
+        helpers.wait()
     end
 end
 
@@ -1070,14 +1069,15 @@ end
 ---Set the Boss' y speed to the given value
 ---@param value number The value to set the Boss' speed y component to.
 function helpers.setYSpeed(value)
-    puppet:SetYSpeed(value)
+    puppet.Speed.Y = value
 end
 
 ---Set the Boss' speed to the given values
 ---@param x number The value to set the Boss' speed x component to.
 ---@param y number The value to set the Boss' speed y component to.
 function helpers.setSpeed(x, y)
-    puppet:SetSpeed(x, y)
+    puppet.Speed.X = x
+    puppet.Speed.Y = y
 end
 
 ---Set the Boss' x speed to the given value, kept constant during the given time.
@@ -1085,7 +1085,8 @@ end
 ---@param time number The time to hold the value for.
 ---@return number time The time given from the Tween
 function helpers.setXSpeedDuring(value, time)
-    return puppet:SetXSpeedDuring(value, time)
+    puppet:Set1DSpeedDuring(value, true, time)
+    return time
 end
 
 ---Set the Boss' y speed to the given value, kept constant during the given time.
@@ -1093,7 +1094,8 @@ end
 ---@param time number The time to hold the value for.
 ---@return number time The time given from the Tween
 function helpers.setYSpeedDuring(value, time)
-    return puppet:SetYSpeedDuring(value, time)
+    puppet:Set1DSpeedDuring(value, false, time)
+    return time
 end
 
 ---Set the Boss' speed to the given values, kept constant during the given time.
@@ -1102,28 +1104,34 @@ end
 ---@param time number The time to hold the values for.
 ---@return number time The time given from the Tween
 function helpers.setSpeedDuring(x, y, time)
-    return puppet:SetSpeedDuring(x, y, time)
+    puppet:Set1DSpeedDuring(x, true, time)
+    puppet:Set1DSpeedDuring(y, false, time)
+    return time
 end
 
 ---Keep the Boss' current x speed constant during the given time.
 ---@param time number The time to hold the value for.
 ---@return number time The time given from the Tween
 function helpers.keepXSpeedDuring(time)
-    return puppet:SetXSpeedDuring(puppet.Speed.X, time)
+    puppet:Set1DSpeedDuring(puppet.Speed.X, true, time)
+    return time
 end
 
 ---Keep the Boss' current y speed constant during the given time.
 ---@param time number The time to hold the value for.
 ---@return number time The time given from the Tween
 function helpers.keepYSpeedDuring(time)
-    return puppet:SetYSpeedDuring(puppet.Speed.Y, time)
+    puppet:Set1DSpeedDuring(puppet.Speed.Y, false, time)
+    return time
 end
 
 ---Keep the Boss' current speed constant during the given time.
 ---@param time number The time to hold the values for.
 ---@return number time The time given from the Tween
 function helpers.keepSpeedDuring(time)
-    return puppet:SetSpeedDuring(puppet.Speed.X, puppet.Speed.Y, time)
+    puppet:Set1DSpeedDuring(puppet.Speed.X, true, time)
+    puppet:Set1DSpeedDuring(puppet.Speed.Y, false, time)
+    return time
 end
 
 local function getEaser(easer, invert)
@@ -1147,7 +1155,6 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    monocle.Tween.Position()
     puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
     return time
 end

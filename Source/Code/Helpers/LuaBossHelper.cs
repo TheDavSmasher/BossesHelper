@@ -1,7 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
-using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
 using System;
@@ -217,58 +216,17 @@ namespace Celeste.Mod.BossesHelper.Code
 
 		public partial class BossPuppet
 		{
-			public void SetXSpeed(float speed)
+			public void Set1DSpeedDuring(float speed, bool isX, float time)
 			{
-				Speed.X = speed;
+				Keep1DSpeed(speed, isX, time).Coroutine(this);
 			}
 
-			public void SetYSpeed(float speed)
-			{
-				Speed.Y = speed;
-			}
-
-			public void SetSpeed(float x, float y)
-			{
-				Speed.Y = y;
-				Speed.X = x;
-			}
-
-			public float SetXSpeedDuring(float speed, float time)
-			{
-				KeepXSpeed(speed, time).Coroutine(this);
-				return time;
-			}
-
-			public float SetYSpeedDuring(float speed, float time)
-			{
-				KeepYSpeed(speed, time).Coroutine(this);
-				return time;
-			}
-
-			public float SetSpeedDuring(float x, float y, float time)
-			{
-				SetXSpeedDuring(x, time);
-				SetYSpeedDuring(y, time);
-				return time;
-			}
-
-			private IEnumerator KeepXSpeed(float speed, float time)
+			private IEnumerator Keep1DSpeed(float speed, bool isX, float time)
 			{
 				float timer = 0;
 				while (timer < time)
 				{
-					Speed.X = speed;
-					timer += Engine.DeltaTime;
-					yield return null;
-				}
-			}
-
-			private IEnumerator KeepYSpeed(float speed, float time)
-			{
-				float timer = 0;
-				while (timer < time)
-				{
-					Speed.Y = speed;
+					(isX ? ref Speed.X : ref Speed.Y) = speed;
 					timer += Engine.DeltaTime;
 					yield return null;
 				}
@@ -309,11 +267,6 @@ namespace Celeste.Mod.BossesHelper.Code
 				{
 					target.Collider = Target;
 				}
-			}
-
-			public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
-			{
-				Tween.Position(this, target, time, easer);
 			}
 
 			public void Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
