@@ -205,6 +205,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
+#nullable enable
+		public class SingleUse<T>
+		{
+			public T? Value
+			{
+				get
+				{
+					T? value = field;
+					field = default;
+					return value;
+				}
+				set;
+			}
+		}
+#nullable disable
+
 		public interface IMonocleCollection<T> : IReadOnlyCollection<T>
 		{
 			public bool Active
