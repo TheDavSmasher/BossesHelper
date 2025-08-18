@@ -14,6 +14,25 @@ namespace Celeste.Mod.BossesHelper.Code
 {
 	namespace Helpers
 	{
+		public interface ILuaLoader
+		{
+			LuaCommand Command { get; }
+
+			LuaTableItem[] Values => [];
+		}
+
+		public class LuaWarmer : ILuaLoader
+		{
+			public LuaCommand Command => ("getCutsceneData", 2);
+
+			public void WarmUp()
+			{
+				Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+				_ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
+					.Select(func => func.ToIEnumerator().MoveNext());
+			}
+		}
+
 		public class LuaException(string message) : Exception(message) { }
 
 		internal static class LuaBossHelper

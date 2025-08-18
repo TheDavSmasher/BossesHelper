@@ -9,13 +9,6 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public interface ILuaLoader
-	{
-		LuaCommand Command { get; }
-
-		LuaTableItem[] Values => [];
-	}
-
 	public interface IBossAction
 	{
 		IEnumerator Perform();
@@ -26,18 +19,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	public interface IBossActionCreator<TSelf> : IBossAction where TSelf : IBossActionCreator<TSelf>
 	{
 		abstract static TSelf Create(string filepath, BossController controller);
-	}
-
-	public class LuaWarmer : ILuaLoader
-	{
-		public LuaCommand Command => ("getCutsceneData", 2);
-
-		public void WarmUp()
-		{
-			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-			_ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
-				.Select(func => func.ToIEnumerator().MoveNext());
-		}
 	}
 
 	public abstract class BossLuaLoader(BossController controller) : ILuaLoader
