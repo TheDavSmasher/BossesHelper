@@ -327,34 +327,16 @@ namespace Celeste.Mod.BossesHelper.Code
 				}
 			}
 
-			public float PositionTween(Vector2 target, float time, Ease.Easer easer = null)
+			public void PositionTween(Vector2 target, float time, Ease.Easer easer = null)
 			{
 				Tween.Position(this, target, time, easer);
-				return time;
 			}
 
-			public float SpeedXTween(float start, float target, float time, Ease.Easer easer = null)
+			public void Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
 			{
 				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-				tween.OnUpdate = t => Speed.X = start + (target - start) * t.Eased;
+				tween.OnUpdate = t => (isX ? ref Speed.X : ref Speed.Y) = start + (target - start) * t.Eased;
 				Add(tween);
-				return time;
-			}
-
-			public float SpeedYTween(float start, float target, float time, Ease.Easer easer = null)
-			{
-				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
-				tween.OnUpdate = t => Speed.Y = start + (target - start) * t.Eased;
-				Add(tween);
-				return time;
-			}
-
-			public float SpeedTween(
-				float xStart, float yStart, float xTarget, float yTarget, float time, Ease.Easer easer = null)
-			{
-				SpeedXTween(xStart, xTarget, time, easer);
-				SpeedYTween(yStart, yTarget, time, easer);
-				return time;
 			}
 
 			public void StoreObject(string key, object toStore)

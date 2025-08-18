@@ -36,7 +36,8 @@ local luanet = _G.luanet
 local celeste = require("#celeste")
 local celesteMod = celeste.mod
 local csharpVector2 = require("#microsoft.xna.framework.vector2")
-local engine = require("#monocle.engine")
+local monocle = require("#monocle")
+local engine = monocle.Engine
 
 local modName = modMetaData.Name
 local classNamePrefix = "Celeste."
@@ -1152,7 +1153,9 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    return puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
+    monocle.Tween.Position()
+    puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
+    return time
 end
 
 ---Create a new Tween for the Boss' x speed.
@@ -1165,7 +1168,8 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
-    return puppet:SpeedXTween(start, target, time, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert) or easer)
+    return time
 end
 
 ---Create a new Tween for the Boss' y speed.
@@ -1178,7 +1182,8 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
-    return puppet:SpeedYTween(start, target, time, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert) or easer)
+    return time
 end
 
 ---Create a new Tween for the Boss' speed.
@@ -1193,7 +1198,9 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, invert)
-    return puppet:SpeedTween(xStart, yStart, xTarget, yTarget, time, getEaser(easer, invert) or easer)
+    helpers.speedXTween(xStart, xTarget, time, easer, invert)
+    helpers.speedYTween(yStart, yTarget, time, easer, invert)
+    return time
 end
 
 ---Create a new Tween for the Boss' x speed from its current x speed value.
@@ -1205,7 +1212,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
-    return puppet:SpeedXTween(puppet.Speed.X, target, time, getEaser(easer, invert) or easer)
+    return helpers.speedXTween(puppet.Speed.X, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
@@ -1217,7 +1224,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
-    return puppet:SpeedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert) or easer)
+    return helpers.speedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert) or easer)
 end
 
 ---Create a new Tween for the Boss'  speed from its current x speed value.
@@ -1230,7 +1237,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
-    return puppet:SpeedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert) or easer)
+    return helpers.speedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert) or easer)
 end
 
 --#endregion
