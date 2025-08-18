@@ -43,14 +43,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				onRecover = array[1];
 			}
 
-			public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
+			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
 			{
 				Level Level = SceneAs<Level>();
 				if (Level.InCutscene ||
 					!evenIfInvincible && (ModSession.damageCooldown > 0 || SaveData.Instance.Assists.Invincible || amount <= 0) ||
 					Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
 				{
-					return;
+					return 0;
 				}
 				ModSession.damageCooldown = HealthData.damageCooldown;
 				if ((ModSession.currentPlayerHealth -= amount) > 0)
@@ -72,6 +72,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				{
 					entity.Die(direction);
 				}
+				return amount + Math.Min(ModSession.currentPlayerHealth, 0);
 			}
 
 			public void RecoverHealth(int amount = 1)

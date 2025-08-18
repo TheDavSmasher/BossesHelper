@@ -140,8 +140,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
 		{
 			if (!IsEnabled) return;
-			Controller.TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
-			HealthBar.DecreaseHealth(amount);
+			int damageDealt = Controller.TakeDamage(direction, amount, silent, stagger, evenIfInvincible);
+			HealthBar.DecreaseHealth(damageDealt);
 		}
 
 		public void RecoverHealth(int amount = 1)
