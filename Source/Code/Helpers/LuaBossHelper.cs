@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code
 			{
 				Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
 				_ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
-					.Select(func => func.ToIEnumerator().MoveNext());
+					.Select(func => func.Call());
 			}
 		}
 
