@@ -34,7 +34,7 @@ def parse_lua_file(lua_path):
             region_name = region_match.group(1)
             if region_name.startswith('Original'):
                 skipping = True
-            if not (region_name.startswith('Type') or 'Helper' in region_name):
+            if not ('Import' in region_name or 'Helper' in region_name):
                 current_region = Region(region_name)
             continue
 
@@ -107,11 +107,9 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     """
     Generates markdown documentation for a list of functions.
     """
-    markdown_text = """
-    # [Bosses Helper](README.md): Lua Helper Functions
-    ## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)
-    [Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n
-    """
+    markdown_text = ("# [Bosses Helper](README.md): Lua Helper Functions\n\n" +
+                     "## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n" +
+                     "[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
 
     layout_markdown = ("# [Bosses Helper](README.md): [Lua Helper Functions]"
                        + "(boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n")
@@ -140,7 +138,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                     if "helpers." in param_desc:
                         for function in [func for func in file_funcs if func.name in param_desc]:
                             param_desc = param_desc.replace(function.name,
-                                f"[{function.name}](#{format_markdown_link(function.full_name)})")
+                                                            f"[{function.name}](#{format_markdown_link(function.full_name)})")
 
                     markdown_text += f"{TAB}{TAB}{param_desc}  \n"
 
