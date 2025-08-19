@@ -245,7 +245,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
 		{
-			if (player.Get<Stopwatch>() is var watch)
+			if (player.Get<Stopwatch>() is Stopwatch watch)
 			{
 				if (onlyOnNull)
 					return;
