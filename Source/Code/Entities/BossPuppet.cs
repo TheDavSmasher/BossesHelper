@@ -36,6 +36,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		protected readonly Component BossCollision;
 
+		public abstract HurtModes HurtMode { get; }
+
 		private readonly bool DynamicFacing;
 
 		private readonly bool MirrorSprite;
@@ -179,12 +181,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				player.Die((player.Position - Position).SafeNormalize());
 		}
 
-		protected void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
+		protected void OnDamage(Func<bool> predicate = null, Action postLua = null)
 		{
 			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
 				BossHitCooldown.Reset();
-				BossFunctions.OnDamage(source).Coroutine(this);
+				BossFunctions.OnDamage(HurtMode).Coroutine(this);
 				postLua?.Invoke();
 			}
 		}
@@ -211,28 +213,34 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 	public class ContactBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
 	{
+		public override HurtModes HurtMode => HurtModes.PlayerContact;
+
 		protected override Component GetBossCollision()
 			=> new PlayerCollider(OnPlayerContact, Hurtbox);
 
 		private void OnPlayerContact(Player _)
 		{
-			OnDamage(HurtModes.PlayerContact);
+			OnDamage();
 		}
 	}
 
 	public class DashBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
 	{
+		public override HurtModes HurtMode => HurtModes.PlayerDash;
+
 		protected override Component GetBossCollision()
 			=> new PlayerCollider(OnPlayerDash, Hurtbox);
 
 		private void OnPlayerDash(Player player)
 		{
-			OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
+			OnDamage(() => player.DashAttacking && player.Speed != Vector2.Zero);
 		}
 	}
 
 	public partial class BounceBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
 	{
+		public override HurtModes HurtMode => HurtModes.HeadBonk;
+
 		public Collider Bouncebox { get; private set; }
 
 		protected override Component GetBossCollision()
@@ -241,7 +249,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private void OnPlayerBounce(Player player)
 		{
-			OnDamage(HurtModes.HeadBonk, postLua: () =>
+			OnDamage(postLua: () =>
 			{
 				Audio.Play("event:/game/general/thing_booped", Position);
 				Celeste.Freeze(0.2f);
@@ -252,6 +260,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 	public partial class SidekickBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
 	{
+		public override HurtModes HurtMode => HurtModes.SidekickAttack;
+
 		private readonly string BossID = data.Attr("bossID");
 
 		private readonly bool freezeSidekickOnAttack = data.Bool("sidekickFreeze");
@@ -276,12 +286,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private void OnSidekickLaser()
 		{
-			OnDamage(HurtModes.SidekickAttack);
+			OnDamage();
 		}
 	}
 
 	public class CustomBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
 	{
+		public override HurtModes HurtMode => HurtModes.Custom;
+
 		protected override Component GetBossCollision()
 			=> null;
 	}
