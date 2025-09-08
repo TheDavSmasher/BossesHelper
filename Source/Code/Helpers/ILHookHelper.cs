@@ -6,6 +6,7 @@ using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper
 {
@@ -117,11 +118,14 @@ namespace Celeste.Mod.BossesHelper
 				{
 					foreach (string fakeMethod in HealthData.FakeDeathMethods)
 					{
-						string[] opts = fakeMethod.Split(':');
-						if (opts.Length != 2)
+						var (classType, methodName) = fakeMethod.SplitOnce(':');
+						if (classType == null)
 							continue;
-						if (LuaMethodWrappers.GetTypeFromString(opts[0], "")?
-							.GetMethod(opts[1], BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+
+						var (classPrefix, className) = classType.SplitOnce('.', false, SplitMode.IncludeFirst, "Celeste.");
+
+						if (LuaMethodWrappers.GetTypeFromString(className, classPrefix)?
+							.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 							is MethodInfo methodInfo)
 						{
 							ILHookHelper.GenerateHookOn(fakeMethod, methodInfo, il =>
