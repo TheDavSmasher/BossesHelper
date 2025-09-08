@@ -73,12 +73,16 @@ namespace Celeste.Mod.BossesHelper
 					return methodInfo;
 				}
 
+				private static string GetKey(MethodInfo methodInfo) => GetKey(methodInfo.DeclaringType, methodInfo.Name);
+
+				private static string GetKey(Type type, string method) => $"{type.Name}:{method}";
+
 				public static void GenerateHookOn(Type classType, string method,
 					ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
-					=> GenerateHookOn(GetMethodInfo(classType, method, flags, stateMethod), action);
+					=> GenerateHookOn(GetKey(classType, method), GetMethodInfo(classType, method, flags, stateMethod), action);
 
 				public static void GenerateHookOn(MethodInfo methodInfo, ILContext.Manipulator action)
-					=> GenerateHookOn(methodInfo.DeclaringType.Name + ":" + methodInfo.Name, methodInfo, action);
+					=> GenerateHookOn(GetKey(methodInfo), methodInfo, action);
 
 				public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
 				{
@@ -89,10 +93,10 @@ namespace Celeste.Mod.BossesHelper
 				}
 
 				public static void DisposeHook(MethodInfo methodInfo)
-					=> DisposeHook(methodInfo.DeclaringType, methodInfo.Name);
+					=> DisposeHook(GetKey(methodInfo));
 
 				public static void DisposeHook(Type classType, string method)
-					=> DisposeHook(classType.Name + ":" + method);
+					=> DisposeHook(GetKey(classType, method));
 
 				public static void DisposeHook(string key)
 				{
