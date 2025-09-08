@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Health = data.Int("bossHealthMax", -1);
 			startAttackingImmediately = data.Bool("startAttackingImmediately");
 			Add(ActivePattern = new Coroutine());
-			Puppet = new(this)
+			Puppet = new(data, offset)
 			{
 				new BossHealthTracker(() => Health)
 			};

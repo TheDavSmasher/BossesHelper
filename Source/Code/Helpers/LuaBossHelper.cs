@@ -273,7 +273,10 @@ namespace Celeste.Mod.BossesHelper.Code
 					collider.Collider = Hurtbox;
 				}
 			}
+		}
 
+		public partial class BounceBossPuppet
+		{
 			public void ChangeBounceboxOption(string tag)
 			{
 				Bouncebox = GetTagOrDefault(ColliderOption.Bouncebox, tag, 6f);
@@ -282,7 +285,10 @@ namespace Celeste.Mod.BossesHelper.Code
 					collider.Collider = Bouncebox;
 				}
 			}
+		}
 
+		public partial class SidekickBossPuppet
+		{
 			public void ChangeTargetOption(string tag)
 			{
 				Target = GetTagOrDefault(ColliderOption.Target, tag, null);

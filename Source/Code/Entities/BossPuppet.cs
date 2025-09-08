@@ -34,17 +34,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
 
-		private readonly Component BossCollision;
+		protected readonly Component BossCollision;
 
 		private readonly bool DynamicFacing;
 
 		private readonly bool MirrorSprite;
-
-		private readonly bool freezeSidekickOnAttack;
-
-		private readonly float sidekickCooldown;
-
-		public readonly HurtModes HurtMode;
 
 		private BossFunctions BossFunctions;
 
@@ -66,20 +60,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public Collider Hurtbox { get; private set; }
 
-		public Collider Bouncebox { get; private set; }
-
-		public Collider Target { get; private set; }
-
 		public bool SolidCollidable;
 
 		private readonly float maxFall;
 
 		public bool killOnContact;
 
-		public BossPuppet(BossController controller)
-			: base(controller.Position)
+		public BossPuppet(EntityData data, Vector2 offset)
+			: base(data.Position + offset)
 		{
-			EntityData data = controller.SourceData;
 			DynamicFacing = data.Bool("dynamicFacing");
 			MirrorSprite = data.Bool("mirrorSprite");
 			Add(BossHitCooldown = new(data.Float("bossHitCooldown", 0.5f)));
@@ -87,11 +76,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			gravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
 			airFriction = data.Float("airFriction");
-			freezeSidekickOnAttack = data.Bool("sidekickFreeze");
-			sidekickCooldown = data.Float("sidekickCooldown");
 			SolidCollidable = data.Bool("startSolidCollidable");
 			Collidable = data.Bool("startCollidable");
-			HurtMode = data.Enum("hurtMode", HurtModes.PlayerContact);
 			killOnContact = data.Bool("killOnContact");
 			Add(new PlayerCollider(KillOnContact));
 			Facing = 1;
@@ -108,24 +94,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
 			Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
-			(BossCollision = HurtMode switch
-			{
-				HurtModes.HeadBonk => new PlayerCollider(OnPlayerBounce,
-						Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f)),
-				HurtModes.SidekickAttack => new SidekickTarget(OnSidekickLaser, data.Attr("bossID"),
-						Target = GetMainOrDefault(ColliderOption.Target, null)),
-				HurtModes.PlayerDash => new PlayerCollider(OnPlayerDash, Hurtbox),
-				HurtModes.PlayerContact => new PlayerCollider(OnPlayerContact, Hurtbox),
-				_ => null //Custom depends on Setup.lua's code, does nothing by default
-			})?.AddTo(this);
+			(BossCollision = GetBossCollision())?.AddTo(this);
 		}
 
-		private Collider GetMainOrDefault(ColliderOption option, float? value)
+		protected virtual Component GetBossCollision() => null;
+
+		protected Collider GetMainOrDefault(ColliderOption option, float? value)
 		{
 			return GetTagOrDefault(option, "main", value);
 		}
 
-		private Collider GetTagOrDefault(ColliderOption option, string key, float? value)
+		protected Collider GetTagOrDefault(ColliderOption option, string key, float? value)
 		{
 			var dictionary = hitboxMetadata[option];
 			if (dictionary.TryGetValue(key, out var result))
@@ -139,16 +118,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		internal void LoadFunctions(BossController controller)
 		{
 			BossFunctions = ReadLuaFilePath(controller.SourceData.Attr("functionsPath"), path => new BossFunctions(path, controller));
-		}
-
-		public override void Awake(Scene scene)
-		{
-			base.Awake(scene);
-			Player player = scene.GetPlayer();
-			if (HurtMode == HurtModes.SidekickAttack && scene.Tracker.GetEntity<BadelineSidekick>() == null)
-			{
-				(scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
-			}
 		}
 
 		public override void Update()
@@ -215,32 +184,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				player.Die((player.Position - Position).SafeNormalize());
 		}
 
-		private void OnSidekickLaser()
-		{
-			OnDamage(HurtModes.SidekickAttack);
-		}
-
-		private void OnPlayerBounce(Player player)
-		{
-			OnDamage(HurtModes.HeadBonk, postLua: () =>
-			{
-				Audio.Play("event:/game/general/thing_booped", Position);
-				Celeste.Freeze(0.2f);
-				player.Bounce(Top + 2f);
-			});
-		}
-
-		private void OnPlayerDash(Player player)
-		{
-			OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
-		}
-
-		private void OnPlayerContact(Player _)
-		{
-			OnDamage(HurtModes.PlayerContact);
-		}
-
-		private void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
+		protected void OnDamage(HurtModes source, Func<bool> predicate = null, Action postLua = null)
 		{
 			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
@@ -268,5 +212,76 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Speed.Y = 0;
 		}
 		#endregion
+	}
+
+	public class ContactBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
+	{
+		protected override Component GetBossCollision()
+			=> new PlayerCollider(OnPlayerContact, Hurtbox);
+
+		private void OnPlayerContact(Player _)
+		{
+			OnDamage(HurtModes.PlayerContact);
+		}
+	}
+
+	public class DashBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
+	{
+		protected override Component GetBossCollision()
+			=> new PlayerCollider(OnPlayerDash, Hurtbox);
+
+		private void OnPlayerDash(Player player)
+		{
+			OnDamage(HurtModes.PlayerDash, () => player.DashAttacking && player.Speed != Vector2.Zero);
+		}
+	}
+
+	public partial class BounceBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
+	{
+		public Collider Bouncebox { get; private set; }
+
+		protected override Component GetBossCollision()
+			=> new PlayerCollider(OnPlayerBounce,
+				Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f));
+
+		private void OnPlayerBounce(Player player)
+		{
+			OnDamage(HurtModes.HeadBonk, postLua: () =>
+			{
+				Audio.Play("event:/game/general/thing_booped", Position);
+				Celeste.Freeze(0.2f);
+				player.Bounce(Top + 2f);
+			});
+		}
+	}
+
+	public partial class SidekickBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
+	{
+		private readonly string BossID = data.Attr("bossID");
+
+		private readonly bool freezeSidekickOnAttack = data.Bool("sidekickFreeze");
+
+		private readonly float sidekickCooldown = data.Float("sidekickCooldown");
+
+		public Collider Target { get; private set; }
+
+		public override void Awake(Scene scene)
+		{
+			base.Awake(scene);
+			Player player = scene.GetPlayer();
+			if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
+			{
+				(scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
+			}
+		}
+
+		protected override Component GetBossCollision()
+			=> new SidekickTarget(OnSidekickLaser, BossID,
+				Target = GetMainOrDefault(ColliderOption.Target, null));
+
+		private void OnSidekickLaser()
+		{
+			OnDamage(HurtModes.SidekickAttack);
+		}
 	}
 }
