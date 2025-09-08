@@ -97,11 +97,8 @@ namespace Celeste.Mod.BossesHelper
 
 				public static void DisposeHook(string key)
 				{
-					if (createdILHooks.TryGetValue(key, out ILHook toRemove))
-					{
-						toRemove.Dispose();
-						createdILHooks.Remove(key);
-					}
+					if (createdILHooks.Remove(key, out ILHook hook))
+						hook.Dispose();
 				}
 
 				public static void DisposeAll()
