@@ -29,7 +29,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly bool startAttackingImmediately;
 
-		private readonly Coroutine ActivePattern;
+		private readonly Coroutine PatternCoroutine;
 
 		private readonly List<Entity> activeEntities = [];
 
@@ -51,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			BossID = data.Attr("bossID");
 			Health = data.Int("bossHealthMax", -1);
 			startAttackingImmediately = data.Bool("startAttackingImmediately");
-			Add(ActivePattern = new Coroutine());
+			Add(PatternCoroutine = new Coroutine());
 			Puppet = data.Enum<HurtModes>("hurtMode") switch
 			{
 				HurtModes.PlayerContact     => new ContactBossPuppet(data, offset),
@@ -137,7 +137,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public void InterruptPattern()
 		{
-			ActivePattern.Active = false;
+			PatternCoroutine.Active = false;
 			CurrentPattern.EndAction(MethodEndReason.Interrupted);
 		}
 
@@ -146,14 +146,14 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (goTo >= AllPatterns.Count)
 			{
 				CurrentPatternIndex = -1;
-				ActivePattern.Active = false;
+				PatternCoroutine.Active = false;
 				return;
 			}
 			if (goTo > 0)
 			{
 				CurrentPatternIndex = goTo;
 			}
-			ActivePattern.Replace(CurrentPattern.Perform());
+			PatternCoroutine.Replace(CurrentPattern.Perform());
 		}
 
 		internal bool TryGet(string key, out IBossAction action)
