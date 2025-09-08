@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 using System.Collections.Generic;
+using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
@@ -50,10 +51,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Health = data.Int("bossHealthMax", -1);
 			startAttackingImmediately = data.Bool("startAttackingImmediately");
 			Add(ActivePattern = new Coroutine());
-			Puppet = new(data, offset)
+			Puppet = data.Enum<HurtModes>("hurtMode") switch
 			{
-				new BossHealthTracker(() => Health)
+				HurtModes.PlayerContact     => new ContactBossPuppet(data, offset),
+				HurtModes.PlayerDash        => new DashBossPuppet(data, offset),
+				HurtModes.HeadBonk          => new BounceBossPuppet(data, offset),
+				HurtModes.SidekickAttack    => new SidekickBossPuppet(data, offset),
+				_                           => new BossPuppet(data, offset)
 			};
+			Puppet.Add(new BossHealthTracker(() => Health));
 			Puppet.LoadFunctions(this);
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
