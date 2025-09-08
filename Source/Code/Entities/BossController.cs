@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
-using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -54,11 +53,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Add(PatternCoroutine = new Coroutine());
 			Puppet = data.Enum<HurtModes>("hurtMode") switch
 			{
-				HurtModes.PlayerContact     => new ContactBossPuppet(data, offset),
-				HurtModes.PlayerDash        => new DashBossPuppet(data, offset),
-				HurtModes.HeadBonk          => new BounceBossPuppet(data, offset),
-				HurtModes.SidekickAttack    => new SidekickBossPuppet(data, offset),
-				_                           => new CustomBossPuppet(data, offset)
+				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
+				HurtModes.PlayerDash => new DashBossPuppet(data, offset),
+				HurtModes.HeadBonk => new BounceBossPuppet(data, offset),
+				HurtModes.SidekickAttack => new SidekickBossPuppet(data, offset),
+				_ => new CustomBossPuppet(data, offset)
 			};
 			Puppet.Add(new BossHealthTracker(() => Health));
 			Puppet.BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, this));
