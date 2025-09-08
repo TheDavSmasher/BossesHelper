@@ -89,11 +89,11 @@ namespace Celeste.Mod.BossesHelper
 					newHook.Apply();
 				}
 
+				public static void DisposeHook(MethodInfo methodInfo)
+					=> DisposeHook(methodInfo.DeclaringType, methodInfo.Name);
+
 				public static void DisposeHook(Type classType, string method)
-				{
-					string key = classType.Name + ":" + method;
-					DisposeHook(key);
-				}
+					=> DisposeHook(classType.Name + ":" + method);
 
 				public static void DisposeHook(string key)
 				{
