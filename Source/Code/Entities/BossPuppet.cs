@@ -102,14 +102,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		protected abstract Component GetBossCollision();
 
 		protected Collider GetMainOrDefault(ColliderOption option, float? value)
-		{
-			return GetTagOrDefault(option, "main", value);
-		}
+			=> GetTagOrDefault(option, "main", value);
 
 		protected Collider GetTagOrDefault(ColliderOption option, string key, float? value)
 		{
-			var dictionary = hitboxMetadata[option];
-			if (dictionary.TryGetValue(key, out var result))
+			if (hitboxMetadata[option].TryGetValue(key, out var result))
 				return result;
 
 			if (value == null)
@@ -216,12 +213,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override HurtModes HurtMode => HurtModes.PlayerContact;
 
 		protected override Component GetBossCollision()
-			=> new PlayerCollider(OnPlayerContact, Hurtbox);
-
-		private void OnPlayerContact(Player _)
-		{
-			OnDamage();
-		}
+			=> new PlayerCollider(_ => OnDamage(), Hurtbox);
 	}
 
 	public class DashBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
@@ -281,13 +273,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		protected override Component GetBossCollision()
-			=> new SidekickTarget(OnSidekickLaser, BossID,
+			=> new SidekickTarget(() => OnDamage(), BossID,
 				Target = GetMainOrDefault(ColliderOption.Target, null));
-
-		private void OnSidekickLaser()
-		{
-			OnDamage();
-		}
 	}
 
 	public class CustomBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
