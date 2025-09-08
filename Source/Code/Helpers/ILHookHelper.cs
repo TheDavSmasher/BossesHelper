@@ -66,20 +66,16 @@ namespace Celeste.Mod.BossesHelper
 				public static void GenerateHookOn(Type classType, string method,
 					ILContext.Manipulator action, BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
 				{
-					string key = classType.Name + ":" + method;
 					if (classType.GetMethod(method, flags) is not MethodInfo methodInfo) return;
 					if (stateMethod)
 					{
 						methodInfo = methodInfo.GetStateMachineTarget();
 					}
-					GenerateHookOn(key, methodInfo, action);
+					GenerateHookOn(methodInfo, action);
 				}
 
 				public static void GenerateHookOn(MethodInfo methodInfo, ILContext.Manipulator action)
-				{
-					string key = methodInfo.DeclaringType.Name + ":" + methodInfo.Name;
-					GenerateHookOn(key, methodInfo, action);
-				}
+					=> GenerateHookOn(methodInfo.DeclaringType.Name + ":" + methodInfo.Name, methodInfo, action);
 
 				public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
 				{
