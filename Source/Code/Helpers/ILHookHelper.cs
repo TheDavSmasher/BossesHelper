@@ -86,10 +86,7 @@ namespace Celeste.Mod.BossesHelper
 
 				public static void GenerateHookOn(string key, MethodInfo methodInfo, ILContext.Manipulator action)
 				{
-					if (createdILHooks.ContainsKey(key)) return;
-					ILHook newHook = new(methodInfo, action);
-					createdILHooks.Add(key, newHook);
-					newHook.Apply();
+					createdILHooks.TryAdd(key, new(methodInfo, action));
 				}
 
 				public static void DisposeHook(MethodInfo methodInfo)
