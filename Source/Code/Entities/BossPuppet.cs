@@ -9,7 +9,7 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	public partial class BossPuppet : Actor
+	public abstract partial class BossPuppet : Actor
 	{
 		#region Enums
 		public enum ColliderOption
@@ -97,7 +97,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			(BossCollision = GetBossCollision())?.AddTo(this);
 		}
 
-		protected virtual Component GetBossCollision() => null;
+		protected abstract Component GetBossCollision();
 
 		protected Collider GetMainOrDefault(ColliderOption option, float? value)
 		{
@@ -278,5 +278,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			OnDamage(HurtModes.SidekickAttack);
 		}
+	}
+
+	public class CustomBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
+	{
+		protected override Component GetBossCollision()
+			=> null;
 	}
 }

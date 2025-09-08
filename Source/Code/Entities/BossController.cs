@@ -58,7 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				HurtModes.PlayerDash        => new DashBossPuppet(data, offset),
 				HurtModes.HeadBonk          => new BounceBossPuppet(data, offset),
 				HurtModes.SidekickAttack    => new SidekickBossPuppet(data, offset),
-				_                           => new BossPuppet(data, offset)
+				_                           => new CustomBossPuppet(data, offset)
 			};
 			Puppet.Add(new BossHealthTracker(() => Health));
 			Puppet.BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, this));
