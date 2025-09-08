@@ -40,7 +40,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly bool MirrorSprite;
 
-		private BossFunctions BossFunctions;
+		internal BossFunctions BossFunctions;
 
 		public readonly Stopwatch BossHitCooldown;
 
@@ -113,11 +113,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (value == null)
 				return new Circle(4f);
 			return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
-		}
-
-		internal void LoadFunctions(BossController controller)
-		{
-			BossFunctions = ReadLuaFilePath(controller.SourceData.Attr("functionsPath"), path => new BossFunctions(path, controller));
 		}
 
 		public override void Update()

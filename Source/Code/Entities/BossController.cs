@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
+using static MonoMod.InlineRT.MonoModRule;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -60,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				_                           => new BossPuppet(data, offset)
 			};
 			Puppet.Add(new BossHealthTracker(() => Health));
-			Puppet.LoadFunctions(this);
+			Puppet.BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, this));
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
