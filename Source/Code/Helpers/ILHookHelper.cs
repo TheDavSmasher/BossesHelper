@@ -66,11 +66,8 @@ namespace Celeste.Mod.BossesHelper
 				public static MethodInfo GetMethodInfo(Type type, string method,
 					BindingFlags flags = BindingFlags.Default, bool stateMethod = false)
 				{
-					if (type.GetMethod(method, flags) is not MethodInfo methodInfo)
-						return null;
-					if (stateMethod)
-						return methodInfo.GetStateMachineTarget();
-					return methodInfo;
+					return type.GetMethod(method, flags) is not MethodInfo methodInfo ? null :
+						stateMethod ? methodInfo.GetStateMachineTarget() : methodInfo;
 				}
 
 				private static string GetKey(MethodInfo methodInfo) => GetKey(methodInfo.DeclaringType, methodInfo.Name);
