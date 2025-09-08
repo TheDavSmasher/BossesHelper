@@ -105,6 +105,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			Tween.Position(self, target, time, easer);
 		}
+
+		public enum SplitMode
+		{
+			Exclude,
+			IncludeFirst,
+			IncludeLast
+		}
+
+		public static (string, string) SplitOnce(this string val, char character, bool forward = true, SplitMode mode = SplitMode.Exclude, string preDefault = null)
+		{
+			int index = forward ? val.IndexOf(character) : val.LastIndexOf(character);
+			if (index == -1)
+				return (preDefault, val);
+			if (mode == SplitMode.IncludeFirst)
+				index++;
+			string first = val[..index];
+			if (mode == SplitMode.Exclude)
+				index++;
+			string second = val[index..];
+			return (first, second);
+		}
 		#endregion
 
 		#region Helpers
