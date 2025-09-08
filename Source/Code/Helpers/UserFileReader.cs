@@ -193,7 +193,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		#region Lua Files
 		public static Dictionary<string, IBossAction> ReadLuaFiles(
-			this Entities.BossController controller, params LuaPathReader[] readers)
+			this BossController controller, params LuaPathReader[] readers)
 		{
 			Dictionary<string, IBossAction> actions = [];
 			foreach (var (path, creator) in readers)
