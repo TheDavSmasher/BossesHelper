@@ -50,9 +50,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
 			{
 				Level Level = SceneAs<Level>();
-				if (Level.InCutscene ||
-					!evenIfInvincible && (!DamageCooldown.Finished || SaveData.Instance.Assists.Invincible || amount <= 0) ||
-					Scene.GetPlayer() is not Player entity || entity.StateMachine.State == Player.StCassetteFly)
+				if (Scene.GetPlayer() is not Player entity ||
+					entity.StateMachine.State == Player.StCassetteFly ||
+					Level.InCutscene ||
+					!evenIfInvincible && (!DamageCooldown.Finished || SaveData.Instance.Assists.Invincible || amount <= 0)
+					)
 				{
 					return 0;
 				}
