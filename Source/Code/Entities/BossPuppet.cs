@@ -163,13 +163,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Sprite?.Scale.X = realFacing;
 		}
 
-		public void PlayBossAnim(string name)
-		{
-			if (Sprite != null && !Sprite.TryPlay(name))
-			{
-				Logger.Log(LogLevel.Warn, "BossesHelper/BossPuppet", "Animation specified does not exist!");
-			}
-		}
+		public void PlayBossAnim(string anim)
+			=> Sprite.PlayOrWarn(anim);
 
 		#region Collision Methods
 		private void KillOnContact(Player player)

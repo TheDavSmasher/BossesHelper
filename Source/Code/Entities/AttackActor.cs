@@ -80,12 +80,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		public void PlayAnim(string anim)
-		{
-			if (!Sprite.TryPlay(anim))
-			{
-				Logger.Log(LogLevel.Warn, "BossesHelper/AttackEntity", "Animation specified does not exist!");
-			}
-		}
+			=> Sprite.PlayOrWarn(anim);
 
 		private void OnPlayer(Player player)
 		{

@@ -38,6 +38,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			sprite.OnLastFrame -= waitUntilDone;
 		}
 
+		public static void PlayOrWarn(this Sprite sprite, string anim)
+		{
+			if (!sprite.TryPlay(anim))
+			{
+				Logger.Warn("BossesHelper", "Animation specified does not exist!");
+			}
+		}
+
 		public static bool TryPlay(this Sprite sprite, string anim)
 		{
 			if (!sprite.Has(anim)) return false;
