@@ -244,11 +244,10 @@ namespace Celeste.Mod.BossesHelper.Code
 
 			private IEnumerator Keep1DSpeed(float speed, bool isX, float time)
 			{
-				float timer = 0;
-				while (timer < time)
+				while (time > 0)
 				{
 					(isX ? ref Speed.X : ref Speed.Y) = speed;
-					timer += Engine.DeltaTime;
+					time -= Engine.DeltaTime;
 					yield return null;
 				}
 			}

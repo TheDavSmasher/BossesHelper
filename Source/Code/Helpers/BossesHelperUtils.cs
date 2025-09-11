@@ -32,12 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			if (sprite is null) yield break;
 			sprite.OnLastFrame += waitUntilDone;
 			if (sprite.TryPlay(anim))
-			{
-				while (!singleLoop && sprite.Animating)
-				{
-					yield return null;
-				}
-			}
+				yield return While(() => singleLoop && sprite.Animating);
 			sprite.OnLastFrame -= waitUntilDone;
 		}
 
@@ -212,6 +207,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 
 			private readonly UInt32[] m_checksumTable;
+		}
+
+		public static IEnumerator While(Func<bool> checker, bool doWhile = false)
+		{
+			if (!doWhile && !checker())
+				yield break;
+
+			do
+				yield return null;
+			while (checker());
 		}
 		#endregion
 

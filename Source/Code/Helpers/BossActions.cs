@@ -119,11 +119,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public IEnumerator Perform()
 		{
 			controller.Scene.Add(cutscene);
-			do
-			{
-				yield return null;
-			}
-			while (cutscene.Running);
+			return While(() => cutscene.Running, true);
 		}
 
 		public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
