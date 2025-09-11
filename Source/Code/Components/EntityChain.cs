@@ -11,12 +11,7 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 		public override void Added(Entity entity)
 		{
 			base.Added(entity);
-			ChainOffset = chained.Position - Entity.Position;
-		}
-
-		public override void Update()
-		{
-			chained.Position = Entity.Position + ChainOffset;
+			CreateOffset();
 		}
 
 		public override void Removed(Entity entity)
@@ -25,5 +20,24 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 			if (removeTogether)
 				chained.RemoveSelf();
 		}
+
+		public override void Update()
+		{
+			chained.Position = Entity.Position + ChainOffset;
+		}
+
+		public void ReconnectChain(bool updateOffset)
+		{
+			if (Active)
+				return;
+
+			if (updateOffset)
+				CreateOffset();
+
+			Active = true;
+		}
+
+		private void CreateOffset()
+			=> ChainOffset = chained.Position - Entity.Position;
 	}
 }
