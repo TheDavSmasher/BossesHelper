@@ -13,7 +13,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public Vector2 Speed;
 
-		public const float Gravity = 900f;
+		private const float Gravity = 900f;
+
+		public float GravityMult
+		{
+			get;
+			set
+			{
+				field = value;
+				effectiveGravity = value * Gravity;
+			}
+		}
 
 		public bool SolidCollidable;
 
@@ -30,7 +40,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Collider = attackbox;
 			Collidable = startCollidable;
 			SolidCollidable = solidCollidable;
-			effectiveGravity = gravMult * Gravity;
+			GravityMult = gravMult;
 			this.maxFall = maxFall;
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
 			{
@@ -99,7 +109,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public void SetEffectiveGravityMult(float mult)
 		{
-			effectiveGravity = mult * Gravity;
+			GravityMult = mult;
 		}
 	}
 }
