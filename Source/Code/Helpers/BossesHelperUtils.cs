@@ -10,11 +10,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	public static class BossesHelperUtils
 	{
 		#region Extensions
-		public static T ElementAtOrLast<T>(this IList<T> list, int index)
-		{
-			return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
-		}
-
+		#region Scene
 		public static Player GetPlayer(this Scene scene)
 		{
 			return scene.GetEntity<Player>();
@@ -22,6 +18,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static T GetEntity<T>(this Scene scene) where T : Entity => scene?.Tracker.GetEntity<T>();
 
+		public static void DoNotLoad(this Scene scene, EntityID entityID)
+		{
+			(scene as Level).Session.DoNotLoad.Add(entityID);
+		}
+		#endregion
+
+		#region Sprite
 		public static IEnumerator PlayAnim(this Sprite sprite, string anim)
 		{
 			bool singleLoop = false;
@@ -52,7 +55,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			sprite.Play(anim);
 			return true;
 		}
+		#endregion
 
+		#region SpriteBank
 		public static Sprite TryCreate(this SpriteBank spriteBank, string id)
 		{
 			try
@@ -78,7 +83,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return false;
 			}
 		}
+		#endregion
 
+		#region string
 		public static T Parse<T>(this string value) where T : IParsable<T>
 		{
 			return T.Parse(value, null);
@@ -87,31 +94,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static bool TryParse<T>(this string value, out T result) where T : IParsable<T>
 		{
 			return T.TryParse(value, null, out result);
-		}
-
-		public static Vector2 NearestWhole(this Vector2 value)
-		{
-			return new Vector2((int)value.X, (int)value.Y);
-		}
-
-		public static void Coroutine(this IEnumerator enumerator, Entity target)
-		{
-			new Coroutine(enumerator).AddTo(target);
-		}
-
-		public static void AddTo(this Component self, Entity target)
-		{
-			target.Add(self);
-		}
-
-		public static void DoNotLoad(this Scene scene, EntityID entityID)
-		{
-			(scene as Level).Session.DoNotLoad.Add(entityID);
-		}
-
-		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
-		{
-			Tween.Position(self, target, time, easer);
 		}
 
 		public enum SplitMode
@@ -133,6 +115,32 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				index++;
 			string second = val[index..];
 			return (first, second);
+		}
+		#endregion
+
+		public static T ElementAtOrLast<T>(this IList<T> list, int index)
+		{
+			return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
+		}
+
+		public static Vector2 NearestWhole(this Vector2 value)
+		{
+			return new Vector2((int)value.X, (int)value.Y);
+		}
+
+		public static void Coroutine(this IEnumerator enumerator, Entity target)
+		{
+			new Coroutine(enumerator).AddTo(target);
+		}
+
+		public static void AddTo(this Component self, Entity target)
+		{
+			target.Add(self);
+		}
+
+		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		{
+			Tween.Position(self, target, time, easer);
 		}
 		#endregion
 
