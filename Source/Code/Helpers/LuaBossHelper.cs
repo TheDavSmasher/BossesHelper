@@ -232,6 +232,11 @@ namespace Celeste.Mod.BossesHelper.Code
 			{
 				storedObjects.Remove(key);
 			}
+
+			public void DecreaseHealth(int val = 1)
+			{
+				Health -= val;
+			}
 		}
 
 		public partial class BossPuppet
