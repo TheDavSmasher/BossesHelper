@@ -48,6 +48,7 @@
 ---@class Entity A Monocle Entity object
 ---@field Add fun(self: Entity, component: Component) Adds a component to the Entity
 ---@field Position Vector2
+---@field Center Vector2
 ---@field Collidable boolean
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
 
