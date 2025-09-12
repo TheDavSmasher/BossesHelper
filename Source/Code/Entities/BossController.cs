@@ -163,7 +163,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		internal void ChangeToPattern()
 		{
 			StartAttackPattern(CurrentPattern.GoToPattern.TryParse(out int index) ? index :
-				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern, CurrentPatternIndex + 1));
+				NamedPatterns.GetValueOrDefault(CurrentPattern.GoToPattern ?? "", CurrentPatternIndex + 1));
 		}
 	}
 }
