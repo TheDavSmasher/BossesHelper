@@ -44,14 +44,10 @@ namespace Celeste.Mod.BossesHelper.Code
 
 			public static string GetFileContent(string path)
 			{
-				ModAsset file = Everest.Content.Get(path);
-				Stream stream = file?.Stream;
-				if (stream != null)
-				{
-					using StreamReader streamReader = new(stream);
-					return streamReader.ReadToEnd();
-				}
-				return null;
+				if (Everest.Content.Get(path)?.Stream is not Stream stream)
+					return null;
+				using StreamReader streamReader = new(stream);
+				return streamReader.ReadToEnd();
 			}
 
 			public static LuaTable DictionaryToLuaTable(IDictionary<object, object> dict)
