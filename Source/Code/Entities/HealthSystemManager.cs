@@ -167,6 +167,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (Scene.GetEntity<DamageController>() == null)
 			{
 				Scene.Add(Controller ??= new DamageController());
+				Controller.Scene = Scene;
 				Controller.UpdateState(HealthBar);
 			}
 
