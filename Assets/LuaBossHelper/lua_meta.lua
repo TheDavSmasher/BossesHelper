@@ -3,6 +3,9 @@
 ---@class _G
 ---@field luanet any Luanet server
 
+---@class ModMetadata
+---@field Name string
+
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
 
 ---@class Component A Monocle Component object.
@@ -81,3 +84,6 @@ puppet = {}
 
 ---@type BossController
 boss = {}
+
+---@type ModMetadata
+modMetaData = {}
