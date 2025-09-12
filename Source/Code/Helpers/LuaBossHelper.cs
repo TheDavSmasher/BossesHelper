@@ -36,11 +36,11 @@ namespace Celeste.Mod.BossesHelper.Code
 
 		internal static class LuaBossHelper
 		{
-			public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require(
-				BossesHelperModule.Instance.Metadata.Name + ":/Assets/LuaBossHelper/cutscene_helper") as LuaTable;
+			private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/Assets/LuaBossHelper";
 
-			public static readonly string HelperFunctions =
-				GetFileContent($"{BossesHelperModule.Instance.Metadata.Name}:/Assets/LuaBossHelper/helper_functions");
+			public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+
+			public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
 
 			public static string GetFileContent(string path)
 			{

@@ -107,8 +107,7 @@ function cutsceneHelper.setFuncAsCoroutine(func)
 end
 
 local function addHelperFunctions(env)
-    local helperContent = luaBossHelper.HelperFunctions
-    local helperFunctions = load(helperContent, nil, nil, env)()
+    local helperFunctions = load(luaBossHelper.HelperFunctions, nil, nil, env)()
 
     for k, v in pairs(helperFunctions) do
         env[k] = v
