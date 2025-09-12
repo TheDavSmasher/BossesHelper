@@ -3,9 +3,6 @@
 ---@class _G
 ---@field luanet any Luanet server
 
----@class ModMetadata
----@field Name string
-
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
 
 ---@class Component A Monocle Component object.
@@ -41,6 +38,25 @@
 ---@field Collidable boolean
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
 
+---@diagnostic disable: missing-fields
+
+---@class BossPuppet : Entity
+---@field Speed Vector2
+---@field gravityMult number
+---@field groundFriction number
+---@field airFriction number
+---@field Sprite Sprite
+---@field SolidCollidable boolean
+---@field BossHitCooldown Stopwatch
+---@field PlayBossAnim fun(self : BossPuppet, anim: string)
+---@field Set1DSpeedDuring fun(self: BossPuppet, speed: number, isX: boolean, time: number) *
+---@field Speed1DTween fun(self: BossPuppet, start: number, target: number, time: number, isX: boolean, easer: Easer?) *
+---@field ChangeHitboxOption fun(self : BossPuppet, tag: string) *
+---@field ChangeHurtboxOption fun(self : BossPuppet, tag: string) *
+---@field ChangeBounceboxOption fun(self : BossPuppet, tag: string) *
+---@field ChangeTargetOption fun(self : BossPuppet, tag: string) *
+puppet = {}
+
 ---@class BossController : Entity
 ---@field Health integer
 ---@field IsActing boolean *
@@ -59,31 +75,8 @@
 ---@field StoreObject fun(self: BossController, key: string, value: any) *
 ---@field GetStoredObject fun(self: BossController, key: string): any *
 ---@field DeleteStoredObject fun(self: BossController, key: string) *
-
----@class BossPuppet : Entity
----@field Speed Vector2
----@field gravityMult number
----@field groundFriction number
----@field airFriction number
----@field Sprite Sprite
----@field SolidCollidable boolean
----@field BossHitCooldown Stopwatch
----@field PlayBossAnim fun(self : BossPuppet, anim: string)
----@field Set1DSpeedDuring fun(self: BossPuppet, speed: number, isX: boolean, time: number) *
----@field Speed1DTween fun(self: BossPuppet, start: number, target: number, time: number, isX: boolean, easer: Easer?) *
----@field ChangeHitboxOption fun(self : BossPuppet, tag: string) *
----@field ChangeHurtboxOption fun(self : BossPuppet, tag: string) *
----@field ChangeBounceboxOption fun(self : BossPuppet, tag: string) *
----@field ChangeTargetOption fun(self : BossPuppet, tag: string) *
-
-
----@diagnostic disable: missing-fields
-
----@type BossPuppet
-puppet = {}
-
----@type BossController
 boss = {}
 
----@type ModMetadata
+---@class ModMetadata
+---@field Name string
 modMetaData = {}
