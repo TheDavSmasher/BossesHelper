@@ -236,6 +236,8 @@ namespace Celeste.Mod.BossesHelper.Code
 
 		public partial class BossPuppet
 		{
+			public float BossHitCooldown => BossDamageCooldown.TimeLeft;
+
 			public void Set1DSpeedDuring(float speed, bool isX, float time)
 			{
 				Keep1DSpeed(speed, isX, time).Coroutine(this);

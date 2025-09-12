@@ -44,7 +44,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		internal BossFunctions BossFunctions;
 
-		public readonly Stopwatch BossHitCooldown;
+		public readonly Stopwatch BossDamageCooldown;
 
 		public int Facing;
 
