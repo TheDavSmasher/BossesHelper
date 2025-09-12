@@ -38,9 +38,9 @@ namespace Celeste.Mod.BossesHelper.Code
 		{
 			private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/Assets/LuaBossHelper";
 
-			public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
-
 			public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
+
+			public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
 
 			public static string GetFileContent(string path)
 			{
