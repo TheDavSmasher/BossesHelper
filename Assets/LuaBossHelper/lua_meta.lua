@@ -62,7 +62,8 @@
 ---@field airFriction number
 ---@field Sprite Sprite
 ---@field SolidCollidable boolean
----@field BossHitCooldown Stopwatch
+---@field BossHitCooldown number
+---@field BossDamageCooldown Stopwatch
 ---@field PlayBossAnim fun(self : BossPuppet, anim: string)
 ---@field Set1DSpeedDuring fun(self: BossPuppet, speed: number, isX: boolean, time: number) *
 ---@field Speed1DTween fun(self: BossPuppet, start: number, target: number, time: number, isX: boolean, easer: Easer?) *
@@ -90,6 +91,7 @@ puppet = {}
 ---@field StoreObject fun(self: BossController, key: string, value: any) *
 ---@field GetStoredObject fun(self: BossController, key: string): any *
 ---@field DeleteStoredObject fun(self: BossController, key: string) *
+---@field DecreaseHealth fun(self: BossController, amount?: integer)
 boss = {}
 
 ---@class ModMetadata

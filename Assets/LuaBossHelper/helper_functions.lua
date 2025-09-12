@@ -1317,12 +1317,12 @@ end
 ---Set the Boss' hit cooldown to the given value
 ---@param value number The timer to set the cooldown to
 function helpers.setHitCooldown(value)
-    puppet.BossHitCooldown.TimeLeft = value
+    puppet.BossDamageCooldown.TimeLeft = value
 end
 
 ---Set the Boss' hit cooldown back to the default value defined.
 function helpers.resetHitCooldown()
-    puppet.BossHitCooldown:Reset()
+    puppet.BossDamageCooldown:Reset()
 end
 
 ---Change the Boss' hitboxes to those stored under the given tag.
