@@ -221,12 +221,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			asset = null;
 			if (isFile)
 				path = CleanPath(path, ".lua");
-			if (!Everest.Content.TryGet(path, out ModAsset luaPath))
+			if (!Everest.Content.TryGet(path, out asset))
 			{
 				Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
 				return false;
 			}
-			asset = luaPath;
 			return true;
 		}
 		#endregion
