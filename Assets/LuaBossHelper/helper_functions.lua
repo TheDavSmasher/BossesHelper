@@ -1029,7 +1029,7 @@ end
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
 ---@default true
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
-    boss:SavePhaseChangeToSession(health or helpers.getHealth(), index or helpers.GetCurrentPatternID(), startImmediately or false)
+    boss:SavePhaseChangeToSession(health or helpers.getHealth(), index or helpers.getCurrentPatternID(), startImmediately or false)
 end
 
 ---Removes the Boss from the scene, alongside its puppet and any Entities spawned by it.
