@@ -60,7 +60,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				_ => new CustomBossPuppet(data, offset)
 			};
 			Puppet.Add(new BossHealthTracker(() => Health));
-			Puppet.BossFunctions = ReadLuaFilePath(data.Attr("functionsPath"), path => new BossFunctions(path, this));
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
@@ -86,6 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(SourceData.Attr("attacksPath"), BossAttack.Create),
 				(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
+			Puppet.BossFunctions = ReadLuaFilePath(SourceData.Attr("functionsPath"), path => new BossFunctions(path, this));
 			AllPatterns.AddRange(this.ReadPatternFile(SourceData.Attr("patternsPath")));
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
