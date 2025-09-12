@@ -80,3 +80,9 @@ boss = {}
 ---@class ModMetadata
 ---@field Name string
 modMetaData = {}
+
+---@type string
+bossId = ""
+
+---@class Player : Entity
+--player = {}

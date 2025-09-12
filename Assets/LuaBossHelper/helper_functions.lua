@@ -36,6 +36,7 @@ local luaMethodWrappers = bossesHelper.Code.Helpers.LuaMethodWrappers
 -- Return values starting with # are from C#.
 -- @module helper_functions
 
+---@class HelperFunctions
 local helpers = {}
 
 helpers.celeste = celeste
