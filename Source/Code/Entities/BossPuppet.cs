@@ -73,7 +73,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			DynamicFacing = data.Bool("dynamicFacing");
 			MirrorSprite = data.Bool("mirrorSprite");
-			Add(BossHitCooldown = new(data.Float("bossHitCooldown", 0.5f)));
+			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
 			maxFall = data.Float("maxFall", 90f);
 			gravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
@@ -175,9 +175,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		protected void OnDamage(Func<bool> predicate = null, Action postLua = null)
 		{
-			if (BossHitCooldown.Finished && (predicate?.Invoke() ?? true))
+			if (BossDamageCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
-				BossHitCooldown.Reset();
+				BossDamageCooldown.Reset();
 				BossFunctions.OnDamage(HurtMode).Coroutine(this);
 				postLua?.Invoke();
 			}
