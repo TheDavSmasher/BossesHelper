@@ -5,11 +5,24 @@
 
 ---@alias Easer Easer A Monocle Easer, used for Tweens.
 
+---@class Audio Celeste Audio
+
+---@class Session A Monocle Session
+
+---@class Scene A Monocle Scene
+---@field Add fun(self: Scene, entity: Entity)
+
+---@class Level : Scene A Monocle Level
+---@field Session Session
+
 ---@class Component A Monocle Component object.
 
 ---@class Collider : Component A Monocle Collider object.
 
 ---@class ColliderList : Collider A Monocle ColliderList object, combining multiple Colliders.
+
+---@class Engine The Monocle Engine
+---@field Scene Level
 
 ---@class Sprite : Component
 ---@field PlayAnim fun(self: Sprite, anim: string): any
@@ -37,6 +50,8 @@
 ---@field Position Vector2
 ---@field Collidable boolean
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
+
+---@class BadelineOldsite : Entity
 
 ---@diagnostic disable: missing-fields
 
@@ -85,4 +100,5 @@ modMetaData = {}
 bossId = ""
 
 ---@class Player : Entity
+---@field OnGround fun(self: Player, at: number?): boolean
 --player = {}
