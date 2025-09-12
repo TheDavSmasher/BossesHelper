@@ -3,6 +3,9 @@
 local cutsceneHelper = {}
 
 local celesteMod = require("#celeste.mod")
+local bossesHelper = celesteMod[modName]
+local bossesHelper_Helpers = bossesHelper.Code.Helpers
+local luaBossHelper = bossesHelper_Helpers.LuaBossHelper
 
 local function threadProxyResume(self, ...)
     local thread = self.value
@@ -15,7 +18,7 @@ local function threadProxyResume(self, ...)
 
     -- The error message should be returned as an exception and not a string
     if not success then
-        return success, celesteMod[modName].Code.Helpers.LuaException(message)
+        return success, bossesHelper_Helpers.LuaException(message)
     end
 
     return success, message
@@ -103,12 +106,8 @@ function cutsceneHelper.setFuncAsCoroutine(func)
     return func and celesteMod.LuaCoroutine({value = coroutine.create(func), resume = threadProxyResume})
 end
 
-function cutsceneHelper.readFile(filename, modName)
-    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetFileContent(filename)
-end
-
-local function addHelperFunctions(data, env)
-    local helperContent = cutsceneHelper.readFile(data.modMetaData.Name .. ":/Assets/LuaBossHelper/helper_functions", data.modMetaData.Name)
+local function addHelperFunctions(env)
+    local helperContent = luaBossHelper.HelperFunctions
     local helperFunctions = load(helperContent, nil, nil, env)()
 
     for k, v in pairs(helperFunctions) do
@@ -130,10 +129,10 @@ function cutsceneHelper.getLuaData(filename, data, preparationFunc)
     preparationFunc = preparationFunc or function() end
 
     local env = cutsceneHelper.getLuaEnv(data)
-    local content = cutsceneHelper.readFile(filename, data.modMetaData.Name)
+    local content = luaBossHelper.GetFileContent(filename)
 
     if content then
-        addHelperFunctions(data, env)
+        addHelperFunctions(env)
 
         local func = load(content, nil, nil, env)
 
