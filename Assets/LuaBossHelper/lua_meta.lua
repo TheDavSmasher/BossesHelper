@@ -54,10 +54,9 @@
 
 ---@class BadelineOldsite : Entity
 
----@diagnostic disable: missing-fields
-
 ---@class BossPuppet : Entity
 ---@field Speed Vector2
+---@field Grounded boolean
 ---@field gravityMult number
 ---@field groundFriction number
 ---@field airFriction number

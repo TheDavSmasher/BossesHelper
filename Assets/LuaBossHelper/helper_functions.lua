@@ -1699,7 +1699,7 @@ function helpers.getEaserByName(name, invert)
         return nil
     end
     local value = string.lower(name)
-    ---@enum
+    ---@enum Easers
     local easers = {
         linear = ease.Linear,
         sinein = ease.SineIn,
