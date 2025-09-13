@@ -1105,21 +1105,20 @@ end
 ---Set the Boss' x speed to the given value
 ---@param value number The value to set the Boss' speed x component to.
 function helpers.setXSpeed(value)
-    puppet.Speed.X = value
+    puppet.Speed = vector2(value, puppet.Speed.Y)
 end
 
 ---Set the Boss' y speed to the given value
 ---@param value number The value to set the Boss' speed y component to.
 function helpers.setYSpeed(value)
-    puppet.Speed.Y = value
+    puppet.Speed = vector2(puppet.Speed.Y, value)
 end
 
 ---Set the Boss' speed to the given values
 ---@param x number The value to set the Boss' speed x component to.
 ---@param y number The value to set the Boss' speed y component to.
 function helpers.setSpeed(x, y)
-    puppet.Speed.X = x
-    puppet.Speed.Y = y
+    puppet.Speed = vector2(x, y)
 end
 
 ---Set the Boss' x speed to the given value, kept constant during the given time.
