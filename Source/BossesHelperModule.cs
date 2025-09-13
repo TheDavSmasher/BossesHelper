@@ -142,7 +142,7 @@ public partial class BossesHelperModule : EverestModule
 			return orig(self, dir, always, register);
 		if (Session.useFakeDeath)
 			return FakeDie(self, dir);
-		if (!self.Get<Stopwatch>().Finished)
+		if (self.Get<Stopwatch>() is var watch && !watch.Finished)
 			return null;
 		if (!damageTracked)
 			return orig(self, dir, always, register);
@@ -318,6 +318,8 @@ public partial class BossesHelperModule : EverestModule
 
 	public static void GiveIFrames(float time)
 	{
-		Engine.Scene.GetPlayer().Get<Stopwatch>().TimeLeft += time;
+		Player player = Engine.Scene.GetPlayer();
+		player.AddIFramesWatch(true);
+		player.Get<Stopwatch>().TimeLeft += time;
 	}
 }
