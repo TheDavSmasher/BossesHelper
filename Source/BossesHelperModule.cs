@@ -142,7 +142,7 @@ public partial class BossesHelperModule : EverestModule
 			return orig(self, dir, always, register);
 		if (Session.useFakeDeath)
 			return FakeDie(self, dir);
-		if (self.Get<Stopwatch>() is var watch && !watch.Finished)
+		if (self.Get<Stopwatch>() is Stopwatch watch && !watch.Finished)
 			return null;
 		if (!damageTracked)
 			return orig(self, dir, always, register);
