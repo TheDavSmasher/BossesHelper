@@ -137,9 +137,7 @@
 ---@field Center Vector2
 ---@field Collidable boolean
 
----@class BossesHelperUtils
----@field PlayAnim fun(self: Sprite, anim: string): IEnumerator
----@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
+---@class Actor : Entity
 
 ---@class BadelineOldsite : Entity
 
@@ -183,7 +181,7 @@
 
 ---@enum IntroTypes
 
----@class Player : Entity
+---@class Player : Actor
 ---@field IntroType IntroTypes
 ---@field StateMachine StateMachine
 ---@field Dead boolean
@@ -206,15 +204,65 @@ player = {}
 ---@field Error fun(tag: string, message: string)
 ---@field Info fun(tag: string, message: string)
 
+---@class AttackClass
+---@field Sprite Sprite
+---@field PlayAnim fun(self: AttackEntity, anim: string)
+---@field SetCollisionActive fun(self: AttackEntity, state: boolean)
+
+---@class AttackEntity : Entity, AttackClass
+
+---@class AttackActor : Actor, AttackClass
+---@field Speed Vector2
+---@field GravityMult number
+---@field SolidCollidable boolean
+---@field Grounded boolean
+---@field SetSolidCollisionActive fun(self: AttackActor, value: boolean)
+---@field SetEffectiveGravityMult fun(self: AttackActor, mult: number)
+
+---@class Entities
+---@field AttackEntity fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, spriteName: string, xScale?: number, yScale?: number) : AttackEntity
+---@field AttackActor fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, startSolidCollidable: boolean, spriteName: string, gravMult: number, maxFall: number, xScale?: number, yScale?: number): AttackActor
+
 ---@class BossesHelperModule
+---@field GiveIFrames fun(time: number)
 ---@field MakeEntityData fun(): EntityData
+
+---@class BossesHelperUtils
+---@field PlayAnim fun(self: Sprite, anim: string): IEnumerator
+---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
+
+---@class LuaBossHelper
+---@field GetFileContent fun(file: string): string
+---@field GetColliderListFromLuaTable fun(...: Collider): ColliderList
+---@field AddConstantBackgroundCoroutine fun(entity: Entity, func: function)
+---@field Say fun(dialog: string, funcs: function[]): IEnumerator
+---@field DoMethodAfterDelay fun(func: function, delay: number)
+
+---@class LuaMethodWrappers
+---@field TeleportTo fun(scene: Scene, player: Player, room: string, intro?: IntroTypes, nearest?: Vector2)
+---@field InstantTeleport fun(scene: Scene, player: Player, room: string, relative: boolean, posX: number, postY: number)
+---@field GetEntities fun(name: string, prefix?: string): table
+---@field GetAllEntities fun(name: string, prefix?: string): table
+---@field GetEntity fun(name: string, prefix?: string): any
+---@field GetFirstEntity fun(name: string, prefix?: string): any
+---@field GetComponents fun(name: string, prefix?: string): table
+---@field GetAllComponents fun(name: string, prefix?: string): table
+---@field GetComponent fun(name: string, prefix?: string): any
+---@field GetFirstComponent fun(name: string, prefix?: string): any
+---@field GetAllComponentsOnType fun(name: string, entity: string, prefix?: string, entityPrefix?: string): table
+---@field GetFirstComponentOnType fun(name: string, entity: string, prefix?: string, entityPrefix?: string): any
+---@field GetComponentsFromEntity fun(entity: Entity, name: string, prefix?: string): table
+---@field GetComponentFromEntity fun(entity: Entity, name: string, prefix?: string): any
+---@field EntityHasComponent fun(entity: Entity, name: string, prefix?: string): boolean
 
 ---@class Helpers
 ---@field BossesHelperUtils BossesHelperUtils
+---@field LuaBossHelper LuaBossHelper
+---@field LuaMethodWrappers LuaMethodWrappers
 
 ---@class Code
 ---@field Components table
----@field Entities table
+---@field Entities Entities
 ---@field Helpers Helpers
 
 ---@class BossesHelper
@@ -251,7 +299,7 @@ player = {}
 ---@field WindController fun(patterns: userdata): Entity
 ---@field SoundSource fun(): SoundSource
 
----@class BossPuppet : Entity
+---@class BossPuppet : Actor
 ---@field Speed Vector2
 ---@field Grounded boolean
 ---@field gravityMult number
