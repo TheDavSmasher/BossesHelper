@@ -1595,13 +1595,9 @@ end
 --#region Health System
 
 ---Get the Player's current health value on the active Health System
----@return number health The player's health value, or -1 if there's no active Health System
+---@return integer health The player's health value, or -1 if there's no active Health System
 function helpers.getPlayerHealth()
-    local controller = bossesHelper.BossesHelperModule.Session.mapDamageController
-    if controller then
-       return controller.Health
-    end
-    return -1
+    return bossesHelper.BossesHelperModule.PlayerHealth
 end
 
 ---Gives additional time where the player is invincible to taking damage.

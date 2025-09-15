@@ -9,6 +9,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+namespace Celeste.Mod.BossesHelper
+{
+	public partial class BossesHelperModule
+	{
+		public static int PlayerHealth => HealthData.isEnabled ? Session.currentPlayerHealth : -1;
+	}
+}
+
 namespace Celeste.Mod.BossesHelper.Code
 {
 	namespace Helpers

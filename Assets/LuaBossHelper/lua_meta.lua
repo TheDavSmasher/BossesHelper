@@ -224,6 +224,7 @@ player = {}
 ---@field AttackActor fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, startSolidCollidable: boolean, spriteName: string, gravMult: number, maxFall: number, xScale?: number, yScale?: number): AttackActor
 
 ---@class BossesHelperModule
+---@field PlayerHealth integer
 ---@field GiveIFrames fun(time: number)
 ---@field MakeEntityData fun(): EntityData
 
