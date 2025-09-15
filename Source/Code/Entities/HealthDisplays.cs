@@ -12,8 +12,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	{
 		private static BossesHelperSession.HealthSystemData HealthData => BossesHelperModule.Session.healthData;
 
-		public class HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default, bool isGlobal = false)
-			: HudEntity(isGlobal)
+		public class HealthDisplay(Vector2 position, Vector2 barScale, Func<int> getHealth, Color color = default, bool isGlobal = false) : Entity
 		{
 			public readonly Sprite Frame = GFX.SpriteBank.TryCreate(HealthData.frameSprite);
 
@@ -44,6 +43,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			public override void Added(Scene scene)
 			{
 				base.Added(scene);
+				AddTag(Tags.HUD);
+				this.ChangeTagState(Tags.Global, isGlobal);
 				Position = position;
 				if (Frame.Width > 0 && Frame.Height > 0)
 				{

@@ -96,7 +96,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
 			Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
-			(BossCollision = GetBossCollision())?.AddTo(this);
+			if ((BossCollision = GetBossCollision()) != null)
+				Add(BossCollision);
 		}
 
 		protected abstract Component GetBossCollision();

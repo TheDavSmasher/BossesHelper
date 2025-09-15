@@ -24,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		[Tracked(false)]
-		private class DamageController() : GlobalEntity(false), ILuaLoader
+		private class DamageController() : Entity, ILuaLoader
 		{
 			private LuaFunction onRecover;
 
@@ -38,7 +38,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
-				ChangeGlobalState(HealthData.globalController);
+				this.ChangeTagState(Tags.Global, HealthData.globalController);
 				Player player = Scene.GetPlayer();
 				Values = [("player", player), ("healthBar", healthBar)];
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);

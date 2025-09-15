@@ -140,12 +140,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static void Coroutine(this IEnumerator enumerator, Entity target)
 		{
-			new Coroutine(enumerator).AddTo(target);
-		}
-
-		public static void AddTo(this Component self, Entity target)
-		{
-			target.Add(self);
+			target.Add(new Coroutine(enumerator));
 		}
 		#endregion
 
@@ -194,20 +189,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			private const UInt32 s_generator = 0xEDB88320;
 
-			public Crc32()
+			private readonly UInt32[] m_checksumTable = [.. Enumerable.Range(0, 256).Select(i =>
 			{
-				m_checksumTable = [.. Enumerable.Range(0, 256).Select(i =>
+				var tableEntry = (uint)i;
+				for (var j = 0; j < 8; ++j)
 				{
-					var tableEntry = (uint)i;
-					for (var j = 0; j < 8; ++j)
-					{
-						tableEntry = ((tableEntry & 1) != 0)
-							? (s_generator ^ (tableEntry >> 1))
-							: (tableEntry >> 1);
-					}
-					return tableEntry;
-				})];
-			}
+					tableEntry = ((tableEntry & 1) != 0)
+						? (s_generator ^ (tableEntry >> 1))
+						: (tableEntry >> 1);
+				}
+				return tableEntry;
+			})];
 
 			public int Get(string value)
 			{
@@ -215,8 +207,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
 							(m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
 			}
-
-			private readonly UInt32[] m_checksumTable;
 		}
 
 		public static IEnumerator While(Func<bool> checker, bool doWhile = false)
@@ -231,38 +221,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Celeste Classes
-		public abstract class HudEntity : GlobalEntity
-		{
-			public HudEntity(bool isGlobal = false) : base(isGlobal)
-			{
-				AddTag(Tags.HUD);
-			}
-		}
-
-		public abstract class GlobalEntity(bool isGlobal) : Entity
-		{
-			protected bool IsGlobal { get; private set; } = isGlobal;
-
-			public override void Added(Scene scene)
-			{
-				base.Added(scene);
-				if (IsGlobal)
-					ChangeGlobalState(true);
-			}
-
-			public void ChangeGlobalState(bool state)
-			{
-				if (IsGlobal != state)
-				{
-					IsGlobal = state;
-					if (state)
-						AddTag(Tags.Global);
-					else
-						RemoveTag(Tags.Global);
-				}
-			}
-		}
-
 		public class SingleUse<T> where T : struct
 		{
 			public T? Value
@@ -304,39 +262,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				watch.RemoveSelf();
 			}
 			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
-		}
-
-		public interface IMonocleCollection<T> : IReadOnlyCollection<T>
-		{
-			public bool Active
-			{
-				get => this.Any(i => ItemActive(i));
-				set
-				{
-					foreach (var item in this)
-						ItemActive(item) = value;
-				}
-			}
-
-			public bool Visible
-			{
-				get => this.Any(i => ItemVisible(i));
-				set
-				{
-					foreach (var item in this)
-						ItemVisible(item) = value;
-				}
-			}
-
-			ref bool ItemActive(T item);
-			ref bool ItemVisible(T item);
-		}
-
-		public class ComponentStack<T> : Stack<T>, IMonocleCollection<T> where T : Component
-		{
-			public ref bool ItemActive(T item) => ref item.Active;
-
-			public ref bool ItemVisible(T item) => ref item.Visible;
 		}
 		#endregion
 	}
