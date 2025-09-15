@@ -188,8 +188,16 @@ player = {}
 ---@field Error fun(tag: string, message: string)
 ---@field Info fun(tag: string, message: string)
 
+---@class ChoicePrompt : Entity
+---@field Choice integer
+---@field Prompt fun(...: string): any
+
+---@class LuaCutscenes
+---@field ChoicePrompt ChoicePrompt
+
 ---@class Mod : { [string]: table }
 ---@field Logger Logger
+---@field LuaCutscenes LuaCutscenes
 
 ---@class Celeste
 ---@field Mod Mod

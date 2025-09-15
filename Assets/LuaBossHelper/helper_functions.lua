@@ -201,8 +201,10 @@ function helpers.miniTextbox(dialog)
 end
 
 --- Allow the user to select one of several minitextboxes, similar to intro cutscene of Reflection.
----@param ... string|table Dialog IDs for each of the textboxes as varargs. First argument can be a table of dialog ids instead.
----@return number index The index of the option the player selected.
+---@param ... string Dialog IDs for each of the textboxes as varargs. First argument can be a table of dialog ids instead.
+---@return integer index The index of the option the player selected.
+---@overload fun(ids: string[]): integer
+---@overload fun(...: string): integer
 function helpers.choice(...)
     local choices = {...}
 
@@ -211,9 +213,9 @@ function helpers.choice(...)
         choices = first
     end
 
-    coroutine.yield(celesteMod[modName].ChoicePrompt.Prompt(table.unpack(choices)))
+    coroutine.yield(celesteMod.LuaCutscenes.ChoicePrompt.Prompt(table.unpack(choices)))
 
-    return celesteMod[modName].ChoicePrompt.Choice + 1
+    return celesteMod.LuaCutscenes.ChoicePrompt.Choice + 1
 end
 
 -- Used by helpers.choiceDialog to store the current dialog table.
