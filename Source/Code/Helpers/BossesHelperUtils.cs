@@ -118,6 +118,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			Tween.Position(self, target, time, easer);
 		}
+
+		public static void ChangeTagState(this Entity entity, int tag, bool state)
+		{
+			if (state)
+				entity.AddTag(tag);
+			else
+				entity.RemoveTag(tag);
+		}
 		#endregion
 
 		public static T ElementAtOrLast<T>(this IList<T> list, int index)
