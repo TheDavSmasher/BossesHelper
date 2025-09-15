@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 using System.Collections;
@@ -128,6 +129,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
+		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
+		{
+			if (player.Get<Stopwatch>() is Stopwatch watch)
+			{
+				if (onlyOnNull)
+					return;
+				watch.RemoveSelf();
+			}
+			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
+		}
+
 		public static T ElementAtOrLast<T>(this IList<T> list, int index)
 		{
 			return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
@@ -144,36 +156,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
-		#region Helpers
-		public enum Alignment
-		{
-			Left = -1,
-			Center,
-			Right
-		}
-
-		public static float DistanceBetween(Vector2 start, Vector2 end)
-		{
-			var dx = start.X - end.X;
-			var dy = start.Y - end.Y;
-			return (float)Math.Sqrt(dx * dx + dy * dy);
-		}
-
-		public static List<string> SeparateList(string listString)
-		{
-			List<string> res = listString?.Split(',').ToList() ?? [];
-			for (int i = 0; i < res.Count; i++)
-			{
-				res[i] = res[i].Trim();
-			}
-			return res;
-		}
-
-		public static List<float> SeparateFloatList(string listString)
-		{
-			return [.. SeparateList(listString).Select(float.Parse)];
-		}
-
+		#region Classes
 		public class EnumDict<TKey, TValue> : Dictionary<TKey, TValue> where TKey : struct, Enum
 		{
 			public EnumDict(Func<TKey, TValue> populator) : base()
@@ -209,18 +192,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-		public static IEnumerator While(Func<bool> checker, bool doWhile = false)
-		{
-			if (!doWhile && !checker())
-				yield break;
-
-			do
-				yield return null;
-			while (checker());
-		}
-		#endregion
-
-		#region Celeste Classes
 		public class SingleUse<T> where T : struct
 		{
 			public T? Value
@@ -234,35 +205,45 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				set;
 			}
 		}
-
-		public class Stopwatch(float fullTime) : Component(true, false)
-		{
-			public float TimeLeft { get; set; }
-
-			public bool Finished => TimeLeft <= 0;
-
-			public void Reset()
-			{
-				TimeLeft = fullTime;
-			}
-
-			public override void Update()
-			{
-				if (TimeLeft > 0)
-					TimeLeft -= Engine.DeltaTime;
-			}
-		}
-
-		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
-		{
-			if (player.Get<Stopwatch>() is Stopwatch watch)
-			{
-				if (onlyOnNull)
-					return;
-				watch.RemoveSelf();
-			}
-			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
-		}
 		#endregion
+
+		public enum Alignment
+		{
+			Left = -1,
+			Center,
+			Right
+		}
+
+		public static float DistanceBetween(Vector2 start, Vector2 end)
+		{
+			var dx = start.X - end.X;
+			var dy = start.Y - end.Y;
+			return (float)Math.Sqrt(dx * dx + dy * dy);
+		}
+
+		public static List<string> SeparateList(string listString)
+		{
+			List<string> res = listString?.Split(',').ToList() ?? [];
+			for (int i = 0; i < res.Count; i++)
+			{
+				res[i] = res[i].Trim();
+			}
+			return res;
+		}
+
+		public static List<float> SeparateFloatList(string listString)
+		{
+			return [.. SeparateList(listString).Select(float.Parse)];
+		}
+
+		public static IEnumerator While(Func<bool> checker, bool doWhile = false)
+		{
+			if (!doWhile && !checker())
+				yield break;
+
+			do
+				yield return null;
+			while (checker());
+		}
 	}
 }
