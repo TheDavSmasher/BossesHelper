@@ -8,8 +8,13 @@
 
 local luanet = _G.luanet
 
+---@type Monocle
 local monocle = require("#monocle")
+---@type Celeste
 local celeste = require("#celeste")
+
+---@class Vector2
+---@overload fun(x: number, y: number): Vector2
 local csharpVector2 = require("#microsoft.xna.framework.vector2")
 
 local ease = monocle.Ease
@@ -32,6 +37,7 @@ local classNamePrefix = "Celeste."
 ---@class HelperFunctions
 local helpers = {}
 
+helpers.monocle = monocle
 helpers.celeste = celeste
 helpers.engine = engine
 
@@ -107,7 +113,7 @@ function helpers.loadCelesteAsset(filename)
     local content = helpers.readCelesteAsset(filename)
 
     if not content then
-        celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: file '" .. filename .. "' not found")
+        celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: file '" .. filename .. "' not found")
 
         return
     end
@@ -126,7 +132,7 @@ function helpers.loadCelesteAsset(filename)
         end
     end
 
-    celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: " .. result)
+    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
 end
 
 --- Put debug message in the Celeste console.
@@ -134,7 +140,7 @@ end
 ---@param tag string? The tag in the console.
 ---@default "Bosses Helper"
 function helpers.log(message, tag)
-    celesteMod.logger.log(celesteMod.LogLevel.Info, tag or "Bosses Helper", tostring(message))
+    celesteMod.Logger.Info(tag or "Bosses Helper", tostring(message))
 end
 
 --- Gets enum value.
@@ -321,17 +327,17 @@ end
 
 --- Display postcard.
 ---@param dialog string Dialog ID or message to show in the postcard.
----@param sfxIn any effect when opening the postcard or area ID.
+---@param sfxIn string|integer effect when opening the postcard or area ID.
 ---@param sfxOut string? Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
 ---@default nil
 function helpers.postcard(dialog, sfxIn, sfxOut)
     local message = celeste.Dialog.Get(dialog) or dialog
     local postcard
 
-    if sfxOut then
+    if sfxOut then ---@cast sfxIn string
         postcard = celeste.Postcard(message, sfxIn, sfxOut)
 
-    else
+    else ---@cast sfxIn integer
         postcard = celeste.Postcard(message, sfxIn)
     end
 
@@ -476,13 +482,13 @@ function helpers.teleportTo(x, y, room, introType)
 
     if room then
         local mapData = engine.Scene.Session.MapData
-        local levelData = mapData:getAt(vector2(x, y))
+        local levelData = mapData:GetAt(vector2(x, y))
 
         -- TeleportTo adds the new room offset for spawnpoint check, we have to remove this
         local offsetX, offsetY = 0, 0
 
         if levelData then
-            local bounds = levelData.bounds
+            local bounds = levelData.Bounds
 
             offsetX, offsetY = bounds.X, bounds.Y
         end
@@ -555,8 +561,8 @@ end
 
 --- Plays a sound.
 ---@param name string Event for the song.
----@param position table? Where the sound is played from.
----@return Audio audio The audio instance of the sound.
+---@param position Vector2? Where the sound is played from.
+---@return EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
         return celeste.Audio.Play(name, position)
@@ -604,14 +610,14 @@ function helpers.giveFeather()
 end
 
 --- Get amount of deaths in current room.
----@return number deaths Current deaths in room.
+---@return integer deaths Current deaths in room.
 function helpers.deathsInCurrentRoom()
     return engine.Scene.Session.DeathsInCurrentLevel
 end
 
 --- Play and update the current music track.
 ---@param track string Name of song, same as in Ahorn's room window.
----@param progress number? Which progress level the music should be at. Leave empty for no change.
+---@param progress integer? Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
     engine.Scene.Session.Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
 
@@ -636,9 +642,9 @@ function helpers.setMusicProgression(progress)
 end
 
 --- Gets the current music progression.
----@return number progress Music progress level.
+---@return integer progress Music progress level.
 function helpers.getMusicProgression()
-    return engine.Scene.Session.Audio.Music.progress
+    return engine.Scene.Session.Audio.Music.Progress
 end
 
 --- Set music layer on/off.
@@ -677,19 +683,20 @@ function helpers.setSpawnPoint(target, absolute)
 end
 
 --- Shakes the camera.
----@param direction any Direction the screen should shake from.
----@param duration boolean? How long the screen should shake.
+---@param direction Vector2|number Direction the screen should shake from.
+---@param duration? number How long the screen should shake.
+---@overload fun(direction: number)
 function helpers.shake(direction, duration)
-    if direction and duration then
+    if direction and duration then ---@cast direction Vector2
         engine.Scene:DirectionalShake(direction, duration)
 
-    else
+    else ---@cast direction number
         engine.Scene:Shake(direction)
     end
 end
 
 --- Set player inventory
----@param inventory string|userdata Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
+---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
         engine.Scene.Session.Inventory = celeste.PlayerInventory[inventory]
@@ -701,7 +708,7 @@ end
 
 --- Get player inventory
 ---@param inventory string? If name is given get inventory by name, otherwise the current player inventory
----@return userdata inventory
+---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
         return celeste.PlayerInventory[inventory]
@@ -795,7 +802,7 @@ helpers.setDarkness = helpers.setBloomStrength
 helpers.getDarkness = helpers.getBloomStrength
 
 --- Sets the current core mode.
----@param mode string|userdata String name for mode or Core Mode enum.
+---@param mode string|CoreModes String name for mode or Core Mode enum.
 function helpers.setCoreMode(mode)
     if type(mode) == "string" then
         engine.Scene.CoreMode = engine.Scene.Session.CoreModes[mode]
@@ -806,7 +813,7 @@ function helpers.setCoreMode(mode)
 end
 
 --- Returns the current core mode.
----@return userdata
+---@return CoreModes
 function helpers.getCoreMode()
     return engine.Scene.CoreMode
 end
@@ -900,7 +907,7 @@ function helpers.setWind(pattern)
 
     else
         windController = celeste.WindController(pattern)
-        level.Add(windController)
+        level:Add(windController)
     end
 end
 
@@ -1196,7 +1203,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
+    puppet:PositionTween(target, time, getEaser(easer, invert))
     return time
 end
 
@@ -1210,7 +1217,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
-    puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert))
     return time
 end
 
@@ -1224,7 +1231,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
-    puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert))
     return time
 end
 
