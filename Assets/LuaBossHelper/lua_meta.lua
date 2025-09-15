@@ -3,6 +3,8 @@
 ---@class _G
 ---@field luanet any Luanet server
 
+---@class IEnumerator
+
 ---@class EventInstance
 
 ---@class Audio Celeste Audio
@@ -60,6 +62,7 @@
 
 ---@class Scene A Monocle Scene
 ---@field Add fun(self: Scene, entity: Entity)
+---@field Remove fun(self: Scene, entity: Entity)
 
 ---@class Rectangle
 ---@field Left number
@@ -98,10 +101,10 @@
 ---@class ColliderList : Collider A Monocle ColliderList object, combining multiple Colliders.
 
 ---@class Engine The Monocle Engine
----@field Scene Level
+---@field Scene Scene
 
 ---@class Sprite : Component
----@field PlayAnim fun(self: Sprite, anim: string): any
+---@field Play fun(self: Sprite, anim: string)
 
 ---@class Stopwatch : Component
 ---@field TimeLeft number
@@ -117,19 +120,28 @@
 ---@operator add(Vector2): Vector2
 ---@operator sub(Vector2): Vector2
 
+---@class Dictionary<K, V>
+---@field Add fun(self: Dictionary, key: `K`, value: `V`)
+
 ---@class EntityData An Everest EntityData object.
----@field Values any
+---@field ID integer
+---@field Level Level
+---@field Position Vector2
+---@field Width integer
+---@field Height integer
+---@field Values Dictionary<string, any>
 
 ---@class Entity A Monocle Entity object
 ---@field Add fun(self: Entity, component: Component) Adds a component to the Entity
 ---@field Position Vector2
 ---@field Center Vector2
 ---@field Collidable boolean
+
+---@class BossesHelperUtils
+---@field PlayAnim fun(self: Sprite, anim: string): IEnumerator
 ---@field PositionTween fun(self: Entity, target: Vector2, time: number, easer: Easer?)
 
 ---@class BadelineOldsite : Entity
-
----@class Engine The Monocle Engine
 
 ---@class Calc Monocle.Calc
 ---@field SafeNormalize fun(vector2: Vector2, length?: number): Vector2
@@ -153,14 +165,14 @@
 ---@field Hitbox Hitbox
 
 ---@class Textbox
----@field Say fun(dialog: string): any
+---@field Say fun(dialog: string): IEnumerator
 
 ---@class Dialog
 ---@field Get fun(name: string)
 
 ---@class Postcard : Entity
 ---@field BeforeRender fun(self: Postcard)
----@field DisplayRoutine fun(self: Postcard): any
+---@field DisplayRoutine fun(self: Postcard): IEnumerator
 
 ---@class Key : Entity
 ---@field ID EntityID
@@ -175,10 +187,16 @@
 ---@field IntroType IntroTypes
 ---@field StateMachine StateMachine
 ---@field Dead boolean
+---@field DummyFriction boolean
+---@field DummyAutoAnimate boolean
+---@field AutoJump boolean
+---@field AutoJumpTimer number
+---@field Speed Vector2
+---@field Sprite Sprite
 ---@field Die fun(self: Player, dir: Vector2, evenIfInvincible?: boolean, registerDeathInStats?: boolean)
 ---@field OnGround fun(self: Player, at: number?): boolean
----@field DummyWalkTo fun(self: Player, x: number, walkBackwards?: boolean, speedMultiplier?: number, keepWalkingIntoWalls?: boolean): any
----@field DummyRunTo fun(self: Player, x: number, fastAnimation?: boolean): any
+---@field DummyWalkTo fun(self: Player, x: number, walkBackwards?: boolean, speedMultiplier?: number, keepWalkingIntoWalls?: boolean): IEnumerator
+---@field DummyRunTo fun(self: Player, x: number, fastAnimation?: boolean): IEnumerator
 ---@field Jump fun(self: Player, particles?: boolean, playSfx?: boolean)
 ---@field StartStarFly fun(self:Player)
 ---@field StartCassetteFly fun(self: Player, target: Vector2, control: Vector2)
@@ -188,9 +206,24 @@ player = {}
 ---@field Error fun(tag: string, message: string)
 ---@field Info fun(tag: string, message: string)
 
+---@class BossesHelperModule
+---@field MakeEntityData fun(): EntityData
+
+---@class Helpers
+---@field BossesHelperUtils BossesHelperUtils
+
+---@class Code
+---@field Components table
+---@field Entities table
+---@field Helpers Helpers
+
+---@class BossesHelper
+---@field BossesHelperModule BossesHelperModule
+---@field Code Code
+
 ---@class ChoicePrompt : Entity
 ---@field Choice integer
----@field Prompt fun(...: string): any
+---@field Prompt fun(...: string): IEnumerator
 
 ---@class LuaCutscenes
 ---@field ChoicePrompt ChoicePrompt
@@ -198,6 +231,7 @@ player = {}
 ---@class Mod : { [string]: table }
 ---@field Logger Logger
 ---@field LuaCutscenes LuaCutscenes
+---@field BossesHelper BossesHelper
 
 ---@class Celeste
 ---@field Mod Mod
@@ -211,12 +245,11 @@ player = {}
 ---@field MiniTextbox fun(dialogId: string): Entity
 ---@field Postcard fun(msg: string, sfxIn: string, sfxOut: string): Postcard
 ---@field Postcard fun(msg: string, area: integer): Postcard
----@field LevelLoader fun(session: Session, respawn: Vector2): Level
+---@field LevelLoader fun(session: Session, respawn: Vector2): Scene
 ---@field BadelineOldsite fun(position: Vector2, index: integer): BadelineOldsite
 ---@field Key fun(player: Player, id: EntityID): Key
 ---@field WindController fun(patterns: userdata): Entity
 ---@field SoundSource fun(): SoundSource
-
 
 ---@class BossPuppet : Entity
 ---@field Speed Vector2

@@ -163,8 +163,8 @@ end
 local getEnum = helpers.getEnum
 
 --- Pause code exection for duration seconds.
----@param duration number? Duration to wait (in seconds).
----@return any
+---@param duration number|IEnumerator? Duration to wait (in seconds).
+---@return number|IEnumerator?
 function helpers.wait(duration)
     return coroutine.yield(duration)
 end
@@ -172,26 +172,27 @@ end
 local wait = helpers.wait
 
 --- Gets the current room the player is in.
----@return Level scene The current room.
+---@return Level level The current room.
 function helpers.getRoom()
-    return engine.Scene
+    return engine.Scene --[[@as Level]]
 end
 
 helpers.getLevel = helpers.getRoom
-
 local getRoom = helpers.getRoom
 local getLevel = helpers.getLevel
 
 --- Gets the current session.
 ---@return Session session The current session.
 function helpers.getSession()
-    return engine.Scene.Session
+    return getLevel().Session
 end
+
+local getSession = helpers.getSession
 
 --- Display textbox with dialog.
 ---@param dialog string Dialog ID used for the conversation.
 function helpers.say(dialog)
-    coroutine.yield(celeste.Textbox.Say(tostring(dialog)))
+    wait(celeste.Textbox.Say(tostring(dialog)))
 end
 
 --- Display minitextbox with dialog.
@@ -213,7 +214,7 @@ function helpers.choice(...)
         choices = first
     end
 
-    coroutine.yield(celesteMod.LuaCutscenes.ChoicePrompt.Prompt(table.unpack(choices)))
+    wait(celesteMod.LuaCutscenes.ChoicePrompt.Prompt(table.unpack(choices)))
 
     return celesteMod.LuaCutscenes.ChoicePrompt.Choice + 1
 end
@@ -346,7 +347,7 @@ function helpers.postcard(dialog, sfxIn, sfxOut)
     getRoom():Add(postcard)
     postcard:BeforeRender()
 
-    coroutine.yield(postcard:DisplayRoutine())
+    wait(postcard:DisplayRoutine())
 end
 
 --- Player walks to the given X coordinate. This is in pixels and uses map based coordinates.
@@ -358,7 +359,7 @@ end
 ---@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
 ---@default false
 function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
-    coroutine.yield(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
+    wait(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
 end
 
 --- Player walks x pixels from current position.
@@ -377,7 +378,7 @@ end
 ---@param x number X coordinate to run to.
 ---@param fastAnimation boolean Whether this should use the fast animation or not.
 function helpers.runTo(x, fastAnimation)
-    coroutine.yield(player:DummyRunTo(x, fastAnimation or false))
+    wait(player:DummyRunTo(x, fastAnimation or false))
 end
 
 --- Player runs x pixels from current position.
@@ -457,7 +458,7 @@ end
 ---@param spawnX number? X coordinate for new spawn point, by default it uses bottom left of room.
 ---@param spawnY number? Y coordinate for new spawn point, by default it uses bottom left of room.
 function helpers.changeRoom(name, spawnX, spawnY)
-    local level = engine.Scene
+    local level = getLevel()
 
     level.Session.Level = name
     level.Session.RespawnPoint = level:GetSpawnPoint(vector2(spawnX or level.Bounds.Left, spawnY or level.Bounds.Bottom))
@@ -483,7 +484,7 @@ function helpers.teleportTo(x, y, room, introType)
     end
 
     if room then
-        local mapData = engine.Scene.Session.MapData
+        local mapData = getSession().MapData
         local levelData = mapData:GetAt(vector2(x, y))
 
         -- TeleportTo adds the new room offset for spawnpoint check, we have to remove this
@@ -558,7 +559,7 @@ end
 ---@param skipCompleteScreen boolean? Whether this skips the complete screen.
 ---@default false
 function helpers.completeArea(spotlightWipe, skipScreenWipe, skipCompleteScreen)
-    engine.Scene:CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
+    getLevel():CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
 end
 
 --- Plays a sound.
@@ -614,20 +615,20 @@ end
 --- Get amount of deaths in current room.
 ---@return integer deaths Current deaths in room.
 function helpers.deathsInCurrentRoom()
-    return engine.Scene.Session.DeathsInCurrentLevel
+    return getSession().DeathsInCurrentLevel
 end
 
 --- Play and update the current music track.
 ---@param track string Name of song, same as in Ahorn's room window.
 ---@param progress integer? Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
-    engine.Scene.Session.Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
+    getSession().Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
 
     if progress then
-        engine.Scene.Session.Audio.Music.Progress = progress
+        getSession().Audio.Music.Progress = progress
     end
 
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio:Apply()
 end
 
 --- Get the current music track name.
@@ -639,14 +640,14 @@ end
 --- Sets music progression.
 ---@param progress number The new progress level.
 function helpers.setMusicProgression(progress)
-    engine.Scene.Session.Audio.Music.Progress = progress
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio.Music.Progress = progress
+    getSession().Audio:Apply()
 end
 
 --- Gets the current music progression.
 ---@return integer progress Music progress level.
 function helpers.getMusicProgression()
-    return engine.Scene.Session.Audio.Music.Progress
+    return getSession().Audio.Music.Progress
 end
 
 --- Set music layer on/off.
@@ -655,14 +656,14 @@ end
 function helpers.setMusicLayer(layer, value)
     if type(layer) == "table" then
         for _, index in ipairs(layer) do
-            engine.Scene.Session.Audio.Music:Layer(index, value)
+            getSession().Audio.Music:Layer(index, value)
         end
 
     else
-        engine.Scene.Session.Audio.Music:Layer(layer, value)
+        getSession().Audio.Music:Layer(layer, value)
     end
 
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio:Apply()
 end
 
 --- Attempt to set the player spawnpoint.
@@ -671,7 +672,7 @@ end
 ---@param absolute boolean? If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
 ---@default false
 function helpers.setSpawnPoint(target, absolute)
-    local session = engine.Scene.Session
+    local session = getSession()
     local ct = cutsceneTrigger
 
     target = target or {0, 0}
@@ -690,10 +691,10 @@ end
 ---@overload fun(direction: number)
 function helpers.shake(direction, duration)
     if direction and duration then ---@cast direction Vector2
-        engine.Scene:DirectionalShake(direction, duration)
+        getLevel():DirectionalShake(direction, duration)
 
     else ---@cast direction number
-        engine.Scene:Shake(direction)
+        getLevel():Shake(direction)
     end
 end
 
@@ -701,10 +702,10 @@ end
 ---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
-        engine.Scene.Session.Inventory = celeste.PlayerInventory[inventory]
+        getSession().Inventory = celeste.PlayerInventory[inventory]
 
     else
-        engine.Scene.Session.Inventory = inventory
+        getSession().Inventory = inventory
     end
 end
 
@@ -716,7 +717,7 @@ function helpers.getInventory(inventory)
         return celeste.PlayerInventory[inventory]
 
     else
-        return engine.Scene.Session.Inventory
+        return getSession().Inventory
     end
 end
 
@@ -725,19 +726,19 @@ end
 ---@param y number Y coordinate to offset by.
 ---@overload fun(x: table)
 function helpers.setCameraOffset(x, y)
-    engine.Scene.CameraOffset = y and vector2(x * 48, y * 32) or x
+    getLevel().CameraOffset = y and vector2(x * 48, y * 32) or x
 end
 
 --- Get the current offset struct.
 ---@return Vector2 offset The camera offset.
 function helpers.getCameraOffset()
-    return engine.Scene.CameraOffset
+    return getLevel().CameraOffset
 end
 
 --- Get the current room coordinates.
 ---@return Vector2 offset The camera offset.
 function helpers.getRoomCoordinates()
-  return engine.Scene.LevelOffset
+  return getLevel().LevelOffset
 end
 
 --- Get the current room coordinates offset by x and y.
@@ -747,10 +748,10 @@ end
 ---@overload fun(offset: table): Vector2
 function helpers.getRoomCoordinatesOffset(x, y)
     if type(x) == "number" then
-        return engine.Scene.LevelOffset + vector2(x, y)
+        return getLevel().LevelOffset + vector2(x, y)
 
     else
-        return engine.Scene.LevelOffset + vector2(x[1], x[2])
+        return getLevel().LevelOffset + vector2(x[1], x[2])
     end
 end
 
@@ -758,14 +759,14 @@ end
 ---@param flag string Flag to set.
 ---@param value boolean State of flag.
 function helpers.setFlag(flag, value)
-    engine.Scene.Session:SetFlag(flag, value)
+    getSession():SetFlag(flag, value)
 end
 
 --- Get session flag.
 ---@param flag string Flag to get.
 ---@return boolean state The state of the flag.
 function helpers.getFlag(flag)
-    return engine.Scene.Session:GetFlag(flag)
+    return getSession():GetFlag(flag)
 end
 
 -- TODO - Accept table?
@@ -791,13 +792,13 @@ end
 --- Sets the current bloom strength.
 ---@param amount number New bloom strength.
 function helpers.setBloomStrength(amount)
-    engine.Scene.Bloom.Strength = amount
+    getLevel().Bloom.Strength = amount
 end
 
 --- Returns the current bloom strength.
 ---@return number strength Bloom strength.
 function helpers.getBloomStrength()
-    return engine.Scene.Bloom.Strength
+    return getLevel().Bloom.Strength
 end
 
 helpers.setDarkness = helpers.setBloomStrength
@@ -807,17 +808,17 @@ helpers.getDarkness = helpers.getBloomStrength
 ---@param mode string|CoreModes String name for mode or Core Mode enum.
 function helpers.setCoreMode(mode)
     if type(mode) == "string" then
-        engine.Scene.CoreMode = engine.Scene.Session.CoreModes[mode]
+        getLevel().CoreMode = getSession().CoreModes[mode]
 
     else
-        engine.Scene.CoreMode = mode
+        getLevel().CoreMode = mode
     end
 end
 
 --- Returns the current core mode.
 ---@return CoreModes
 function helpers.getCoreMode()
-    return engine.Scene.CoreMode
+    return getLevel().CoreMode
 end
 
 --- Changes the current colorgrade to the new one.
@@ -826,10 +827,10 @@ end
 ---@default false
 function helpers.setColorGrade(colorGrade, instant)
     if instant then
-        engine.Scene:SnapColorGrade(colorGrade)
+        getLevel():SnapColorGrade(colorGrade)
 
     else
-        engine.Scene:NextColorGrade(colorGrade)
+        getLevel():NextColorGrade(colorGrade)
     end
 end
 
@@ -841,7 +842,7 @@ end
 ---@param controllY number? Y coordinate for controll point.
 ---@default endY
 function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
-    playSound("event:/game/general/cassette_bubblereturn", vector2(engine.Scene.Camera.Position.X + 160, engine.Scene.Camera.Position.Y + 90))
+    playSound("event:/game/general/cassette_bubblereturn", vector2(getLevel().Camera.Position.X + 160, getLevel().Camera.Position.Y + 90))
 
     if endX and endY and controllX and controllY then
         player:StartCassetteFly(vector2(endX, endY), vector2(controllX, controllY))
@@ -873,9 +874,9 @@ end
 ---@param value boolean State of flag.
 function helpers.setLevelFlag(flag, value)
     if value then
-        engine.Scene.Session.LevelFlags:Add(flag)
+        getSession().LevelFlags:Add(flag)
     else
-        engine.Scene.Session.LevelFlags:Remove(flag)
+        getSession().LevelFlags:Remove(flag)
     end
 end
 
@@ -883,12 +884,12 @@ end
 ---@param flag string Flag to get.
 ---@return boolean state The state of the flag.
 function helpers.getLevelFlag(flag)
-    return engine.Scene.Session:GetLevelFlag(flag)
+    return getSession():GetLevelFlag(flag)
 end
 
 --- Gives the player a key.
 function helpers.giveKey()
-    local level = engine.Scene
+    local level = getLevel()
     local key = celeste.Key(player, celeste.EntityID("unknown", 1073741823 + math.random(0, 10000)))
 
     level:Add(key)
@@ -898,7 +899,6 @@ end
 -- Test
 function helpers.setWind(pattern)
     local windController = helpers.getFirstEntity("WindController")
-    local level = engine.Scene
 
     if type(pattern) == "string" then
         pattern = windController.Patterns[pattern]
@@ -909,7 +909,7 @@ function helpers.setWind(pattern)
 
     else
         windController = celeste.WindController(pattern)
-        level:Add(windController)
+        engine.Scene:Add(windController)
     end
 end
 
@@ -929,28 +929,28 @@ end
 
 --- Disables skip cutscene from menu.
 function helpers.makeUnskippable()
-    engine.Scene.InCutscene = false
-    engine.Scene:CancelCutscene()
+    getLevel().InCutscene = false
+    getLevel():CancelCutscene()
 end
 
 --- Enables retrying from menu.
 function helpers.enableRetry()
-    engine.Scene.CanRetry = true
+    getLevel().CanRetry = true
 end
 
 --- Disables retrying from menu.
 function helpers.disableRetry()
-    engine.Scene.CanRetry = false
+    getLevel().CanRetry = false
 end
 
 --- Prevents the player from even accessing the pause menu.
 function helpers.disablePause()
-    engine.Scene.PauseLock = true
+    getLevel().PauseLock = true
 end
 
 --- Reenables the player to pause the game.
 function helpers.enablePause()
-    engine.Scene.PauseLock = false
+    getLevel().PauseLock = false
 end
 
 --#endregion
@@ -993,7 +993,7 @@ end
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 ---@param anim string The animation to play
 function helpers.playAndWaitPuppetAnim(anim)
-    coroutine.yield(puppet.Sprite:PlayAnim(anim))
+    wait(celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PlayAnim(puppet.Sprite, anim))
 end
 
 ---Get a random number based on the boss's random seed.
@@ -1205,7 +1205,7 @@ end
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    puppet:PositionTween(target, time, getEaser(easer, invert))
+    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, getEaser(easer, invert))
     return time
 end
 
@@ -1615,7 +1615,7 @@ end
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
 function helpers.sayExt(dialog, ...)
-    coroutine.yield(celesteMod[modName].Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+    wait(celesteMod[modName].Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
@@ -1645,7 +1645,7 @@ end
 ---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
-    newData = celesteMod[modName].BossesHelperModule.MakeEntityData()
+    newData = celesteMod.BossesHelper.BossesHelperModule.MakeEntityData()
     newData.ID = id or 1000
     newData.Level = engine.Scene
     newData.Position = position or vector2(0,0)
