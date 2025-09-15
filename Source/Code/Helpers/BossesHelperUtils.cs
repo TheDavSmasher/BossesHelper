@@ -113,6 +113,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
+		#region Entity
+		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		{
+			Tween.Position(self, target, time, easer);
+		}
+		#endregion
+
 		public static T ElementAtOrLast<T>(this IList<T> list, int index)
 		{
 			return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
@@ -131,11 +138,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static void AddTo(this Component self, Entity target)
 		{
 			target.Add(self);
-		}
-
-		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
-		{
-			Tween.Position(self, target, time, easer);
 		}
 		#endregion
 
