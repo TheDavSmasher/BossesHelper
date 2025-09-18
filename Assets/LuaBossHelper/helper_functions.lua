@@ -4,7 +4,7 @@
 --#region Mod Imports
 
 ---Mostly used for lua-language-server annotations and VS Code support
----@module "CelesteMod"
+---@module "LuaMeta"
 
 local luanet = _G.luanet
 
@@ -12,16 +12,15 @@ local luanet = _G.luanet
 local monocle = require("#monocle")
 ---@type Celeste
 local celeste = require("#celeste")
-
----@type Microsoft.Xna.Framework.Vector2
-local csharpVector2 = require("#microsoft.xna.framework.vector2")
+---@type Microsoft.XNA.Framework
+local framework = require("#microsoft.xna.framework")
 
 local ease = monocle.Ease
 local celesteMod = celeste.Mod
 local engine = monocle.Engine
 
 local modName = modMetaData.Name
-local bossesHelper = celesteMod[modName] --[[@as Celeste.Mod.BossesHelper]]
+local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
 local classNamePrefix = "Celeste."
 
 --#endregion
@@ -44,21 +43,21 @@ helpers.engine = engine
 ---Returns a new Vector2
 ---@param x number
 ---@param y number
----@return Microsoft.Xna.Framework.Vector2
----@overload fun(x: table): Microsoft.Xna.Framework.Vector2
+---@return Vector2
+---@overload fun(x: table): Vector2
 ---@overload fun(x: userdata): userdata
----@overload fun(x: Microsoft.Xna.Framework.Vector2): Microsoft.Xna.Framework.Vector2
+---@overload fun(x: Vector2): Vector2
 function helpers.vector2(x, y)
     local typ = type(x)
 
     if typ == "table" and not y then
-        return csharpVector2(x[1], x[2])
+        return framework.Vector2(x[1], x[2])
 
     elseif typ == "userdata" and not y then
         return x
 
     else
-        return csharpVector2(x, y)
+        return framework.Vector2(x, y)
     end
 end
 
@@ -172,9 +171,9 @@ end
 local wait = helpers.wait
 
 --- Gets the current room the player is in.
----@return Celeste.Level level The current room.
+---@return Level level The current room.
 function helpers.getRoom()
-    return engine.Scene --[[@as Celeste.Level]]
+    return engine.Scene --[[@as Level]]
 end
 
 helpers.getLevel = helpers.getRoom
@@ -182,7 +181,7 @@ local getRoom = helpers.getRoom
 local getLevel = helpers.getLevel
 
 --- Gets the current session.
----@return Celeste.Session session The current session.
+---@return Session session The current session.
 function helpers.getSession()
     return getLevel().Session
 end
@@ -389,7 +388,7 @@ function helpers.run(x, fastAnimation)
 end
 
 --- Kills the player.
----@param direction table|Microsoft.Xna.Framework.Vector2? The direction the player dies from.
+---@param direction table|Vector2? The direction the player dies from.
 ---@default {0, 0}
 ---@param evenIfInvincible boolean? If the player should die even if they are invincible (assist mode).
 ---@default false
@@ -411,7 +410,7 @@ function helpers.setPlayerState(state, locked)
             state = "St" .. state
         end
 
-        player.StateMachine.State = celeste.Player[state]
+        player.StateMachine.State = Player[state]
 
     else
         player.StateMachine.State = state
@@ -477,10 +476,10 @@ end
 ---@param x number Target x coordinate.
 ---@param y number Target y coordinate.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType string|Celeste.Player.IntroTypes intro type to use, can be either a #Celeste.Player.IntroTypes enum or a string
+---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = getEnum("Celeste.Player.IntroTypes", introType) --[[@as Celeste.Player.IntroTypes]]
+        introType = getEnum("IntroTypes", introType) --[[@as IntroTypes]]
     end
 
     if room then
@@ -511,7 +510,7 @@ end
 ---@param x number X offset on X axis.
 ---@param y number Y offset on Y axis.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType any? intro type to use, can be either a #Celeste.Player.IntroTypes enum or a string. Only applies if room is specified.
+---@param introType any? intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
 function helpers.teleport(x, y, room, introType)
     helpers.teleportTo(player.Position.X + x, player.Position.Y + y, room, introType)
 end
@@ -563,7 +562,7 @@ end
 
 --- Plays a sound.
 ---@param name string Event for the song.
----@param position Microsoft.Xna.Framework.Vector2? Where the sound is played from.
+---@param position Vector2? Where the sound is played from.
 ---@return FMOD.Studio.EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
@@ -685,11 +684,11 @@ function helpers.setSpawnPoint(target, absolute)
 end
 
 --- Shakes the camera.
----@param direction Microsoft.Xna.Framework.Vector2|number Direction the screen should shake from.
+---@param direction Vector2|number Direction the screen should shake from.
 ---@param duration? number How long the screen should shake.
 ---@overload fun(direction: number)
 function helpers.shake(direction, duration)
-    if direction and duration then ---@cast direction Microsoft.Xna.Framework.Vector2
+    if direction and duration then ---@cast direction Vector2
         getLevel():DirectionalShake(direction, duration)
 
     else ---@cast direction number
@@ -698,10 +697,10 @@ function helpers.shake(direction, duration)
 end
 
 --- Set player inventory
----@param inventory string|Celeste.PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
+---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
-        getSession().Inventory = celeste.PlayerInventory[inventory]
+        getSession().Inventory = PlayerInventory[inventory]
 
     else
         getSession().Inventory = inventory
@@ -710,10 +709,10 @@ end
 
 --- Get player inventory
 ---@param inventory string? If name is given get inventory by name, otherwise the current player inventory
----@return Celeste.PlayerInventory inventory
+---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
-        return celeste.PlayerInventory[inventory]
+        return PlayerInventory[inventory]
 
     else
         return getSession().Inventory
@@ -729,13 +728,13 @@ function helpers.setCameraOffset(x, y)
 end
 
 --- Get the current offset struct.
----@return Microsoft.Xna.Framework.Vector2 offset The camera offset.
+---@return Vector2 offset The camera offset.
 function helpers.getCameraOffset()
     return getLevel().CameraOffset
 end
 
 --- Get the current room coordinates.
----@return Microsoft.Xna.Framework.Vector2 offset The camera offset.
+---@return Vector2 offset The camera offset.
 function helpers.getRoomCoordinates()
   return getLevel().LevelOffset
 end
@@ -743,8 +742,8 @@ end
 --- Get the current room coordinates offset by x and y.
 ---@param x number X coordinate or table of coordinates to offset by.
 ---@param y number Y coordinate to offset by.
----@return Microsoft.Xna.Framework.Vector2 offset The camera offset.
----@overload fun(offset: table): Microsoft.Xna.Framework.Vector2
+---@return Vector2 offset The camera offset.
+---@overload fun(offset: table): Vector2
 function helpers.getRoomCoordinatesOffset(x, y)
     if type(x) == "number" then
         return getLevel().LevelOffset + vector2(x, y)
@@ -773,7 +772,7 @@ end
 ---@param x number
 ---@param y number
 ---@param relativeToPlayer boolean?
----@return Celeste.BadelineOldsite
+---@return BadelineOldsite
 function helpers.spawnBadeline(x, y, relativeToPlayer)
     local position = (relativeToPlayer or relativeToPlayer == nil) and vector2(player.Position.X + x, player.Position.Y + y) or vector2(x, y)
     local badeline = celeste.BadelineOldsite(position, 1)
@@ -963,13 +962,13 @@ end
 --#region Entity Adding
 
 --- Adds the provided entity onto the scene, as well as into the Boss' tracked entities.
----@param entity Monocle.Entity The entity to add
+---@param entity Entity The entity to add
 function helpers.addEntity(entity)
     boss:AddEntity(entity)
 end
 
 --- Calls RemoveSelf on the entity provided, as well as removing it from the tracked entities.
----@param entity Monocle.Entity The entity to destroy.
+---@param entity Entity The entity to destroy.
 function helpers.destroyEntity(entity)
     boss:DestroyEntity(entity)
 end
@@ -1219,7 +1218,7 @@ local easers = {
 local function getEaser(easer, invert)
     if type(easer) == "string" then
         return helpers.getEaserByName(easer, invert)
-    elseif type(easer) == "userdata" then ---@cast easer Monocle.Easer
+    elseif type(easer) == "userdata" then ---@cast easer Ease.Easer
         if invert then
             return ease.Invert(easer)
         end
@@ -1229,9 +1228,9 @@ local function getEaser(easer, invert)
 end
 
 ---Create a new Position Tween, which will slowly move the Boss to the target.
----@param target Microsoft.Xna.Framework.Vector2 The vector2 target position the Boss will move towards.
+---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time number The time the Boss will take to reach the target.
----@param easer? string|Monocle.Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1245,7 +1244,7 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Monocle.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1259,7 +1258,7 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Monocle.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1275,7 +1274,7 @@ end
 ---@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Monocle.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1289,7 +1288,7 @@ end
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Monocle.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1301,7 +1300,7 @@ end
 ---Create a new Tween for the Boss' x speed from its current y speed value.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Monocle.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1314,7 +1313,7 @@ end
 ---@param xTarget number The value the Boss' speed x component will slowly change to.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Monocle.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1389,7 +1388,7 @@ end
 ---@default 0
 ---@param y? number The y offest of the Hitbox. Defaults to 0.
 ---@default 0
----@return Monocle.Hitbox hitbox The created Hitbox Collider
+---@return Hitbox hitbox The created Hitbox Collider
 function helpers.getHitbox(width, height, x, y)
     return monocle.Hitbox(width, height, x or 0, y or 0)
 end
@@ -1400,14 +1399,14 @@ end
 ---@default 0
 ---@param y? number The y offest of the Hitbox. Defaults to 0.
 ---@default 0
----@return Monocle.Circle circle The created Hitbox Collider
+---@return Circle circle The created Hitbox Collider
 function helpers.getCircle(radius, x, y)
     return monocle.Circle(radius, x or 0, y or 0)
 end
 
 ---Create a ColliderList object from the provided colliders.
----@param ... Monocle.Collider All the colliders to combine into a ColliderList
----@return Monocle.ColliderList colliderList The combined ColliderList object.
+---@param ... Collider All the colliders to combine into a ColliderList
+---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
     return bossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
 end
@@ -1417,7 +1416,7 @@ end
 --#region Boss Components and Entities
 
 ---Add a component to the Boss.
----@param component Monocle.Component The component to add.
+---@param component Component The component to add.
 function helpers.addComponentToBoss(component)
     puppet:Add(component)
 end
@@ -1443,21 +1442,21 @@ function helpers.addConstantBackgroundCoroutine(func, ...)
     bossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
 end
 
----@param entity Monocle.Entity
----@param player Celeste.Player
+---@param entity Entity
+---@param player Player
 local function killPlayer(entity, player)
     helpers.die(monocle.Calc.SafeNormalize(player.Position - entity.Position))
 end
 
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
 ---@param checker fun() The function that will be called every frame to test its value.
----@param func? fun(entity: Monocle.Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
 ---@param state? boolean The state the checker function's return value must match. Defaults to true.
 ---@default true
 ---@param remove? boolean If the component should remove itself after it calls the func function. Defaults to true
 ---@default true
----@return BossesHelper.EntityChecker checker The Entity Checker that can be added to any Entity.
+---@return EntityChecker checker The Entity Checker that can be added to any Entity.
 function helpers.getEntityChecker(checker, func, state, remove)
     return bossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
 end
@@ -1465,9 +1464,9 @@ end
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
 ---Can be added to any Entity.
 ---@param timer number The amount of time that must pass for the timer to execute.
----@param func? fun(entity: Monocle.Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
+---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
----@return BossesHelper.EntityTimer timer The Entity Timer that can be added to any Entity.
+---@return EntityTimer timer The Entity Timer that can be added to any Entity.
 function helpers.getEntityTimer(timer, func)
     return bossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
 end
@@ -1475,31 +1474,31 @@ end
 ---Returns an EntityFlagger Component that will execute the passed function when the given session flag's state matches the required state.
 ---Can be added to any Entity.
 ---@param flag string The session flag the entity will use to activate its function.
----@param func? fun(entity: Monocle.Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will the Entity the component is added to. Defaults to the destroyEntity function.
+---@param func? fun(entity: Entity) The function that will execute once the session flag state is the same as the state parameter. Takes an entity parameter, which will the Entity the component is added to. Defaults to the destroyEntity function.
 ---@default helpers.destroyEntity
 ---@param state? boolean The state the flag must match to activate the passed function. Defaults to true.
 ---@default true
 ---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
 ---@default true
----@return BossesHelper.EntityFlagger flagger The Entity Flagger that can be added to any Entity.
+---@return EntityFlagger flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
     return bossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 ---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
----@param entity Monocle.Entity The entity to chain, whose position will change as the base Entity moves.
+---@param entity Entity The entity to chain, whose position will change as the base Entity moves.
 ---@param startChained? boolean Whether the entity should start chained immediately. Defaults to true.
 ---@default true
 ---@param remove? boolean Whether the chained entity should be removed if the chain component is also removed.
 ---@default false
----@return BossesHelper.EntityChain chain The Entity Chain component that can be added to any Entity.
+---@return EntityChain chain The Entity Chain component that can be added to any Entity.
 function helpers.getEntityChain(entity, startChained, remove)
     return bossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
 ---Create and return a basic entity to use in attacks.
----@param position Microsoft.Xna.Framework.Vector2 The position the entity will be at.
----@param hitboxes Monocle.Collider The collider the entity will use.
+---@param position Vector2 The position the entity will be at.
+---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@default true
@@ -1509,14 +1508,14 @@ end
 ---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
----@return BossesHelper.AttackEntity
+---@return AttackEntity
 function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
     return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
 end
 
 ---Create and return a basic entity to use in attacks.
----@param position Microsoft.Xna.Framework.Vector2 The position the entity will be at.
----@param hitboxes Monocle.Collider The collider the entity will use.
+---@param position Vector2 The position the entity will be at.
+---@param hitboxes Collider The collider the entity will use.
 ---@param spriteName string The sprite the entity will use.
 ---@param gravMult? number The multiplier to the Gravity constant the Actor should use. Defaults to 1.
 ---@default 1
@@ -1532,7 +1531,7 @@ end
 ---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
----@return BossesHelper.AttackActor
+---@return AttackActor
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
     return celesteMod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
@@ -1545,7 +1544,7 @@ end
 --- Gets all tracked components by class name.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component[] components Tracked components of given class.
+--- @return Component[] components Tracked components of given class.
 function helpers.getComponents(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
 end
@@ -1553,7 +1552,7 @@ end
 --- Gets the first tracked component by class name.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component component First tracked component of given class.
+--- @return Component component First tracked component of given class.
 function helpers.getComponent(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
 end
@@ -1561,7 +1560,7 @@ end
 --- Gets all components by class name.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component[] components All components of given class on scene.
+--- @return Component[] components All components of given class on scene.
 function helpers.getAllComponents(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
 end
@@ -1569,7 +1568,7 @@ end
 --- Gets the first component by class name.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component component First component of given class.
+--- @return Component component First component of given class.
 function helpers.getFirstComponent(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
 end
@@ -1579,7 +1578,7 @@ end
 --- @param entity string Class name of the entity, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix for the Component class.
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
---- @return Monocle.Component[] components All components of given class on scene attached to the entity type.
+--- @return Component[] components All components of given class on scene attached to the entity type.
 function helpers.getAllComponentsOnType(name, entity, prefix, entityPre)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
@@ -1589,31 +1588,31 @@ end
 --- @param entity string Class name of the entity, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix for the Component class.
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
---- @return Monocle.Component component First component of given class attached to the entity type.
+--- @return Component component First component of given class attached to the entity type.
 function helpers.getFirstComponentOnType(name, entity, prefix, entityPre)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Returns all the components of the given class name from the entity given, if any.
---- @param entity Monocle.Entity The entity to check.
+--- @param entity Entity The entity to check.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component[] components All components of given class on scene sored on the entity, if any.
+--- @return Component[] components All components of given class on scene sored on the entity, if any.
 function helpers.getComponentsFromEntity(entity, name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Returns the component of the given class name from the entity given, if any.
---- @param entity Monocle.Entity The entity to check.
+--- @param entity Entity The entity to check.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
---- @return Monocle.Component component First component of given class stored on the entity, if any.
+--- @return Component component First component of given class stored on the entity, if any.
 function helpers.getComponentFromEntity(entity, name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Checks if the entity given has a component of the given class name.
---- @param entity Monocle.Entity The entity to check.
+--- @param entity Entity The entity to check.
 --- @param name string Class name of the component, relative to "Celeste." by default.
 --- @param prefix? string Overrides the global class name prefix.
 --- @return boolean componentFound If the Entity does have a Component of the type specified.
@@ -1650,8 +1649,8 @@ end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
 ---@param event string The name of the Event to play.
----@param entity Monocle.Entity The entity to add the SoundSource to.
----@return Monocle.Component newSound The newly created SoundSource
+---@param entity Entity The entity to add the SoundSource to.
+---@return Component newSound The newly created SoundSource
 function helpers.addSoundTo(event, entity)
     local newSound = celeste.SoundSource()
     entity:Add(newSound:Play(event))
@@ -1660,20 +1659,20 @@ end
 
 ---Creates a new SoundSource and adds it to the Boss, starting the sound immediately
 ---@param event string The name of the Event to play.
----@return Monocle.Component newSound The newly created SoundSource attached to the Boss
+---@return Component newSound The newly created SoundSource attached to the Boss
 function helpers.addSoundToBoss(event)
     return helpers.addSoundTo(event, puppet)
 end
 
 ---Get a new EntityData object
----@param position Microsoft.Xna.Framework.Vector2 The vector2 position the entityData will hold.
+---@param position Vector2 The vector2 position the entityData will hold.
 ---@param width? number The width the EntityData will hold. Defaults to 0.
 ---@default 0
 ---@param height? number The height the EntityData will hold. Defaults to 0.
 ---@default 0
 ---@param id? integer The id the EntityData will hold. Defaults to 1000.
 ---@default 1000
----@return Celeste.EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
+---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
     newData = celesteMod.BossesHelper.BossesHelperModule.MakeEntityData()
     newData.ID = id or 1000
@@ -1685,7 +1684,7 @@ function helpers.getNewEntityData(position, width, height, id)
 end
 
 ---Set a list of attributes to the provided EntityData object's Values dictionary.
----@param entityData Celeste.EntityData The EntityData to update.
+---@param entityData EntityData The EntityData to update.
 ---@param attributes table<string,any> The list of attributes to add.
 function helpers.setEntityDataAttributes(entityData, attributes)
     for k,v in pairs(attributes) do
@@ -1723,7 +1722,7 @@ end
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 ---@param name? string The name of the Easer to get.
 ---@param invert? boolean If the easer returned should be inverted.
----@return nil|Monocle.Easer easer The Easer found or nil if not found.
+---@return nil|Ease.Easer easer The Easer found or nil if not found.
 function helpers.getEaserByName(name, invert)
     local typ = type(name)
     if (typ ~= "string") then
@@ -1747,7 +1746,7 @@ end
 
 ---@deprecated Use Vector2:Length instead
 ---Get the length of the provided vector2
----@param vector Microsoft.Xna.Framework.Vector2 Vector to get length of
+---@param vector Vector2 Vector to get length of
 ---@return number length The length of the vector2
 function helpers.v2L(vector)
     return vector:Length()
@@ -1755,10 +1754,10 @@ end
 
 ---@deprecated Use Vector2:SafeNormalize instead
 ---Normalizes the vector provided to the given length or 1.
----@param vector Microsoft.Xna.Framework.Vector2 The vector to normalize
+---@param vector Vector2 The vector to normalize
 ---@param length? number The new length of the vector or 1
 ---@default 1
----@return Microsoft.Xna.Framework.Vector2 normal The normalized vector2
+---@return Vector2 normal The normalized vector2
 function helpers.normalize(vector, length)
     return monocle.Calc.SafeNormalize(vector, length or 1)
 end
