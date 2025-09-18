@@ -256,10 +256,13 @@ player = {}
 ---@field GetComponentFromEntity fun(entity: Entity, name: string, prefix?: string): any
 ---@field EntityHasComponent fun(entity: Entity, name: string, prefix?: string): boolean
 
+---@class Lua
+---@field LuaMethodWrappers LuaMethodWrappers
+
 ---@class Helpers
 ---@field BossesHelperUtils BossesHelperUtils
 ---@field LuaBossHelper LuaBossHelper
----@field LuaMethodWrappers LuaMethodWrappers
+---@field Lua Lua
 
 ---@class Code
 ---@field Components table

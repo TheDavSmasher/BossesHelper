@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	internal static class LuaMethodWrappers
 	{

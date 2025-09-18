@@ -498,10 +498,10 @@ function helpers.teleportTo(x, y, room, introType)
         end
 
         if x and y then
-            bossesHelper.Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
+            bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
 
         else
-            bossesHelper.Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
+            bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
         end
 
 	else
@@ -528,11 +528,11 @@ end
 function helpers.instantTeleportTo(x, y, room)
     if x and y then ---@cast x number
         -- Provide own position
-        bossesHelper.Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
+        bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
 
     else ---@cast x string
         -- Keep releative room position
-        bossesHelper.Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
+        bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
     end
 end
 
@@ -581,7 +581,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return table entities Tracked entities of given class.
 function helpers.getEntities(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked entity by class name.
@@ -589,7 +589,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return any entity First tracked entity of given class.
 function helpers.getEntity(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
 end
 
 --- Gets all entities by class name.
@@ -597,7 +597,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return table entities All entities of given class.
 function helpers.getAllEntities(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first entity by class name.
@@ -605,7 +605,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return any entity First entity of given class.
 function helpers.getFirstEntity(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
 end
 
 --- Puts player in feather state.
@@ -1516,7 +1516,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components Tracked components of given class.
 function helpers.getComponents(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked component by class name.
@@ -1524,7 +1524,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First tracked component of given class.
 function helpers.getComponent(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name.
@@ -1532,7 +1532,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene.
 function helpers.getAllComponents(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first component by class name.
@@ -1540,7 +1540,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class.
 function helpers.getFirstComponent(name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name added to an entity of given class name.
@@ -1550,7 +1550,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component[] components All components of given class on scene attached to the entity type.
 function helpers.getAllComponentsOnType(name, entity, prefix, entityPre)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Gets the first component by class name added to an entity of the given class name.
@@ -1560,7 +1560,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component component First component of given class attached to the entity type.
 function helpers.getFirstComponentOnType(name, entity, prefix, entityPre)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Returns all the components of the given class name from the entity given, if any.
@@ -1569,7 +1569,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene sored on the entity, if any.
 function helpers.getComponentsFromEntity(entity, name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Returns the component of the given class name from the entity given, if any.
@@ -1578,7 +1578,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class stored on the entity, if any.
 function helpers.getComponentFromEntity(entity, name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Checks if the entity given has a component of the given class name.
@@ -1587,7 +1587,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return boolean componentFound If the Entity does have a Component of the type specified.
 function helpers.entityHasComponent(entity, name, prefix)
-    return bossesHelper.Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
 
 --#endregion

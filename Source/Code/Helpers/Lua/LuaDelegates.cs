@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	internal static class LuaDelegates
 	{
@@ -10,14 +10,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static ParamAction LuaFunctionToAction(LuaFunction func)
 		{
-			return (params object[] args) => func.Call(args);
+			return args => func.Call(args);
 		}
 
 		public delegate object ParamFunc(params object[] args);
 
 		public static ParamFunc LuaFunctionToFunc(LuaFunction func)
 		{
-			return (params object[] args) => func.Call(args).First();
+			return args => func.Call(args).First();
 		}
 
 		#region To Action
