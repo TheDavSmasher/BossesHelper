@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public bool killOnContact;
 
-		public BossPuppet(EntityData data, Vector2 offset)
+		protected BossPuppet(EntityData data, Vector2 offset)
 			: base(data.Position + offset)
 		{
 			DynamicFacing = data.Bool("dynamicFacing");

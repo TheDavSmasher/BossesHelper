@@ -118,6 +118,7 @@ function entities.BossController:DecreaseHealth(amount) end
 ---@field gravityMult number
 ---@field groundFriction number
 ---@field airFriction number
+---@field killOnContact boolean
 ---@field Sprite Sprite
 ---@field SolidCollidable boolean
 ---@field BossHitCooldown number
