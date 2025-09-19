@@ -83,15 +83,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			killOnContact = data.Bool("killOnContact");
 			Add(new PlayerCollider(KillOnContact));
 			Facing = 1;
-			if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite sprite))
+			if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite))
 			{
-				Add(Sprite = sprite);
+				Add(Sprite);
 				Sprite.Scale = Vector2.One;
 				PlayBossAnim(data.String("startingAnim", "idle"));
-			}
-			else
-			{
-				Sprite = sprite;
 			}
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
