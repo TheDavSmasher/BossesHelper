@@ -48,8 +48,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			SourceData = data;
 			SourceId = id;
 			BossID = data.Attr("bossID");
-			Health = data.Int("bossHealthMax", -1);
-			startAttackingImmediately = data.Bool("startAttackingImmediately");
 			Add(PatternCoroutine = new Coroutine());
 			Puppet = data.Enum<HurtModes>("hurtMode") switch
 			{
@@ -65,6 +63,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Health = phase.BossHealthAt;
 				CurrentPatternIndex = phase.StartWithPatternIndex;
 				startAttackingImmediately = phase.StartImmediately;
+			}
+			else
+			{
+				Health = data.Int("bossHealthMax", -1);
+				startAttackingImmediately = data.Bool("startAttackingImmediately");
 			}
 			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(MethodEndReason.PlayerDied);
 		}
