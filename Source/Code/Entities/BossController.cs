@@ -48,7 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			SourceData = data;
 			SourceId = id;
 			BossID = data.Attr("bossID");
-			Add(PatternCoroutine = new Coroutine());
+			Add(PatternCoroutine = new Coroutine(false));
 			Puppet = data.Enum<HurtModes>("hurtMode") switch
 			{
 				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
