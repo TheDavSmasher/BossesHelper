@@ -153,6 +153,7 @@ celeste.MiniTextbox = {}
 
 --#region Player
 ---@class Player : Actor
+---@field IntroType IntroTypes
 ---@field StateMachine StateMachine
 ---@field Dead boolean
 ---@field DummyFriction boolean
