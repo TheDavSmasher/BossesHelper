@@ -49,14 +49,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			SourceId = id;
 			BossID = data.Attr("bossID");
 			Add(PatternCoroutine = new Coroutine(false));
-			Puppet = data.Enum<HurtModes>("hurtMode") switch
-			{
-				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
-				HurtModes.PlayerDash => new DashBossPuppet(data, offset),
-				HurtModes.HeadBonk => new BounceBossPuppet(data, offset),
-				HurtModes.SidekickAttack => new SidekickBossPuppet(data, offset),
-				_ => new CustomBossPuppet(data, offset)
-			};
+			Puppet = Create(data.Enum<HurtModes>("hurtMode"), data, offset);
 			Puppet.Add(new BossHealthTracker(() => Health));
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{

@@ -100,6 +100,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Add(BossCollision);
 		}
 
+		internal static BossPuppet Create(HurtModes hurtMode, EntityData data, Vector2 offset)
+		{
+			return hurtMode switch
+			{
+				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
+				HurtModes.PlayerDash => new DashBossPuppet(data, offset),
+				HurtModes.HeadBonk => new BounceBossPuppet(data, offset),
+				HurtModes.SidekickAttack => new SidekickBossPuppet(data, offset),
+				_ => new CustomBossPuppet(data, offset)
+			};
+		}
+
 		protected abstract Component GetBossCollision();
 
 		protected Collider GetMainOrDefault(ColliderOption option, float? value)
