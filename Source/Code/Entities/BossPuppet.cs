@@ -9,7 +9,7 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	public abstract partial class BossPuppet : Actor
+	public abstract partial class BossPuppet : BossActor
 	{
 		#region Enums
 		public enum ColliderOption
@@ -30,11 +30,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 		#endregion
 
-		public readonly Sprite Sprite;
-
 		private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
 
 		protected readonly Component BossCollision;
+
+		public Collider Hurtbox { get; private set; }
 
 		public abstract HurtModes HurtMode { get; }
 
@@ -48,34 +48,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public int Facing;
 
-		public const float Gravity = 900f;
-
-		public float gravityMult;
-
-		public Vector2 Speed;
-
 		public float groundFriction;
 
-		public float airFriction;
-
-		public bool Grounded => Speed.Y >= 0 && OnGround();
-
-		public Collider Hurtbox { get; private set; }
-
-		public bool SolidCollidable;
-
-		private readonly float maxFall;
+		public float airFriction;		
 
 		public bool killOnContact;
 
 		protected BossPuppet(EntityData data, Vector2 offset)
-			: base(data.Position + offset)
+			: base(data.Position + offset, data.Attr("bossSprite"), Vector2.One, data.Float("maxFall", 90f))
 		{
 			DynamicFacing = data.Bool("dynamicFacing");
 			MirrorSprite = data.Bool("mirrorSprite");
 			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
-			maxFall = data.Float("maxFall", 90f);
-			gravityMult = data.Float("baseGravityMultiplier", 1f);
+			GravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
 			airFriction = data.Float("airFriction");
 			SolidCollidable = data.Bool("startSolidCollidable");
@@ -83,18 +68,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			killOnContact = data.Bool("killOnContact");
 			Add(new PlayerCollider(KillOnContact));
 			Facing = 1;
-			if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite))
-			{
-				Add(Sprite);
-				Sprite.Scale = Vector2.One;
-				PlayBossAnim(data.String("startingAnim", "idle"));
-			}
+			PlayAnim(data.String("startingAnim", "idle"));
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
 			Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
 			if ((BossCollision = GetBossCollision()) != null)
 				Add(BossCollision);
 		}
+
+		protected abstract Component GetBossCollision();
 
 		internal static BossPuppet Create(HurtModes hurtMode, EntityData data, Vector2 offset)
 		{
@@ -107,8 +89,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				_ => new CustomBossPuppet(data, offset)
 			};
 		}
-
-		protected abstract Component GetBossCollision();
 
 		protected Collider GetMainOrDefault(ColliderOption option, float? value)
 			=> GetTagOrDefault(option, "main", value);
@@ -131,21 +111,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Facing *= -1;
 			}
 			base.Update();
-			//Move based on speed
-			if (SolidCollidable)
-			{
-				MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
-				MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
-			}
-			else
-			{
-				NaiveMove(Speed * Engine.DeltaTime);
-			}
-			//Apply gravity
-			if (!Grounded)
-			{
-				Speed.Y = Calc.Approach(Speed.Y, maxFall, Gravity * gravityMult * Engine.DeltaTime);
-			}
 			//Apply friction
 			Speed.X = Calc.Approach(Speed.X, 0f, (Grounded ? groundFriction : airFriction) * Engine.DeltaTime);
 			//Return Sprite Scale
@@ -169,11 +134,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Render();
 			int realFacing = Facing * (MirrorSprite ? -1 : 1);
-			Sprite?.Scale.X = realFacing;
+			Sprite.Scale.X = realFacing;
 		}
-
-		public void PlayBossAnim(string anim)
-			=> Sprite.PlayOrWarn(anim);
 
 		#region Collision Methods
 		private void KillOnContact(Player player)
@@ -190,24 +152,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				BossFunctions.OnDamage(HurtMode).Coroutine(this);
 				postLua?.Invoke();
 			}
-		}
-
-		private void OnCollideH(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.X = 0;
-		}
-
-		private void OnCollideV(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.Y = 0;
 		}
 		#endregion
 	}

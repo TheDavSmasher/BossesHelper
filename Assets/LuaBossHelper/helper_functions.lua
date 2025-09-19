@@ -985,7 +985,7 @@ end
 ---Plan an animation on the Boss's given sprite
 ---@param anim string The animation to play
 function helpers.playPuppetAnim(anim)
-    puppet:PlayBossAnim(anim)
+    puppet:PlayAnim(anim)
 end
 
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.

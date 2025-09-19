@@ -127,7 +127,7 @@ entities.BossPuppet = {}
 
 ---Play an animation on the Boss's Sprite.
 ---@param anim string The animation to play.
-function entities.BossPuppet:PlayBossAnim(anim) end
+function entities.BossPuppet:PlayAnim(anim) end
 
 ---Maintain a component of the Boss's speed to the value during the time given. 
 ---@param speed number The speed component's value to maintain.
