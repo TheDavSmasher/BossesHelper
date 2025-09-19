@@ -1,13 +1,12 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	public abstract class BossActor : Actor
+	public abstract class BossActor(Vector2 position, string spriteName, Vector2 spriteScale,
+		float maxFall, bool collidable, bool solidCollidable, float gravityMult)
+		: BossEntity(position, spriteName, spriteScale, collidable)
 	{
-		public readonly Sprite Sprite;
-
 		public Vector2 Speed;
 
 		private const float Gravity = 900f;
@@ -20,30 +19,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				field = value;
 				effectiveGravity = value * Gravity;
 			}
-		}
+		} = gravityMult;
 
-		public bool SolidCollidable;
+		public bool SolidCollidable = solidCollidable;
 
 		public bool Grounded => Speed.Y >= 0 && OnGround();
 
-		private readonly float MaxFall;
+		private readonly float MaxFall = maxFall;
 
 		private float effectiveGravity;
-
-		public BossActor(Vector2 position, string spriteName, Vector2 spriteScale, float maxFall,
-			bool collidable, bool solidCollidable, float gravityMult)
-			: base(position)
-		{
-			Collidable = collidable;
-			SolidCollidable = solidCollidable;
-			MaxFall = maxFall;
-			GravityMult = gravityMult;
-			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
-			{
-				Sprite.Scale = spriteScale;
-				Add(Sprite);
-			}
-		}
 
 		public override void Update()
 		{
@@ -82,8 +66,5 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			}
 			Speed.Y = 0;
 		}
-
-		public void PlayAnim(string anim)
-			=> Sprite.PlayOrWarn(anim);
 	}
 }
