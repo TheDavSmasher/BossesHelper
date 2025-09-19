@@ -80,6 +80,8 @@ namespace Celeste.Mod.BossesHelper
 				storedObjects.Remove(key);
 			}
 
+			public int GetHealth() => Health;
+
 			public void DecreaseHealth(int val = 1)
 			{
 				Health -= val;

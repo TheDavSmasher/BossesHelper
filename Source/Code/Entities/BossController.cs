@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			BossID = data.Attr("bossID");
 			Add(PatternCoroutine = new Coroutine(false));
 			Puppet = Create(data.Enum<HurtModes>("hurtMode"), data, offset);
-			Puppet.Add(new BossHealthTracker(() => Health));
+			Puppet.Add(new BossHealthTracker(GetHealth));
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
