@@ -26,14 +26,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public bool Grounded => Speed.Y >= 0 && OnGround();
 
-		private readonly float maxFall;
+		private readonly float MaxFall;
 
 		private float effectiveGravity;
 
-		public BossActor(Vector2 position, string spriteName, Vector2 spriteScale, float maxFall)
+		public BossActor(Vector2 position, string spriteName, Vector2 spriteScale, float maxFall,
+			bool collidable, bool solidCollidable, float gravityMult)
 			: base(position)
 		{
-			this.maxFall = maxFall;
+			Collidable = collidable;
+			SolidCollidable = solidCollidable;
+			MaxFall = maxFall;
+			GravityMult = gravityMult;
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
 			{
 				Sprite.Scale = spriteScale;
@@ -57,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			//Apply gravity
 			if (!Grounded)
 			{
-				Speed.Y = Calc.Approach(Speed.Y, maxFall, effectiveGravity * Engine.DeltaTime);
+				Speed.Y = Calc.Approach(Speed.Y, MaxFall, effectiveGravity * Engine.DeltaTime);
 			}
 		}
 

@@ -5,7 +5,7 @@ using NLua;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	internal class AttackEntity : Entity
+	public class AttackEntity : Entity
 	{
 		public readonly Sprite Sprite;
 

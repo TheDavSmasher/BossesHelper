@@ -18,19 +18,24 @@ function entities.AttackEntity:PlayAnim(anim) end
 function entities.AttackEntity:SetCollisionActive(state) end
 --#endregion
 
---#region AttackActor
----@class AttackActor : Actor
----@overload fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, startSolidCollidable: boolean, spriteName: string, gravMult: number, maxFall: number, xScale?: number, yScale?: number): AttackActor
+--#region BossActor
+---@class BossActor : Actor
 ---@field Sprite Sprite
 ---@field Speed Vector2
 ---@field GravityMult number
 ---@field SolidCollidable boolean
 ---@field Grounded boolean
-entities.AttackActor = {}
+entities.BossActor = {}
 
 ---Play an animation on the attached Sprite.
 ---@param anim string The animation to play
-function entities.AttackActor:PlayAnim(anim) end
+function entities.BossActor:PlayAnim(anim) end
+--#endregion
+
+--#region AttackActor
+---@class AttackActor : BossActor
+---@overload fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, startSolidCollidable: boolean, spriteName: string, gravMult: number, maxFall: number, xScale?: number, yScale?: number): AttackActor
+entities.AttackActor = {}
 
 ---Change the Collidable state.
 ---@param state boolean
@@ -43,6 +48,53 @@ function entities.AttackActor:SetSolidCollisionActive(state) end
 ---Set the Actor's active gravity multiplier.
 ---@param mult number
 function entities.AttackActor:SetEffectiveGravityMult(mult) end
+--#endregion
+
+--#region BossPuppet
+---@class BossPuppet : BossActor
+---@field groundFriction number
+---@field airFriction number
+---@field killOnContact boolean
+---@field BossHitCooldown number
+---@field BossDamageCooldown Stopwatch
+entities.BossPuppet = {}
+
+---Maintain a component of the Boss's speed to the value during the time given. 
+---@param speed number The speed component's value to maintain.
+---@param isX boolean Whether to affect the x component of the speed.
+---@param time number The time the value should be maintained.
+---@return IEnumerator
+function entities.BossPuppet:Keep1DSpeed(speed, isX, time) end
+
+---Set a component of the Boss's speed to the value, kept during the time given.
+---@param speed number The speed component's value to maintain.
+---@param isX boolean Whether to affect the x component of the speed.
+---@param time number The time the value should be maintained.
+function entities.BossPuppet:Set1DSpeedDuring(speed, isX, time) end
+
+---Create a Tween to transition one of the Boss's speed component.
+---@param start number The starting speed value.
+---@param target number The target speed value.
+---@param time number The time the transition should take.
+---@param isX boolean Whether to affect the x component of the speed.
+---@param easer? Ease.Easer The Easer to transition the speed value.
+function entities.BossPuppet:Speed1DTween(start, target, time, isX, easer) end
+
+---Change the Boss's Hitbox to the one specified.
+---@param tag string The Hitbox group tag to change to.
+function entities.BossPuppet:ChangeHitboxOption(tag) end
+
+---Change the Boss's Hurtbox to the one specified.
+---@param tag string The Hurtbox group tag to change to.
+function entities.BossPuppet:ChangeHurtboxOption(tag) end
+
+---Change the Boss's Bouncebox to the one specified.
+---@param tag string The Bouncebox group tag to change to.
+function entities.BossPuppet:ChangeBounceboxOption(tag) end
+
+---Change the Boss's Target to the one specified.
+---@param tag string The Target group tag to change to.
+function entities.BossPuppet:ChangeTargetOption(tag) end
 --#endregion
 
 --#region BossController
@@ -109,62 +161,6 @@ function entities.BossController:DeleteStoredObject(key) end
 ---Decrease the Boss's health by the amount.
 ---@param amount integer
 function entities.BossController:DecreaseHealth(amount) end
---#endregion
-
---#region BossPuppet
----@class BossPuppet : Actor
----@field Speed Vector2
----@field Grounded boolean
----@field gravityMult number
----@field groundFriction number
----@field airFriction number
----@field killOnContact boolean
----@field Sprite Sprite
----@field SolidCollidable boolean
----@field BossHitCooldown number
----@field BossDamageCooldown Stopwatch
-entities.BossPuppet = {}
-
----Play an animation on the Boss's Sprite.
----@param anim string The animation to play.
-function entities.BossPuppet:PlayAnim(anim) end
-
----Maintain a component of the Boss's speed to the value during the time given. 
----@param speed number The speed component's value to maintain.
----@param isX boolean Whether to affect the x component of the speed.
----@param time number The time the value should be maintained.
----@return IEnumerator
-function entities.BossPuppet:Keep1DSpeed(speed, isX, time) end
-
----Set a component of the Boss's speed to the value, kept during the time given.
----@param speed number The speed component's value to maintain.
----@param isX boolean Whether to affect the x component of the speed.
----@param time number The time the value should be maintained.
-function entities.BossPuppet:Set1DSpeedDuring(speed, isX, time) end
-
----Create a Tween to transition one of the Boss's speed component.
----@param start number The starting speed value.
----@param target number The target speed value.
----@param time number The time the transition should take.
----@param isX boolean Whether to affect the x component of the speed.
----@param easer? Ease.Easer The Easer to transition the speed value.
-function entities.BossPuppet:Speed1DTween(start, target, time, isX, easer) end
-
----Change the Boss's Hitbox to the one specified.
----@param tag string The Hitbox group tag to change to.
-function entities.BossPuppet:ChangeHitboxOption(tag) end
-
----Change the Boss's Hurtbox to the one specified.
----@param tag string The Hurtbox group tag to change to.
-function entities.BossPuppet:ChangeHurtboxOption(tag) end
-
----Change the Boss's Bouncebox to the one specified.
----@param tag string The Bouncebox group tag to change to.
-function entities.BossPuppet:ChangeBounceboxOption(tag) end
-
----Change the Boss's Target to the one specified.
----@param tag string The Target group tag to change to.
-function entities.BossPuppet:ChangeTargetOption(tag) end
 --#endregion
 
 return entities
