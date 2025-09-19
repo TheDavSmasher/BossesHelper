@@ -162,8 +162,8 @@ end
 local getEnum = helpers.getEnum
 
 --- Pause code exection for duration seconds.
----@param duration number|System.Collections.IEnumerator? Duration to wait (in seconds).
----@return number|System.Collections.IEnumerator?
+---@param duration number|IEnumerator? Duration to wait (in seconds).
+---@return number|IEnumerator?
 function helpers.wait(duration)
     return coroutine.yield(duration)
 end

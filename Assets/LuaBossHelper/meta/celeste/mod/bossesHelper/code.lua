@@ -1,6 +1,6 @@
 ---@meta Celeste.Mod.BossesHelper.Code
 
----@class Code Namespace
+---@class Code
 local code = {}
 
 ---@module "Celeste.Mod.BossesHelper.Code.Components"

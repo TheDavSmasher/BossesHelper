@@ -1,6 +1,6 @@
 ---@meta Microsoft.XNA.Framework
 
----@class Microsoft.XNA.Framework Namespace
+---@class Microsoft.XNA.Framework
 local framework = {}
 
 ---@class Rectangle
@@ -10,6 +10,7 @@ local framework = {}
 ---@field Y number
 framework.Rectangle = {}
 
+--#region Vector2
 ---@class Vector2
 ---@overload fun(x: number, y: number): Vector2
 ---@field X number The x component of the vector
@@ -21,3 +22,4 @@ framework.Vector2 = {}
 ---Get the length of the Vector2
 ---@return number length The Vector2's length
 function framework.Vector2:Length() end
+--#endregion

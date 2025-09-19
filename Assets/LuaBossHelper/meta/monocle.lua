@@ -3,6 +3,7 @@
 ---@class Monocle
 local monocle = {}
 
+--#region Calc
 ---@class Calc
 monocle.Calc = {}
 
@@ -11,6 +12,7 @@ monocle.Calc = {}
 ---@param length? number The length to give the Vector2. Defaults to 1.
 ---@return Vector2 # The normalized Vector2
 function monocle.Calc.SafeNormalize(tself, length) end
+--#endregion
 
 ---@class Camera
 ---@field Position Vector2
@@ -29,6 +31,7 @@ monocle.ColliderList = {}
 ---@class Component
 monocle.Component = {}
 
+--#region Ease
 ---@class Ease : { [string]: Ease.Easer }
 monocle.Ease = {}
 
@@ -38,11 +41,13 @@ monocle.Ease = {}
 ---@param easer Ease.Easer The [Ease.Easer](lua://Ease.Easer) to invert
 ---@return Ease.Easer inverse The inverted [Ease.Easer](lua://Ease.Easer)
 function monocle.Ease.Invert(easer) end
+--#endregion
 
 ---@class Engine
 ---@field Scene Scene
 monocle.Engine = {}
 
+--#region Entity
 ---@class Entity
 ---@field Position Vector2
 ---@field Center Vector2
@@ -52,18 +57,22 @@ monocle.Entity = {}
 ---Add a Component to the Entity.
 ---@param component Component The Component to add.
 function monocle.Entity:Add(component) end
+--#endregion
 
 ---@class Hitbox
 ---@overload fun(width: number, height: number, x: number, y: number): Hitbox
 monocle.Hitbox = {}
 
+--#region Sprite
 ---@class Sprite
 monocle.Sprite = {}
 
 ---Play an animation.
 ---@param anim string The animation to play.
 function monocle.Sprite:Play(anim) end
+--#endregion
 
+--#region Scene
 ---@class Scene
 monocle.Scene = {}
 
@@ -74,6 +83,7 @@ function monocle.Scene:Add(entity) end
 ---Remove an [Entity](lua://Entity) from the [Scene](lua://Scene).
 ---@param entity Entity The [Entity](lua://Entity) to remove.
 function monocle.Scene:Remove(entity) end
+--#endregion
 
 ---@class StateMachine
 ---@field State integer

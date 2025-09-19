@@ -1,12 +1,16 @@
 ---@meta Celeste.Mod.BossesHelper.Code.Components
 
----@class Celeste.Mod.BossesHelper.Code.Components
+---@class Components
 local components = {}
 
+--#region Stopwatch
 ---@class Stopwatch : Component
 ---@field TimeLeft number
----@field Reset fun(self: Stopwatch)
 components.Stopwatch = {}
+
+---Reset the Stopwatch
+function components.Stopwatch:Reset() end
+--#endregion
 
 ---@class EntityChecker : Component
 ---@overload fun(checker: (fun(): boolean), onCheck: fun(entity: Entity), state?: boolean, removeOnComplete?: boolean): EntityChecker
