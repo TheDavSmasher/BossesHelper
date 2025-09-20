@@ -77,6 +77,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			private readonly LuaFunction endMethod = functions[1];
 
+			public IEnumerator Executer => While(() => Running, true);
+
 			public override void OnBegin(Level level)
 			{
 				Coroutine(level).Coroutine(this);
@@ -120,7 +122,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public IEnumerator Perform()
 		{
 			controller.Scene.Add(cutscene);
-			return While(() => cutscene.Running, true);
+			return cutscene.Executer;
 		}
 
 		public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
