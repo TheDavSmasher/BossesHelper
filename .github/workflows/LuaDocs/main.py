@@ -1,6 +1,6 @@
 import re
-from class_defs import Function, FunctionParam, FunctionType, Region
 import sys
+from class_defs import Function, FunctionParam, FunctionType, Region
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
