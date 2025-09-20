@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;
 using System;
@@ -67,36 +68,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return luaTable;
 		}
 
-		private static bool SafeMoveNext(this LuaCoroutine enumerator)
-		{
-			try
-			{
-				return enumerator.MoveNext();
-			}
-			catch (Exception e)
-			{
-				Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to resume coroutine");
-				Logger.LogDetailed(e);
-				return false;
-			}
-		}
-
 		public static IEnumerator ToIEnumerator(this LuaFunction func)
 		{
-			LuaCoroutine routine = (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction)
-				.Call(func).ElementAtOrDefault(0) as LuaCoroutine;
-			while (routine != null && SafeMoveNext(routine))
-			{
-				if (routine.Current is double || routine.Current is long)
-				{
-					yield return Convert.ToSingle(routine.Current);
-				}
-				else
-				{
-					yield return routine.Current;
-				}
-			}
-			yield return null;
+			return (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction)
+				.Call(func).ElementAtOrDefault(0) as LuaFuncCoroutine;
 		}
 
 		public static void AddAsCoroutine(this LuaFunction function, Entity target)
