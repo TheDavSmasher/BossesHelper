@@ -2,16 +2,20 @@
 
 local cutsceneHelper = {}
 
+---@type Mod
 local celesteMod = require("#celeste.mod")
 
-local function threadProxyResume(self, ...)
-    local thread = self.value
+local function getMod(modName)
+    return getMod(modName) --[[@as BossesHelper]]
+end
 
-    if coroutine.status(thread) == "dead" then
+---@type ProxyResume
+local function threadProxyResume(self, ...)
+    if coroutine.status(self.value) == "dead" then
         return false, nil
     end
 
-    local success, message = coroutine.resume(thread)
+    local success, message = coroutine.resume(self.value)
 
     -- The error message should be returned as an exception and not a string
     if not success then
@@ -21,6 +25,7 @@ local function threadProxyResume(self, ...)
     return success, message
 end
 
+---@type LuaPreparer
 local function prepareCutscene(env, func)
     local success, onBegin, onEnd = pcall(func)
 
@@ -31,12 +36,13 @@ local function prepareCutscene(env, func)
         return onBegin, onEnd
 
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load cutscene in Lua: " .. onBegin)
+        celesteMod.Logger.Error("Bosses Helper", "Failed to load cutscene in Lua: " .. onBegin)
 
         return success
     end
 end
 
+---@type LuaPreparer
 local function prepareAttack(env, func)
     local success, onBegin, onEnd, onComplete, onInterrupt, onDeath = pcall(func)
 
@@ -49,11 +55,12 @@ local function prepareAttack(env, func)
 
         return onBegin, onEnd, onComplete, onInterrupt, onDeath
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load attack in Lua: " .. onBegin)
+        celesteMod.Logger.Error("Bosses Helper", "Failed to load attack in Lua: " .. onBegin)
         return success
     end
 end
 
+---@type LuaPreparer
 local function prepareInterruption(env, func)
     local success, onHit, onContact, onDash, onBounce, onLaser, setup = pcall(func)
 
@@ -67,11 +74,12 @@ local function prepareInterruption(env, func)
 
         return setup, onHit, onContact, onDash, onBounce, onLaser
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
+        celesteMod.Logger.Error("Bosses Helper", "Failed to load interrupt data in Lua: " .. onHit)
         return success
     end
 end
 
+---@type LuaPreparer
 local function prepareFunction(env, func)
     local success, onDamage, onRecover = pcall(func)
 
@@ -81,11 +89,12 @@ local function prepareFunction(env, func)
 
         return onDamage, onRecover
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load on damage function in Lua: " .. onDamage)
+        celesteMod.Logger.Error("Bosses Helper", "Failed to load on damage function in Lua: " .. onDamage)
         return success
     end
 end
 
+---@type LuaPreparer
 local function prepareSavePoint(env, func)
     local success, onTalk = pcall(func)
 
@@ -94,7 +103,7 @@ local function prepareSavePoint(env, func)
         
         return onTalk
     else
-        celesteMod.logger.log(celesteMod.logLevel.error, "Bosses Helper", "Failed to load on save point function in Lua: " .. onTalk)
+        celesteMod.Logger.Error("Bosses Helper", "Failed to load on save point function in Lua: " .. onTalk)
         return success
     end
 end
@@ -104,11 +113,11 @@ function cutsceneHelper.setFuncAsCoroutine(func)
 end
 
 function cutsceneHelper.readFile(filename, modName)
-    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetFileContent(filename)
+    return getMod(modName).Code.Helpers.LuaBossHelper.GetFileContent(filename)
 end
 
 local function addHelperFunctions(modName, env)
-    local helperContent = celesteMod[modName].Code.Helpers.LuaBossHelper.HelperFunctions
+    local helperContent = getMod(modName).Code.Helpers.LuaBossHelper.HelperFunctions
     local helperFunctions = load(helperContent, nil, nil, env)()
 
     for k, v in pairs(helperFunctions) do
@@ -126,6 +135,7 @@ function cutsceneHelper.getLuaEnv(data)
     return env
 end
 
+---@type LuaGetData
 function cutsceneHelper.getLuaData(filename, data, preparationFunc)
     preparationFunc = preparationFunc or function() end
 
@@ -136,28 +146,33 @@ function cutsceneHelper.getLuaData(filename, data, preparationFunc)
     if content then
         addHelperFunctions(modName, env)
 
-        local func = load(content, nil, nil, env)
+        local func = load(content, nil, nil, env) --[[@as function]]
 
         return env, preparationFunc(env, func)
     end
 end
 
+---@type LuaDataGetter
 function cutsceneHelper.getCutsceneData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareCutscene)
 end
 
+---@type LuaDataGetter
 function cutsceneHelper.getAttackData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareAttack)
 end
 
+---@type LuaDataGetter
 function cutsceneHelper.getInterruptData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareInterruption)
 end
 
+---@type LuaDataGetter
 function cutsceneHelper.getFunctionData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareFunction)
 end
 
+---@type LuaDataGetter
 function cutsceneHelper.getSavePointData(filename, data)
     return cutsceneHelper.getLuaData(filename, data, prepareSavePoint)
 end
