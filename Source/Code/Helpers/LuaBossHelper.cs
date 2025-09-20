@@ -81,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					if ((cutsceneHelper[self.Command.Name] as LuaFunction)
 						.Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
 					{
-						funcs = [.. array.Skip(1).Cast<LuaFunction>()];
+						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}
 					else
 					{
@@ -97,15 +97,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return funcs;
 		}
 
+		public static IEnumerable<T> ToType<T>(this LuaTable table) => table.Values.OfType<T>();
+
 		public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
 		{
-			return new ColliderList([.. luaTable.Values.OfType<Collider>()]);
+			return new([.. luaTable.ToType<Collider>()]);
 		}
 
 		public static IEnumerator Say(string dialog, LuaTable luaEvents)
 		{
 			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaFuncCoroutine(func);
-			return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>().Select(Selector)]);
+			return Textbox.Say(dialog, [.. luaEvents.ToType<LuaFunction>().Select(Selector)]);
 		}
 
 		public static LuaTable GetEmptyTable()

@@ -160,6 +160,7 @@ local function getLuaData(filename, data, preparationFunc)
     end
 end
 
+--#region Getters
 ---@type LuaDataGetter
 function cutsceneHelper.getCutsceneData(filename, data)
     return getLuaData(filename, data, luaPreparers.prepareCutscene)
@@ -184,6 +185,8 @@ end
 function cutsceneHelper.getSavePointData(filename, data)
     return getLuaData(filename, data, luaPreparers.prepareSavePoint)
 end
+--#endregion
+
 --#endregion
 
 return cutsceneHelper
