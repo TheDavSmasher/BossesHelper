@@ -70,8 +70,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static IEnumerator ToIEnumerator(this LuaFunction func)
 		{
-			return (cutsceneHelper["setFuncAsCoroutine"] as LuaFunction)
-				.Call(func).ElementAtOrDefault(0) as LuaFuncCoroutine;
+			return new LuaFuncCoroutine((cutsceneHelper["getProxyTable"] as LuaFunction)
+				.Call(func).ElementAtOrDefault(0) as LuaTable);
 		}
 
 		public static void AddAsCoroutine(this LuaFunction function, Entity target)

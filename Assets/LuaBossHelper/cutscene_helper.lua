@@ -26,8 +26,10 @@ local function threadProxyResume(self, ...)
     return success, message
 end
 
-function cutsceneHelper.setFuncAsCoroutine(func)
-    return func and celesteMod.BossesHelper.Code.Helpers.Lua.LuaFuncCoroutine({value = coroutine.create(func), resume = threadProxyResume})
+---@param func function
+---@return LuaCoroutineProxy?
+function cutsceneHelper.getProxyTable(func)
+    return func and {value = coroutine.create(func), resume = threadProxyResume}
 end
 --#endregion
 
