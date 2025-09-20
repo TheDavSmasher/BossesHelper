@@ -3,52 +3,30 @@
 ---@class Entities
 local entities = {}
 
---#region AttackEntity
----@class AttackEntity : Entity
----@overload fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, spriteName: string, xScale?: number, yScale?: number) : AttackEntity
+--#region BossEntity
+---@class BossEntity : Actor
 ---@field Sprite Sprite
-entities.AttackEntity = {}
+entities.BossEntity = {}
 
 ---Play an animation on the attached Sprite.
 ---@param anim string The animation to play
-function entities.AttackEntity:PlayAnim(anim) end
-
----Change the Collidable state.
----@param state boolean
-function entities.AttackEntity:SetCollisionActive(state) end
+function entities.BossEntity:PlayAnim(anim) end
 --#endregion
 
---#region BossActor
----@class BossActor : Actor
----@field Sprite Sprite
+---@class AttackEntity : BossEntity
+---@overload fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, spriteName: string, xScale?: number, yScale?: number) : AttackEntity
+entities.AttackEntity = {}
+
+---@class BossActor : BossEntity
 ---@field Speed Vector2
 ---@field GravityMult number
 ---@field SolidCollidable boolean
 ---@field Grounded boolean
 entities.BossActor = {}
 
----Play an animation on the attached Sprite.
----@param anim string The animation to play
-function entities.BossActor:PlayAnim(anim) end
---#endregion
-
---#region AttackActor
 ---@class AttackActor : BossActor
 ---@overload fun(position: Vector2, hitboxes: Collider, funcOnPlayer: fun(self: Entity, player: Player), startCollidable: boolean, startSolidCollidable: boolean, spriteName: string, gravMult: number, maxFall: number, xScale?: number, yScale?: number): AttackActor
 entities.AttackActor = {}
-
----Change the Collidable state.
----@param state boolean
-function entities.AttackActor:SetCollisionActive(state) end
-
----Change the SolidCollidable state.
----@param state boolean
-function entities.AttackActor:SetSolidCollisionActive(state) end
-
----Set the Actor's active gravity multiplier.
----@param mult number
-function entities.AttackActor:SetEffectiveGravityMult(mult) end
---#endregion
 
 --#region BossPuppet
 ---@class BossPuppet : BossActor

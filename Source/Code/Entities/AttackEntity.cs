@@ -11,10 +11,5 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			Add(new PlayerCollider(player => onPlayer.Call(this, player)));
 		}
-
-		public void SetCollisionActive(bool active)
-		{
-			Collidable = active;
-		}
 	}
 }
