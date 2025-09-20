@@ -8,8 +8,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	{
 		public readonly Sprite Sprite;
 
-		public BossEntity(Vector2 position, string spriteName, Vector2 spriteScale, bool collidable) : base(position)
+		public BossEntity(Vector2 position, string spriteName, Vector2 spriteScale, bool collidable, Collider collider = null)
+			: base(position)
 		{
+			Collider = collider;
 			Collidable = collidable;
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
 			{

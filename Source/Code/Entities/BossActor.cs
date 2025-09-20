@@ -4,8 +4,8 @@ using Monocle;
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
 	public abstract class BossActor(Vector2 position, string spriteName, Vector2 spriteScale,
-		float maxFall, bool collidable, bool solidCollidable, float gravityMult)
-		: BossEntity(position, spriteName, spriteScale, collidable)
+		float maxFall, bool collidable, bool solidCollidable, float gravityMult, Collider collider = null)
+		: BossEntity(position, spriteName, spriteScale, collidable, collider)
 	{
 		public Vector2 Speed;
 
