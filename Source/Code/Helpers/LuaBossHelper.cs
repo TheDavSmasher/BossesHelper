@@ -69,11 +69,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return luaTable;
 		}
 
-		public static LuaFuncCoroutine ToIEnumerator(this LuaFunction func)
-		{
-			return new LuaFuncCoroutine(func);
-		}
-
 		public static void AddAsCoroutine(this LuaFunction function, Entity target)
 		{
 			target.Add(new LuaCoroutineComponent(function));
@@ -114,8 +109,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static IEnumerator Say(string dialog, LuaTable luaEvents)
 		{
-			return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>()
-				.Select<LuaFunction, Func<IEnumerator>>(luaEv => luaEv.ToIEnumerator)]);
+			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaFuncCoroutine(func);
+			return Textbox.Say(dialog, [.. luaEvents.Values.OfType<LuaFunction>().Select(Selector)]);
 		}
 
 		public static LuaTable GetEmptyTable()

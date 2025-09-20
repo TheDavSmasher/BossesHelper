@@ -57,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public IEnumerator Perform()
 		{
-			return attackFunction.ToIEnumerator();
+			return new LuaFuncCoroutine(attackFunction);
 		}
 
 		public void End(MethodEndReason reason)
@@ -73,7 +73,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
 		{
-			private readonly LuaFuncCoroutine Cutscene = functions[0]?.ToIEnumerator();
+			private readonly LuaFuncCoroutine Cutscene = new(functions[0]);
 
 			private readonly LuaFunction endMethod = functions[1];
 
@@ -143,9 +143,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? OnHitLua);
 		}
 
-		public IEnumerator OnDamage(BossPuppet.HurtModes source)
+		public LuaFuncCoroutine OnDamage(BossPuppet.HurtModes source)
 		{
-			return onDamageMethods[source]?.ToIEnumerator();
+			return new(onDamageMethods[source]);
 		}
 	}
 }
