@@ -117,10 +117,5 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			Alarm.Create(Alarm.AlarmMode.Oneshot, () => func.Call(), delay, true);
 		}
-
-		public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
-		{
-			puppet.Add(new LuaCoroutineComponent(func));
-		}
 	}
 }

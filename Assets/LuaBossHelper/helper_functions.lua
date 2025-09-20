@@ -1439,7 +1439,7 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-    bossesHelper.Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
+    puppet:Add(bossesHelper.Code.Components.LuaCoroutineComponent(callFunc(func, {...})))
 end
 
 ---@param entity Entity
