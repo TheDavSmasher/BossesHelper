@@ -147,7 +147,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (BossDamageCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
 				BossDamageCooldown.Reset();
-				BossFunctions.OnDamage(HurtMode).Coroutine(this);
+				BossFunctions.OnDamage(HurtMode).AsCoroutine(this);
 				postLua?.Invoke();
 			}
 		}

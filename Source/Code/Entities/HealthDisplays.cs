@@ -167,7 +167,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 						Logger.Log("Health Render", "No Health Icon to remove");
 						return;
 					}
-					removed.RemoveIcon(removeIconOnDamage).Coroutine(this);
+					removed.RemoveIcon(removeIconOnDamage).AsCoroutine(this);
 					if (!removeIconOnDamage)
 					{
 						toRemove.Push(removed);

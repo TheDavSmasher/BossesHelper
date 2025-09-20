@@ -81,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			public override void OnBegin(Level level)
 			{
-				Coroutine(level).Coroutine(this);
+				Coroutine(level).AsCoroutine(this);
 			}
 
 			private IEnumerator Coroutine(Level level)

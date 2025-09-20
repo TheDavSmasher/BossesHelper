@@ -150,7 +150,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return new Vector2((int)value.X, (int)value.Y);
 		}
 
-		public static void Coroutine(this IEnumerator enumerator, Entity target)
+		public static void AsCoroutine(this IEnumerator enumerator, Entity target)
 		{
 			target.Add(new Coroutine(enumerator));
 		}

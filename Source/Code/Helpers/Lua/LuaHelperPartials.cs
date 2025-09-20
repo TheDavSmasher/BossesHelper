@@ -94,7 +94,7 @@ namespace Celeste.Mod.BossesHelper
 
 			public void Set1DSpeedDuring(float speed, bool isX, float time)
 			{
-				Keep1DSpeed(speed, isX, time).Coroutine(this);
+				Keep1DSpeed(speed, isX, time).AsCoroutine(this);
 			}
 
 			public IEnumerator Keep1DSpeed(float speed, bool isX, float time)
