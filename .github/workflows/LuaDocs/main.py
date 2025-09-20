@@ -1,5 +1,6 @@
 import re
 from class_defs import Function, FunctionParam, FunctionType, Region
+import sys
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
@@ -159,10 +160,11 @@ def save_markdown_to_file(markdown_text, output_path, desc):
 
 
 if __name__ == '__main__':
-    LUA_PATH = "../LuaBossHelper/helper_functions.lua"
-    DOCUMENTATION_PATH = "../../boss_helper_functions.md"
-    LAYOUT_PATH = "../../boss_helper_functions_layout.md"
+    if len(sys.argv) != 2:
+        print("File path is required for script.")
+        sys.exit(1)
 
+    LUA_PATH = f'{sys.argv[1]}/helper_functions.md'
     markdown, layout = generate_markdown_documentation(*parse_lua_file(LUA_PATH))
-    save_markdown_to_file(markdown, DOCUMENTATION_PATH, "Documentation")
-    save_markdown_to_file(layout, LAYOUT_PATH, "Layout")
+    save_markdown_to_file(markdown, 'docs/Boss-Lua-Helper-Functions.md', "Documentation")
+    save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
