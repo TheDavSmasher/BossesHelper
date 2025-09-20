@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;
@@ -75,7 +76,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static void AddAsCoroutine(this LuaFunction function, Entity target)
 		{
-			function.ToIEnumerator().Coroutine(target);
+			target.Add(new LuaCoroutineComponent(function));
 		}
 
 		public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
