@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				return base.MoveNext();
+				return Proxy != null && base.MoveNext();
 			}
 			catch (Exception e)
 			{
