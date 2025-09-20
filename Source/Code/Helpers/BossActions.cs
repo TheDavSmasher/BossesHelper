@@ -1,6 +1,7 @@
 ﻿global using LuaCommand = (string Name, int Count);
 global using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using NLua;
 using System;
 using System.Collections;
@@ -72,7 +73,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
 		{
-			private readonly IEnumerator Cutscene = functions[0]?.ToIEnumerator();
+			private readonly LuaFuncCoroutine Cutscene = functions[0]?.ToIEnumerator();
 
 			private readonly LuaFunction endMethod = functions[1];
 

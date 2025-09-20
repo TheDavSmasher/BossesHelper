@@ -68,7 +68,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return luaTable;
 		}
 
-		public static IEnumerator ToIEnumerator(this LuaFunction func)
+		public static LuaFuncCoroutine ToIEnumerator(this LuaFunction func)
 		{
 			return new LuaFuncCoroutine((cutsceneHelper["getProxyTable"] as LuaFunction)
 				.Call(func).ElementAtOrDefault(0) as LuaTable);
