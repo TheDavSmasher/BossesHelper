@@ -69,11 +69,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return luaTable;
 		}
 
-		public static void AddAsCoroutine(this LuaFunction function, Entity target)
-		{
-			target.Add(new LuaCoroutineComponent(function));
-		}
-
 		public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
 		{
 			Dictionary<object, object> passedVals = self.Values.ToDictionary();
@@ -125,7 +120,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static void AddConstantBackgroundCoroutine(BossPuppet puppet, LuaFunction func)
 		{
-			func.AddAsCoroutine(puppet);
+			puppet.Add(new LuaCoroutineComponent(func));
 		}
 	}
 }
