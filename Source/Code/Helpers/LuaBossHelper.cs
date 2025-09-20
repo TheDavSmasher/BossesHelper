@@ -115,7 +115,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static void DoMethodAfterDelay(LuaFunction func, float delay)
 		{
-			Alarm.Create(Alarm.AlarmMode.Oneshot, () => func.Call(), delay, true);
+			Alarm.Create(Alarm.AlarmMode.Oneshot, func.ToAction(), delay, true);
 		}
 	}
 }
