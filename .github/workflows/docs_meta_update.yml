@@ -1,0 +1,56 @@
+name: Update Wiki and Meta
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "Assets/LuaBossHelper/**"
+    
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare for Script
+        run: |
+          mkdir docs
+          mkdir meta
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Rewrite files
+        run: |
+          
+          python .github/workflows/LuaDocs/main.py Assets/LuaBossHelper
+      
+      - name: Push Docs to Wiki
+        run: |
+          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki
+
+          cp -r docs/* wiki/helperFunctions/
+
+          cd wiki
+          git add .
+          git commit -m "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
+          git push
+      
+      - name: Push Meta to Addon
+        run: |
+          git clone "https://x-access-token:${{ secrets.ADDON_WIKI_PAT }}@github.com/TheDavSmasher/bosses-helper-addon.git" addon
+
+          cp -r meta/* addon/library/
+
+          cd addon
+          git add .
+          git commit -m "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
+          git push
+      
