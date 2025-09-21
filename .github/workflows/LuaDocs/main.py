@@ -33,8 +33,7 @@ def parse_lua_file():
     skipping = False
 
     for i, line in enumerate(lines):
-        region_match = region_pattern.match(line)
-        if region_match:
+        if (region_match := region_pattern.match(line)):
             region_name = region_match.group(1)
             if region_name.startswith('Original'):
                 skipping = True
@@ -107,6 +106,10 @@ def format_markdown_link(name: str):
     return re.sub(r'[^a-z0-9-]', '', name.replace(' ', '-').lower())
 
 
+def name_link(name: str, pre_link: str = "", link: str = None):
+    return f'[{name}]({pre_link}#{format_markdown_link(link or name)})'
+
+
 def generate_markdown_documentation(region_list: list[Region], file_funcs: list[Function]):
     """
     Generates markdown documentation for a list of functions.
@@ -114,21 +117,19 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
 
     docs = ("This page contains all documentation for all Lua helper functions this mod" +
             " provides for all attacks, events, and setup files required for a boss.\n\n" +
-            f"[Find the actual Lua file here](${REPO_PATH}/${LUA_PATH}).\n")
+            f"[Find the actual Lua file here]({REPO_PATH}/{LUA_PATH}).\n")
 
     sidebar = "[**Home**](Home)\n"
 
     for region in region_list:
         docs += f"\n## {region.name}\n"
 
-        sidebar += (f"\n## [{region.name}](${DOCS_FILE}"
-                            + f"#{format_markdown_link(region.name)})\n\n")
+        sidebar += (f"\n## {name_link(region.name, DOCS_FILE)}\n\n")
 
         for func in region.functions:
             docs += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
-            sidebar += (f"- [{func.full_name}](${DOCS_FILE}"
-                                + f"#{format_markdown_link(func.full_name)})\n")
+            sidebar += (f"- {name_link(func.full_name, DOCS_FILE)}\n")
 
             if func.params:
                 for param in func.params:
@@ -143,7 +144,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                         for function in [func for func in file_funcs if func.name in param_desc]:
                             param_desc = param_desc.replace(
                                 function.name,
-                                f"[{function.name}](#{format_markdown_link(function.full_name)})"
+                                name_link(function.name, link=function.full_name),
                                 )
 
                     docs += f"{TAB}{TAB}{param_desc}  \n"
@@ -173,5 +174,5 @@ if __name__ == '__main__':
     LUA_PATH = f'{sys.argv[2]}/helper_functions.lua'
 
     markdown, layout = generate_markdown_documentation(*parse_lua_file())
-    save_markdown_to_file(markdown, f'docs/${DOCS_FILE}.md', "Documentation")
+    save_markdown_to_file(markdown, f'docs/{DOCS_FILE}.md', "Documentation")
     save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
