@@ -30,29 +30,20 @@ def parse_lua_file():
     default_pattern = re.compile(r'---\s*@default\s+(.*)')
     return_pattern = re.compile(r'---\s*@return\s+([a-zA-Z0-9_|]+)\s+([a-zA-Z0-9_]+)\s+(.*)')
 
-    skipping = False
-
     for i, line in enumerate(lines):
         if (region_match := region_pattern.match(line)):
             region_name = region_match.group(1)
-            if region_name.startswith('Original'):
-                skipping = True
-            if not ('Import' in region_name or 'Helper' in region_name):
+            if 'Import' not in region_name:
                 current_region = Region(region_name)
             continue
 
         if end_pattern.match(line):
-            skipping = False
             if current_region is not None:
                 all_regions.append(current_region)
                 current_region = None
             continue
 
-        if skipping:
-            continue
-
-        func_match = func_pattern.match(line)
-        if func_match is None:
+        if (func_match := func_pattern.match(line)) is None:
             continue
 
         doc_lines: list[str] = []
@@ -122,6 +113,9 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     sidebar = "[**Home**](Home)\n"
 
     for region in region_list:
+        if "Original" in region.name:
+            continue
+
         docs += f"\n## {region.name}\n"
 
         sidebar += (f"\n## {name_link(region.name, DOCS_FILE)}\n\n")
