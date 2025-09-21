@@ -110,32 +110,32 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     Generates markdown documentation for a list of functions.
     """
 
-    markdown_text = ("# [Bosses Helper](README.md): Lua Helper Functions\n\n" +
+    docs = ("# [Bosses Helper](README.md): Lua Helper Functions\n\n" +
                      "## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n" +
                      "[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
 
-    layout_markdown = ("# [Bosses Helper](README.md): [Lua Helper Functions]"
+    sidebar = ("# [Bosses Helper](README.md): [Lua Helper Functions]"
                        + "(boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n")
 
     for region in region_list:
-        markdown_text += f"\n## {region.name}\n"
+        docs += f"\n## {region.name}\n"
 
-        layout_markdown += (f"\n## [{region.name}](${DOCS_FILE}"
+        sidebar += (f"\n## [{region.name}](${DOCS_FILE}"
                             + f"#{format_markdown_link(region.name)})\n\n")
 
         for func in region.functions:
-            markdown_text += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
+            docs += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
-            layout_markdown += (f"- [{func.full_name}](${DOCS_FILE}"
+            sidebar += (f"- [{func.full_name}](${DOCS_FILE}"
                                 + f"#{format_markdown_link(func.full_name)})\n")
 
             if func.params:
                 for param in func.params:
-                    markdown_text += f"\n{TAB}`{param.name}` (`{param.type}`)"
+                    docs += f"\n{TAB}`{param.name}` (`{param.type}`)"
                     if param.optional:
-                        markdown_text += (f" (default `{param.default}`)"
+                        docs += (f" (default `{param.default}`)"
                                           if param.default else " (optional)")
-                    markdown_text += "  \n\n"
+                    docs += "  \n\n"
 
                     param_desc = param.description
                     if "helpers." in param_desc:
@@ -143,16 +143,16 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                             param_desc = param_desc.replace(function.name,
                                                             f"[{function.name}](#{format_markdown_link(function.full_name)})")
 
-                    markdown_text += f"{TAB}{TAB}{param_desc}  \n"
+                    docs += f"{TAB}{TAB}{param_desc}  \n"
 
             if func.returns:
-                markdown_text += f"\n{TAB}Returns:  \n"
+                docs += f"\n{TAB}Returns:  \n"
                 for ret in func.returns:
-                    markdown_text += f"\n{TAB}{TAB}`{ret.name}` (`{ret.type}`): {ret.description}\n"
+                    docs += f"\n{TAB}{TAB}`{ret.name}` (`{ret.type}`): {ret.description}\n"
 
-            markdown_text += "\n---\n"
+            docs += "\n---\n"
 
-    return markdown_text, layout_markdown
+    return docs, sidebar
 
 
 def save_markdown_to_file(markdown_text, output_path, desc):
