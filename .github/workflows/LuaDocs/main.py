@@ -3,6 +3,7 @@ import sys
 from class_defs import Function, FunctionParam, FunctionType, Region
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+DOCS_FILE = "Bosser-Helper-‐-Lua-Helper-Functions"
 
 
 def parse_lua_file(lua_path):
@@ -108,6 +109,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     """
     Generates markdown documentation for a list of functions.
     """
+
     markdown_text = ("# [Bosses Helper](README.md): Lua Helper Functions\n\n" +
                      "## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n" +
                      "[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
@@ -118,13 +120,13 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     for region in region_list:
         markdown_text += f"\n## {region.name}\n"
 
-        layout_markdown += (f"\n## [{region.name}](boss_helper_functions.md"
+        layout_markdown += (f"\n## [{region.name}](${DOCS_FILE}"
                             + f"#{format_markdown_link(region.name)})\n\n")
 
         for func in region.functions:
             markdown_text += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
-            layout_markdown += (f"- [{func.full_name}](boss_helper_functions.md"
+            layout_markdown += (f"- [{func.full_name}](${DOCS_FILE}"
                                 + f"#{format_markdown_link(func.full_name)})\n")
 
             if func.params:
@@ -166,5 +168,5 @@ if __name__ == '__main__':
 
     LUA_PATH = f'{sys.argv[1]}/helper_functions.md'
     markdown, layout = generate_markdown_documentation(*parse_lua_file(LUA_PATH))
-    save_markdown_to_file(markdown, 'docs/Boss-Lua-Helper-Functions.md', "Documentation")
+    save_markdown_to_file(markdown, f'docs/${DOCS_FILE}.md', "Documentation")
     save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
