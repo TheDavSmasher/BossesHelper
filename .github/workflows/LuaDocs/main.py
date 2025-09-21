@@ -21,9 +21,10 @@ def parse_lua_file():
     with open(LUA_PATH, 'r', encoding='utf-8') as file:
         lines: list[str] = list(map(str.strip, file.readlines()))
 
-    region_pattern = re.compile(r'--#region\s+(.*)')
-    end_pattern = re.compile(r'--#endregion+(.*)')
-    func_pattern = re.compile(r'function\s+([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*\(([^)]*)\)')
+    region_pattern = re.compile(r'^--#region\s+(.*)')
+    end_pattern = re.compile(r'^--#endregion$')
+    func_pattern = re.compile(r'^function\s+([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*\(([^)]*)\)')
+
     comment_pattern = re.compile(r'(?:---\s?)+((?<!@)[^@]*)$')
     param_pattern = re.compile(
         r'---\s*@param\s+([a-zA-Z0-9_?.]+)\s+([a-zA-Z0-9_?.|]+(?:\([^)]*\))?)\s+(.*)')
@@ -32,8 +33,7 @@ def parse_lua_file():
 
     for i, line in enumerate(lines):
         if (region_match := region_pattern.match(line)):
-            region_name = region_match.group(1)
-            if 'Import' not in region_name:
+            if 'Import' not in (region_name := region_match.group(1)):
                 current_region = Region(region_name)
             continue
 
@@ -58,30 +58,25 @@ def parse_lua_file():
             j += 1
             line = lines[j]
 
-            comment_match = comment_pattern.match(line)
-            if comment_match:
+            if (comment_match := comment_pattern.match(line)):
                 doc_lines.append(comment_match.group(1))
                 continue
 
-            param_match = param_pattern.match(line)
-            if param_match:
+            if (param_match := param_pattern.match(line)):
                 param_name, param_type, param_desc = param_match.groups()
-                param_default = ""
-                optional = param_name.endswith('?')
-                if optional:
+
+                if (opt := param_name.endswith('?')):
                     param_name = param_name[:-1]
 
-                    default_match = default_pattern.match(lines[j + 1])
-                    if default_match:
-                        param_default = default_match.group(1)
+                    if (default_match := default_pattern.match(lines[j + 1])):
+                        param_default: str = default_match.group(1)
                         j += 1
 
                 params.append(
-                    FunctionParam(param_type, param_name, param_desc, optional, param_default))
+                    FunctionParam(param_type, param_name, param_desc, opt, param_default or ""))
                 continue
 
-            return_match = return_pattern.match(line)
-            if return_match:
+            if (return_match := return_pattern.match(line)):
                 returns.append(
                     FunctionType(*return_match.groups()))
 
