@@ -4,9 +4,11 @@ from class_defs import Function, FunctionParam, FunctionType, Region
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 DOCS_FILE = "Bosser-Helper-‐-Lua-Helper-Functions"
+REPO_PATH: str
+LUA_PATH: str
 
 
-def parse_lua_file(lua_path):
+def parse_lua_file():
     """
     Parses a Lua file to extract function names,
     parameters, return values, and documentation comments.
@@ -16,7 +18,7 @@ def parse_lua_file(lua_path):
 
     current_region: Region | None = None
 
-    with open(lua_path, 'r', encoding='utf-8') as file:
+    with open(LUA_PATH, 'r', encoding='utf-8') as file:
         lines: list[str] = list(map(str.strip, file.readlines()))
 
     region_pattern = re.compile(r'--#region\s+(.*)')
@@ -101,7 +103,7 @@ def parse_lua_file(lua_path):
     return all_regions, all_funcs
 
 
-def format_markdown_link(name):
+def format_markdown_link(name: str):
     return re.sub(r'[^a-z0-9-]', '', name.replace(' ', '-').lower())
 
 
@@ -140,8 +142,10 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                     param_desc = param.description
                     if "helpers." in param_desc:
                         for function in [func for func in file_funcs if func.name in param_desc]:
-                            param_desc = param_desc.replace(function.name,
-                                                            f"[{function.name}](#{format_markdown_link(function.full_name)})")
+                            param_desc = param_desc.replace(
+                                function.name,
+                                f"[{function.name}](#{format_markdown_link(function.full_name)})"
+                                )
 
                     docs += f"{TAB}{TAB}{param_desc}  \n"
 
@@ -162,11 +166,13 @@ def save_markdown_to_file(markdown_text, output_path, desc):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("File path is required for script.")
         sys.exit(1)
 
-    LUA_PATH = f'{sys.argv[1]}/helper_functions.md'
-    markdown, layout = generate_markdown_documentation(*parse_lua_file(LUA_PATH))
+    REPO_PATH = sys.argv[1]
+    LUA_PATH = f'{sys.argv[2]}/helper_functions.lua'
+
+    markdown, layout = generate_markdown_documentation(*parse_lua_file())
     save_markdown_to_file(markdown, f'docs/${DOCS_FILE}.md', "Documentation")
     save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
