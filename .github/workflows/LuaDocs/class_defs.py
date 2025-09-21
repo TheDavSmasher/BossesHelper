@@ -14,7 +14,7 @@ class FunctionParam(FunctionType):
     default: str
 
 
-@dataclass
+@dataclass(init=False)
 class Function:
     name: str
     full_name: str

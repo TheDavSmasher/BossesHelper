@@ -112,12 +112,11 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     Generates markdown documentation for a list of functions.
     """
 
-    docs = ("# [Bosses Helper](README.md): Lua Helper Functions\n\n" +
-                     "## [Document Layout](boss_helper_functions_layout.md#bosses-helper-lua-helper-functions-layout)\n\n" +
-                     "[Find the actual Lua file here](Assets/LuaBossHelper/helper_functions.lua).\n")
+    docs = ("This page contains all documentation for all Lua helper functions this mod" +
+            " provides for all attacks, events, and setup files required for a boss.\n\n" +
+            f"[Find the actual Lua file here](${REPO_PATH}/${LUA_PATH}).\n")
 
-    sidebar = ("# [Bosses Helper](README.md): [Lua Helper Functions]"
-                       + "(boss_helper_functions.md#bosses-helper-lua-helper-functions) Layout\n")
+    sidebar = "[**Home**](Home)\n"
 
     for region in region_list:
         docs += f"\n## {region.name}\n"
