@@ -1,7 +1,8 @@
 import re
 import sys
-from class_defs import Function, FunctionParam, FunctionType, Region
-from regex_defs import * #pylint: disable=W0401,W0614
+#pylint: disable=W0401,W0614
+from class_defs import *
+from regex_defs import *
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 DOCS_FILE = "Bosser-Helper-‐-Lua-Helper-Functions"
@@ -58,7 +59,7 @@ def parse_lua_file():
     """
     all_funcs: list[Function] = []
     all_regions: list[Region] = []
-    all_ranges: list[range] = []
+    all_meta_ranges: list[LineRange] = []
 
     current_region: Region | None = None
 
@@ -75,18 +76,24 @@ def parse_lua_file():
                 all_regions.append(current_region)
                 current_region = None
 
+            case _ if CLASS_P.match(line):
+                all_meta_ranges.append(ClassRange(i))
+
+            case _ if MODULE_P.match(line):
+                all_meta_ranges.append(ModuleRange(i))
+
             case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)
-                all_ranges.append(range(start_idx, i + 1))
                 new_function = parse_function(match.group(1), annotations)
                 current_region.add(new_function)
                 all_funcs.append(new_function)
-
-            case _ if CLASS_P.match(line) or MODULE_P.match(line):
-                all_ranges.append(range(i, i+2))
+                all_meta_ranges.append(FuncRange(start_idx, i))
 
             case _ if FIELD_P.match(line):
-                all_ranges.append(range(i, i+1))
+                all_meta_ranges.append(FieldRange(i))
+
+    for _ in all_meta_ranges:
+        pass
 
     return all_regions, all_funcs
 

@@ -1,6 +1,10 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+import re
+from regex_defs import MODULE_F_P, CLASS_F_P
 
 
+# region Function Parsing
 @dataclass
 class FunctionType:
     type: str
@@ -54,3 +58,65 @@ class Region:
 
     def add(self, func: Function):
         self.functions.append(func)
+
+# endregion
+
+# region Meta Parsing
+@dataclass
+class LineRange(ABC):
+    _start: int
+    _end: int
+
+    @property
+    def range(self):
+        return range(self._start, self._end + 1)
+
+    def reformat(self, lines: list[str]):
+        lines[self._end] = self._format_last(lines[self._end])
+
+    @abstractmethod
+    def _format_last(self, last: str) -> str:
+        pass
+
+@dataclass(init=False)
+class LocalRange(LineRange):
+    def __init__(self, start: int):
+        super().__init__(start, start + 1)
+
+    def _format_last(self, last):
+        return self.parser.match(last).group(1)
+
+    @property
+    @abstractmethod
+    def parser(self) -> re.Pattern:
+        pass
+
+
+@dataclass(init=False)
+class ModuleRange(LocalRange):
+    @property
+    def parser(self):
+        return MODULE_F_P
+
+
+@dataclass(init=False)
+class ClassRange(LocalRange):
+    @property
+    def parser(self):
+        return CLASS_F_P
+
+
+@dataclass
+class FuncRange(LineRange):
+    def _format_last(self, last):
+        return last + ' end'
+
+
+@dataclass(init=False)
+class FieldRange(LineRange):
+    def __init__(self, start: int):
+        super().__init__(start, start)
+
+    def _format_last(self, last):
+        return last
+# endregion
