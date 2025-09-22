@@ -1,26 +1,13 @@
 import re
 import sys
 from class_defs import Function, FunctionParam, FunctionType, Region
+from regex_defs import * #pylint: disable=W0401,W0614
 
 TAB = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 DOCS_FILE = "Bosser-Helper-‐-Lua-Helper-Functions"
 REPO_PATH: str
 LUA_PATH: str
 
-region_p = re.compile(r'^--#region\s+(.*)')
-end_p = re.compile(r'^--#endregion')
-func_p = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
-
-comment_p = re.compile(r'---\s*(?!@)(.*)')
-param_p = re.compile(
-    r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)(?:\s*(.*))?$')
-default_p = re.compile(r'---\s*@default\s+(.*)')
-return_p = re.compile(
-    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?(?:\[\])*)\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
-
-class_p = re.compile(r'---\s*@class\s+[\w.]+')
-module_p = re.compile(r'---\s*@module\s+"[\w.]+"')
-local_p = re.compile(r'^local\s+\w+')
 
 def parse_function(func_name: str, lines_subset: list[str]):
     """
@@ -34,24 +21,24 @@ def parse_function(func_name: str, lines_subset: list[str]):
     idx = -1
     while (idx := idx + 1) < len(lines_subset):
         match (line := lines_subset[idx]):
-            case _ if (comment_m := comment_p.match(line)):
-                doc_lines.append(comment_m.group(1))
+            case _ if (match := COMMENT_P.match(line)):
+                doc_lines.append(match.group(1))
 
-            case _ if (param_m := param_p.match(line)):
-                param_name, param_type, param_desc = param_m.groups()
+            case _ if (match := PARAM_P.match(line)):
+                param_name, param_type, param_desc = match.groups()
                 default = ""
 
                 if (opt := param_name.endswith('?')):
                     param_name = param_name[:-1]
 
-                    if (default_m := default_p.match(lines_subset[idx + 1])):
+                    if (default_m := DEFAULT_P.match(lines_subset[idx + 1])):
                         default: str = default_m.group(1)
                         idx += 1
 
                 params.append(FunctionParam(param_type, param_name, param_desc, opt, default))
 
-            case _ if (return_m := return_p.match(line)):
-                returns.append(FunctionType(*return_m.groups()))
+            case _ if (match := RETURN_P.match(line)):
+                returns.append(FunctionType(*match.groups()))
 
     return Function(func_name, '\n'.join(doc_lines), params, returns)
 
@@ -80,15 +67,15 @@ def parse_lua_file():
 
     for i, line in enumerate(lines):
         match line:
-            case _ if ((match := region_p.match(line)) and
+            case _ if ((match := REGION_P.match(line)) and
                        'Import' not in (region_name := match.group(1))):
                 current_region = Region(region_name)
 
-            case _ if end_p.match(line) and current_region is not None:
+            case _ if END_P.match(line) and current_region is not None:
                 all_regions.append(current_region)
                 current_region = None
 
-            case _ if (match := func_p.match(line)):
+            case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)
                 all_ranges.append(range(start_idx, i + 1))
                 new_function = parse_function(match.group(1), annotations)
