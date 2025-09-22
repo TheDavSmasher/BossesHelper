@@ -82,6 +82,12 @@ def parse_lua_file():
                 current_region.add(new_function)
                 all_funcs.append(new_function)
 
+            case _ if CLASS_P.match(line) or MODULE_P.match(line):
+                all_ranges.append(range(i, i+2))
+
+            case _ if FIELD_P.match(line):
+                all_ranges.append(range(i, i+1))
+
     return all_regions, all_funcs
 
 

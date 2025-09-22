@@ -13,4 +13,5 @@ RETURN_P = re.compile(
 
 CLASS_P = re.compile(r'---\s*@class\s+[\w.]+')
 MODULE_P = re.compile(r'---\s*@module\s+"[\w.]+"')
+LOCAL_P = re.compile(r'^local\s+(\w+)\b')
 FIELD_P = re.compile(r'^helpers\.(.+)\s+=')
