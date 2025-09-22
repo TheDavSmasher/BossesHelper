@@ -51,3 +51,6 @@ class Function:
 class Region:
     name: str
     functions: list[Function] = field(default_factory=list)
+
+    def add(self, func: Function):
+        self.functions.append(func)

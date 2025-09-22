@@ -7,6 +7,59 @@ DOCS_FILE = "Bosser-Helper-‐-Lua-Helper-Functions"
 REPO_PATH: str
 LUA_PATH: str
 
+region_p = re.compile(r'^--#region\s+(.*)')
+end_p = re.compile(r'^--#endregion')
+func_p = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
+
+comment_p = re.compile(r'---\s*(?!@)(.*)')
+param_p = re.compile(
+    r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?)(?:\s*(.*))?$')
+default_p = re.compile(r'---\s*@default\s+(.*)')
+return_p = re.compile(
+    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s*(\w+)(?:\s*(.*))?$')
+
+
+def parse_function(func_name: str, lines_subset: list[str]):
+    """
+    Parses the subset of lines to extract the function's
+    documentation comments, parameters, and return values.
+    """
+    doc_lines: list[str] = []
+    params: list[FunctionParam] = []
+    returns: list[FunctionType] = []
+
+    idx = -1
+    while (idx := idx + 1) < len(lines_subset):
+        match (line := lines_subset[idx]):
+            case _ if (comment_m := comment_p.match(line)):
+                doc_lines.append(comment_m.group(1))
+
+            case _ if (param_m := param_p.match(line)):
+                param_name, param_type, param_desc = param_m.groups()
+                default = ""
+
+                if (opt := param_name.endswith('?')):
+                    param_name = param_name[:-1]
+
+                    if (default_m := default_p.match(lines_subset[idx + 1])):
+                        default: str = default_m.group(1)
+                        idx += 1
+
+                params.append(FunctionParam(param_type, param_name, param_desc, opt, default))
+
+            case _ if (return_m := return_p.match(line)):
+                returns.append(FunctionType(*return_m.groups()))
+
+    return Function(func_name, '\n'.join(doc_lines), params, returns)
+
+
+def get_annotations(lines: list[str], i: int):
+    j = i - 1
+    while j >= 0 and lines[j].startswith('---'):
+        j -= 1
+
+    return lines[j+1:i+1]
+
 
 def parse_lua_file():
     """
@@ -21,72 +74,20 @@ def parse_lua_file():
     with open(LUA_PATH, 'r', encoding='utf-8') as file:
         lines: list[str] = list(map(str.strip, file.readlines()))
 
-    region_pattern = re.compile(r'^--#region\s+(.*)')
-    end_pattern = re.compile(r'^--#endregion')
-    func_pattern = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
-
-    comment_pattern = re.compile(r'---\s*(?!@)(.*)')
-    param_pattern = re.compile(
-        r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?)(?:\s*(.*))?$')
-    default_pattern = re.compile(r'---\s*@default\s+(.*)')
-    return_pattern = re.compile(
-        r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s+(\w+)(?:\s*(.*))?$')
-
     for i, line in enumerate(lines):
-        if (region_match := region_pattern.match(line)):
-            if 'Import' not in (region_name := region_match.group(1)):
+        match line:
+            case _ if ((match := region_p.match(line)) and
+                       'Import' not in (region_name := match.group(1))):
                 current_region = Region(region_name)
-            continue
 
-        if end_pattern.match(line):
-            if current_region is not None:
+            case _ if end_p.match(line) and current_region is not None:
                 all_regions.append(current_region)
                 current_region = None
-            continue
 
-        if (func_match := func_pattern.match(line)) is None:
-            continue
-
-        func_name = func_match.group(1)
-
-        doc_lines: list[str] = []
-        params: list[FunctionParam] = []
-        returns: list[FunctionType] = []
-
-        j = i - 1
-        while j >= 0 and lines[j].startswith('---'):
-            j -= 1
-
-        while j < i:
-            j += 1
-            line = lines[j]
-
-            if (comment_match := comment_pattern.match(line)):
-                doc_lines.append(comment_match.group(1))
-                continue
-
-            if (param_match := param_pattern.match(line)):
-                param_name, param_type, param_desc = param_match.groups()
-
-                if (opt := param_name.endswith('?')):
-                    param_name = param_name[:-1]
-
-                    if (default_match := default_pattern.match(lines[j + 1])):
-                        param_default: str = default_match.group(1)
-                        j += 1
-
-                params.append(
-                    FunctionParam(param_type, param_name, param_desc, opt, param_default or ""))
-                continue
-
-            if (return_match := return_pattern.match(line)):
-                returns.append(
-                    FunctionType(*return_match.groups()))
-
-        new_function = Function(func_name, '\n'.join(doc_lines), params, returns)
-        current_region.functions.append(new_function)
-
-        all_funcs.append(new_function)
+            case _ if (match := func_p.match(line)):
+                new_function = parse_function(match.group(1), get_annotations(lines, i))
+                current_region.add(new_function)
+                all_funcs.append(new_function)
 
     return all_regions, all_funcs
 
