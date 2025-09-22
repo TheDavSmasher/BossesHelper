@@ -2,7 +2,7 @@
 
 local cutsceneHelper = {}
 
----@type Mod
+---@module "Celeste.Mod"
 local celesteMod = require("#celeste.mod")
 
 local function getMod(modName)

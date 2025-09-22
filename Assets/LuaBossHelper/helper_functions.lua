@@ -8,11 +8,11 @@
 
 local luanet = _G.luanet
 
----@type Monocle
+---@module "Monocle"
 local monocle = require("#monocle")
----@type Celeste
+---@module "Celeste"
 local celeste = require("#celeste")
----@type Microsoft.XNA.Framework
+---@module "Microsoft.XNA.Framework"
 local framework = require("#microsoft.xna.framework")
 
 local ease = monocle.Ease
