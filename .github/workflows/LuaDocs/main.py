@@ -68,13 +68,14 @@ def parse_lua_file():
 
     for i, line in enumerate(lines):
         match line:
-            case _ if ((match := REGION_P.match(line)) and
-                       'Import' not in (region_name := match.group(1))):
-                current_region = Region(region_name)
+            case _ if (match := REGION_P.match(line)):
+                if not any(_ in (region_name := match.group(1)) for _ in ("Import", "Local")):
+                    current_region = Region(region_name)
 
-            case _ if END_P.match(line) and current_region is not None:
-                all_regions.append(current_region)
-                current_region = None
+            case _ if END_P.match(line):
+                if current_region is not None:
+                    all_regions.append(current_region)
+                    current_region = None
 
             case _ if CLASS_P.match(line):
                 all_meta_ranges.append(ClassRange(i))
@@ -84,7 +85,8 @@ def parse_lua_file():
 
             case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)
-                new_function = parse_function(match.group(1), annotations)
+                func_name = match.group(1)
+                new_function = parse_function(func_name, annotations)
                 current_region.add(new_function)
                 all_funcs.append(new_function)
                 all_meta_ranges.append(FuncRange(start_idx, i))

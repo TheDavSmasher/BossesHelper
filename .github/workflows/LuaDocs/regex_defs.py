@@ -3,7 +3,8 @@ import re
 LOCAL_R = r'^(local\s+\w+'
 ANN_R = r'---\s*@'
 TABLE = 'helpers'
-TABLE_F = TABLE + r'\.'
+
+TABLE_P = re.compile(TABLE + r'\.(\w+)\b')
 
 REGION_P = re.compile(r'^--#region\s+(.*)')
 END_P = re.compile(r'^--#endregion')
