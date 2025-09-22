@@ -4,9 +4,6 @@
 --#region Mod Imports
 
 ---Mostly used for lua-language-server annotations and VS Code support
----@module "LuaMeta"
-
-local luanet = _G.luanet
 
 ---@module "Monocle"
 local monocle = require("#monocle")
@@ -14,6 +11,12 @@ local monocle = require("#monocle")
 local celeste = require("#celeste")
 ---@module "Microsoft.XNA.Framework"
 local framework = require("#microsoft.xna.framework")
+
+--#endregion
+
+--#region Local Shortcuts
+
+--- Locals to shortcut certain common accessed sub-tables.
 
 local ease = monocle.Ease
 local celesteMod = celeste.Mod
@@ -23,7 +26,12 @@ local modName = modMetaData.Name
 local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
 local classNamePrefix = "Celeste."
 
+local luanet = _G.luanet
+
 --#endregion
+
+---@class HelperFunctions
+local helpers = {}
 
 --#region Original Helper Functions
 
@@ -32,9 +40,6 @@ local classNamePrefix = "Celeste."
 -- For example "helpers.say" will be just "say".
 -- Return values starting with # are from C#.
 -- @module helper_functions
-
----@class HelperFunctions
-local helpers = {}
 
 helpers.monocle = monocle
 helpers.celeste = celeste
@@ -159,8 +164,6 @@ function helpers.getEnum(enum, value)
 	return enumValue
 end
 
-local getEnum = helpers.getEnum
-
 --- Pause code exection for duration seconds.
 ---@param duration number|IEnumerator? Duration to wait (in seconds).
 ---@return number|IEnumerator?
@@ -177,7 +180,7 @@ function helpers.getRoom()
 end
 
 helpers.getLevel = helpers.getRoom
-local getRoom = helpers.getRoom
+
 local getLevel = helpers.getLevel
 
 --- Gets the current session.
@@ -343,7 +346,7 @@ function helpers.postcard(dialog, sfxIn, sfxOut)
         postcard = celeste.Postcard(message, sfxIn)
     end
 
-    getRoom():Add(postcard)
+    getLevel():Add(postcard)
     postcard:BeforeRender()
 
     wait(postcard:DisplayRoutine())
@@ -479,7 +482,7 @@ end
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = getEnum("IntroTypes", introType) --[[@as IntroTypes]]
+        introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
     end
 
     if room then
