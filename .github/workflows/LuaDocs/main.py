@@ -59,6 +59,7 @@ def parse_lua_file():
     """
     all_funcs: list[Function] = []
     all_regions: list[Region] = []
+    all_fields: list[FieldName] = []
     all_meta_ranges: list[LineRange] = []
 
     current_region: Region | None = None
@@ -85,13 +86,14 @@ def parse_lua_file():
 
             case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)
-                func_name = match.group(1)
-                new_function = parse_function(func_name, annotations)
-                current_region.add(new_function)
-                all_funcs.append(new_function)
+                new_func = parse_function(match.group(1), annotations)
+                current_region.add(new_func)
+                all_funcs.append(new_func)
+                all_fields.append(FieldName(new_func.name))
                 all_meta_ranges.append(FuncRange(start_idx, i))
 
-            case _ if FIELD_P.match(line):
+            case _ if (match := FIELD_P.match(line)):
+                all_fields.append(FieldName(match.group(1)))
                 all_meta_ranges.append(FieldRange(i))
 
     for _ in all_meta_ranges:

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import re
-from regex_defs import MODULE_F_P, CLASS_F_P
+from regex_defs import MODULE_F_P, CLASS_F_P, TABLE_P
 
 
 # region Function Parsing
@@ -62,6 +62,15 @@ class Region:
 # endregion
 
 # region Meta Parsing
+@dataclass(init=False)
+class FieldName:
+    full_name: str
+    name: str
+
+    def __init__(self, full_name: str):
+        self.full_name = full_name
+        self.name = TABLE_P.match(full_name).group(1)
+
 @dataclass
 class LineRange(ABC):
     _start: int
