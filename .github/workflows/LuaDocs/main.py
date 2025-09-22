@@ -16,7 +16,7 @@ param_p = re.compile(
     r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?)(?:\s*(.*))?$')
 default_p = re.compile(r'---\s*@default\s+(.*)')
 return_p = re.compile(
-    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s*(\w+)(?:\s*(.*))?$')
+    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
 
 
 def parse_function(func_name: str, lines_subset: list[str]):
@@ -130,7 +130,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                     if param.optional:
                         docs += (f" (default `{param.default}`)"
                                           if param.default else " (optional)")
-                    docs += "  \n\n"
+                    docs += "  \n"
 
                     param_desc = param.description
                     if "helpers." in param_desc:
@@ -140,12 +140,14 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                                 name_link(function.name, link=function.full_name),
                                 )
 
-                    docs += f"{TAB}{TAB}{param_desc}  \n"
+                    docs += f"\n{TAB}{TAB}{param_desc}  \n" if param_desc else ''
 
             if func.returns:
                 docs += f"\n{TAB}Returns:  \n"
                 for ret in func.returns:
-                    docs += f"\n{TAB}{TAB}`{ret.name}` (`{ret.type}`): {ret.description}\n"
+                    name = f'`{ret.name}` ' if ret.name else ''
+                    desc = f': {ret.description}' if ret.description else ''
+                    docs += f"\n{TAB}{TAB}{name}(`{ret.type}`){desc}\n"
 
             docs += "\n---\n"
 
