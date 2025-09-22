@@ -22,14 +22,15 @@ def parse_lua_file():
         lines: list[str] = list(map(str.strip, file.readlines()))
 
     region_pattern = re.compile(r'^--#region\s+(.*)')
-    end_pattern = re.compile(r'^--#endregion$')
-    func_pattern = re.compile(r'^function\s+([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*\(([^)]*)\)')
+    end_pattern = re.compile(r'^--#endregion')
+    func_pattern = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
 
-    comment_pattern = re.compile(r'(?:---\s?)+((?<!@)[^@]*)$')
+    comment_pattern = re.compile(r'---\s*(?!@)(.*)')
     param_pattern = re.compile(
-        r'---\s*@param\s+([a-zA-Z0-9_?.]+)\s+([a-zA-Z0-9_?.|]+(?:\([^)]*\))?)\s+(.*)')
+        r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?)(?:\s*(.*))?$')
     default_pattern = re.compile(r'---\s*@default\s+(.*)')
-    return_pattern = re.compile(r'---\s*@return\s+([a-zA-Z0-9_|]+)\s+([a-zA-Z0-9_]+)\s+(.*)')
+    return_pattern = re.compile(
+        r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s+(\w+)(?:\s*(.*))?$')
 
     for i, line in enumerate(lines):
         if (region_match := region_pattern.match(line)):
@@ -45,6 +46,8 @@ def parse_lua_file():
 
         if (func_match := func_pattern.match(line)) is None:
             continue
+
+        func_name = func_match.group(1)
 
         doc_lines: list[str] = []
         params: list[FunctionParam] = []
@@ -80,7 +83,7 @@ def parse_lua_file():
                 returns.append(
                     FunctionType(*return_match.groups()))
 
-        new_function = Function(func_match.group(1), '\n'.join(doc_lines), params, returns)
+        new_function = Function(func_name, '\n'.join(doc_lines), params, returns)
         current_region.functions.append(new_function)
 
         all_funcs.append(new_function)
