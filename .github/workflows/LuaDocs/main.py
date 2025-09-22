@@ -54,11 +54,10 @@ def parse_function(func_name: str, lines_subset: list[str]):
 
 
 def get_annotations(lines: list[str], i: int):
-    j = i - 1
-    while j >= 0 and lines[j].startswith('---'):
+    j = i
+    while j > 0 and lines[j - 1].startswith('---'):
         j -= 1
 
-    j += 1
     return lines[j:i+1], j
 
 
