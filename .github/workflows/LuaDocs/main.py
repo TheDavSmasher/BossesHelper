@@ -58,7 +58,8 @@ def get_annotations(lines: list[str], i: int):
     while j >= 0 and lines[j].startswith('---'):
         j -= 1
 
-    return lines[j+1:i+1]
+    j += 1
+    return lines[j:i+1], j
 
 
 def parse_lua_file():
@@ -68,6 +69,7 @@ def parse_lua_file():
     """
     all_funcs: list[Function] = []
     all_regions: list[Region] = []
+    all_ranges: list[range] = []
 
     current_region: Region | None = None
 
@@ -85,7 +87,9 @@ def parse_lua_file():
                 current_region = None
 
             case _ if (match := func_p.match(line)):
-                new_function = parse_function(match.group(1), get_annotations(lines, i))
+                annotations, start_idx = get_annotations(lines, i)
+                all_ranges.append(range(start_idx, i + 1))
+                new_function = parse_function(match.group(1), annotations)
                 current_region.add(new_function)
                 all_funcs.append(new_function)
 
