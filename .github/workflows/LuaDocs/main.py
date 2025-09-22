@@ -13,11 +13,14 @@ func_p = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
 
 comment_p = re.compile(r'---\s*(?!@)(.*)')
 param_p = re.compile(
-    r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?)(?:\s*(.*))?$')
+    r'---\s*@param\s+([\w?.]+)\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)(?:\s*(.*))?$')
 default_p = re.compile(r'---\s*@default\s+(.*)')
 return_p = re.compile(
-    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?)\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
+    r'---\s*@return\s+([\w?.|]+(?:<[^<>]+>)?(?:\[\])*)\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
 
+class_p = re.compile(r'---\s*@class\s+[\w.]+')
+module_p = re.compile(r'---\s*@module\s+"[\w.]+"')
+local_p = re.compile(r'^local\s+\w+')
 
 def parse_function(func_name: str, lines_subset: list[str]):
     """
