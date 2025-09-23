@@ -67,7 +67,14 @@ def parse_lua_file():
         orig_lines: list[str] = file.readlines()
         lines: list[str] = list(map(str.strip, orig_lines))
 
+    inside_func = False
+
     for i, line in enumerate(lines):
+        if inside_func:
+            if FUNC_END_P.match(orig_lines[i]):
+                inside_func = False
+            continue
+
         match line:
             case _ if (match := REGION_P.match(line)):
                 if not any(_ in (region_name := match.group(1)) for _ in ("Import", "Local")):
@@ -91,6 +98,10 @@ def parse_lua_file():
                 all_funcs.append(new_func)
                 all_fields.append(FieldName(new_func.name))
                 all_meta_ranges.append(FuncRange(start_idx, i))
+                inside_func = True
+
+            case _ if LOCAL_FUNC_P.match(line):
+                inside_func = True
 
             case _ if (match := FIELD_P.match(line)):
                 all_fields.append(FieldName(match.group(1)))

@@ -15,6 +15,7 @@ MODULE_P = re.compile(fr'{ANN_R}module\s+"[\w.]+"')
 MODULE_F_P = re.compile(fr'{LOCAL_R})\s+=\s+require')
 FIELD_P = re.compile(fr'^{FIELD_R}=')
 FUNC_P = re.compile(fr'^function\s+{FIELD_R}\(([^)]*)\)')
+LOCAL_FUNC_P = re.compile(r'^local\s+function')
 FUNC_END_P = re.compile(r'^end$')
 
 TYPE_R = r'([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)'
