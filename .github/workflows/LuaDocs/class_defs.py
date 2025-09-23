@@ -76,12 +76,10 @@ class LineRange(ABC):
     _start: int
     _end: int
 
-    @property
-    def range(self):
-        return range(self._start, self._end + 1)
-
-    def reformat(self, lines: list[str]):
-        lines[self._end] = self._format_last(lines[self._end])
+    def form_range(self, lines: list[str]):
+        line_range = lines[self._start : self._end + 1]
+        line_range[-1] = self._format_last(line_range[-1])
+        return line_range
 
     @abstractmethod
     def _format_last(self, last: str) -> str:
