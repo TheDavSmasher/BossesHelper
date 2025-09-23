@@ -73,7 +73,7 @@ def parse_lua_file():
                 if not any(_ in (region_name := match.group(1)) for _ in ("Import", "Local")):
                     current_region = Region(region_name)
 
-            case _ if END_P.match(line):
+            case _ if REGION_END_P.match(line):
                 if current_region is not None:
                     all_regions.append(current_region)
                     current_region = None
