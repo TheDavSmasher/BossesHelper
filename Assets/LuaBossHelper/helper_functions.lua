@@ -1,6 +1,8 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
+local helpers = {}
+
 --#region Mod Imports
 
 ---Mostly used for lua-language-server annotations and VS Code support
@@ -12,6 +14,10 @@ local celeste = require("#celeste")
 ---@module "Microsoft.XNA.Framework"
 local framework = require("#microsoft.xna.framework")
 
+helpers.monocle = monocle
+helpers.engine = monocle.Engine
+helpers.celeste = celeste
+
 --#endregion
 
 --#region Local Shortcuts
@@ -20,7 +26,7 @@ local framework = require("#microsoft.xna.framework")
 
 local ease = monocle.Ease
 local celesteMod = celeste.Mod
-local engine = monocle.Engine
+local engine = helpers.engine
 
 local modName = modMetaData.Name
 local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
@@ -30,8 +36,7 @@ local luanet = _G.luanet
 
 --#endregion
 
----@class HelperFunctions
-local helpers = {}
+
 
 --#region Original Helper Functions
 
@@ -40,10 +45,6 @@ local helpers = {}
 -- For example "helpers.say" will be just "say".
 -- Return values starting with # are from C#.
 -- @module helper_functions
-
-helpers.monocle = monocle
-helpers.celeste = celeste
-helpers.engine = engine
 
 ---Returns a new Vector2
 ---@param x number
