@@ -65,7 +65,8 @@ def parse_lua_file():
     current_region: Region | None = None
 
     with open(LUA_PATH, 'r', encoding='utf-8') as file:
-        lines: list[str] = list(map(str.strip, file.readlines()))
+        orig_lines: list[str] = file.readlines()
+        lines: list[str] = list(map(str.strip, orig_lines))
 
     for i, line in enumerate(lines):
         match line:
@@ -96,8 +97,11 @@ def parse_lua_file():
                 all_fields.append(FieldName(match.group(1)))
                 all_meta_ranges.append(FieldRange(i))
 
-    for _ in all_meta_ranges:
-        pass
+    meta_lines: list[str] = []
+
+    for meta_range in all_meta_ranges:
+        meta_lines.extend(meta_range.form_range(orig_lines))
+        meta_lines.append("\n")
 
     return all_regions, all_funcs
 
