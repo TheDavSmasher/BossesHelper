@@ -95,13 +95,13 @@ class LocalRange(LineRange):
         self._last_parser = parse
 
     def _format_last(self, last):
-        return self._last_parser.match(last).group(1)
+        return self._last_parser.match(last).group(1) + '\n'
 
 
 @dataclass
 class FuncRange(LineRange):
     def _format_last(self, last):
-        return last + ' end'
+        return last.rstrip() + ' end\n'
 
 
 @dataclass(init=False)

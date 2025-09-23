@@ -9,6 +9,16 @@ REPO_PATH: str
 LUA_PATH: str
 
 
+def build_meta_file(lines: list[str], meta_ranges: list[LineRange]):
+    meta_lines: list[str] = []
+
+    for meta_range in meta_ranges:
+        meta_lines.extend(meta_range.form_range(lines))
+        meta_lines.append("\n")
+
+    return meta_lines
+
+
 def parse_function(func_name: str, lines_subset: list[str]):
     """
     Parses the subset of lines to extract the function's
@@ -105,11 +115,7 @@ def parse_lua_file():
                 all_fields.append(FieldName(match.group(1)))
                 all_meta_ranges.append(FieldRange(i))
 
-    meta_lines: list[str] = []
-
-    for meta_range in all_meta_ranges:
-        meta_lines.extend(meta_range.form_range(orig_lines))
-        meta_lines.append("\n")
+    meta_lines = build_meta_file(orig_lines, all_meta_ranges)
 
     return all_regions, all_funcs
 
@@ -190,6 +196,7 @@ if __name__ == '__main__':
     REPO_PATH = sys.argv[1]
     LUA_PATH = f'{sys.argv[2]}/helper_functions.lua'
 
-    markdown, layout = generate_markdown_documentation(*parse_lua_file())
+    regions, files = parse_lua_file()
+    markdown, layout = generate_markdown_documentation(regions, files)
     save_markdown_to_file(markdown, f'docs/{DOCS_FILE}.md', "Documentation")
     save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
