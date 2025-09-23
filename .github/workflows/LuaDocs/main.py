@@ -9,14 +9,14 @@ REPO_PATH: str
 LUA_PATH: str
 
 
-def build_meta_file(lines: list[str], meta_ranges: list[LineRange]):
-    meta_lines: list[str] = []
+def build_meta_file(lines: list[str], list_ranges: list[LineRange]):
+    _meta_lines: list[str] = []
 
-    for meta_range in meta_ranges:
-        meta_lines.extend(meta_range.form_range(lines))
-        meta_lines.append("\n")
+    for meta_range in list_ranges:
+        _meta_lines.extend(meta_range.form_range(lines))
+        _meta_lines.append("\n")
 
-    return meta_lines
+    return _meta_lines
 
 
 def parse_function(func_name: str, lines_subset: list[str]):
@@ -59,7 +59,7 @@ def get_annotations(lines: list[str], i: int):
     return lines[j:i + 1], j
 
 
-def parse_lua_file():
+def parse_lua_file(orig_lines: list[str]):
     """
     Parses a Lua file to extract function names,
     parameters, return values, and documentation comments.
@@ -71,9 +71,7 @@ def parse_lua_file():
 
     current_region: Region | None = None
 
-    with open(LUA_PATH, 'r', encoding='utf-8') as file:
-        orig_lines: list[str] = file.readlines()
-        lines: list[str] = list(map(str.strip, orig_lines))
+    lines: list[str] = list(map(str.strip, orig_lines))
 
     inside_func = False
 
@@ -115,9 +113,7 @@ def parse_lua_file():
                 all_fields.append(FieldName(match.group(1)))
                 all_meta_ranges.append(FieldRange(i))
 
-    meta_lines = build_meta_file(orig_lines, all_meta_ranges)
-
-    return all_regions, all_funcs
+    return all_regions, all_funcs, all_meta_ranges
 
 
 def format_markdown_link(name: str):
@@ -182,9 +178,15 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     return docs, sidebar
 
 
-def save_markdown_to_file(markdown_text, output_path, desc):
+def save_text_to_file(text, output_path, desc):
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(markdown_text)
+        f.write(text)
+    print(f"{desc} saved to {f}")
+
+
+def save_lines_to_file(lines, output_path, desc):
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.writelines(lines)
     print(f"{desc} saved to {f}")
 
 
@@ -196,7 +198,12 @@ if __name__ == '__main__':
     REPO_PATH = sys.argv[1]
     LUA_PATH = f'{sys.argv[2]}/helper_functions.lua'
 
-    regions, files = parse_lua_file()
+    with open(LUA_PATH, 'r', encoding='utf-8') as file:
+        file_lines: list[str] = file.readlines()
+
+    regions, files, meta_ranges = parse_lua_file(file_lines)
+    meta_lines = build_meta_file(file_lines, meta_ranges)
     markdown, layout = generate_markdown_documentation(regions, files)
-    save_markdown_to_file(markdown, f'docs/{DOCS_FILE}.md', "Documentation")
-    save_markdown_to_file(layout, 'docs/_Sidebar.md', "Layout")
+
+    save_text_to_file(markdown, f'docs/{DOCS_FILE}.md', "Documentation")
+    save_text_to_file(layout, 'docs/_Sidebar.md', "Layout")
