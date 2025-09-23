@@ -10,7 +10,7 @@ LUA_PATH: str
 
 
 def build_meta_file(lines: list[str], list_ranges: list[LineRange]):
-    _meta_lines = DocList('')
+    _meta_lines = DocList(sep='')
     for meta_range in list_ranges:
         _meta_lines.append(meta_range.form_range(lines)).append_s()
 
@@ -200,3 +200,4 @@ if __name__ == '__main__':
 
     save_lines_to_file(markdown.as_list(), f'docs/{DOCS_FILE}.md', "Documentation")
     save_lines_to_file(layout.as_list(), 'docs/_Sidebar.md', "Layout")
+    save_lines_to_file(meta_lines.as_list(), 'docs/_Meta.lua', "Meta")
