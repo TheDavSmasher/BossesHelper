@@ -20,7 +20,7 @@ FUNC_END_P = re.compile(r'^end$')
 
 TYPE_R = r'([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)'
 
-COMMENT_P = re.compile(r'---\s*(?!@)(.*)')
+COMMENT_P = re.compile(r'---\s*(?![^@]*@)(.+)')
 PARAM_P = re.compile(fr'{ANN_R}param\s+([\w?]+|\.\.\.)\s+{TYPE_R}(?:\s*(.*))?$')
 DEFAULT_P = re.compile(fr'{ANN_R}default\s+(.*)')
 RETURN_P = re.compile(fr'{ANN_R}return\s+{TYPE_R}\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')

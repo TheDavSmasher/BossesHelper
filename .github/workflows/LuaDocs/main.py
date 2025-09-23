@@ -10,11 +10,9 @@ LUA_PATH: str
 
 
 def build_meta_file(lines: list[str], list_ranges: list[LineRange]):
-    _meta_lines: list[str] = []
-
+    _meta_lines = DocList('')
     for meta_range in list_ranges:
-        _meta_lines.extend(meta_range.form_range(lines))
-        _meta_lines.append("\n")
+        _meta_lines.append(meta_range.form_range(lines)).append_s()
 
     return _meta_lines
 
