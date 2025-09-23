@@ -4,22 +4,21 @@ LOCAL_R = r'^(local\s+\w+'
 ANN_R = r'---\s*@'
 TABLE = 'helpers'
 
-TABLE_P = re.compile(TABLE + r'\.(\w+)\b')
+TABLE_P = re.compile(fr'{TABLE}\.(\w+)\b')
+FIELD_R = r'([\w.]+)\s*'
 
 REGION_P = re.compile(r'^--#region\s+(.*)')
 END_P = re.compile(r'^--#endregion')
-CLASS_P = re.compile(ANN_R + r'class\s+[\w.]+')
-CLASS_F_P = re.compile(LOCAL_R + r'\s+=\s+{})')
-MODULE_P = re.compile(ANN_R + r'module\s+"[\w.]+"')
-MODULE_F_P = re.compile(LOCAL_R + r')\s+=\s+require')
-FIELD_P = re.compile(r'^([\w.]+)\s+=')
-FUNC_P = re.compile(r'^function\s+([\w.]+)\s*\(([^)]*)\)')
+CLASS_P = re.compile(fr'{ANN_R}class\s+[\w.]+')
+CLASS_F_P = re.compile(fr'{LOCAL_R}\s+=\s+{{}})')
+MODULE_P = re.compile(fr'{ANN_R}module\s+"[\w.]+"')
+MODULE_F_P = re.compile(fr'{LOCAL_R})\s+=\s+require')
+FIELD_P = re.compile(fr'^{FIELD_R}=')
+FUNC_P = re.compile(fr'^function\s+{FIELD_R}\(([^)]*)\)')
 
-TYPE_R = r'\s+([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)'
+TYPE_R = r'([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)'
 
 COMMENT_P = re.compile(r'---\s*(?!@)(.*)')
-PARAM_P = re.compile(
-    ANN_R + r'param\s+([\w?]+|\.\.\.)' + TYPE_R + r'(?:\s*(.*))?$')
-DEFAULT_P = re.compile(ANN_R + r'default\s+(.*)')
-RETURN_P = re.compile(
-    ANN_R + r'return' + TYPE_R + r'\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
+PARAM_P = re.compile(fr'{ANN_R}param\s+([\w?]+|\.\.\.)\s+{TYPE_R}(?:\s*(.*))?$')
+DEFAULT_P = re.compile(fr'{ANN_R}default\s+(.*)')
+RETURN_P = re.compile(fr'{ANN_R}return\s+{TYPE_R}\s*([^#\s]*)(?:\s*(?:#\s*)?(.*))?$')
