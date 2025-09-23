@@ -1,6 +1,5 @@
-import re
 import sys
-#pylint: disable=W0401,W0614
+# pylint: disable=W0401,W0614
 from class_defs import *
 from regex_defs import *
 
@@ -29,10 +28,10 @@ def parse_function(func_name: str, lines_subset: list[str]):
                 param_name, param_type, param_desc = match.groups()
                 default = ""
 
-                if (opt := param_name.endswith('?')):
+                if opt := param_name.endswith('?'):
                     param_name = param_name[:-1]
 
-                    if (default_m := DEFAULT_P.match(lines_subset[idx + 1])):
+                    if default_m := DEFAULT_P.match(lines_subset[idx + 1]):
                         default: str = default_m.group(1)
                         idx += 1
 
@@ -49,7 +48,7 @@ def get_annotations(lines: list[str], i: int):
     while j > 0 and lines[j - 1].startswith('---'):
         j -= 1
 
-    return lines[j:i+1], j
+    return lines[j:i + 1], j
 
 
 def parse_lua_file():
@@ -131,19 +130,19 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
 
         docs += f"\n## {region.name}\n"
 
-        sidebar += (f"\n## {name_link(region.name, DOCS_FILE)}\n\n")
+        sidebar += f"\n## {name_link(region.name, DOCS_FILE)}\n\n"
 
         for func in region.functions:
             docs += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
 
-            sidebar += (f"- {name_link(func.full_name, DOCS_FILE)}\n")
+            sidebar += f"- {name_link(func.full_name, DOCS_FILE)}\n"
 
             if func.params:
                 for param in func.params:
                     docs += f"\n{TAB}`{param.name}` (`{param.type}`)"
                     if param.optional:
                         docs += (f" (default `{param.default}`)"
-                                          if param.default else " (optional)")
+                                 if param.default else " (optional)")
                     docs += "  \n"
 
                     param_desc = param.description
@@ -152,7 +151,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                             param_desc = param_desc.replace(
                                 function.name,
                                 name_link(function.name, link=function.full_name),
-                                )
+                            )
 
                     docs += f"\n{TAB}{TAB}{param_desc}  \n" if param_desc else ''
 

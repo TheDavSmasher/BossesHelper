@@ -59,6 +59,7 @@ class Region:
     def add(self, func: Function):
         self.functions.append(func)
 
+
 # endregion
 
 # region Meta Parsing
@@ -71,17 +72,19 @@ class FieldName:
         self.full_name = full_name
         self.name = TABLE_P.match(full_name).group(1)
 
+
 @dataclass
 class LineRange(ABC):
     _start: int
     _end: int
 
     def form_range(self, lines: list[str]):
-        return lines[self._start : self._end] + [self._format_last(lines[self._end])]
+        return lines[self._start: self._end] + [self._format_last(lines[self._end])]
 
     @abstractmethod
     def _format_last(self, last: str) -> str:
         pass
+
 
 @dataclass(init=False)
 class LocalRange(LineRange):
