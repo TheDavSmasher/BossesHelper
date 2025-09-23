@@ -86,10 +86,10 @@ def parse_lua_file():
                     current_region = None
 
             case _ if CLASS_P.match(line):
-                all_meta_ranges.append(ClassRange(i))
+                all_meta_ranges.append(LocalRange(i, CLASS_F_P))
 
             case _ if MODULE_P.match(line):
-                all_meta_ranges.append(ModuleRange(i))
+                all_meta_ranges.append(LocalRange(i, MODULE_F_P))
 
             case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)

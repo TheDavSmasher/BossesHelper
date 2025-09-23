@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import re
-from regex_defs import MODULE_F_P, CLASS_F_P, TABLE_P
+from regex_defs import TABLE_P
 
 
 # region Function Parsing
@@ -88,30 +88,14 @@ class LineRange(ABC):
 
 @dataclass(init=False)
 class LocalRange(LineRange):
-    def __init__(self, start: int):
+    _last_parser: re.Pattern
+
+    def __init__(self, start: int, parse: re.Pattern):
         super().__init__(start, start + 1)
+        self._last_parser = parse
 
     def _format_last(self, last):
-        return self.parser.match(last).group(1)
-
-    @property
-    @abstractmethod
-    def parser(self) -> re.Pattern:
-        pass
-
-
-@dataclass(init=False)
-class ModuleRange(LocalRange):
-    @property
-    def parser(self):
-        return MODULE_F_P
-
-
-@dataclass(init=False)
-class ClassRange(LocalRange):
-    @property
-    def parser(self):
-        return CLASS_F_P
+        return self._last_parser.match(last).group(1)
 
 
 @dataclass
