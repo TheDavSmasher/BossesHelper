@@ -18,9 +18,8 @@ def parse_function(func_name: str, lines_subset: list[str]):
     params: list[FunctionParam] = []
     returns: list[FunctionType] = []
 
-    idx = -1
-    while (idx := idx + 1) < len(lines_subset):
-        match (line := lines_subset[idx]):
+    for idx, line in enumerate(lines_subset):
+        match line:
             case _ if (match := COMMENT_P.match(line)):
                 doc_lines.append(match.group(1))
 
@@ -33,7 +32,6 @@ def parse_function(func_name: str, lines_subset: list[str]):
 
                     if default_m := DEFAULT_P.match(lines_subset[idx + 1]):
                         default: str = default_m.group(1)
-                        idx += 1
 
                 params.append(FunctionParam(param_type, param_name, param_desc, opt, default))
 
