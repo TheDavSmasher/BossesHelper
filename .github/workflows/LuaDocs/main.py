@@ -9,10 +9,17 @@ REPO_PATH: str
 LUA_PATH: str
 
 
-def build_meta_file(lines: list[str], list_ranges: list[LineRange]):
-    _meta_lines = DocList(sep='')
+def build_meta_file(lines: list[str], list_ranges: list[LineRange], field_list: list[FieldName]):
+    _meta_lines = (DocList("---@meta HelperFunctions")
+                   .append_s("---@class HelperFunctions")
+                   .append(f"local {TABLE} = {{}}")
+                   )
+
+    _meta_lines.set_sep('')
     for meta_range in list_ranges:
-        _meta_lines.append(meta_range.form_range(lines)).append_s()
+        _meta_lines.append_s(meta_range.form_range(lines))
+
+    _meta_lines.append(f"return {TABLE}")
 
     return _meta_lines
 
@@ -89,11 +96,8 @@ def parse_lua_file(orig_lines: list[str]):
                     all_regions.append(current_region)
                     current_region = None
 
-            case _ if CLASS_P.match(line):
-                all_meta_ranges.append(LocalRange(i, CLASS_F_P))
-
             case _ if MODULE_P.match(line):
-                all_meta_ranges.append(LocalRange(i, MODULE_F_P))
+                all_meta_ranges.append(ModuleRange(i))
 
             case _ if (match := FUNC_P.match(line)):
                 annotations, start_idx = get_annotations(lines, i)
@@ -111,7 +115,7 @@ def parse_lua_file(orig_lines: list[str]):
                 all_fields.append(FieldName(match.group(1)))
                 all_meta_ranges.append(FieldRange(i))
 
-    return all_regions, all_funcs, all_meta_ranges
+    return all_regions, all_funcs, all_meta_ranges, all_fields
 
 
 def format_markdown_link(name: str):
@@ -128,7 +132,7 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     """
 
     docs = (DocList(("This page contains all documentation for all Lua helper functions this mod" +
-                    " provides for all attacks, events, and setup files required for a boss."))
+                     " provides for all attacks, events, and setup files required for a boss."))
             .append_s(f"[Find the actual Lua file here]({REPO_PATH}/{LUA_PATH})."))
 
     sidebar = DocList("[**Home**](Home)")
@@ -194,10 +198,10 @@ if __name__ == '__main__':
     with open(LUA_PATH, 'r', encoding='utf-8') as file:
         file_lines: list[str] = file.readlines()
 
-    regions, files, meta_ranges = parse_lua_file(file_lines)
-    meta_lines = build_meta_file(file_lines, meta_ranges)
+    regions, files, meta_ranges, class_fields = parse_lua_file(file_lines)
+    meta_lines = build_meta_file(file_lines, meta_ranges, class_fields)
     markdown, layout = generate_markdown_documentation(regions, files)
 
     save_lines_to_file(markdown.as_list(), f'docs/{DOCS_FILE}.md', "Documentation")
     save_lines_to_file(layout.as_list(), 'docs/_Sidebar.md', "Layout")
-    save_lines_to_file(meta_lines.as_list(), 'docs/_Meta.lua', "Meta")
+    save_lines_to_file(meta_lines.as_list(), 'meta/helper_functions_meta.lua', "Meta")

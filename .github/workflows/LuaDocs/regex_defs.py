@@ -9,8 +9,6 @@ FIELD_R = r'([\w.]+)\s*'
 
 REGION_P = re.compile(r'^--#region\s+(.*)')
 REGION_END_P = re.compile(r'^--#endregion')
-CLASS_P = re.compile(fr'{ANN_R}class\s+[\w.]+')
-CLASS_F_P = re.compile(fr'{LOCAL_R}\s+=\s+{{}})')
 MODULE_P = re.compile(fr'{ANN_R}module\s+"[\w.]+"')
 MODULE_F_P = re.compile(fr'{LOCAL_R})\s+=\s+require')
 FIELD_P = re.compile(fr'^{FIELD_R}=')
