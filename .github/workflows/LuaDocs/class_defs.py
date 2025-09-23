@@ -111,4 +111,39 @@ class FieldRange(LineRange):
 
     def _format_last(self, last):
         return last
+
+
+# endregion
+
+# region Others
+@dataclass(init=False)
+class DocList:
+    _docs: list[str]
+    _sep: str
+
+    def __init__(self, docs: str | list[str] = None, sep: str = '\n'):
+        self._sep = sep
+        self._docs = []
+        if docs:
+            self.append(docs)
+
+    def append(self, docs: str | list[str]):
+        if isinstance(docs, list):
+            for doc in docs:
+                self._append(doc)
+        else:
+            self._append(docs)
+        return self
+
+    def _append(self, doc: str):
+        self._docs.append(doc + self._sep)
+
+    def append_s(self, docs: str | list[str] = None):
+        self._docs.append('\n')
+        if docs:
+            self.append(docs)
+        return self
+
+    def as_list(self):
+        return self._docs
 # endregion

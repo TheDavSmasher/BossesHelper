@@ -129,32 +129,32 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
     Generates markdown documentation for a list of functions.
     """
 
-    docs = ("This page contains all documentation for all Lua helper functions this mod" +
-            " provides for all attacks, events, and setup files required for a boss.\n\n" +
-            f"[Find the actual Lua file here]({REPO_PATH}/{LUA_PATH}).\n")
+    docs = (DocList(("This page contains all documentation for all Lua helper functions this mod" +
+                    " provides for all attacks, events, and setup files required for a boss."))
+            .append_s(f"[Find the actual Lua file here]({REPO_PATH}/{LUA_PATH})."))
 
-    sidebar = "[**Home**](Home)\n"
+    sidebar = DocList("[**Home**](Home)")
 
     for region in region_list:
         if "Original" in region.name:
             continue
 
-        docs += f"\n## {region.name}\n"
+        docs.append_s(f"## {region.name}")
 
-        sidebar += f"\n## {name_link(region.name, DOCS_FILE)}\n\n"
+        sidebar.append_s(f"## {name_link(region.name, DOCS_FILE)}\n")
 
         for func in region.functions:
-            docs += f"\n### {func.full_name}\n\n{TAB}{func.description}\n"
+            docs.append_s(f"### {func.full_name}\n\n{TAB}{func.description}")
 
-            sidebar += f"- {name_link(func.full_name, DOCS_FILE)}\n"
+            sidebar.append(f"- {name_link(func.full_name, DOCS_FILE)}")
 
             if func.params:
                 for param in func.params:
-                    docs += f"\n{TAB}`{param.name}` (`{param.type}`)"
+                    desc = f"{TAB}`{param.name}` (`{param.type}`)"
                     if param.optional:
-                        docs += (f" (default `{param.default}`)"
+                        desc += (f" (default `{param.default}`)"
                                  if param.default else " (optional)")
-                    docs += "  \n"
+                    docs.append_s(desc + "  ")
 
                     param_desc = param.description
                     if "helpers." in param_desc:
@@ -164,24 +164,19 @@ def generate_markdown_documentation(region_list: list[Region], file_funcs: list[
                                 name_link(function.name, link=function.full_name),
                             )
 
-                    docs += f"\n{TAB}{TAB}{param_desc}  \n" if param_desc else ''
+                    if param_desc:
+                        docs.append_s(f"{TAB}{TAB}{param_desc}  ")
 
             if func.returns:
-                docs += f"\n{TAB}Returns:  \n"
+                docs.append_s(f"{TAB}Returns:  ")
                 for ret in func.returns:
                     name = f'`{ret.name}` ' if ret.name else ''
                     desc = f': {ret.description}' if ret.description else ''
-                    docs += f"\n{TAB}{TAB}{name}(`{ret.type}`){desc}\n"
+                    docs.append_s(f"{TAB}{TAB}{name}(`{ret.type}`){desc}")
 
-            docs += "\n---\n"
+            docs.append_s("---")
 
     return docs, sidebar
-
-
-def save_text_to_file(text, output_path, desc):
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(text)
-    print(f"{desc} saved to {f}")
 
 
 def save_lines_to_file(lines, output_path, desc):
@@ -205,5 +200,5 @@ if __name__ == '__main__':
     meta_lines = build_meta_file(file_lines, meta_ranges)
     markdown, layout = generate_markdown_documentation(regions, files)
 
-    save_text_to_file(markdown, f'docs/{DOCS_FILE}.md', "Documentation")
-    save_text_to_file(layout, 'docs/_Sidebar.md', "Layout")
+    save_lines_to_file(markdown.as_list(), f'docs/{DOCS_FILE}.md', "Documentation")
+    save_lines_to_file(layout.as_list(), 'docs/_Sidebar.md', "Layout")
