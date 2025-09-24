@@ -7,6 +7,9 @@ on:
     paths:
       - "Assets/LuaBossHelper/**"
   workflow_call:
+    secrets:
+      ADDON_WIKI_PAT:
+        required: true
     
 env:
   GITHUB_REPO: ${{ github.server_url }}/${{ github.repository }}/blob/master

@@ -45,3 +45,4 @@ jobs:
     
   docs-update:
     uses: ./.github/workflows/docs_meta_update.yml
+    secrets: inherit
