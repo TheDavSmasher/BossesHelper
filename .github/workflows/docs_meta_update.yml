@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "Assets/LuaBossHelper/**"
+  workflow_call:
     
 env:
   GITHUB_REPO: ${{ github.server_url }}/${{ github.repository }}/blob/master
@@ -40,8 +41,7 @@ jobs:
           cp -r docs/* wiki/helperFunctions/
 
           cd wiki
-          git add .
-          git commit -m "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
+          git commit -am "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
           git push
       
       - name: Push Meta to Addon
@@ -51,7 +51,6 @@ jobs:
           cp -r meta/* addon/library/
 
           cd addon
-          git add .
-          git commit -m "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
+          git commit -am "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
           git push
       
