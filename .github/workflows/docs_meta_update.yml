@@ -7,6 +7,9 @@ on:
     paths:
       - "Assets/LuaBossHelper/**"
   workflow_call:
+    secrets:
+      ADDON_WIKI_PAT:
+        required: true
     
 env:
   GITHUB_REPO: ${{ github.server_url }}/${{ github.repository }}/blob/master
@@ -19,10 +22,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Prepare for Script
+      - name: Configure git
         run: |
-          mkdir docs
-          mkdir meta
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
@@ -32,7 +33,10 @@ jobs:
           python-version: "3.11"
 
       - name: Rewrite files
-        run: python .github/workflows/LuaDocs/main.py $GITHUB_REPO Assets/LuaBossHelper
+        run: |
+          mkdir docs
+          mkdir meta
+          python .github/workflows/LuaDocs/main.py $GITHUB_REPO Assets/LuaBossHelper
       
       - name: Checkout Wiki
         uses: actions/checkout@v5
