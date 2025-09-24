@@ -6,6 +6,10 @@ on:
       - master
     paths:
       - "Assets/LuaBossHelper/**"
+  workflow_call:
+    secrets:
+      ADDON_WIKI_PAT:
+        required: true
     
 env:
   GITHUB_REPO: ${{ github.server_url }}/${{ github.repository }}/blob/master
@@ -16,42 +20,51 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Prepare for Script
+      - name: Rewrite files
         run: |
           mkdir docs
           mkdir meta
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Rewrite files
-        run: python .github/workflows/LuaDocs/main.py $GITHUB_REPO Assets/LuaBossHelper
+          python .github/workflows/LuaDocs/main.py ${{ env.GITHUB_REPO }} Assets/LuaBossHelper
       
+      - name: Checkout Wiki
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository }}.wiki
+          token: ${{ secrets.ADDON_WIKI_PAT }}
+          path: wiki
+
       - name: Push Docs to Wiki
         run: |
-          git clone "https://x-access-token:${{ secrets.ADDON_WIKI_PAT }}@github.com/${{ github.repository }}.wiki.git" wiki
-
           cp -r docs/* wiki/helperFunctions/
 
           cd wiki
-          git add .
-          git commit -m "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
+          git commit -am "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
           git push
+
+      - name: Checkout Addon
+        uses: actions/checkout@v5
+        with:
+          repository: TheDavSmasher/bosses-helper-addon
+          token: ${{ secrets.ADDON_WIKI_PAT }}
+          path: addon
       
       - name: Push Meta to Addon
         run: |
-          git clone "https://x-access-token:${{ secrets.ADDON_WIKI_PAT }}@github.com/TheDavSmasher/bosses-helper-addon.git" addon
-
           cp -r meta/* addon/library/
 
           cd addon
-          git add .
-          git commit -m "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
+          git commit -am "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
           git push
       
