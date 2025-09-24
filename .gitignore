@@ -360,3 +360,6 @@ MigrationBackup/
 **/.idea/
 **/.venv/
 
+# Temporary Documents folder
+docs/
+meta/
