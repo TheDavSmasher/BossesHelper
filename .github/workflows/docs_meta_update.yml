@@ -35,7 +35,7 @@ jobs:
       
       - name: Push Docs to Wiki
         run: |
-          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki
+          git clone "https://x-access-token:${{ secrets.ADDON_WIKI_PAT }}@github.com/${{ github.repository }}.wiki.git" wiki
 
           cp -r docs/* wiki/helperFunctions/
 
