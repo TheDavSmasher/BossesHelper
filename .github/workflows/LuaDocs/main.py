@@ -12,14 +12,16 @@ LUA_PATH: str
 def build_meta_file(lines: list[str], list_ranges: list[LineRange], field_list: list[FieldName]):
     _meta_lines = (DocList("---@meta HelperFunctions")
                    .append_s("---@class HelperFunctions")
-                   .append(f"local {TABLE} = {{}}")
+                   .append(f"{TABLE} = {{}}")
                    )
 
     _meta_lines.set_sep('')
     for meta_range in list_ranges:
         _meta_lines.append_s(meta_range.form_range(lines))
 
-    _meta_lines.append(f"return {TABLE}")
+    _meta_lines.append_s().set_sep('\n')
+    for helper_field in field_list:
+        _meta_lines.append(helper_field.name)
 
     return _meta_lines
 

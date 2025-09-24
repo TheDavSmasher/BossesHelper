@@ -64,12 +64,10 @@ class Region:
 # region Meta Parsing
 @dataclass(init=False)
 class FieldName:
-    full_name: str
     name: str
 
     def __init__(self, full_name: str):
-        self.full_name = full_name
-        self.name = TABLE_P.match(full_name).group(1)
+        self.name = f"{TABLE_P.match(full_name).group(1)} = {full_name}"
 
 
 @dataclass
