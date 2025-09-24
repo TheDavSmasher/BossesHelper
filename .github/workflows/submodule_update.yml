@@ -1,0 +1,66 @@
+name: Update Addon submodule in LLS-Addons
+
+on:
+  release:
+    types: [published]
+
+env:
+  UPSTREAM: LuaLS
+  REPO: LLS-Addons
+  SUBMODULE_PATH: addons/celeste-bosses-helper
+  UPDATE_BRANCH: celeste-bosses-helper-update
+
+jobs:
+  docs-update:
+    uses: ./.github/workflows/docs_meta_update.yml
+    secrets: inherit
+
+  update-submodule:
+    runs-on: ubuntu-latest
+    needs: docs-update
+
+    steps:
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Checkout fork
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository_owner }}/${{ env.REPO }}
+          token: ${{ secrets.ADDON_WIKI_PAT }}
+          fetch-depth: 0      
+
+      - name: Update Addon submodule
+        id: submodule
+        run: |
+          git submodule update --init --remote ${{ env.SUBMODULE_PATH }}
+          git add ${{ env.SUBMODULE_PATH }}
+
+          if git diff --cached --quiet; then
+            echo "Addon submodule is already at latest version."
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+  
+      - name: Commit and Push update
+        id: sync_remote
+        if: steps.submodule.outputs.changes == 'true'
+        run: |
+          git checkout -b "${{ env.UPDATE_BRANCH }}" || git checkout "${{ env.UPDATE_BRANCH }}"
+          git commit -m "[chore]: bump addon to latest after new helper release."
+          git push origin "${{ env.UPDATE_BRANCH }}"
+
+      - name: Create PR to upstream
+        if: steps.sync_remote.outcome == 'skipped'
+        env:
+          GH_TOKEN: ${{ secrets.ADDON_WIKI_PAT }}
+        run: |
+          gh pr create \
+            --repo ${{ env.UPSTREAM }}/${{ env.REPO }} \
+            --head "${{ github.repository_owner }}:${{ env.UPDATE_BRANCH }}" \
+            --base main \
+            --title "Update Celeste: Bosses Helper Addon to latest" \
+            --body "This PR updates the Celeste: Bosses Helper Addon submodule to the latest commit." || true
