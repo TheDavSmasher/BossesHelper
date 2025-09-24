@@ -15,6 +15,8 @@ FIELD_P = re.compile(fr'^{FIELD_R}=')
 FUNC_P = re.compile(fr'^function\s+{FIELD_R}\(([^)]*)\)')
 LOCAL_FUNC_P = re.compile(fr'{LOCAL_R}function')
 FUNC_END_P = re.compile(r'^end$')
+LOCAL_TABLE_P = re.compile(fr'{LOCAL_R}\w+\s+=\s+\{{')
+TABLE_END_P = re.compile(r'}')
 
 TYPE_R = r'([\w?.|]+(?:<[^<>]+>)?(?:\([^)]*\))?(?:\[\])*)'
 

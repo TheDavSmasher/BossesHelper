@@ -81,11 +81,17 @@ def parse_lua_file(orig_lines: list[str]):
     lines: list[str] = list(map(str.strip, orig_lines))
 
     inside_func = False
+    inside_table = False
 
     for i, line in enumerate(lines):
         if inside_func:
             if FUNC_END_P.match(orig_lines[i]):
                 inside_func = False
+            continue
+
+        if inside_table:
+            if TABLE_END_P.match(line):
+                inside_table = False
             continue
 
         match line:
@@ -112,6 +118,9 @@ def parse_lua_file(orig_lines: list[str]):
 
             case _ if LOCAL_FUNC_P.match(line):
                 inside_func = True
+
+            case _ if LOCAL_TABLE_P.match(line) and '}' not in line:
+                inside_table = True
 
             case _ if (match := FIELD_P.match(line)):
                 all_fields.append(FieldName(match.group(1)))
