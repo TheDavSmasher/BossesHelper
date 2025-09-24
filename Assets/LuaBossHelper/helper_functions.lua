@@ -9,8 +9,10 @@ local helpers = {}
 
 ---@module "Monocle"
 local monocle = require("#monocle")
+
 ---@module "Celeste"
 local celeste = require("#celeste")
+
 ---@module "Microsoft.XNA.Framework"
 local framework = require("#microsoft.xna.framework")
 
