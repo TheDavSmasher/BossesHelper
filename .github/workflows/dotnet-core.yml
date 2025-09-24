@@ -42,3 +42,6 @@ jobs:
       run: gh release upload ${{ github.event.release.tag_name }} BossesHelper.zip --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+  docs-update:
+    uses: ./.github/workflows/docs_meta_update.yml
