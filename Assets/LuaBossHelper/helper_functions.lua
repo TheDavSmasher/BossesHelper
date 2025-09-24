@@ -1,25 +1,42 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 --Created by Cruor, modified and expanded by DavDualMain
 
+local helpers = {}
+
 --#region Mod Imports
 
 ---Mostly used for lua-language-server annotations and VS Code support
----@module "CelesteMod"
 
-local luanet = _G.luanet
-
+---@module "Monocle"
 local monocle = require("#monocle")
+---@module "Celeste"
 local celeste = require("#celeste")
-local csharpVector2 = require("#microsoft.xna.framework.vector2")
+---@module "Microsoft.XNA.Framework"
+local framework = require("#microsoft.xna.framework")
+
+helpers.monocle = monocle
+helpers.engine = monocle.Engine
+helpers.celeste = celeste
+
+--#endregion
+
+--#region Local Shortcuts
+
+--- Locals to shortcut certain common accessed sub-tables.
 
 local ease = monocle.Ease
 local celesteMod = celeste.Mod
-local engine = monocle.Engine
+local engine = helpers.engine
 
 local modName = modMetaData.Name
+local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
 local classNamePrefix = "Celeste."
 
+local luanet = _G.luanet
+
 --#endregion
+
+
 
 --#region Original Helper Functions
 
@@ -28,12 +45,6 @@ local classNamePrefix = "Celeste."
 -- For example "helpers.say" will be just "say".
 -- Return values starting with # are from C#.
 -- @module helper_functions
-
----@class HelperFunctions
-local helpers = {}
-
-helpers.celeste = celeste
-helpers.engine = engine
 
 ---Returns a new Vector2
 ---@param x number
@@ -46,13 +57,13 @@ function helpers.vector2(x, y)
     local typ = type(x)
 
     if typ == "table" and not y then
-        return csharpVector2(x[1], x[2])
+        return framework.Vector2(x[1], x[2])
 
     elseif typ == "userdata" and not y then
         return x
 
     else
-        return csharpVector2(x, y)
+        return framework.Vector2(x, y)
     end
 end
 
@@ -97,7 +108,7 @@ end
 ---@param filename string Filename to load. Filename should not have a extention.
 ---@return string content The content of the file
 function helpers.readCelesteAsset(filename)
-    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetFileContent(filename)
+    return bossesHelper.Code.Helpers.LuaBossHelper.GetFileContent(filename)
 end
 
 --- Loads and returns the result of a Lua asset.
@@ -107,7 +118,7 @@ function helpers.loadCelesteAsset(filename)
     local content = helpers.readCelesteAsset(filename)
 
     if not content then
-        celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: file '" .. filename .. "' not found")
+        celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: file '" .. filename .. "' not found")
 
         return
     end
@@ -126,7 +137,7 @@ function helpers.loadCelesteAsset(filename)
         end
     end
 
-    celesteMod.logger.log(celesteMod.LogLevel.Error, "Bosses Helper", "Failed to require asset in Lua: " .. result)
+    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
 end
 
 --- Put debug message in the Celeste console.
@@ -134,7 +145,7 @@ end
 ---@param tag string? The tag in the console.
 ---@default "Bosses Helper"
 function helpers.log(message, tag)
-    celesteMod.logger.log(celesteMod.LogLevel.Info, tag or "Bosses Helper", tostring(message))
+    celesteMod.Logger.Info(tag or "Bosses Helper", tostring(message))
 end
 
 --- Gets enum value.
@@ -154,11 +165,9 @@ function helpers.getEnum(enum, value)
 	return enumValue
 end
 
-local getEnum = helpers.getEnum
-
 --- Pause code exection for duration seconds.
----@param duration number? Duration to wait (in seconds).
----@return any
+---@param duration number|IEnumerator? Duration to wait (in seconds).
+---@return number|IEnumerator?
 function helpers.wait(duration)
     return coroutine.yield(duration)
 end
@@ -166,26 +175,27 @@ end
 local wait = helpers.wait
 
 --- Gets the current room the player is in.
----@return Level scene The current room.
+---@return Level level The current room.
 function helpers.getRoom()
-    return engine.Scene
+    return engine.Scene --[[@as Level]]
 end
 
 helpers.getLevel = helpers.getRoom
 
-local getRoom = helpers.getRoom
 local getLevel = helpers.getLevel
 
 --- Gets the current session.
 ---@return Session session The current session.
 function helpers.getSession()
-    return engine.Scene.Session
+    return getLevel().Session
 end
+
+local getSession = helpers.getSession
 
 --- Display textbox with dialog.
 ---@param dialog string Dialog ID used for the conversation.
 function helpers.say(dialog)
-    coroutine.yield(celeste.Textbox.Say(tostring(dialog)))
+    wait(celeste.Textbox.Say(tostring(dialog)))
 end
 
 --- Display minitextbox with dialog.
@@ -195,8 +205,10 @@ function helpers.miniTextbox(dialog)
 end
 
 --- Allow the user to select one of several minitextboxes, similar to intro cutscene of Reflection.
----@param ... string|table Dialog IDs for each of the textboxes as varargs. First argument can be a table of dialog ids instead.
----@return number index The index of the option the player selected.
+---@param ... string Dialog IDs for each of the textboxes as varargs. First argument can be a table of dialog ids instead.
+---@return integer index The index of the option the player selected.
+---@overload fun(ids: string[]): integer
+---@overload fun(...: string): integer
 function helpers.choice(...)
     local choices = {...}
 
@@ -205,9 +217,9 @@ function helpers.choice(...)
         choices = first
     end
 
-    coroutine.yield(celesteMod[modName].ChoicePrompt.Prompt(table.unpack(choices)))
+    wait(celesteMod.LuaCutscenes.ChoicePrompt.Prompt(table.unpack(choices)))
 
-    return celesteMod[modName].ChoicePrompt.Choice + 1
+    return celesteMod.LuaCutscenes.ChoicePrompt.Choice + 1
 end
 
 -- Used by helpers.choiceDialog to store the current dialog table.
@@ -321,24 +333,24 @@ end
 
 --- Display postcard.
 ---@param dialog string Dialog ID or message to show in the postcard.
----@param sfxIn any effect when opening the postcard or area ID.
+---@param sfxIn string|integer effect when opening the postcard or area ID.
 ---@param sfxOut string? Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
 ---@default nil
 function helpers.postcard(dialog, sfxIn, sfxOut)
     local message = celeste.Dialog.Get(dialog) or dialog
     local postcard
 
-    if sfxOut then
+    if sfxOut then ---@cast sfxIn string
         postcard = celeste.Postcard(message, sfxIn, sfxOut)
 
-    else
+    else ---@cast sfxIn integer
         postcard = celeste.Postcard(message, sfxIn)
     end
 
-    getRoom():Add(postcard)
+    getLevel():Add(postcard)
     postcard:BeforeRender()
 
-    coroutine.yield(postcard:DisplayRoutine())
+    wait(postcard:DisplayRoutine())
 end
 
 --- Player walks to the given X coordinate. This is in pixels and uses map based coordinates.
@@ -350,7 +362,7 @@ end
 ---@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
 ---@default false
 function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
-    coroutine.yield(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
+    wait(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
 end
 
 --- Player walks x pixels from current position.
@@ -369,7 +381,7 @@ end
 ---@param x number X coordinate to run to.
 ---@param fastAnimation boolean Whether this should use the fast animation or not.
 function helpers.runTo(x, fastAnimation)
-    coroutine.yield(player:DummyRunTo(x, fastAnimation or false))
+    wait(player:DummyRunTo(x, fastAnimation or false))
 end
 
 --- Player runs x pixels from current position.
@@ -402,7 +414,7 @@ function helpers.setPlayerState(state, locked)
             state = "St" .. state
         end
 
-        player.StateMachine.State = celeste.Player[state]
+        player.StateMachine.State = Player[state]
 
     else
         player.StateMachine.State = state
@@ -449,7 +461,7 @@ end
 ---@param spawnX number? X coordinate for new spawn point, by default it uses bottom left of room.
 ---@param spawnY number? Y coordinate for new spawn point, by default it uses bottom left of room.
 function helpers.changeRoom(name, spawnX, spawnY)
-    local level = engine.Scene
+    local level = getLevel()
 
     level.Session.Level = name
     level.Session.RespawnPoint = level:GetSpawnPoint(vector2(spawnX or level.Bounds.Left, spawnY or level.Bounds.Bottom))
@@ -468,30 +480,29 @@ end
 ---@param x number Target x coordinate.
 ---@param y number Target y coordinate.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType any? intro type to use, can be either a #Celeste.Player.IntroTypes enum or a string
+---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = getEnum("Celeste.Player.IntroTypes", introType)
+        introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
     end
 
     if room then
-        local mapData = engine.Scene.Session.MapData
-        local levelData = mapData:getAt(vector2(x, y))
+        local mapData = getSession().MapData
+        local levelData = mapData:GetAt(vector2(x, y))
 
         -- TeleportTo adds the new room offset for spawnpoint check, we have to remove this
         local offsetX, offsetY = 0, 0
 
         if levelData then
-            local bounds = levelData.bounds
+            local bounds = levelData.Bounds
 
             offsetX, offsetY = bounds.X, bounds.Y
         end
 
         if x and y then
-            celesteMod[modName].Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
-
+            bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType, vector2(x - offsetX, y - offsetY))
         else
-            celesteMod[modName].Code.Helpers.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
+            bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.TeleportTo(getLevel(), player, room, introType or player.IntroType)
         end
 
 	else
@@ -503,7 +514,7 @@ end
 ---@param x number X offset on X axis.
 ---@param y number Y offset on Y axis.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType any? intro type to use, can be either a #Celeste.Player.IntroTypes enum or a string. Only applies if room is specified.
+---@param introType any? intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
 function helpers.teleport(x, y, room, introType)
     helpers.teleportTo(player.Position.X + x, player.Position.Y + y, room, introType)
 end
@@ -511,18 +522,18 @@ end
 --- Instantly teleport the player seamlessly.
 --- Teleport player to (x, y) position, in pixels.
 --- Room name as only argument will seamlessly teleport to that room at the same relative position.
----@param x number X offset on X axis if number. Target room if string.
----@param y number Y offset on Y axis.
+---@param x number|string X offset on X axis if number. Target room if string.
+---@param y number? Y offset on Y axis.
 ---@param room string? What room the game should attempt to load. By default same room.
 ---@overload fun(x: string)
 function helpers.instantTeleportTo(x, y, room)
-    if x and y then
+    if x and y then ---@cast x number
         -- Provide own position
-        celesteMod[modName].Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
+        bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
 
-    else
+    else ---@cast x string
         -- Keep releative room position
-        celesteMod[modName].Code.Helpers.LuaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
+        bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.InstantTeleport(getLevel(), player, x or "", true, 0.0, 0.0)
     end
 end
 
@@ -550,13 +561,13 @@ end
 ---@param skipCompleteScreen boolean? Whether this skips the complete screen.
 ---@default false
 function helpers.completeArea(spotlightWipe, skipScreenWipe, skipCompleteScreen)
-    engine.Scene:CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
+    getLevel():CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
 end
 
 --- Plays a sound.
 ---@param name string Event for the song.
----@param position table? Where the sound is played from.
----@return Audio audio The audio instance of the sound.
+---@param position Vector2? Where the sound is played from.
+---@return FMOD.Studio.EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
         return celeste.Audio.Play(name, position)
@@ -571,7 +582,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return table entities Tracked entities of given class.
 function helpers.getEntities(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked entity by class name.
@@ -579,7 +590,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return any entity First tracked entity of given class.
 function helpers.getEntity(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
 end
 
 --- Gets all entities by class name.
@@ -587,7 +598,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return table entities All entities of given class.
 function helpers.getAllEntities(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
 end
 
 --- Gets the first entity by class name.
@@ -595,7 +606,7 @@ end
 ---@param prefix string? Overrides the global class name prefix.
 ---@return any entity First entity of given class.
 function helpers.getFirstEntity(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
 end
 
 --- Puts player in feather state.
@@ -604,22 +615,22 @@ function helpers.giveFeather()
 end
 
 --- Get amount of deaths in current room.
----@return number deaths Current deaths in room.
+---@return integer deaths Current deaths in room.
 function helpers.deathsInCurrentRoom()
-    return engine.Scene.Session.DeathsInCurrentLevel
+    return getSession().DeathsInCurrentLevel
 end
 
 --- Play and update the current music track.
 ---@param track string Name of song, same as in Ahorn's room window.
----@param progress number? Which progress level the music should be at. Leave empty for no change.
+---@param progress integer? Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
-    engine.Scene.Session.Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
+    getSession().Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
 
     if progress then
-        engine.Scene.Session.Audio.Music.Progress = progress
+        getSession().Audio.Music.Progress = progress
     end
 
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio:Apply()
 end
 
 --- Get the current music track name.
@@ -631,14 +642,14 @@ end
 --- Sets music progression.
 ---@param progress number The new progress level.
 function helpers.setMusicProgression(progress)
-    engine.Scene.Session.Audio.Music.Progress = progress
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio.Music.Progress = progress
+    getSession().Audio:Apply()
 end
 
 --- Gets the current music progression.
----@return number progress Music progress level.
+---@return integer progress Music progress level.
 function helpers.getMusicProgression()
-    return engine.Scene.Session.Audio.Music.progress
+    return getSession().Audio.Music.Progress
 end
 
 --- Set music layer on/off.
@@ -647,14 +658,14 @@ end
 function helpers.setMusicLayer(layer, value)
     if type(layer) == "table" then
         for _, index in ipairs(layer) do
-            engine.Scene.Session.Audio.Music:Layer(index, value)
+            getSession().Audio.Music:Layer(index, value)
         end
 
     else
-        engine.Scene.Session.Audio.Music:Layer(layer, value)
+        getSession().Audio.Music:Layer(layer, value)
     end
 
-    engine.Scene.Session.Audio:Apply()
+    getSession().Audio:Apply()
 end
 
 --- Attempt to set the player spawnpoint.
@@ -663,7 +674,7 @@ end
 ---@param absolute boolean? If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
 ---@default false
 function helpers.setSpawnPoint(target, absolute)
-    local session = engine.Scene.Session
+    local session = getSession()
     local ct = cutsceneTrigger
 
     target = target or {0, 0}
@@ -677,37 +688,38 @@ function helpers.setSpawnPoint(target, absolute)
 end
 
 --- Shakes the camera.
----@param direction any Direction the screen should shake from.
----@param duration boolean? How long the screen should shake.
+---@param direction Vector2|number Direction the screen should shake from.
+---@param duration? number How long the screen should shake.
+---@overload fun(direction: number)
 function helpers.shake(direction, duration)
-    if direction and duration then
-        engine.Scene:DirectionalShake(direction, duration)
+    if direction and duration then ---@cast direction Vector2
+        getLevel():DirectionalShake(direction, duration)
 
-    else
-        engine.Scene:Shake(direction)
+    else ---@cast direction number
+        getLevel():Shake(direction)
     end
 end
 
 --- Set player inventory
----@param inventory string|userdata Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
+---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
-        engine.Scene.Session.Inventory = celeste.PlayerInventory[inventory]
+        getSession().Inventory = PlayerInventory[inventory]
 
     else
-        engine.Scene.Session.Inventory = inventory
+        getSession().Inventory = inventory
     end
 end
 
 --- Get player inventory
 ---@param inventory string? If name is given get inventory by name, otherwise the current player inventory
----@return userdata inventory
+---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
-        return celeste.PlayerInventory[inventory]
+        return PlayerInventory[inventory]
 
     else
-        return engine.Scene.Session.Inventory
+        return getSession().Inventory
     end
 end
 
@@ -716,19 +728,19 @@ end
 ---@param y number Y coordinate to offset by.
 ---@overload fun(x: table)
 function helpers.setCameraOffset(x, y)
-    engine.Scene.CameraOffset = y and vector2(x * 48, y * 32) or x
+    getLevel().CameraOffset = y and vector2(x * 48, y * 32) or x
 end
 
 --- Get the current offset struct.
 ---@return Vector2 offset The camera offset.
 function helpers.getCameraOffset()
-    return engine.Scene.CameraOffset
+    return getLevel().CameraOffset
 end
 
 --- Get the current room coordinates.
 ---@return Vector2 offset The camera offset.
 function helpers.getRoomCoordinates()
-  return engine.Scene.LevelOffset
+  return getLevel().LevelOffset
 end
 
 --- Get the current room coordinates offset by x and y.
@@ -738,10 +750,10 @@ end
 ---@overload fun(offset: table): Vector2
 function helpers.getRoomCoordinatesOffset(x, y)
     if type(x) == "number" then
-        return engine.Scene.LevelOffset + vector2(x, y)
+        return getLevel().LevelOffset + vector2(x, y)
 
     else
-        return engine.Scene.LevelOffset + vector2(x[1], x[2])
+        return getLevel().LevelOffset + vector2(x[1], x[2])
     end
 end
 
@@ -749,14 +761,14 @@ end
 ---@param flag string Flag to set.
 ---@param value boolean State of flag.
 function helpers.setFlag(flag, value)
-    engine.Scene.Session:SetFlag(flag, value)
+    getSession():SetFlag(flag, value)
 end
 
 --- Get session flag.
 ---@param flag string Flag to get.
 ---@return boolean state The state of the flag.
 function helpers.getFlag(flag)
-    return engine.Scene.Session:GetFlag(flag)
+    return getSession():GetFlag(flag)
 end
 
 -- TODO - Accept table?
@@ -782,33 +794,33 @@ end
 --- Sets the current bloom strength.
 ---@param amount number New bloom strength.
 function helpers.setBloomStrength(amount)
-    engine.Scene.Bloom.Strength = amount
+    getLevel().Bloom.Strength = amount
 end
 
 --- Returns the current bloom strength.
 ---@return number strength Bloom strength.
 function helpers.getBloomStrength()
-    return engine.Scene.Bloom.Strength
+    return getLevel().Bloom.Strength
 end
 
 helpers.setDarkness = helpers.setBloomStrength
 helpers.getDarkness = helpers.getBloomStrength
 
 --- Sets the current core mode.
----@param mode string|userdata String name for mode or Core Mode enum.
+---@param mode string|CoreModes String name for mode or Core Mode enum.
 function helpers.setCoreMode(mode)
     if type(mode) == "string" then
-        engine.Scene.CoreMode = engine.Scene.Session.CoreModes[mode]
+        getLevel().CoreMode = getSession().CoreModes[mode]
 
     else
-        engine.Scene.CoreMode = mode
+        getLevel().CoreMode = mode
     end
 end
 
 --- Returns the current core mode.
----@return userdata
+---@return CoreModes
 function helpers.getCoreMode()
-    return engine.Scene.CoreMode
+    return getLevel().CoreMode
 end
 
 --- Changes the current colorgrade to the new one.
@@ -817,10 +829,10 @@ end
 ---@default false
 function helpers.setColorGrade(colorGrade, instant)
     if instant then
-        engine.Scene:SnapColorGrade(colorGrade)
+        getLevel():SnapColorGrade(colorGrade)
 
     else
-        engine.Scene:NextColorGrade(colorGrade)
+        getLevel():NextColorGrade(colorGrade)
     end
 end
 
@@ -832,7 +844,7 @@ end
 ---@param controllY number? Y coordinate for controll point.
 ---@default endY
 function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
-    playSound("event:/game/general/cassette_bubblereturn", vector2(engine.Scene.Camera.Position.X + 160, engine.Scene.Camera.Position.Y + 90))
+    playSound("event:/game/general/cassette_bubblereturn", vector2(getLevel().Camera.Position.X + 160, getLevel().Camera.Position.Y + 90))
 
     if endX and endY and controllX and controllY then
         player:StartCassetteFly(vector2(endX, endY), vector2(controllX, controllY))
@@ -864,9 +876,9 @@ end
 ---@param value boolean State of flag.
 function helpers.setLevelFlag(flag, value)
     if value then
-        engine.Scene.Session.LevelFlags:Add(flag)
+        getSession().LevelFlags:Add(flag)
     else
-        engine.Scene.Session.LevelFlags:Remove(flag)
+        getSession().LevelFlags:Remove(flag)
     end
 end
 
@@ -874,12 +886,12 @@ end
 ---@param flag string Flag to get.
 ---@return boolean state The state of the flag.
 function helpers.getLevelFlag(flag)
-    return engine.Scene.Session:GetLevelFlag(flag)
+    return getSession():GetLevelFlag(flag)
 end
 
 --- Gives the player a key.
 function helpers.giveKey()
-    local level = engine.Scene
+    local level = getLevel()
     local key = celeste.Key(player, celeste.EntityID("unknown", 1073741823 + math.random(0, 10000)))
 
     level:Add(key)
@@ -889,7 +901,6 @@ end
 -- Test
 function helpers.setWind(pattern)
     local windController = helpers.getFirstEntity("WindController")
-    local level = engine.Scene
 
     if type(pattern) == "string" then
         pattern = windController.Patterns[pattern]
@@ -900,7 +911,7 @@ function helpers.setWind(pattern)
 
     else
         windController = celeste.WindController(pattern)
-        level.Add(windController)
+        engine.Scene:Add(windController)
     end
 end
 
@@ -920,28 +931,28 @@ end
 
 --- Disables skip cutscene from menu.
 function helpers.makeUnskippable()
-    engine.Scene.InCutscene = false
-    engine.Scene:CancelCutscene()
+    getLevel().InCutscene = false
+    getLevel():CancelCutscene()
 end
 
 --- Enables retrying from menu.
 function helpers.enableRetry()
-    engine.Scene.CanRetry = true
+    getLevel().CanRetry = true
 end
 
 --- Disables retrying from menu.
 function helpers.disableRetry()
-    engine.Scene.CanRetry = false
+    getLevel().CanRetry = false
 end
 
 --- Prevents the player from even accessing the pause menu.
 function helpers.disablePause()
-    engine.Scene.PauseLock = true
+    getLevel().PauseLock = true
 end
 
 --- Reenables the player to pause the game.
 function helpers.enablePause()
-    engine.Scene.PauseLock = false
+    getLevel().PauseLock = false
 end
 
 --#endregion
@@ -978,13 +989,13 @@ end
 ---Plan an animation on the Boss's given sprite
 ---@param anim string The animation to play
 function helpers.playPuppetAnim(anim)
-    puppet:PlayBossAnim(anim)
+    puppet:PlayAnim(anim)
 end
 
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 ---@param anim string The animation to play
 function helpers.playAndWaitPuppetAnim(anim)
-    coroutine.yield(puppet.Sprite:PlayAnim(anim))
+    wait(celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PlayAnim(puppet.Sprite, anim))
 end
 
 ---Get a random number based on the boss's random seed.
@@ -1175,10 +1186,43 @@ function helpers.keepSpeedDuring(time)
     return time
 end
 
+---@enum Easers
+local easers = {
+    linear = ease.Linear,
+    sinein = ease.SineIn,
+    sineout = ease.SineOut,
+    sineinout = ease.SineInOut,
+    quadin = ease.QuadIn,
+    quadout = ease.QuadOut,
+    quadinout = ease.QuadInOut,
+    cubein = ease.CubeIn,
+    cubeout = ease.CubeOut,
+    cubeinout = ease.CubeInOut,
+    quintin = ease.QuintIn,
+    quintout = ease.QuintOut,
+    QuintInOut = ease.QuintInOut,
+    expoin = ease.ExpoIn,
+    expoout = ease.ExpoOut,
+    expoinout = ease.ExpoInOut,
+    backin = ease.BackIn,
+    backout = ease.BackOut,
+    backinout = ease.BackInOut,
+    bigbackin = ease.BigBackIn,
+    bigbackout = ease.BigBackOut,
+    bigbackinout = ease.BigBackInOut,
+    elasticin = ease.ElasticIn,
+    elasticout = ease.ElasticOut,
+    elasticinout = ease.ElasticInOut,
+    bouncein = ease.BounceIn,
+    bounceout = ease.BounceOut,
+    bounceinout = ease.BounceInOut,
+    default = nil
+}
+
 local function getEaser(easer, invert)
     if type(easer) == "string" then
         return helpers.getEaserByName(easer, invert)
-    elseif type(easer) == "userdata" then
+    elseif type(easer) == "userdata" then ---@cast easer Ease.Easer
         if invert then
             return ease.Invert(easer)
         end
@@ -1190,13 +1234,13 @@ end
 ---Create a new Position Tween, which will slowly move the Boss to the target.
 ---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time number The time the Boss will take to reach the target.
----@param easer? string|Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.positionTween(target, time, easer, invert)
-    puppet:PositionTween(target, time, getEaser(easer, invert) or easer)
+    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, getEaser(easer, invert))
     return time
 end
 
@@ -1204,13 +1248,13 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
-    puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert))
     return time
 end
 
@@ -1218,13 +1262,13 @@ end
 ---@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
-    puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert) or easer)
+    puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert))
     return time
 end
 
@@ -1234,7 +1278,7 @@ end
 ---@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
@@ -1248,38 +1292,38 @@ end
 ---Create a new Tween for the Boss' x speed from its current x speed value.
 ---@param target number The value the Boss' speed x component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
-    return helpers.speedXTween(puppet.Speed.X, target, time, getEaser(easer, invert) or easer)
+    return helpers.speedXTween(puppet.Speed.X, target, time, getEaser(easer, invert))
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
 ---@param target number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target y speed.
----@param easer? string|Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
-    return helpers.speedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert) or easer)
+    return helpers.speedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert))
 end
 
 ---Create a new Tween for the Boss'  speed from its current x speed value.
 ---@param xTarget number The value the Boss' speed x component will slowly change to.
 ---@param yTarget number The value the Boss' speed y component will slowly change to.
 ---@param time number The time the Boss will take to reach the target x speed.
----@param easer? string|Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
+---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return number time The time given from the Tween
 function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
-    return helpers.speedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert) or easer)
+    return helpers.speedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert))
 end
 
 --#endregion
@@ -1348,7 +1392,7 @@ end
 ---@default 0
 ---@param y? number The y offest of the Hitbox. Defaults to 0.
 ---@default 0
----@return Collider hitbox The created Hitbox Collider
+---@return Hitbox hitbox The created Hitbox Collider
 function helpers.getHitbox(width, height, x, y)
     return monocle.Hitbox(width, height, x or 0, y or 0)
 end
@@ -1359,7 +1403,7 @@ end
 ---@default 0
 ---@param y? number The y offest of the Hitbox. Defaults to 0.
 ---@default 0
----@return Collider circle The created Hitbox Collider
+---@return Circle circle The created Hitbox Collider
 function helpers.getCircle(radius, x, y)
     return monocle.Circle(radius, x or 0, y or 0)
 end
@@ -1368,7 +1412,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-    return celesteMod[modName].Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
+    return bossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -1399,11 +1443,11 @@ end
 ---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
 ---@param ... any Parameters to pass to the wrapped function, if any
 function helpers.addConstantBackgroundCoroutine(func, ...)
-    celesteMod[modName].Code.Helpers.LuaBossHelper.AddConstantBackgroundCoroutine(puppet, callFunc(func, {...}))
+    puppet:Add(bossesHelper.Code.Components.LuaCoroutineComponent(callFunc(func, {...})))
 end
 
 ---@param entity Entity
----@param player Entity
+---@param player Player
 local function killPlayer(entity, player)
     helpers.die(monocle.Calc.SafeNormalize(player.Position - entity.Position))
 end
@@ -1416,9 +1460,9 @@ end
 ---@default true
 ---@param remove? boolean If the component should remove itself after it calls the func function. Defaults to true
 ---@default true
----@return Component checker The Entity Checker that can be added to any Entity.
+---@return EntityChecker checker The Entity Checker that can be added to any Entity.
 function helpers.getEntityChecker(checker, func, state, remove)
-    return celesteMod[modName].Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
+    return bossesHelper.Code.Components.EntityChecker(checker, func or helpers.destroyEntity, state or state == nil, remove or remove == nil)
 end
 
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
@@ -1426,9 +1470,9 @@ end
 ---@param timer number The amount of time that must pass for the timer to execute.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
----@return Component timer The Entity Timer that can be added to any Entity.
+---@return EntityTimer timer The Entity Timer that can be added to any Entity.
 function helpers.getEntityTimer(timer, func)
-    return celesteMod[modName].Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
+    return bossesHelper.Code.Components.EntityTimer(timer, func or helpers.destroyEntity)
 end
 
 ---Returns an EntityFlagger Component that will execute the passed function when the given session flag's state matches the required state.
@@ -1440,9 +1484,9 @@ end
 ---@default true
 ---@param resetFlag? boolean If the flag should return to its previous state once used by the Flagger. Defaults to true
 ---@default true
----@return Component flagger The Entity Flagger that can be added to any Entity.
+---@return EntityFlagger flagger The Entity Flagger that can be added to any Entity.
 function helpers.getEntityFlagger(flag, func, state, resetFlag)
-    return celesteMod[modName].Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
+    return bossesHelper.Code.Components.EntityFlagger(flag, func or helpers.destroyEntity, state or state == nil, resetFlag or resetFlag == nil)
 end
 
 ---Returns an EntityChain component that will keep another entity's position chained to the Entity this component is added to.
@@ -1451,9 +1495,9 @@ end
 ---@default true
 ---@param remove? boolean Whether the chained entity should be removed if the chain component is also removed.
 ---@default false
----@return Component the Entity Chain component that can be added to any Entity.
+---@return EntityChain chain The Entity Chain component that can be added to any Entity.
 function helpers.getEntityChain(entity, startChained, remove)
-    return celesteMod[modName].Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
+    return bossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
 ---Create and return a basic entity to use in attacks.
@@ -1468,8 +1512,9 @@ end
 ---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
+---@return AttackEntity
 function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
-    return celesteMod[modName].Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+    return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
 end
 
 ---Create and return a basic entity to use in attacks.
@@ -1490,8 +1535,9 @@ end
 ---@default 1
 ---@param yScale? number The vertical sprite scale. Defaults to 1.
 ---@default 1
+---@return AttackActor
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
-    return celesteMod[modName].Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
+    return celesteMod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
         startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
@@ -1504,7 +1550,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components Tracked components of given class.
 function helpers.getComponents(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first tracked component by class name.
@@ -1512,7 +1558,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First tracked component of given class.
 function helpers.getComponent(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name.
@@ -1520,7 +1566,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene.
 function helpers.getAllComponents(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponents(name, prefix or classNamePrefix)
 end
 
 --- Gets the first component by class name.
@@ -1528,7 +1574,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class.
 function helpers.getFirstComponent(name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponent(name, prefix or classNamePrefix)
 end
 
 --- Gets all components by class name added to an entity of given class name.
@@ -1538,7 +1584,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component[] components All components of given class on scene attached to the entity type.
 function helpers.getAllComponentsOnType(name, entity, prefix, entityPre)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllComponentsOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Gets the first component by class name added to an entity of the given class name.
@@ -1548,7 +1594,7 @@ end
 --- @param entityPre? string Overrides the global class name prefix for the Entity class.
 --- @return Component component First component of given class attached to the entity type.
 function helpers.getFirstComponentOnType(name, entity, prefix, entityPre)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstComponentOnType(name, entity, prefix or classNamePrefix, entityPre or classNamePrefix)
 end
 
 --- Returns all the components of the given class name from the entity given, if any.
@@ -1557,7 +1603,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component[] components All components of given class on scene sored on the entity, if any.
 function helpers.getComponentsFromEntity(entity, name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentsFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Returns the component of the given class name from the entity given, if any.
@@ -1566,7 +1612,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return Component component First component of given class stored on the entity, if any.
 function helpers.getComponentFromEntity(entity, name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetComponentFromEntity(entity, name, prefix or classNamePrefix)
 end
 
 --- Checks if the entity given has a component of the given class name.
@@ -1575,7 +1621,7 @@ end
 --- @param prefix? string Overrides the global class name prefix.
 --- @return boolean componentFound If the Entity does have a Component of the type specified.
 function helpers.entityHasComponent(entity, name, prefix)
-    return celesteMod[modName].Code.Helpers.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.EntityHasComponent(entity, name, prefix or classNamePrefix)
 end
 
 --#endregion
@@ -1583,19 +1629,15 @@ end
 --#region Health System
 
 ---Get the Player's current health value on the active Health System
----@return number health The player's health value, or -1 if there's no active Health System
+---@return integer health The player's health value, or -1 if there's no active Health System
 function helpers.getPlayerHealth()
-    local controller = celesteMod[modName].BossesHelperModule.Session.mapDamageController
-    if controller then
-       return controller.Health
-    end
-    return -1
+    return bossesHelper.BossesHelperModule.PlayerHealth
 end
 
 ---Gives additional time where the player is invincible to taking damage.
 ---@param time number The time to add to the invincible timer.
 function helpers.giveInvincibleFrames(time)
-    celesteMod[modName].BossesHelperModule.GiveIFrames(time)
+    bossesHelper.BossesHelperModule.GiveIFrames(time)
 end
 
 --#endregion
@@ -1606,7 +1648,7 @@ end
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
 function helpers.sayExt(dialog, ...)
-    coroutine.yield(celesteMod[modName].Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+    wait(bossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
@@ -1636,7 +1678,7 @@ end
 ---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
-    newData = celesteMod[modName].BossesHelperModule.MakeEntityData()
+    newData = celesteMod.BossesHelper.BossesHelperModule.MakeEntityData()
     newData.ID = id or 1000
     newData.Level = engine.Scene
     newData.Position = position or vector2(0,0)
@@ -1678,56 +1720,25 @@ end
 ---@param func fun() The function to execute. Takes no parameters.
 ---@param delay number The time in seconds the function will be called after.
 function helpers.doMethodAfterDelay(func, delay)
-    celesteMod[modName].Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
+    bossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
 end
 
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 ---@param name? string The name of the Easer to get.
 ---@param invert? boolean If the easer returned should be inverted.
----@return nil|Easer easer The Easer found or nil if not found.
+---@return nil|Ease.Easer easer The Easer found or nil if not found.
 function helpers.getEaserByName(name, invert)
     local typ = type(name)
     if (typ ~= "string") then
         return nil
     end
     local value = string.lower(name)
-    ---@enum Easers
-    local easers = {
-        linear = ease.Linear,
-        sinein = ease.SineIn,
-        sineout = ease.SineOut,
-        sineinout = ease.SineInOut,
-        quadin = ease.QuadIn,
-        quadout = ease.QuadOut,
-        quadinout = ease.QuadInOut,
-        cubein = ease.CubeIn,
-        cubeout = ease.CubeOut,
-        cubeinout = ease.CubeInOut,
-        quintin = ease.QuintIn,
-        quintout = ease.QuintOut,
-        QuintInOut = ease.QuintInOut,
-        expoin = ease.ExpoIn,
-        expoout = ease.ExpoOut,
-        expoinout = ease.ExpoInOut,
-        backin = ease.BackIn,
-        backout = ease.BackOut,
-        backinout = ease.BackInOut,
-        bigbackin = ease.BigBackIn,
-        bigbackout = ease.BigBackOut,
-        bigbackinout = ease.BigBackInOut,
-        elasticin = ease.ElasticIn,
-        elasticout = ease.ElasticOut,
-        elasticinout = ease.ElasticInOut,
-        bouncein = ease.BounceIn,
-        bounceout = ease.BounceOut,
-        bounceinout = ease.BounceInOut,
-        default = nil
-    }
-    if easers[value] then
+    local choice = easers[value]
+    if choice then
         if invert or false then
-            return ease.Invert(easers[value])
+            return ease.Invert(choice)
         end
-        return easers[value]
+        return choice
     else
         return easers.default
     end

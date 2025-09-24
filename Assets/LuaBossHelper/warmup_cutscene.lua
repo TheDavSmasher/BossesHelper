@@ -1,8 +1,5 @@
 --Lua Files obtained from Lua Cutscenes mod, reformatted to fit Bosses Helper
 
----Mostly used for lua-language-server annotations and VS Code support
----@module "CelesteMod"
-
 local modName = modMetaData.Name
 local methodCacheTargets = {
 	["#Celeste.Audio"] = "everything",
