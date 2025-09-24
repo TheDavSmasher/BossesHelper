@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir docs
           mkdir meta
-          python .github/workflows/LuaDocs/main.py $GITHUB_REPO Assets/LuaBossHelper
+          python .github/workflows/LuaDocs/main.py ${{ env.GITHUB_REPO }} Assets/LuaBossHelper
       
       - name: Checkout Wiki
         uses: actions/checkout@v5

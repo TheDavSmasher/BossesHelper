@@ -39,7 +39,7 @@ jobs:
         CelestePrefix: ${{ github.workspace }}/lib-stripped
 
     - name: Upload Release ZIP
+      run: gh release upload ${{ github.event.release.tag_name }} BossesHelper.zip --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release upload ${{ github.event.release.tag_name }} BossesHelper.zip --clobber
     
