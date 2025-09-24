@@ -11,6 +11,7 @@ LUA_PATH: str
 
 def build_meta_file(lines: list[str], list_ranges: list[LineRange], field_list: list[FieldName]):
     _meta_lines = (DocList("---@meta HelperFunctions")
+                   .append_s("---@diagnostic disable: deprecated")
                    .append_s("---@class HelperFunctions")
                    .append(f"{TABLE} = {{}}")
                    )
