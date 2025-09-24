@@ -1,6 +1,7 @@
 ﻿global using LuaCommand = (string Name, int Count);
 global using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using NLua;
 using System;
 using System.Collections;
@@ -56,7 +57,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public IEnumerator Perform()
 		{
-			return attackFunction.ToIEnumerator();
+			return new LuaFuncCoroutine(attackFunction);
 		}
 
 		public void End(MethodEndReason reason)
@@ -72,13 +73,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
 		{
-			private readonly IEnumerator Cutscene = functions[0]?.ToIEnumerator();
+			private readonly LuaFuncCoroutine Cutscene = new(functions[0]);
 
 			private readonly LuaFunction endMethod = functions[1];
 
+			public IEnumerator Executer => While(() => Running, true);
+
 			public override void OnBegin(Level level)
 			{
-				Coroutine(level).Coroutine(this);
+				Coroutine(level).AsCoroutine(this);
 			}
 
 			private IEnumerator Coroutine(Level level)
@@ -119,7 +122,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public IEnumerator Perform()
 		{
 			controller.Scene.Add(cutscene);
-			return While(() => cutscene.Running, true);
+			return cutscene.Executer;
 		}
 
 		public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
@@ -140,9 +143,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? OnHitLua);
 		}
 
-		public IEnumerator OnDamage(BossPuppet.HurtModes source)
+		public LuaFuncCoroutine OnDamage(BossPuppet.HurtModes source)
 		{
-			return onDamageMethods[source]?.ToIEnumerator();
+			return new(onDamageMethods[source]);
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -191,7 +192,7 @@ public partial class BossesHelperModule : EverestModule
 			case HealthSystemManager.OffscreenEffect.BubbleBack:
 				PlayerTakesDamage(stagger: false);
 				if (!Session.alreadyFlying)
-					PlayerFlyBack(player).Coroutine(player);
+					PlayerFlyBack(player).AsCoroutine(player);
 				break;
 			default:
 				SharedDeath(player, HealthData.playerOffscreen == HealthSystemManager.OffscreenEffect.FakeDeath);

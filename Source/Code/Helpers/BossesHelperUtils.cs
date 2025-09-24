@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 using System.Collections;
@@ -113,6 +114,32 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
+		#region Entity
+		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		{
+			Tween.Position(self, target, time, easer);
+		}
+
+		public static void ChangeTagState(this Entity entity, int tag, bool state)
+		{
+			if (state)
+				entity.AddTag(tag);
+			else
+				entity.RemoveTag(tag);
+		}
+		#endregion
+
+		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
+		{
+			if (player.Get<Stopwatch>() is Stopwatch watch)
+			{
+				if (onlyOnNull)
+					return;
+				watch.RemoveSelf();
+			}
+			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
+		}
+
 		public static T ElementAtOrLast<T>(this IList<T> list, int index)
 		{
 			return index >= 0 && index < list.Count ? list[index] : list.LastOrDefault();
@@ -123,23 +150,63 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return new Vector2((int)value.X, (int)value.Y);
 		}
 
-		public static void Coroutine(this IEnumerator enumerator, Entity target)
+		public static void AsCoroutine(this IEnumerator enumerator, Entity target)
 		{
-			new Coroutine(enumerator).AddTo(target);
-		}
-
-		public static void AddTo(this Component self, Entity target)
-		{
-			target.Add(self);
-		}
-
-		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
-		{
-			Tween.Position(self, target, time, easer);
+			target.Add(new Coroutine(enumerator));
 		}
 		#endregion
 
-		#region Helpers
+		#region Classes
+		public class EnumDict<TKey, TValue> : Dictionary<TKey, TValue> where TKey : struct, Enum
+		{
+			public EnumDict(Func<TKey, TValue> populator) : base()
+			{
+				foreach (var option in Enum.GetValues<TKey>())
+				{
+					Add(option, populator(option));
+				}
+			}
+		}
+
+		public class Crc32
+		{
+			private const UInt32 s_generator = 0xEDB88320;
+
+			private readonly UInt32[] m_checksumTable = [.. Enumerable.Range(0, 256).Select(i =>
+			{
+				var tableEntry = (uint)i;
+				for (var j = 0; j < 8; ++j)
+				{
+					tableEntry = ((tableEntry & 1) != 0)
+						? (s_generator ^ (tableEntry >> 1))
+						: (tableEntry >> 1);
+				}
+				return tableEntry;
+			})];
+
+			public int Get(string value)
+			{
+				IEnumerable<char> byteStream = value.ToCharArray();
+				return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
+							(m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
+			}
+		}
+
+		public class SingleUse<T> where T : struct
+		{
+			public T? Value
+			{
+				get
+				{
+					T? value = field;
+					field = null;
+					return value;
+				}
+				set;
+			}
+		}
+		#endregion
+
 		public enum Alignment
 		{
 			Left = -1,
@@ -169,46 +236,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return [.. SeparateList(listString).Select(float.Parse)];
 		}
 
-		public class EnumDict<TKey, TValue> : Dictionary<TKey, TValue> where TKey : struct, Enum
-		{
-			public EnumDict(Func<TKey, TValue> populator) : base()
-			{
-				foreach (var option in Enum.GetValues<TKey>())
-				{
-					Add(option, populator(option));
-				}
-			}
-		}
-
-		public class Crc32
-		{
-			private const UInt32 s_generator = 0xEDB88320;
-
-			public Crc32()
-			{
-				m_checksumTable = [.. Enumerable.Range(0, 256).Select(i =>
-				{
-					var tableEntry = (uint)i;
-					for (var j = 0; j < 8; ++j)
-					{
-						tableEntry = ((tableEntry & 1) != 0)
-							? (s_generator ^ (tableEntry >> 1))
-							: (tableEntry >> 1);
-					}
-					return tableEntry;
-				})];
-			}
-
-			public int Get(string value)
-			{
-				IEnumerable<char> byteStream = value.ToCharArray();
-				return (int)~byteStream.Aggregate(0xFFFFFFFF, (checksumRegister, currentByte) =>
-							(m_checksumTable[(checksumRegister & 0xFF) ^ Convert.ToByte(currentByte)] ^ (checksumRegister >> 8)));
-			}
-
-			private readonly UInt32[] m_checksumTable;
-		}
-
 		public static IEnumerator While(Func<bool> checker, bool doWhile = false)
 		{
 			if (!doWhile && !checker())
@@ -218,116 +245,5 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				yield return null;
 			while (checker());
 		}
-		#endregion
-
-		#region Celeste Classes
-		public abstract class HudEntity : GlobalEntity
-		{
-			public HudEntity(bool isGlobal = false) : base(isGlobal)
-			{
-				AddTag(Tags.HUD);
-			}
-		}
-
-		public abstract class GlobalEntity(bool isGlobal) : Entity
-		{
-			protected bool IsGlobal { get; private set; } = isGlobal;
-
-			public override void Added(Scene scene)
-			{
-				base.Added(scene);
-				if (IsGlobal)
-					ChangeGlobalState(true);
-			}
-
-			public void ChangeGlobalState(bool state)
-			{
-				if (IsGlobal != state)
-				{
-					IsGlobal = state;
-					if (state)
-						AddTag(Tags.Global);
-					else
-						RemoveTag(Tags.Global);
-				}
-			}
-		}
-
-		public class SingleUse<T> where T : struct
-		{
-			public T? Value
-			{
-				get
-				{
-					T? value = field;
-					field = null;
-					return value;
-				}
-				set;
-			}
-		}
-
-		public class Stopwatch(float fullTime) : Component(true, false)
-		{
-			public float TimeLeft { get; set; }
-
-			public bool Finished => TimeLeft <= 0;
-
-			public void Reset()
-			{
-				TimeLeft = fullTime;
-			}
-
-			public override void Update()
-			{
-				if (TimeLeft > 0)
-					TimeLeft -= Engine.DeltaTime;
-			}
-		}
-
-		public static void AddIFramesWatch(this Player player, bool onlyOnNull = false)
-		{
-			if (player.Get<Stopwatch>() is Stopwatch watch)
-			{
-				if (onlyOnNull)
-					return;
-				watch.RemoveSelf();
-			}
-			player.Add(new Stopwatch(BossesHelperModule.Session.healthData.damageCooldown));
-		}
-
-		public interface IMonocleCollection<T> : IReadOnlyCollection<T>
-		{
-			public bool Active
-			{
-				get => this.Any(i => ItemActive(i));
-				set
-				{
-					foreach (var item in this)
-						ItemActive(item) = value;
-				}
-			}
-
-			public bool Visible
-			{
-				get => this.Any(i => ItemVisible(i));
-				set
-				{
-					foreach (var item in this)
-						ItemVisible(item) = value;
-				}
-			}
-
-			ref bool ItemActive(T item);
-			ref bool ItemVisible(T item);
-		}
-
-		public class ComponentStack<T> : Stack<T>, IMonocleCollection<T> where T : Component
-		{
-			public ref bool ItemActive(T item) => ref item.Active;
-
-			public ref bool ItemVisible(T item) => ref item.Visible;
-		}
-		#endregion
 	}
 }

@@ -8,7 +8,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
 	[Tracked(false)]
 	[CustomEntity("BossesHelper/HealthSystemManager")]
-	public partial class HealthSystemManager : GlobalEntity
+	public partial class HealthSystemManager : Entity
 	{
 		private static BossesHelperSession ModSession => BossesHelperModule.Session;
 
@@ -42,9 +42,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public static ref bool IsEnabled => ref HealthData.isEnabled;
 
-		private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
-			: base(isGlobal)
+		public bool IsGlobal
 		{
+			get => TagCheck(Tags.Global);
+			set => this.ChangeTagState(Tags.Global, value);
+		}
+
+		private HealthSystemManager(bool resetHealth, bool isGlobal, int setHealthTo = 0, string activateFlag = null)
+			: base()
+		{
+			IsGlobal = isGlobal;
 			if (activateFlag != null)
 			{
 				HealthData.activateFlag = activateFlag;
@@ -71,7 +78,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void UpdateSessionData(EntityData data)
 		{
 			bool wasEnabled = IsEnabled;
-			ChangeGlobalState(data.Bool("isGlobal"));
+			IsGlobal = data.Bool("isGlobal");
 			HealthData = new()
 			{
 				iconSprite = data.String("healthIcons", HealthData.iconSprite),

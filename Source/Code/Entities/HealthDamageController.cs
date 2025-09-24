@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
@@ -24,7 +25,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		[Tracked(false)]
-		private class DamageController() : GlobalEntity(false), ILuaLoader
+		private class DamageController() : Entity, ILuaLoader
 		{
 			private LuaFunction onRecover;
 
@@ -38,7 +39,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
-				ChangeGlobalState(HealthData.globalController);
+				this.ChangeTagState(Tags.Global, HealthData.globalController);
 				Player player = Scene.GetPlayer();
 				Values = [("player", player), ("healthBar", healthBar)];
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
@@ -68,10 +69,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 						Level.Flash(Color.Red * 0.3f);
 						Audio.Play("event:/char/madeline/predeath");
 						if (HealthData.playerStagger && stagger)
-							PlayerStagger(entity.Position, direction).Coroutine(entity);
+							PlayerStagger(entity.Position, direction).AsCoroutine(entity);
 						if (HealthData.playerBlink)
-							PlayerInvincible().Coroutine(entity);
-						onDamage?.AddAsCoroutine(this);
+							PlayerInvincible().AsCoroutine(entity);
+						AddLuaCoroutine(onDamage);
 					}
 				}
 				else
@@ -84,14 +85,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			public void RecoverHealth(int amount = 1)
 			{
 				ModSession.currentPlayerHealth += amount;
-				onRecover?.AddAsCoroutine(this);
+				AddLuaCoroutine(onRecover);
 			}
 
 			public void RefillHealth()
 			{
 				ModSession.currentPlayerHealth = HealthData.playerHealthVal;
-				onRecover?.AddAsCoroutine(this);
+				AddLuaCoroutine(onRecover);
 			}
+
+			private void AddLuaCoroutine(LuaFunction func) => Add(new LuaCoroutineComponent(func));
 
 			private IEnumerator PlayerStagger(Vector2 from, Vector2 bounce)
 			{

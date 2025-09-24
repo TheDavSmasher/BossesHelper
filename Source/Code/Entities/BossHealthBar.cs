@@ -10,7 +10,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
 	[Tracked(false)]
 	[CustomEntity("BossesHelper/BossHealthBar")]
-	public class BossHealthBar : HudEntity
+	public class BossHealthBar : Entity
 	{
 		private readonly Vector2 BarPosition;
 
@@ -37,8 +37,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			set => barEntity.Visible = value;
 		}
 
-		public BossHealthBar(EntityData data, Vector2 _) : base()
+		public BossHealthBar(EntityData data, Vector2 _)
+			: base()
 		{
+			AddTag(Tags.HUD);
 			Position = data.Position;
 			BarPosition = new Vector2(data.Float("healthBarX"), data.Float("healthBarY"));
 			BarScale = new Vector2(data.Float("healthScaleX", 1f), data.Float("healthScaleY", 1f));

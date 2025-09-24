@@ -67,7 +67,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void OnTalk(Player _)
 		{
 			Changer.Update();
-			onInteract?.AddAsCoroutine(this);
+			Add(new LuaCoroutineComponent(onInteract));
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;
 using System;
