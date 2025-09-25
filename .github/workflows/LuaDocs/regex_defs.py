@@ -10,7 +10,7 @@ FIELD_R = r'([\w.]+)\s*'
 REGION_P = re.compile(r'^--#region\s+(.*)')
 REGION_END_P = re.compile(r'^--#endregion')
 MODULE_P = re.compile(fr'{ANN_R}module\s+"[\w.]+"')
-MODULE_F_P = re.compile(fr'({LOCAL_R}\w+)\s+=\s+require')
+MODULE_F_P = re.compile(fr'({LOCAL_R}_\w+)\s+=\s+require')
 FIELD_P = re.compile(fr'^{FIELD_R}=')
 FUNC_P = re.compile(fr'^function\s+{FIELD_R}\(([^)]*)\)')
 LOCAL_FUNC_P = re.compile(fr'{LOCAL_R}function')
