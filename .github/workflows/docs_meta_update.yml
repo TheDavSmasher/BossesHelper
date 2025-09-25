@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "Assets/LuaBossHelper/**"
+      - ".github/workflows/docs_meta_update.yml"
   workflow_call:
     secrets:
       ADDON_WIKI_PAT:
