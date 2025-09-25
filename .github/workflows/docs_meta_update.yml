@@ -50,8 +50,7 @@ jobs:
           cp -r docs/* wiki/helperFunctions/
 
           cd wiki
-          git commit -am "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}"
-          git push
+          git commit -am "[chore] Updated Lua Helper Functions docs from Workflow run ${{ github.run_number }}" && git push || echo "No changes to make"
 
       - name: Checkout Addon
         uses: actions/checkout@v5
@@ -65,6 +64,5 @@ jobs:
           cp -r meta/* addon/library/
 
           cd addon
-          git commit -am "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}"
-          git push
+          git commit -am "[chore] Updated Lua Helper Functions meta from Worflow run ${{ github.run_number }}" && git push || echo "No changes to make"
       
