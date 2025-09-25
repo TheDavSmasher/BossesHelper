@@ -196,7 +196,7 @@ local getSession = helpers.getSession
 
 --- Display textbox with dialog.
 ---@param dialog string Dialog ID used for the conversation.
----@return number|IEnumerator?
+---@return IEnumerator
 function helpers.say(dialog)
     return wait(_celeste.Textbox.Say(tostring(dialog)))
 end
