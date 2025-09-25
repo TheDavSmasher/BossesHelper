@@ -790,7 +790,7 @@ end
 
 --- Ends the current cutscene.
 function helpers.endCutscene()
-    cutsceneEntity:EndCutscene(engine.Scene)
+    cutsceneEntity:EndCutscene(getLevel())
 end
 
 --- Sets the current bloom strength.
