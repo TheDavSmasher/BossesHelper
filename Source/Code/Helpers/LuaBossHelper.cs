@@ -9,13 +9,10 @@ using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public interface ILuaCommand
+	public interface ILuaLoader
 	{
 		LuaCommand Command { get; }
-	}
 
-	public interface ILuaLoader : ILuaCommand
-	{
 		List<LuaTableItem> Values { get; }
 
 		Scene Scene { get; }
@@ -30,6 +27,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
 
 		public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+
+		public static void WarmUp()
+		{
+			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+			foreach (var func in LoadCommand("Assets/LuaBossHelper/warmup_cutscene", ("getCutsceneData", 2)))
+				func.Call();
+		}
 
 		public static string GetFileContent(string path)
 		{
