@@ -9,23 +9,16 @@ using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public interface ILuaLoader
+	public interface ILuaCommand
 	{
 		LuaCommand Command { get; }
-
-		LuaTableItem[] Values => [];
 	}
 
-	public class LuaWarmer : ILuaLoader
+	public interface ILuaLoader : ILuaCommand
 	{
-		public LuaCommand Command => ("getCutsceneData", 2);
+		List<LuaTableItem> Values { get; }
 
-		public void WarmUp()
-		{
-			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-			_ = this.LoadFile("Assets/LuaBossHelper/warmup_cutscene")
-				.Select(func => func.Call());
-		}
+		Scene Scene { get; }
 	}
 
 	public class LuaException(string message) : Exception(message) { }
@@ -70,13 +63,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
 		{
 			Dictionary<object, object> passedVals = self.Values.ToDictionary();
+			passedVals.Add("player", self.Scene.GetPlayer());
+			return LoadCommand(filename, self.Command, passedVals);
+		}
+
+		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
+		{
+			passedVals ??= [];
 			LuaFunction[] funcs = null;
 			if (!string.IsNullOrEmpty(filename))
 			{
 				passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
 				try
 				{
-					if ((cutsceneHelper[self.Command.Name] as LuaFunction)
+					if ((cutsceneHelper[command.Name] as LuaFunction)
 						.Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
@@ -91,7 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
 				}
 			}
-			Array.Resize(ref funcs, self.Command.Count);
+			Array.Resize(ref funcs, command.Count);
 			return funcs;
 		}
 

@@ -6,6 +6,7 @@ using Monocle;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper;
@@ -47,6 +48,18 @@ public partial class BossesHelperModule : EverestModule
 		// release builds use info logging to reduce spam in log files
 		Logger.SetLogLevel(nameof(BossesHelperModule), LogLevel.Info);
 #endif
+	}
+
+	public class LuaWarmer : ILuaCommand
+	{
+		public LuaCommand Command => ("getCutsceneData", 2);
+
+		public void WarmUp()
+		{
+			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
+			foreach (var func in LoadCommand("Assets/LuaBossHelper/warmup_cutscene", Command))
+				func.Call();
+		}
 	}
 
 	public override void LoadContent(bool firstLoad)

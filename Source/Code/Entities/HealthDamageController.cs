@@ -5,6 +5,7 @@ using Monocle;
 using NLua;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
@@ -35,17 +36,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public LuaCommand Command => ("getFunctionData", 2);
 
-			public LuaTableItem[] Values { get; set; }
+			public List<LuaTableItem> Values { get; private set; }
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
 				this.ChangeTagState(Tags.Global, HealthData.globalController);
-				Player player = Scene.GetPlayer();
-				Values = [("player", player), ("healthBar", healthBar)];
+				Values = [("healthBar", healthBar)];
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
 				onDamage = array[0];
 				onRecover = array[1];
-				player.AddIFramesWatch();
+				Scene.GetPlayer().AddIFramesWatch();
 			}
 
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)

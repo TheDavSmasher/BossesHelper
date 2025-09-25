@@ -4,6 +4,7 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
+using System.Collections.Generic;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
@@ -29,13 +30,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public LuaCommand Command => ("getSavePointData", 1);
 
-		public LuaTableItem[] Values { get; set; }
+		public List<LuaTableItem> Values { get; init; }
 
 		public GlobalSavePoint(EntityData entityData, Vector2 offset)
 			: base(entityData.Position + offset)
 		{
 			Add(Changer = new(entityData.Level, entityData.Nodes.FirstOrDefault(Position),
 				entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
+			Values = [
+				("savePoint", this),
+				("spawnPoint", Changer.spawnPoint)
+			];
 			filepath = entityData.String("luaFile");
 			string spriteName = entityData.String("savePointSprite");
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
@@ -53,15 +58,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Enabled = true,
 				PlayerMustBeFacing = false
 			});
-			if (scene.GetPlayer() is Player player)
-			{
-				Values = [
-					("player", player),
-					("savePoint", this),
-					("spawnPoint", Changer.spawnPoint)
-				];
-				onInteract = ReadLuaFilePath(filepath, this.LoadFile)[0];
-			}
+			onInteract = ReadLuaFilePath(filepath, this.LoadFile)[0];
 		}
 
 		public void OnTalk(Player _)

@@ -2,9 +2,11 @@
 global using LuaTableItem = (object Key, object Value);
 using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
+using Monocle;
 using NLua;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
@@ -26,12 +28,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		public abstract LuaCommand Command { get; }
 
-		public virtual LuaTableItem[] Values =>
+		public Scene Scene => controller.Scene;
+
+		public List<LuaTableItem> Values => _Values;
+
+		protected List<LuaTableItem> _Values =
 		[
 			( "boss", controller ),
 			( "bossID", controller.BossID ),
 			( "puppet", controller.Puppet ),
-			( "player", controller.Scene.GetPlayer() ),
 			( "sidekick", controller.Scene.GetEntity<BadelineSidekick>() )
 		];
 	}
@@ -110,13 +115,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public override LuaCommand Command => ("getCutsceneData", 2);
 
-		public override LuaTableItem[] Values => [("cutsceneEntity", cutscene), .. base.Values];
-
 		public BossEvent(string filepath, BossController controller)
 			: base(controller)
 		{
 			this.controller = controller;
 			cutscene = new(this.LoadFile(filepath));
+			_Values.Add(("cutsceneEntity", cutscene));
 		}
 
 		public IEnumerator Perform()
