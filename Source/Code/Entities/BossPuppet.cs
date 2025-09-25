@@ -50,7 +50,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public float groundFriction;
 
-		public float airFriction;		
+		public float airFriction;
 
 		public bool killOnContact;
 

@@ -1,6 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Components;
-using Celeste.Mod.BossesHelper.Code.Entities;
-using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;
 using System;
