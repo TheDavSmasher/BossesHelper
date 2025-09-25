@@ -14,7 +14,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 {
 	[Tracked(false)]
 	[CustomEntity("BossesHelper/PlayerSavePoint")]
-	public class GlobalSavePoint : Actor, ILuaLoader
+	public class GlobalSavePoint : Entity, ILuaLoader
 	{
 		private readonly GlobalSavePointChanger Changer;
 
