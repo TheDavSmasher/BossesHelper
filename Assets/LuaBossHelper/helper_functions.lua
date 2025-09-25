@@ -1100,7 +1100,7 @@ end
 --- Set the gravity multiplier to the given value. Gravity constant is 900.
 --- @param mult number The multiplier to apply to the Gravity constant which the Boss will use.
 function helpers.setEffectiveGravityMult(mult)
-    puppet.gravityMult = mult
+    puppet.GravityMult = mult
 end
 
 ---Set the Boss's horizontal ground friction deceleration rate.
