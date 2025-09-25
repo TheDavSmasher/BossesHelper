@@ -8,17 +8,17 @@ local helpers = {}
 ---Mostly used for lua-language-server annotations and VS Code support
 
 ---@module "Monocle"
-local monocle = require("#monocle")
+local _monocle = require("#monocle")
 
 ---@module "Celeste"
-local celeste = require("#celeste")
+local _celeste = require("#celeste")
 
 ---@module "Microsoft.XNA.Framework"
-local framework = require("#microsoft.xna.framework")
+local _framework = require("#microsoft.xna.framework")
 
-helpers.monocle = monocle
-helpers.engine = monocle.Engine
-helpers.celeste = celeste
+helpers.monocle = _monocle
+helpers.engine = _monocle.Engine
+helpers.celeste = _celeste
 
 --#endregion
 
@@ -26,8 +26,8 @@ helpers.celeste = celeste
 
 --- Locals to shortcut certain common accessed sub-tables.
 
-local ease = monocle.Ease
-local celesteMod = celeste.Mod
+local ease = _monocle.Ease
+local celesteMod = _celeste.Mod
 local engine = helpers.engine
 
 local modName = modMetaData.Name
@@ -59,13 +59,13 @@ function helpers.vector2(x, y)
     local typ = type(x)
 
     if typ == "table" and not y then
-        return framework.Vector2(x[1], x[2])
+        return _framework.Vector2(x[1], x[2])
 
     elseif typ == "userdata" and not y then
         return x
 
     else
-        return framework.Vector2(x, y)
+        return _framework.Vector2(x, y)
     end
 end
 
@@ -197,13 +197,13 @@ local getSession = helpers.getSession
 --- Display textbox with dialog.
 ---@param dialog string Dialog ID used for the conversation.
 function helpers.say(dialog)
-    wait(celeste.Textbox.Say(tostring(dialog)))
+    wait(_celeste.Textbox.Say(tostring(dialog)))
 end
 
 --- Display minitextbox with dialog.
 ---@param dialog string Dialog ID used for the textbox.
 function helpers.miniTextbox(dialog)
-    engine.Scene:Add(celeste.MiniTextbox(dialog))
+    engine.Scene:Add(_celeste.MiniTextbox(dialog))
 end
 
 --- Allow the user to select one of several minitextboxes, similar to intro cutscene of Reflection.
@@ -339,14 +339,14 @@ end
 ---@param sfxOut string? Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
 ---@default nil
 function helpers.postcard(dialog, sfxIn, sfxOut)
-    local message = celeste.Dialog.Get(dialog) or dialog
+    local message = _celeste.Dialog.Get(dialog) or dialog
     local postcard
 
     if sfxOut then ---@cast sfxIn string
-        postcard = celeste.Postcard(message, sfxIn, sfxOut)
+        postcard = _celeste.Postcard(message, sfxIn, sfxOut)
 
     else ---@cast sfxIn integer
-        postcard = celeste.Postcard(message, sfxIn)
+        postcard = _celeste.Postcard(message, sfxIn)
     end
 
     getLevel():Add(postcard)
@@ -470,7 +470,7 @@ function helpers.changeRoom(name, spawnX, spawnY)
     level.Session:UpdateLevelStartDashes()
 
     -- TODO - Test
-    engine.Scene = celeste.LevelLoader(level.Session, level.Session.RespawnPoint)
+    engine.Scene = _celeste.LevelLoader(level.Session, level.Session.RespawnPoint)
 end
 
 function helpers.getRoomPosition(name)
@@ -572,10 +572,10 @@ end
 ---@return FMOD.Studio.EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
-        return celeste.Audio.Play(name, position)
+        return _celeste.Audio.Play(name, position)
 
     else
-        return celeste.Audio.Play(name)
+        return _celeste.Audio.Play(name)
     end
 end
 
@@ -626,7 +626,7 @@ end
 ---@param track string Name of song, same as in Ahorn's room window.
 ---@param progress integer? Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
-    getSession().Audio.Music.Event = celeste.SFX.EventnameByHandle(track)
+    getSession().Audio.Music.Event = _celeste.SFX.EventnameByHandle(track)
 
     if progress then
         getSession().Audio.Music.Progress = progress
@@ -638,7 +638,7 @@ end
 --- Get the current music track name.
 ---@return string track Music track name.
 function helpers.getMusic()
-    return celeste.Audio.CurrentMusic
+    return _celeste.Audio.CurrentMusic
 end
 
 --- Sets music progression.
@@ -781,7 +781,7 @@ end
 ---@return BadelineOldsite
 function helpers.spawnBadeline(x, y, relativeToPlayer)
     local position = (relativeToPlayer or relativeToPlayer == nil) and vector2(player.Position.X + x, player.Position.Y + y) or vector2(x, y)
-    local badeline = celeste.BadelineOldsite(position, 1)
+    local badeline = _celeste.BadelineOldsite(position, 1)
 
     engine.Scene:Add(badeline)
 
@@ -894,7 +894,7 @@ end
 --- Gives the player a key.
 function helpers.giveKey()
     local level = getLevel()
-    local key = celeste.Key(player, celeste.EntityID("unknown", 1073741823 + math.random(0, 10000)))
+    local key = _celeste.Key(player, _celeste.EntityID("unknown", 1073741823 + math.random(0, 10000)))
 
     level:Add(key)
     level.Session.Keys:Add(key.ID)
@@ -912,7 +912,7 @@ function helpers.setWind(pattern)
         windController:SetPattern(pattern)
 
     else
-        windController = celeste.WindController(pattern)
+        windController = _celeste.WindController(pattern)
         engine.Scene:Add(windController)
     end
 end
@@ -1100,7 +1100,7 @@ end
 --- Set the gravity multiplier to the given value. Gravity constant is 900.
 --- @param mult number The multiplier to apply to the Gravity constant which the Boss will use.
 function helpers.setEffectiveGravityMult(mult)
-    puppet.gravityMult = mult
+    puppet.GravityMult = mult
 end
 
 ---Set the Boss's horizontal ground friction deceleration rate.
@@ -1396,7 +1396,7 @@ end
 ---@default 0
 ---@return Hitbox hitbox The created Hitbox Collider
 function helpers.getHitbox(width, height, x, y)
-    return monocle.Hitbox(width, height, x or 0, y or 0)
+    return _monocle.Hitbox(width, height, x or 0, y or 0)
 end
 
 ---Create a new Circle Collider
@@ -1407,7 +1407,7 @@ end
 ---@default 0
 ---@return Circle circle The created Hitbox Collider
 function helpers.getCircle(radius, x, y)
-    return monocle.Circle(radius, x or 0, y or 0)
+    return _monocle.Circle(radius, x or 0, y or 0)
 end
 
 ---Create a ColliderList object from the provided colliders.
@@ -1451,7 +1451,7 @@ end
 ---@param entity Entity
 ---@param player Player
 local function killPlayer(entity, player)
-    helpers.die(monocle.Calc.SafeNormalize(player.Position - entity.Position))
+    helpers.die(_monocle.Calc.SafeNormalize(player.Position - entity.Position))
 end
 
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
@@ -1658,7 +1658,7 @@ end
 ---@param entity Entity The entity to add the SoundSource to.
 ---@return Component newSound The newly created SoundSource
 function helpers.addSoundTo(event, entity)
-    local newSound = celeste.SoundSource()
+    local newSound = _celeste.SoundSource()
     entity:Add(newSound:Play(event))
     return newSound
 end
@@ -1765,7 +1765,7 @@ end
 ---@default 1
 ---@return Vector2 normal The normalized vector2
 function helpers.normalize(vector, length)
-    return monocle.Calc.SafeNormalize(vector, length or 1)
+    return _monocle.Calc.SafeNormalize(vector, length or 1)
 end
 
 --#endregion
