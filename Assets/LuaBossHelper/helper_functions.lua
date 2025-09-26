@@ -31,7 +31,7 @@ local celesteMod = _celeste.Mod
 local engine = helpers.engine
 
 local modName = modMetaData.Name
-local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
+local bossesHelper = celesteMod[modName] --[[@as Celeste.Mod.BossesHelper]]
 local classNamePrefix = "Celeste."
 
 local luanet = _G.luanet
@@ -812,7 +812,7 @@ helpers.getDarkness = helpers.getBloomStrength
 ---@param mode string|CoreModes String name for mode or Core Mode enum.
 function helpers.setCoreMode(mode)
     if type(mode) == "string" then
-        getLevel().CoreMode = getSession().CoreModes[mode]
+        getLevel().CoreMode = celeste.Session.CoreModes[mode]
 
     else
         getLevel().CoreMode = mode

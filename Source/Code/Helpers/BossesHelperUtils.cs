@@ -115,9 +115,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Entity
+		public static void Move(this Actor self, Vector2 offset, Collision onCollideV = null, Collision onCollideH = null)
+		{
+			self.MoveH(offset.X, onCollideH);
+			self.MoveV(offset.Y, onCollideV);
+		}
+
 		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
 		{
 			Tween.Position(self, target, time, easer);
+		}
+
+		public static void PositionTweenC(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		{
+			Vector2 startPosition = self.Position;
+			Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, start: true);
+			tween.OnUpdate = t =>
+			{
+				self.Position = Vector2.Lerp(startPosition, target, t.Eased);
+			};
+			self.Add(tween);
 		}
 
 		public static void ChangeTagState(this Entity entity, int tag, bool state)
