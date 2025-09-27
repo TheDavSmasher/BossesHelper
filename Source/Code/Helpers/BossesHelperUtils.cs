@@ -122,12 +122,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				   self.MoveV(offset.Y, onCollideV);
 		}
 
-		public static void PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		public static Tween PositionTween(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
 		{
-			Tween.Position(self, target, time, easer);
+			return Tween.Position(self, target, time, easer);
 		}
 
-		public static void PositionTween(
+		public static Tween PositionTween(
 			this Actor self, Vector2 target, float time, bool actNaive = false, bool stopOnCollide = false,
 			Collision collisionH = null, Collision collisionV = null, Ease.Easer easer = null
 		)
@@ -148,11 +148,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 			};
 			self.Add(tween);
+			return tween;
 		}
 
-		public static void PositionTween(this BossActor self, Vector2 target, float time, bool actNaive = false, bool stopOnCollide = false, Ease.Easer easer = null)
+		public static Tween PositionTween(this BossActor self, Vector2 target, float time, bool actNaive = false, bool stopOnCollide = false, Ease.Easer easer = null)
 		{
-			self.PositionTween(target, time, actNaive, stopOnCollide, self.OnCollideH, self.OnCollideV, easer);
+			return self.PositionTween(target, time, actNaive, stopOnCollide, self.OnCollideH, self.OnCollideV, easer);
 		}
 
 		public static void ChangeTagState(this Entity entity, int tag, bool state)

@@ -107,11 +107,12 @@ namespace Celeste.Mod.BossesHelper
 				}
 			}
 
-			public void Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
+			public Tween Speed1DTween(float start, float target, float time, bool isX, Ease.Easer easer = null)
 			{
 				Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, true);
 				tween.OnUpdate = t => (isX ? ref Speed.X : ref Speed.Y) = start + (target - start) * t.Eased;
 				Add(tween);
+				return tween;
 			}
 
 			public void ChangeHitboxOption(string tag)
