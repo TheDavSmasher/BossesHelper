@@ -1236,13 +1236,15 @@ end
 ---Create a new Position Tween, which will slowly move the Boss to the target.
 ---@param target Vector2 The vector2 target position the Boss will move towards.
 ---@param time float The time the Boss will take to reach the target.
+---@param treatNaive? bool Whether to ignore collisions when moving.
+---@param stopOnCollide? bool Whether to stop the Tween on a collision.
 ---@param easer? string|Ease.Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
 ---@return float time The time given from the Tween
-function helpers.positionTween(target, time, easer, invert)
-    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, getEaser(easer, invert))
+function helpers.positionTween(target, time, treatNaive, stopOnCollide, easer, invert)
+    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, treatNaive, stopOnCollide, getEaser(easer, invert))
     return time
 end
 
