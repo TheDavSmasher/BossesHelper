@@ -10,6 +10,7 @@ local function getMod(modName)
 end
 
 --#region Coroutine
+
 ---@type ProxyResume
 local function threadProxyResume(self, ...)
     if coroutine.status(self.value) == "dead" then
@@ -31,9 +32,11 @@ end
 function cutsceneHelper.getProxyTable(func)
     return func and {value = coroutine.create(func), resume = threadProxyResume}
 end
+
 --#endregion
 
 --#region Lua Preparers
+
 ---@class Preparers : { [string]: LuaPreparer }
 local luaPreparers = {}
 
@@ -117,9 +120,11 @@ function luaPreparers.prepareSavePoint(env, func)
     celesteMod.Logger.Error("Bosses Helper", "Failed to load on save point function in Lua: " .. onTalk)
     return success
 end
+
 --#endregion
 
 --#region Lua Data Getters
+
 local function readFile(filename, modName)
     return getMod(modName).Code.Helpers.LuaBossHelper.GetFileContent(filename)
 end
@@ -161,6 +166,7 @@ local function getLuaData(filename, data, preparationFunc)
 end
 
 --#region Getters
+
 ---@type LuaDataGetter
 function cutsceneHelper.getCutsceneData(filename, data)
     return getLuaData(filename, data, luaPreparers.prepareCutscene)
@@ -185,6 +191,7 @@ end
 function cutsceneHelper.getSavePointData(filename, data)
     return getLuaData(filename, data, luaPreparers.prepareSavePoint)
 end
+
 --#endregion
 
 --#endregion
