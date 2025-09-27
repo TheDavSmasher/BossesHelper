@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -126,15 +127,31 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			Tween.Position(self, target, time, easer);
 		}
 
-		public static void PositionTweenC(this Entity self, Vector2 target, float time, Ease.Easer easer = null)
+		public static void PositionTween(
+			this Actor self, Vector2 target, float time, bool actNaive = false,
+			Collision collisionH = null, Collision collisionV = null, Ease.Easer easer = null
+		)
 		{
 			Vector2 startPosition = self.Position;
 			Tween tween = Tween.Create(Tween.TweenMode.Oneshot, easer, time, start: true);
 			tween.OnUpdate = t =>
 			{
-				self.Position = Vector2.Lerp(startPosition, target, t.Eased);
+				Vector2 delta = Vector2.Lerp(startPosition, target, t.Eased) - self.Position;
+				if (actNaive)
+				{
+					self.NaiveMove(delta);
+				}
+				else
+				{
+					self.Move(delta, collisionV, collisionH);
+				}
 			};
 			self.Add(tween);
+		}
+
+		public static void PositionTween(this BossActor self, Vector2 target, float time, bool actNaive = false, Ease.Easer easer = null)
+		{
+			self.PositionTween(target, time, actNaive, self.OnCollideH, self.OnCollideV, easer);
 		}
 
 		public static void ChangeTagState(this Entity entity, int tag, bool state)
