@@ -165,8 +165,9 @@ function helpers.getEnum(enum, value)
 end
 
 --- Pause code exection for duration seconds.
----@param duration float|IEnumerator? Duration to wait (in seconds).
----@return float|IEnumerator?
+---@param duration? float Duration to wait (in seconds).
+---@return float?
+---@overload fun(routine: IEnumerator): IEnumerator
 function helpers.wait(duration)
     return coroutine.yield(duration)
 end
@@ -193,8 +194,9 @@ local getSession = helpers.getSession
 
 --- Display textbox with dialog.
 ---@param dialog string Dialog ID used for the conversation.
+---@return IEnumerator
 function helpers.say(dialog)
-    wait(_celeste.Textbox.Say(tostring(dialog)))
+    return wait(_celeste.Textbox.Say(tostring(dialog)))
 end
 
 --- Display minitextbox with dialog.
@@ -360,8 +362,9 @@ end
 ---@default 1.0
 ---@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
 ---@default false
+---@return IEnumerator
 function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
-    wait(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
+    return wait(player:DummyWalkTo(x, walkBackwards or false, speedMultiplier or 1, keepWalkingIntoWalls or false))
 end
 
 --- Player walks x pixels from current position.
@@ -372,22 +375,25 @@ end
 ---@default 1.0
 ---@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
 ---@default false
+---@return IEnumerator
 function helpers.walk(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
-    helpers.walkTo(player.Position.X + x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
+    return helpers.walkTo(player.Position.X + x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
 end
 
 --- Player runs to the given X coordinate. This is in pixels and uses map based coordinates.
 ---@param x float X coordinate to run to.
 ---@param fastAnimation boolean Whether this should use the fast animation or not.
+---@return IEnumerator
 function helpers.runTo(x, fastAnimation)
-    wait(player:DummyRunTo(x, fastAnimation or false))
+    return wait(player:DummyRunTo(x, fastAnimation or false))
 end
 
 --- Player runs x pixels from current position.
 ---@param x float X offset for where player should run.
 ---@param fastAnimation boolean Whether this should use the fast animation or not.
+---@return IEnumerator
 function helpers.run(x, fastAnimation)
-    helpers.runTo(player.Position.X + x, fastAnimation)
+    return helpers.runTo(player.Position.X + x, fastAnimation)
 end
 
 --- Kills the player.
@@ -993,8 +999,9 @@ end
 
 ---Play an animation on the Boss's given sprite and wait for it to complete one full cycle.
 ---@param anim string The animation to play
+---@return IEnumerator
 function helpers.playAndWaitPuppetAnim(anim)
-    wait(celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PlayAnim(puppet.Sprite, anim))
+    return wait(celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PlayAnim(puppet.Sprite, anim))
 end
 
 ---Get a random float based on the boss's random seed.
@@ -1648,8 +1655,9 @@ end
 ---Display textbox with dialog. Any provided functions will be passed as Triggers accessible to Dialog.txt triggers.
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
+---@return IEnumerator
 function helpers.sayExt(dialog, ...)
-    wait(bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.Say(tostring(dialog), {...}))
+    return wait(bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
