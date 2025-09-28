@@ -6,7 +6,7 @@ local cutsceneHelper = {}
 local celesteMod = require("#celeste.mod")
 
 local function getMod(modName)
-    return getMod(modName) --[[@as Celeste.Mod.BossesHelper]]
+    return celesteMod[modName] --[[@as Celeste.Mod.BossesHelper]]
 end
 
 --#region Coroutine
