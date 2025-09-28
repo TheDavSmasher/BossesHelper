@@ -73,6 +73,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return LoadCommand(filename, self.Command, passedVals);
 		}
 
+		private static LuaFunction GetCommand(string command)
+			=> cutsceneHelper[command] as LuaFunction;
+
 		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
 		{
 			passedVals ??= [];
@@ -82,8 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
 				try
 				{
-					if ((cutsceneHelper[command.Name] as LuaFunction)
-						.Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
+					if (GetCommand(command.Name).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}
