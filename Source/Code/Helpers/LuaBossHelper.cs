@@ -22,7 +22,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	internal static class LuaBossHelper
 	{
-		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/Assets/LuaBossHelper";
+		private static readonly string FilesPath = "Assets/LuaBossHelper";
+
+		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
 
 		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
 
@@ -31,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static void WarmUp()
 		{
 			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-			foreach (var func in LoadCommand("Assets/LuaBossHelper/warmup_cutscene", ("getCutsceneData", 2)))
+			foreach (var func in LoadCommand($"{FilesPath}/warmup_cutscene", ("getCutsceneData", 2)))
 				func.Call();
 		}
 
