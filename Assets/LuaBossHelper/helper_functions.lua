@@ -1413,7 +1413,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-    return bossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -1649,7 +1649,7 @@ end
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
 function helpers.sayExt(dialog, ...)
-    wait(bossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+    wait(bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
@@ -1730,7 +1730,7 @@ end
 ---@param func fun() The function to execute. Takes no parameters.
 ---@param delay float The time in seconds the function will be called after.
 function helpers.doMethodAfterDelay(func, delay)
-    bossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
+    bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.DoMethodAfterDelay(func, delay)
 end
 
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
