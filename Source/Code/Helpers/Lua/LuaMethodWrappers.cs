@@ -4,6 +4,8 @@ using Monocle;
 using NLua;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
@@ -432,6 +434,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				}
 				level.Wipe?.Cancel();
 			};
+		}
+		#endregion
+
+		#region Miscellaneous
+		public static IEnumerable<T> ToType<T>(this LuaTable table) => table.Values.OfType<T>();
+
+		public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
+		{
+			return new([.. luaTable.ToType<Collider>()]);
+		}
+
+		public static IEnumerator Say(string dialog, LuaTable luaEvents)
+		{
+			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaFuncCoroutine(func);
+			return Textbox.Say(dialog, [.. luaEvents.ToType<LuaFunction>().Select(Selector)]);
+		}
+
+		public static void DoMethodAfterDelay(LuaFunction func, float delay)
+		{
+			Alarm.Create(Alarm.AlarmMode.Oneshot, func.ToAction(), delay, true);
 		}
 		#endregion
 

@@ -101,27 +101,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return funcs;
 		}
 
-		public static IEnumerable<T> ToType<T>(this LuaTable table) => table.Values.OfType<T>();
-
-		public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
-		{
-			return new([.. luaTable.ToType<Collider>()]);
-		}
-
-		public static IEnumerator Say(string dialog, LuaTable luaEvents)
-		{
-			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaFuncCoroutine(func);
-			return Textbox.Say(dialog, [.. luaEvents.ToType<LuaFunction>().Select(Selector)]);
-		}
-
 		public static LuaTable GetEmptyTable()
 		{
 			return Everest.LuaLoader.Context.DoString("return {}").FirstOrDefault() as LuaTable;
-		}
-
-		public static void DoMethodAfterDelay(LuaFunction func, float delay)
-		{
-			Alarm.Create(Alarm.AlarmMode.Oneshot, func.ToAction(), delay, true);
 		}
 	}
 }
