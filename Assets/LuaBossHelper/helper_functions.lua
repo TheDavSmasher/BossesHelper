@@ -1741,6 +1741,14 @@ function helpers.doMethodAfterDelay(func, delay)
     bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.DoMethodAfterDelay(func, delay)
 end
 
+---Wait While the given predicate is true.
+---@param predicate fun(): bool The predicate to evaluate each frame.
+function helpers.waitWhile(predicate)
+    while predicate() do
+        wait()
+    end
+end
+
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
 ---@param name? string The name of the Easer to get.
 ---@param invert? boolean If the easer returned should be inverted.
