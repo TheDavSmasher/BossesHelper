@@ -1669,6 +1669,15 @@ function helpers.addSoundToBoss(event)
     return helpers.addSoundTo(event, puppet)
 end
 
+---Normalizes the vector provided to the given length or 1.
+---@param vector Vector2 The vector to normalize
+---@param length? float The new length of the vector or 1
+---@default 1
+---@return Vector2 normal The normalized vector2
+function helpers.normalize(vector, length)
+    return _monocle.Calc.SafeNormalize(vector, length or 1)
+end
+
 ---Get a new EntityData object
 ---@param position Vector2 The vector2 position the entityData will hold.
 ---@param width? float The width the EntityData will hold. Defaults to 0.
@@ -1755,16 +1764,6 @@ end
 ---@return float length The length of the vector2
 function helpers.v2L(vector)
     return vector:Length()
-end
-
----@deprecated Use Vector2:SafeNormalize instead
----Normalizes the vector provided to the given length or 1.
----@param vector Vector2 The vector to normalize
----@param length? float The new length of the vector or 1
----@default 1
----@return Vector2 normal The normalized vector2
-function helpers.normalize(vector, length)
-    return _monocle.Calc.SafeNormalize(vector, length or 1)
 end
 
 --#endregion
