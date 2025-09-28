@@ -5,6 +5,7 @@ using NLua;
 using System;
 using System.Collections;
 using System.Reflection;
+using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
@@ -36,6 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		private static readonly MethodInfo entityIsTracked = Tracker.GetType().GetMethod("IsEntityTracked");
 		#endregion
 
+		#region Types and Generics
 		public static Type GetTypeFromString(string name, string prefix = "Celeste.")
 		{
 			return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name);
@@ -45,6 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			return method.MakeGenericMethod(type).Invoke(on, null);
 		}
+		#endregion
 
 		#region Entities
 		public static object GetEntity(string name, string prefix = "Celeste.")
@@ -82,7 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getEntitiesMethodInfo, type) as IList);
+				return ListToLuaTable(Tracker.CallGeneric(getEntitiesMethodInfo, type) as IList);
 			}
 			catch (ArgumentNullException)
 			{
@@ -130,7 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Entities.CallGeneric(entitiesFindAll, type) as IList);
+				return ListToLuaTable(Entities.CallGeneric(entitiesFindAll, type) as IList);
 			}
 			catch (ArgumentNullException)
 			{
@@ -180,7 +183,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type) as IList);
+				return ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type) as IList);
 			}
 			catch (ArgumentNullException)
 			{
@@ -348,7 +351,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(entity.Components.CallGeneric(componentsGetAll, type) as IList);
+				return ListToLuaTable(entity.Components.CallGeneric(componentsGetAll, type) as IList);
 			}
 			catch (ArgumentNullException)
 			{
@@ -372,6 +375,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		}
 		#endregion
 
+		#region Teleports
 		public static void TeleportTo(Scene scene, Player player, string room, Player.IntroTypes introType = Player.IntroTypes.Transition, Vector2? nearestSpawn = null)
 		{
 			if (scene is Level level)
@@ -429,6 +433,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				level.Wipe?.Cancel();
 			};
 		}
+		#endregion
 
 		#region Entity Collider Creator
 		/*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
