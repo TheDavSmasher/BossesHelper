@@ -13,8 +13,8 @@ local _monocle = require("#monocle")
 ---@module "Celeste"
 local _celeste = require("#celeste")
 
----@module "Microsoft.XNA.Framework"
-local _framework = require("#microsoft.xna.framework")
+---@module "Microsoft.XNA.Framework.Vector2"
+local _vector2 = require("#microsoft.xna.framework.vector2")
 
 helpers.monocle = _monocle
 helpers.engine = _monocle.Engine
@@ -53,19 +53,16 @@ local luanet = _G.luanet
 ---@param y float
 ---@return Vector2
 ---@overload fun(x: table): Vector2
----@overload fun(x: userdata): userdata
 ---@overload fun(x: Vector2): Vector2
 function helpers.vector2(x, y)
-    local typ = type(x)
+    if type(x) == "table" and not y then
+        return _vector2(x[1], x[2])
 
-    if typ == "table" and not y then
-        return _framework.Vector2(x[1], x[2])
-
-    elseif typ == "userdata" and not y then
-        return x
+    elseif type(x) == "userdata" and not y then
+        return x --[[@as Vector2]]
 
     else
-        return _framework.Vector2(x, y)
+        return _vector2(x, y)
     end
 end
 
