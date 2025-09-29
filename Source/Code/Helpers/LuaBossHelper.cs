@@ -73,7 +73,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return LoadCommand(filename, self.Command, passedVals);
 		}
 
-		private static LuaFunction GetCommand(string command)
+		private static LuaPreparer GetCommand(string command)
 			=> cutsceneHelper.Commands[command];
 
 		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
