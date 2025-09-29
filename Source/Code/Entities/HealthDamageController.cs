@@ -103,7 +103,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					Celeste.Freeze(0.05f);
 					yield return null;
 					Vector2 to = new(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
-					Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, delegate (Tween t)
+					Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, t =>
 					{
 						Vector2 val = from + (to - from) * t.Eased;
 						if (Scene.GetPlayer() is Player player)
@@ -128,7 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					}
 				}
 				int times = 1;
-				Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, HealthData.damageCooldown, Ease.CubeOut, delegate
+				Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, HealthData.damageCooldown, Ease.CubeOut, _ =>
 				{
 					if (Scene.OnInterval(0.02f))
 					{

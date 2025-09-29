@@ -382,7 +382,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			if (scene is Level level)
 			{
-				level.OnEndOfFrame += delegate
+				level.OnEndOfFrame += () =>
 				{
 					level.TeleportTo(player, room, introType, nearestSpawn);
 				};
@@ -403,7 +403,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				player.Hair.MoveHairBy(vector);
 				return;
 			}
-			level.OnEndOfFrame += delegate
+			level.OnEndOfFrame += () =>
 			{
 				Vector2 levelOffset = level.LevelOffset;
 				Vector2 vector2 = player.Position - level.LevelOffset;
