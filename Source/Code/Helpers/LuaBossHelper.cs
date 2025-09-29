@@ -71,8 +71,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return LoadCommand(filename, self.Command, passedVals);
 		}
 
-		private static LuaPreparers Commands => cutsceneHelper.Commands;
-
 		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
 		{
 			passedVals ??= [];
@@ -83,7 +81,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				try
 				{
 					if (GetFileContent(filename) is string content && !content.IsWhiteSpace() &&
-						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), Commands[command]) is object[] array)
+						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), command.Name) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}
