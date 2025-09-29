@@ -37,11 +37,11 @@ end
 
 --#region Lua Preparers
 
----@class Preparers : { [string]: LuaPreparer }
-local luaPreparers = {}
+---@class Preparers
+cutsceneHelper.luaPreparers = {}
 
 ---@type LuaPreparer
-function luaPreparers.prepareCutscene(env, func)
+function cutsceneHelper.luaPreparers.getCutsceneData(env, func)
     local success, onBegin, onEnd = pcall(func)
 
     if success then
@@ -56,7 +56,7 @@ function luaPreparers.prepareCutscene(env, func)
 end
 
 ---@type LuaPreparer
-function luaPreparers.prepareAttack(env, func)
+function cutsceneHelper.luaPreparers.getAttackData(env, func)
     local success, onBegin, onEnd, onComplete, onInterrupt, onDeath = pcall(func)
 
     if success then
@@ -74,7 +74,7 @@ function luaPreparers.prepareAttack(env, func)
 end
 
 ---@type LuaPreparer
-function luaPreparers.prepareInterruption(env, func)
+function cutsceneHelper.luaPreparers.getInterruptData(env, func)
     local success, onHit, onContact, onDash, onBounce, onLaser, setup = pcall(func)
 
     if success then
@@ -93,7 +93,7 @@ function luaPreparers.prepareInterruption(env, func)
 end
 
 ---@type LuaPreparer
-function luaPreparers.prepareFunction(env, func)
+function cutsceneHelper.luaPreparers.getFunctionData(env, func)
     local success, onDamage, onRecover = pcall(func)
 
     if success then
@@ -108,7 +108,7 @@ function luaPreparers.prepareFunction(env, func)
 end
 
 ---@type LuaPreparer
-function luaPreparers.prepareSavePoint(env, func)
+function cutsceneHelper.luaPreparers.getSavePointData(env, func)
     local success, onTalk = pcall(func)
 
     if success then
@@ -149,7 +149,7 @@ local function getLuaEnv(data)
 end
 
 ---@type LuaGetData
-local function getLuaData(filename, data, preparationFunc)
+function cutsceneHelper.getLuaData(filename, data, preparationFunc)
     preparationFunc = preparationFunc or function() end
 
     local modName = data.modMetaData.Name
@@ -164,35 +164,6 @@ local function getLuaData(filename, data, preparationFunc)
         return env, preparationFunc(env, func)
     end
 end
-
---#region Getters
-
----@type LuaDataGetter
-function cutsceneHelper.getCutsceneData(filename, data)
-    return getLuaData(filename, data, luaPreparers.prepareCutscene)
-end
-
----@type LuaDataGetter
-function cutsceneHelper.getAttackData(filename, data)
-    return getLuaData(filename, data, luaPreparers.prepareAttack)
-end
-
----@type LuaDataGetter
-function cutsceneHelper.getInterruptData(filename, data)
-    return getLuaData(filename, data, luaPreparers.prepareInterruption)
-end
-
----@type LuaDataGetter
-function cutsceneHelper.getFunctionData(filename, data)
-    return getLuaData(filename, data, luaPreparers.prepareFunction)
-end
-
----@type LuaDataGetter
-function cutsceneHelper.getSavePointData(filename, data)
-    return getLuaData(filename, data, luaPreparers.prepareSavePoint)
-end
-
---#endregion
 
 --#endregion
 
