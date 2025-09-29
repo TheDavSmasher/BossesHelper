@@ -148,7 +148,11 @@ local function getLuaEnv(data)
     return env
 end
 
----@type LuaGetData
+---@param filename string
+---@param data InjectedData
+---@param preparationFunc LuaPreparer
+---@return table?
+---@return function|boolean ...
 function cutsceneHelper.getLuaData(filename, data, preparationFunc)
     preparationFunc = preparationFunc or function() end
 
