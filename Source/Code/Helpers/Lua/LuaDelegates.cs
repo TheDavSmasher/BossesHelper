@@ -84,7 +84,26 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		#endregion
 
 		#region To Func
-		public static Func<T> ToFunc<T>(this LuaFunction function) => () => (T)function.Call().FirstOrDefault();
+		public static Func<TOut> ToFunc<TOut>(this LuaFunction function) =>
+			() => (TOut)function.Call().FirstOrDefault();
+
+		public static Func<T, TOut> ToFunc<T, TOut>(this LuaFunction function) =>
+			(t) => (TOut)function.Call(t).FirstOrDefault();
+
+		public static Func<T1, T2, TOut> ToFunc<T1, T2, TOut>(this LuaFunction function) =>
+			(t1, t2) => (TOut)function.Call(t1, t2).FirstOrDefault();
+
+		public static Func<T1, T2, T3, TOut> ToFunc<T1, T2, T3, TOut>(this LuaFunction function) =>
+			(t1, t2, t3) => (TOut)function.Call(t1, t2, t3).FirstOrDefault();
+
+		public static Func<T1, T2, T3, T4, TOut> ToFunc<T1, T2, T3, T4, TOut>(this LuaFunction function) =>
+			(t1, t2, t3, t4) => (TOut)function.Call(t1, t2, t3, t4).FirstOrDefault();
+
+		public static Func<T1, T2, T3, T4, T5, TOut> ToFunc<T1, T2, T3, T4, T5, TOut>(this LuaFunction function) =>
+			(t1, t2, t3, t4, t5) => (TOut)function.Call(t1, t2, t3, t4, t5).FirstOrDefault();
+
+		public static Func<T1, T2, T3, T4, T5, T6, TOut> ToFunc<T1, T2, T3, T4, T5, T6, TOut>(this LuaFunction function) =>
+			(t1, t2, t3, t4, t5, t6) => (TOut)function.Call(t1, t2, t3, t4, t5, t6).FirstOrDefault();
 		#endregion
 	}
 }
