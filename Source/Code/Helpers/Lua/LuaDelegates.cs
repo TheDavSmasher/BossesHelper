@@ -1,4 +1,5 @@
-﻿using NLua;
+﻿using Monocle;
+using NLua;
 using System;
 using System.Linq;
 
@@ -6,19 +7,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	internal static class LuaDelegates
 	{
-		public delegate void ParamAction(params object[] args);
+		public static Collision ToCollision(this LuaFunction f)
+			=> data => f.Call(data);
 
-		public static ParamAction LuaFunctionToAction(LuaFunction func)
-		{
-			return args => func.Call(args);
-		}
+		public static Ease.Easer ToEaser(this LuaFunction f)
+			=> t => (float) f.Call(t)[0];
 
-		public delegate object ParamFunc(params object[] args);
-
-		public static ParamFunc LuaFunctionToFunc(LuaFunction func)
-		{
-			return args => func.Call(args).First();
-		}
+		public static DashCollision ToDashCollision(this LuaFunction f)
+			=> (player, direction) => (DashCollisionResults) f.Call(player, direction)[0];
 
 		#region Lua Structure
 		public abstract class LuaWrapper<T>(T _base) where T : LuaBase
