@@ -20,6 +20,33 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			return args => func.Call(args).First();
 		}
 
+		#region Table Structure
+		public class LuaPreparers(LuaTable baseTable)
+		{
+			private readonly LuaTable BaseTable = baseTable;
+
+			public LuaFunction this[string key]
+				=> BaseTable[key] as LuaFunction;
+
+			public static implicit operator LuaPreparers(LuaTable baseTable) => new(baseTable);
+		}
+
+		public class CutsceneHelper(LuaTable baseTable)
+		{
+			private readonly LuaTable BaseTable = baseTable;
+
+			public object[] GetLuaData(string filename, LuaTable data, LuaFunction preparer)
+				=> (BaseTable["getLuaData"] as LuaFunction).Call(filename, data, preparer);
+
+			public LuaTable GetProxyTable(LuaFunction func)
+				=> (BaseTable["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
+
+			public LuaPreparers Commands => BaseTable["luaPreparers"] as LuaTable;
+
+			public static implicit operator CutsceneHelper(LuaTable baseTable) => new(baseTable);
+		}
+		#endregion
+
 		#region To Action
 		public static Action ToAction(this LuaFunction function) =>
 			() => function.Call();

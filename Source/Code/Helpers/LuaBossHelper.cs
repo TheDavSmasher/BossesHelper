@@ -1,11 +1,11 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
-using Monocle;
+﻿using Monocle;
 using NLua;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Celeste.Mod.BossesHelper.Code.Helpers.Lua.LuaDelegates;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
 
-		public static readonly LuaTable cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+		public static readonly CutsceneHelper cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
 
 		public static void WarmUp()
 		{
@@ -74,7 +74,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 
 		private static LuaFunction GetCommand(string command)
-			=> cutsceneHelper[command] as LuaFunction;
+			=> cutsceneHelper.Commands[command];
 
 		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
 		{
@@ -85,7 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
 				try
 				{
-					if (GetCommand(command.Name).Call(filename, DictionaryToLuaTable(passedVals)) is object[] array)
+					if (cutsceneHelper.GetLuaData(filename, DictionaryToLuaTable(passedVals), GetCommand(command.Name)) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}

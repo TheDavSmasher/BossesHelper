@@ -1,12 +1,10 @@
 ﻿using NLua;
 using System;
-using System.Linq;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	public class LuaFuncCoroutine(LuaFunction func)
-		: LuaCoroutine((LuaBossHelper.cutsceneHelper["getProxyTable"] as LuaFunction)
-			.Call(func).ElementAtOrDefault(0) as LuaTable)
+		: LuaCoroutine(LuaBossHelper.cutsceneHelper.GetProxyTable(func))
 	{
 		private object _Current;
 
