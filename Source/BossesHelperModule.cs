@@ -308,15 +308,6 @@ public partial class BossesHelperModule : EverestModule
 	}
 	#endregion
 
-	public static EntityData MakeEntityData()
-	{
-		EntityData entityData = new()
-		{
-			Values = []
-		};
-		return entityData;
-	}
-
 	public static void GiveIFrames(float time)
 	{
 		Player player = Engine.Scene.GetPlayer();

@@ -9,6 +9,15 @@ namespace Celeste.Mod.BossesHelper
 	public partial class BossesHelperModule
 	{
 		public static int PlayerHealth => HealthData.isEnabled ? Session.currentPlayerHealth : -1;
+
+		public static EntityData MakeEntityData()
+		{
+			EntityData entityData = new()
+			{
+				Values = []
+			};
+			return entityData;
+		}
 	}
 
 	namespace Code.Entities
