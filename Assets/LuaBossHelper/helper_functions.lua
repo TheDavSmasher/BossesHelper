@@ -141,7 +141,7 @@ end
 
 --- Put debug message in the Celeste console.
 ---@param message any The debug message.
----@param tag string? The tag in the console.
+---@param tag? string The tag in the console.
 ---@default "Bosses Helper"
 function helpers.log(message, tag)
     celesteMod.Logger.Info(tag or "Bosses Helper", tostring(message))
@@ -335,7 +335,7 @@ end
 --- Display postcard.
 ---@param dialog string Dialog ID or message to show in the postcard.
 ---@param sfxIn string|int effect when opening the postcard or area ID.
----@param sfxOut string? Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
+---@param sfxOut? string Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
 ---@default nil
 function helpers.postcard(dialog, sfxIn, sfxOut)
     local message = _celeste.Dialog.Get(dialog) or dialog
@@ -356,11 +356,11 @@ end
 
 --- Player walks to the given X coordinate. This is in pixels and uses map based coordinates.
 ---@param x float X coordinate to walk to.
----@param walkBackwards boolean? If the player should visually be walking backwards.
+---@param walkBackwards? boolean If the player should visually be walking backwards.
 ---@default false
----@param speedMultiplier float? How fast the player should move. Walking is considered a speed multiplier of 1.0.
+---@param speedMultiplier? float How fast the player should move. Walking is considered a speed multiplier of 1.0.
 ---@default 1.0
----@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
+---@param keepWalkingIntoWalls? boolean If the player should keep walking into walls.
 ---@default false
 ---@return IEnumerator
 function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
@@ -369,11 +369,11 @@ end
 
 --- Player walks x pixels from current position.
 ---@param x float X offset for where player should walk.
----@param walkBackwards boolean? If the player should visually be walking backwards.
+---@param walkBackwards? boolean If the player should visually be walking backwards.
 ---@default false
----@param speedMultiplier float? How fast the player should move. Walking is considered a speed multiplier of 1.0.
+---@param speedMultiplier? float How fast the player should move. Walking is considered a speed multiplier of 1.0.
 ---@default 1.0
----@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
+---@param keepWalkingIntoWalls? boolean If the player should keep walking into walls.
 ---@default false
 ---@return IEnumerator
 function helpers.walk(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
@@ -397,11 +397,11 @@ function helpers.run(x, fastAnimation)
 end
 
 --- Kills the player.
----@param direction table|Vector2? The direction the player dies from.
+---@param direction? table|Vector2 The direction the player dies from.
 ---@default {0, 0}
----@param evenIfInvincible boolean? If the player should die even if they are invincible (assist mode).
+---@param evenIfInvincible? boolean If the player should die even if they are invincible (assist mode).
 ---@default false
----@param registerDeathInStats boolean? If it should count as a death in journal.
+---@param registerDeathInStats? boolean If it should count as a death in journal.
 ---@default true
 function helpers.die(direction, evenIfInvincible, registerDeathInStats)
     if player and not player.Dead then
@@ -411,7 +411,7 @@ end
 
 --- Sets the current player state.
 ---@param state string|int Name of the state or the state float.
----@param locked boolean? If this should prevent the player for changing state afterwards.
+---@param locked? boolean If this should prevent the player for changing state afterwards.
 ---@default false
 function helpers.setPlayerState(state, locked)
     if type(state) == "string" then
@@ -446,7 +446,7 @@ function helpers.enableMovement()
 end
 
 --- Make the player jump.
----@param duration float? How long the "jump button" would be held (in seconds).
+---@param duration? float How long the "jump button" would be held (in seconds).
 ---@default 2.0
 function helpers.jump(duration)
     player:Jump(true, true)
@@ -463,8 +463,8 @@ end
 
 --- Changes the room the game thinks the player is in.
 ---@param name string Room name.
----@param spawnX float? X coordinate for new spawn point, by default it uses bottom left of room.
----@param spawnY float? Y coordinate for new spawn point, by default it uses bottom left of room.
+---@param spawnX? float X coordinate for new spawn point, by default it uses bottom left of room.
+---@param spawnY? float Y coordinate for new spawn point, by default it uses bottom left of room.
 function helpers.changeRoom(name, spawnX, spawnY)
     local level = getLevel()
 
@@ -484,7 +484,7 @@ end
 --- Sets the player position to the absolute coordinates.
 ---@param x float Target x coordinate.
 ---@param y float Target y coordinate.
----@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
+---@param room? string What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 ---@overload fun(x: float, y: float, room?: string, introType?: string|IntroTypes)
 ---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
@@ -520,8 +520,8 @@ end
 --- Teleport the player to (x, y) pixels from current position.
 ---@param x float X offset on X axis.
 ---@param y float Y offset on Y axis.
----@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType any? intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
+---@param room? string What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
+---@param introType? any intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
 function helpers.teleport(x, y, room, introType)
     helpers.teleportTo(player.Position.X + x, player.Position.Y + y, room, introType)
 end
@@ -530,8 +530,8 @@ end
 --- Teleport player to (x, y) position, in pixels.
 --- Room name as only argument will seamlessly teleport to that room at the same relative position.
 ---@param x float|string X offset on X axis if float. Target room if string.
----@param y float? Y offset on Y axis.
----@param room string? What room the game should attempt to load. By default same room.
+---@param y? float Y offset on Y axis.
+---@param room? string What room the game should attempt to load. By default same room.
 ---@overload fun(x: string)
 function helpers.instantTeleportTo(x, y, room)
     if x and y then ---@cast x float
@@ -549,7 +549,7 @@ end
 --- Room name as only argument will seamlessly teleport to that room at the same relative position.
 ---@param x float X offset on X axis if float. Target room if string.
 ---@param y float Y offset on Y axis.
----@param room string? What room the game should attempt to load. By default same room.
+---@param room? string What room the game should attempt to load. By default same room.
 ---@overload fun(x: string)
 function helpers.instantTeleport(x, y, room)
     if x and y then
@@ -561,11 +561,11 @@ function helpers.instantTeleport(x, y, room)
 end
 
 --- Completes the level and returns the player to the chapter screen.
----@param spotlightWipe boolean? Whether this should be a spotlight wipe or not.
+---@param spotlightWipe? boolean Whether this should be a spotlight wipe or not.
 ---@default false
----@param skipScreenWipe boolean? Whether this wipe is skipped or not.
+---@param skipScreenWipe? boolean Whether this wipe is skipped or not.
 ---@default false
----@param skipCompleteScreen boolean? Whether this skips the complete screen.
+---@param skipCompleteScreen? boolean Whether this skips the complete screen.
 ---@default false
 function helpers.completeArea(spotlightWipe, skipScreenWipe, skipCompleteScreen)
     getLevel():CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
@@ -573,7 +573,7 @@ end
 
 --- Plays a sound.
 ---@param name string Event for the song.
----@param position Vector2? Where the sound is played from.
+---@param position? Vector2 Where the sound is played from.
 ---@return EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
@@ -586,7 +586,7 @@ end
 
 --- Gets all tracked entities by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return table entities Tracked entities of given class.
 function helpers.getEntities(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
@@ -594,7 +594,7 @@ end
 
 --- Gets the first tracked entity by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return any entity First tracked entity of given class.
 function helpers.getEntity(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
@@ -602,7 +602,7 @@ end
 
 --- Gets all entities by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return table entities All entities of given class.
 function helpers.getAllEntities(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
@@ -610,7 +610,7 @@ end
 
 --- Gets the first entity by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return any entity First entity of given class.
 function helpers.getFirstEntity(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
@@ -629,7 +629,7 @@ end
 
 --- Play and update the current music track.
 ---@param track string Name of song, same as in Ahorn's room window.
----@param progress int? Which progress level the music should be at. Leave empty for no change.
+---@param progress? int Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
     getSession().Audio.Music.Event = _celeste.SFX.EventnameByHandle(track)
 
@@ -676,9 +676,9 @@ function helpers.setMusicLayer(layer, value)
 end
 
 --- Attempt to set the player spawnpoint.
----@param target table? Where it should attempt to set the spawnpoint from.
+---@param target? table Where it should attempt to set the spawnpoint from.
 ---@default {0, 0}
----@param absolute boolean? If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
+---@param absolute? boolean If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
 ---@default false
 function helpers.setSpawnPoint(target, absolute)
     local session = getSession()
@@ -719,7 +719,7 @@ function helpers.setInventory(inventory)
 end
 
 --- Get player inventory
----@param inventory string? If name is given get inventory by name, otherwise the current player inventory
+---@param inventory? string If name is given get inventory by name, otherwise the current player inventory
 ---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
@@ -782,7 +782,7 @@ end
 -- TODO - Unhaunt, the index needs to be handled
 ---@param x float
 ---@param y float
----@param relativeToPlayer boolean?
+---@param relativeToPlayer? boolean
 ---@return BadelineOldsite
 function helpers.spawnBadeline(x, y, relativeToPlayer)
     local position = (relativeToPlayer or relativeToPlayer == nil) and vector2(player.Position.X + x, player.Position.Y + y) or vector2(x, y)
@@ -832,7 +832,7 @@ end
 
 --- Changes the current colorgrade to the new one.
 ---@param colorGrade string Name of the color grade
----@param instant boolean? Wheter the color grade should instantly change or gradually change
+---@param instant? boolean Wheter the color grade should instantly change or gradually change
 ---@default false
 function helpers.setColorGrade(colorGrade, instant)
     if instant then
@@ -846,9 +846,9 @@ end
 --- Bubble flies (cassette collection) to the target. This is in pixels and uses map based coordinates.
 ---@param endX float X coordinate for end point.
 ---@param endY float Y coordinate for end point.
----@param controllX float? X coordinate for controll point.
+---@param controllX? float X coordinate for controll point.
 ---@default endX
----@param controllY float? Y coordinate for controll point.
+---@param controllY? float Y coordinate for controll point.
 ---@default endY
 function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
     playSound("event:/game/general/cassette_bubblereturn", vector2(getLevel().Camera.Position.X + 160, getLevel().Camera.Position.Y + 90))
@@ -864,9 +864,9 @@ end
 --- Bubble flies (cassette collection) to the target relative to player. Values are in pixels and not tiles.
 ---@param endX float X offset for end point.
 ---@param endY float Y offset for end point.
----@param controllX float? X offset for controll point.
+---@param controllX? float X offset for controll point.
 ---@default endX
----@param controllY float? Y offset for controll point.
+---@param controllY? float Y offset for controll point.
 ---@default endY
 function helpers.cassetteFly(endX, endY, controllX, controllY)
     local playerX = player.Position.X
