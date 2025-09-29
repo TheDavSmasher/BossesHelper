@@ -7,6 +7,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	internal static class LuaDelegates
 	{
+		#region To Celeste Delegates
 		public static Collision ToCollision(this LuaFunction f)
 			=> data => f.Call(data);
 
@@ -15,6 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static DashCollision ToDashCollision(this LuaFunction f)
 			=> (player, direction) => (DashCollisionResults) f.Call(player, direction)[0];
+		#endregion
 
 		#region To Action
 		public static Action ToAction(this LuaFunction function) =>
