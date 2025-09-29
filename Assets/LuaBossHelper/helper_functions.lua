@@ -1652,6 +1652,27 @@ end
 
 --#region Misc. Functions
 
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_Ease.Easer
+---@return Ease.Easer
+function helpers.funcToEaser(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToEaser(func)
+end
+
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_Collision
+---@return Collision
+function helpers.funcToCollision(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToCollision(func)
+end
+
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_DashCollision
+---@return DashCollision
+function helpers.funcToDashCollision(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToDashCollision(func)
+end
+
 ---Display textbox with dialog. Any provided functions will be passed as Triggers accessible to Dialog.txt triggers.
 ---@param dialog string Dialog ID used for the conversation.
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
