@@ -846,15 +846,15 @@ end
 --- Bubble flies (cassette collection) to the target. This is in pixels and uses map based coordinates.
 ---@param endX float X coordinate for end point.
 ---@param endY float Y coordinate for end point.
----@param controllX? float X coordinate for controll point.
+---@param controlX? float X coordinate for control point.
 ---@default endX
----@param controllY? float Y coordinate for controll point.
+---@param controlY? float Y coordinate for control point.
 ---@default endY
-function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
+function helpers.cassetteFlyTo(endX, endY, controlX, controlY)
     playSound("event:/game/general/cassette_bubblereturn", vector2(getLevel().Camera.Position.X + 160, getLevel().Camera.Position.Y + 90))
 
-    if endX and endY and controllX and controllY then
-        player:StartCassetteFly(vector2(endX, endY), vector2(controllX, controllY))
+    if endX and endY and controlX and controlY then
+        player:StartCassetteFly(vector2(endX, endY), vector2(controlX, controlY))
 
     else
         player:StartCassetteFly(vector2(endX, endY), vector2(endX, endY))
@@ -864,18 +864,18 @@ end
 --- Bubble flies (cassette collection) to the target relative to player. Values are in pixels and not tiles.
 ---@param endX float X offset for end point.
 ---@param endY float Y offset for end point.
----@param controllX? float X offset for controll point.
+---@param controlX? float X offset for control point.
 ---@default endX
----@param controllY? float Y offset for controll point.
+---@param controlY? float Y offset for control point.
 ---@default endY
-function helpers.cassetteFly(endX, endY, controllX, controllY)
+function helpers.cassetteFly(endX, endY, controlX, controlY)
     local playerX = player.Position.X
     local playerY = player.Position.Y
 
-    controllX = controllX or endX
-    controllY = controllY or endY
+    controlX = controlX or endX
+    controlY = controlY or endY
 
-    helpers.cassetteFlyTo(endX + playerX, endY + playerY, controllX + playerX, controllY + playerY)
+    helpers.cassetteFlyTo(endX + playerX, endY + playerY, controlX + playerX, controlY + playerY)
 end
 
 --- Set session level flag.
@@ -1083,7 +1083,7 @@ function helpers.forceNextAttackIndex(index)
     boss:ForceNextAttack(index)
 end
 
----Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
+---Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controler automatically when loaded back into the level.
 ---@param health int The health value to save and set back upon reload.
 ---@param index int The pattern index the boss should start with upon reload.
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
