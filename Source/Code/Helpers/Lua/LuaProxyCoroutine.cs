@@ -3,7 +3,7 @@ using System;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
-	public class LuaFuncCoroutine(LuaFunction func)
+	public class LuaProxyCoroutine(LuaFunction func)
 		: LuaCoroutine(LuaBossHelper.cutsceneHelper.GetProxyTable(func))
 	{
 		private object _Current;

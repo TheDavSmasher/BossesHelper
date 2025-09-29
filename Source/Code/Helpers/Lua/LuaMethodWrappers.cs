@@ -447,7 +447,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static IEnumerator Say(string dialog, LuaTable luaEvents)
 		{
-			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaFuncCoroutine(func);
+			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaProxyCoroutine(func);
 			return Textbox.Say(dialog, [.. luaEvents.ToType<LuaFunction>().Select(Selector)]);
 		}
 
