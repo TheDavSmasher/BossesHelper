@@ -140,7 +140,7 @@ function helpers.loadCelesteAsset(filename)
 end
 
 --- Put debug message in the Celeste console.
----@param message string The debug message.
+---@param message any The debug message.
 ---@param tag string? The tag in the console.
 ---@default "Bosses Helper"
 function helpers.log(message, tag)
@@ -382,7 +382,7 @@ end
 
 --- Player runs to the given X coordinate. This is in pixels and uses map based coordinates.
 ---@param x float X coordinate to run to.
----@param fastAnimation boolean Whether this should use the fast animation or not.
+---@param fastAnimation? boolean Whether this should use the fast animation or not.
 ---@return IEnumerator
 function helpers.runTo(x, fastAnimation)
     return wait(player:DummyRunTo(x, fastAnimation or false))
@@ -390,7 +390,7 @@ end
 
 --- Player runs x pixels from current position.
 ---@param x float X offset for where player should run.
----@param fastAnimation boolean Whether this should use the fast animation or not.
+---@param fastAnimation? boolean Whether this should use the fast animation or not.
 ---@return IEnumerator
 function helpers.run(x, fastAnimation)
     return helpers.runTo(player.Position.X + x, fastAnimation)
