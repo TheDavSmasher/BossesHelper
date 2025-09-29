@@ -125,10 +125,6 @@ end
 
 --#region Lua Data Getters
 
-local function readFile(filename, modName)
-    return getMod(modName).Code.Helpers.LuaBossHelper.GetFileContent(filename)
-end
-
 local function addHelperFunctions(modName, env)
     local helperContent = getMod(modName).Code.Helpers.LuaBossHelper.HelperFunctions
     local helperFunctions = load(helperContent, nil, nil, env)()
@@ -148,20 +144,18 @@ local function getLuaEnv(data)
     return env
 end
 
----@param filename string
+---@param content string
 ---@param data InjectedData
 ---@param preparationFunc LuaPreparer
 ---@return table?
 ---@return function|boolean ...
-function cutsceneHelper.getLuaData(filename, data, preparationFunc)
+function cutsceneHelper.getLuaData(content, data, preparationFunc)
     preparationFunc = preparationFunc or function() end
 
-    local modName = data.modMetaData.Name
     local env = getLuaEnv(data)
-    local content = readFile(filename, modName)
 
     if content then
-        addHelperFunctions(modName, env)
+        addHelperFunctions(data.modMetaData.Name, env)
 
         local func = load(content, nil, nil, env) --[[@as function]]
 

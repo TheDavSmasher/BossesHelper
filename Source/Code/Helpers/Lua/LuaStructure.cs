@@ -18,6 +18,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			public object[] Call(LuaTable env, LuaFunction loadFunc)
 				=> Base.Call(env, loadFunc);
 
+			public LuaFunction Func => Base;
+
 			public static implicit operator LuaPreparer(LuaFunction f) => new(f);
 		}
 		#endregion
@@ -35,8 +37,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public class CutsceneHelper(LuaTable _base) : TableWrapper(_base)
 		{
-			public object[] GetLuaData(string filename, LuaTable data, LuaPreparer preparer)
-				=> (Base["getLuaData"] as LuaFunction).Call(filename, data, preparer);
+			public object[] GetLuaData(string content, LuaTable data, LuaPreparer preparer)
+				=> (Base["getLuaData"] as LuaFunction).Call(content, data, preparer.Func);
 
 			public LuaTable GetProxyTable(LuaFunction func)
 				=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;

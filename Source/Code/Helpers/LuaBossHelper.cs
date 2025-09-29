@@ -82,7 +82,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
 				try
 				{
-					if (cutsceneHelper.GetLuaData(filename, passedVals.ToLuaTable(), Commands[command]) is object[] array)
+					if (GetFileContent(filename) is string content && !content.IsWhiteSpace() &&
+						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), Commands[command]) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}
