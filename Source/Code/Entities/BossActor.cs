@@ -3,9 +3,7 @@ using Monocle;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	public abstract class BossActor(Vector2 position, string spriteName, Vector2 spriteScale,
-		float maxFall, bool collidable, bool solidCollidable, float gravityMult, Collider collider = null)
-		: BossEntity(position, spriteName, spriteScale, collidable, collider)
+	public abstract class BossActor : BossEntity
 	{
 		public Vector2 Speed;
 
@@ -19,15 +17,30 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				field = value;
 				effectiveGravity = value * Gravity;
 			}
-		} = gravityMult;
+		}
 
-		public bool SolidCollidable = solidCollidable;
+		public bool SolidCollidable;
+
+		public Collision OnCollideH;
+
+		public Collision OnCollideV;
 
 		public bool Grounded => Speed.Y >= 0 && OnGround();
 
-		private readonly float MaxFall = maxFall;
+		private readonly float MaxFall;
 
 		private float effectiveGravity;
+
+		public BossActor(Vector2 position, string spriteName, Vector2 spriteScale,
+			float maxFall, bool collidable, bool solidCollidable, float gravityMult, Collider collider = null)
+			: base(position, spriteName, spriteScale, collidable, collider)
+		{
+			MaxFall = maxFall;
+			SolidCollidable = solidCollidable;
+			GravityMult = gravityMult;
+			OnCollideH = OnCollide_H;
+			OnCollideV = OnCollide_V;
+		}
 
 		public override void Update()
 		{
@@ -49,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			}
 		}
 
-		public void OnCollideH(CollisionData data)
+		public void OnCollide_H(CollisionData data)
 		{
 			if (data.Hit != null && data.Hit.OnCollide != null)
 			{
@@ -58,7 +71,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Speed.X = 0;
 		}
 
-		public void OnCollideV(CollisionData data)
+		public void OnCollide_V(CollisionData data)
 		{
 			if (data.Hit != null && data.Hit.OnCollide != null)
 			{
