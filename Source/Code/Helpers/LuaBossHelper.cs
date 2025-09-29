@@ -45,7 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return streamReader.ReadToEnd();
 		}
 
-		public static LuaTable DictionaryToLuaTable(IDictionary<object, object> dict)
+		public static LuaTable ToLuaTable(this IDictionary<object, object> dict)
 		{
 			LuaTable luaTable = GetEmptyTable();
 			foreach (KeyValuePair<object, object> item in dict)
@@ -55,7 +55,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return luaTable;
 		}
 
-		public static LuaTable ListToLuaTable(IList list)
+		public static LuaTable ToLuaTable(this IList list)
 		{
 			LuaTable luaTable = GetEmptyTable();
 			int num = 1;
@@ -85,7 +85,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				passedVals.Add("modMetaData", BossesHelperModule.Instance.Metadata);
 				try
 				{
-					if (cutsceneHelper.GetLuaData(filename, DictionaryToLuaTable(passedVals), GetCommand(command.Name)) is object[] array)
+					if (cutsceneHelper.GetLuaData(filename, passedVals.ToLuaTable(), GetCommand(command.Name)) is object[] array)
 					{
 						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
 					}
