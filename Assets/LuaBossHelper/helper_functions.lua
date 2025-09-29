@@ -486,6 +486,8 @@ end
 ---@param y float Target y coordinate.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
+---@overload fun(x: float, y: float, room?: string, introType?: string|IntroTypes)
+---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
         introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
@@ -764,7 +766,7 @@ end
 
 --- Set session flag.
 ---@param flag string Flag to set.
----@param value boolean State of flag.
+---@param value? boolean State of flag.
 function helpers.setFlag(flag, value)
     getSession():SetFlag(flag, value)
 end
@@ -1461,7 +1463,7 @@ local function killPlayer(entity, player)
 end
 
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
----@param checker fun() The function that will be called every frame to test its value.
+---@param checker fun(): bool The function that will be called every frame to test its value.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
 ---@param state? boolean The state the checker function's return value must match. Defaults to true.
@@ -1511,7 +1513,7 @@ end
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
----@param spriteName string The sprite the entity will use.
+---@param spriteName? string The sprite the entity will use.
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@default true
 ---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
@@ -1522,13 +1524,13 @@ end
 ---@default 1
 ---@return AttackEntity
 function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
-    return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+    return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName or '', xScale or 1, yScale or 1)
 end
 
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
----@param spriteName string The sprite the entity will use.
+---@param spriteName? string The sprite the entity will use.
 ---@param gravMult? float The multiplier to the Gravity constant the Actor should use. Defaults to 1.
 ---@default 1
 ---@param maxFall? float The fastest the Boss will fall naturally due to gravity. Defaults to 90.
@@ -1546,7 +1548,7 @@ end
 ---@return AttackActor
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
     return celesteMod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
-        startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
+        startSolidCollidable or startSolidCollidable == nil, spriteName or '', gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
 end
 
 --#endregion
