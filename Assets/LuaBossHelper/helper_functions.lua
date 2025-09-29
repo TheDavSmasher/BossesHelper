@@ -1194,39 +1194,6 @@ function helpers.keepSpeedDuring(time)
     return time
 end
 
----@enum Easers
-local easers = {
-    linear = ease.Linear,
-    sinein = ease.SineIn,
-    sineout = ease.SineOut,
-    sineinout = ease.SineInOut,
-    quadin = ease.QuadIn,
-    quadout = ease.QuadOut,
-    quadinout = ease.QuadInOut,
-    cubein = ease.CubeIn,
-    cubeout = ease.CubeOut,
-    cubeinout = ease.CubeInOut,
-    quintin = ease.QuintIn,
-    quintout = ease.QuintOut,
-    QuintInOut = ease.QuintInOut,
-    expoin = ease.ExpoIn,
-    expoout = ease.ExpoOut,
-    expoinout = ease.ExpoInOut,
-    backin = ease.BackIn,
-    backout = ease.BackOut,
-    backinout = ease.BackInOut,
-    bigbackin = ease.BigBackIn,
-    bigbackout = ease.BigBackOut,
-    bigbackinout = ease.BigBackInOut,
-    elasticin = ease.ElasticIn,
-    elasticout = ease.ElasticOut,
-    elasticinout = ease.ElasticInOut,
-    bouncein = ease.BounceIn,
-    bounceout = ease.BounceOut,
-    bounceinout = ease.BounceInOut,
-    default = nil
-}
-
 local function getEaser(easer, invert)
     if type(easer) == "string" then
         return helpers.getEaserByName(easer, invert)
@@ -1788,14 +1755,14 @@ function helpers.getEaserByName(name, invert)
         return nil
     end
     local value = string.lower(name)
-    local choice = easers[value]
+    local choice = ease[value]
     if choice then
         if invert or false then
             return ease.Invert(choice)
         end
         return choice
     else
-        return easers.default
+        return nil
     end
 end
 
