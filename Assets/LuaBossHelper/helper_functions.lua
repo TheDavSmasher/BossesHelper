@@ -419,7 +419,7 @@ function helpers.setPlayerState(state, locked)
             state = "St" .. state
         end
 
-        player.StateMachine.State = Player[state]
+        player.StateMachine.State = player[state]
 
     else
         player.StateMachine.State = state
