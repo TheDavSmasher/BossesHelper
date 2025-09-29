@@ -20,13 +20,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	internal static class LuaBossHelper
 	{
+		private readonly static HashSet<string> HelperFunctions = [];
+
 		private static readonly string FilesPath = "Assets/LuaBossHelper";
 
 		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
 
-		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
-
 		public static readonly CutsceneHelper cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+
+		static LuaBossHelper()
+		{
+			InjectFile(BossesHelperModule.Instance, $"{FilesPath}/helper_functions");
+		}
 
 		public static void WarmUp()
 		{
@@ -41,6 +46,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return null;
 			using StreamReader streamReader = new(stream);
 			return streamReader.ReadToEnd();
+		}
+
+		public static void InjectFile(EverestModule modModule, string path)
+		{
+			HelperFunctions.Add(GetFileContent($"{modModule.Metadata.Name}:/{path}"));
 		}
 
 		public static LuaTable ToLuaTable(this IDictionary<object, object> dict)

@@ -123,13 +123,18 @@ end
 
 local function addHelperFunctions(env)
     local helperContent = celesteMod.BossesHelper.Code.Helpers.LuaBossHelper.HelperFunctions
-    local helperFunctions = load(helperContent, nil, nil, env)()
+    local helpers = {}
 
-    for k, v in pairs(helperFunctions) do
-        env[k] = v
+    for _, helperFile in ipairs(helperContent) do
+        local helperFunctions = load(helperFile, nil, nil, env)()
+
+        for k, v in pairs(helperFunctions) do
+            env[k] = v
+            helpers[k] = v
+        end
     end
 
-    env.helpers = helperFunctions
+    env.helpers = helpers
 end
 
 local function getLuaEnv(data)
