@@ -20,28 +20,29 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			return args => func.Call(args).First();
 		}
 
-		#region Table Structure
-		public class LuaPreparers(LuaTable baseTable)
+		public abstract class LuaWrapper<T>(T _base) where T : LuaBase
 		{
-			private readonly LuaTable BaseTable = baseTable;
+			protected readonly T Base = _base;
+		}
 
+		#region Table Structure
+		public class LuaPreparers(LuaTable _base) : LuaWrapper<LuaTable>(_base)
+		{
 			public LuaFunction this[string key]
-				=> BaseTable[key] as LuaFunction;
+				=> Base[key] as LuaFunction;
 
 			public static implicit operator LuaPreparers(LuaTable baseTable) => new(baseTable);
 		}
 
-		public class CutsceneHelper(LuaTable baseTable)
+		public class CutsceneHelper(LuaTable _base) : LuaWrapper<LuaTable>(_base)
 		{
-			private readonly LuaTable BaseTable = baseTable;
-
 			public object[] GetLuaData(string filename, LuaTable data, LuaFunction preparer)
-				=> (BaseTable["getLuaData"] as LuaFunction).Call(filename, data, preparer);
+				=> (Base["getLuaData"] as LuaFunction).Call(filename, data, preparer);
 
 			public LuaTable GetProxyTable(LuaFunction func)
-				=> (BaseTable["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
+				=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
 
-			public LuaPreparers Commands => BaseTable["luaPreparers"] as LuaTable;
+			public LuaPreparers Commands => Base["luaPreparers"] as LuaTable;
 
 			public static implicit operator CutsceneHelper(LuaTable baseTable) => new(baseTable);
 		}
