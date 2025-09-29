@@ -27,7 +27,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		}
 
 		#region Function Structure
-		public class LuaPreparer(LuaFunction _base) : LuaWrapper<LuaFunction>(_base)
+		public class FunctionWrapper(LuaFunction _base) : LuaWrapper<LuaFunction>(_base);
+
+		public class LuaPreparer(LuaFunction _base) : FunctionWrapper(_base)
 		{
 			public object[] Call(LuaTable env, LuaFunction loadFunc)
 				=> Base.Call(env, loadFunc);
@@ -37,15 +39,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		#endregion
 
 		#region Table Structure
-		public class LuaPreparers(LuaTable _base) : LuaWrapper<LuaTable>(_base)
+		public class TableWrapper(LuaTable _base) : LuaWrapper<LuaTable>(_base);
+
+		public class LuaPreparers(LuaTable _base) : TableWrapper(_base)
 		{
-			public LuaPreparer this[string key]
-				=> Base[key] as LuaFunction;
+			public LuaPreparer this[LuaCommand key]
+				=> Base[key.Name] as LuaFunction;
 
 			public static implicit operator LuaPreparers(LuaTable baseTable) => new(baseTable);
 		}
 
-		public class CutsceneHelper(LuaTable _base) : LuaWrapper<LuaTable>(_base)
+		public class CutsceneHelper(LuaTable _base) : TableWrapper(_base)
 		{
 			public object[] GetLuaData(string filename, LuaTable data, LuaPreparer preparer)
 				=> (Base["getLuaData"] as LuaFunction).Call(filename, data, preparer);
