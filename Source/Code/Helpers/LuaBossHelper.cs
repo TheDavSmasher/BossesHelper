@@ -18,8 +18,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		Scene Scene { get; }
 	}
 
-	public class LuaException(string message) : Exception(message) { }
-
 	internal static class LuaBossHelper
 	{
 		private static readonly string FilesPath = "Assets/LuaBossHelper";

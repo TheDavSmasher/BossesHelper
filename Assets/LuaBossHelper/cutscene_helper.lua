@@ -21,7 +21,7 @@ local function threadProxyResume(self, ...)
 
     -- The error message should be returned as an exception and not a string
     if not success then
-        return success, celesteMod.BossesHelper.Code.Helpers.LuaException(message)
+        return success, celesteMod.BossesHelper.Code.Helpers.Lua.LuaException(message)
     end
 
     return success, message

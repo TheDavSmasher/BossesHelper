@@ -11,6 +11,8 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
+	public class LuaException(string message) : Exception(message) { }
+
 	internal static class LuaMethodWrappers
 	{
 		private static Tracker Tracker => Engine.Scene.Tracker;
