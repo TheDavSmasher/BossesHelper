@@ -1650,7 +1650,9 @@ end
 
 --#endregion
 
---#region Misc. Functions
+--#region Delegates
+
+---These methods allow transforming a Lua function into C# delegates the API can then use correctly.
 
 ---Transform a Ease.Easer function into its C# counterpart.
 ---@param func L_Ease.Easer
@@ -1672,6 +1674,10 @@ end
 function helpers.funcToDashCollision(func)
     return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToDashCollision(func)
 end
+
+--#endregion
+
+--#region Misc. Functions
 
 ---Display textbox with dialog. Any provided functions will be passed as Triggers accessible to Dialog.txt triggers.
 ---@param dialog string Dialog ID used for the conversation.
