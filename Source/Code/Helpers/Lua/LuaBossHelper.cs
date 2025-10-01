@@ -5,10 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static Celeste.Mod.BossesHelper.Code.Helpers.Lua.LuaStructure;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
+	using LuaData = (LuaTable Env, LuaFunction[] Funcs);
+
 	public interface ILuaLoader
 	{
 		LuaCommand Command { get; }
@@ -18,6 +19,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		Scene Scene { get; }
 	}
 
+	#region Lua Structure
+	public class CutsceneHelper(string filepath)
+	{
+		private readonly LuaTable Base = Everest.LuaLoader.Require(filepath) as LuaTable;
+
+		public LuaData GetLuaData(string content, LuaTable data, string preparer)
+		{
+			object[] luaData = (Base["getLuaData"] as LuaFunction).Call(content, data, preparer);
+			return (luaData[0] as LuaTable, [.. luaData.Skip(1).OfType<LuaFunction>()]);
+		}
+
+		public LuaTable GetProxyTable(LuaFunction func)
+			=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
+	}
+	#endregion
+
 	internal static class LuaBossHelper
 	{
 		private static readonly string FilesPath = "Assets/LuaBossHelper";
@@ -26,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
 
-		public static readonly CutsceneHelper cutsceneHelper = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+		public static readonly CutsceneHelper cutsceneHelper = new($"{LuaAssetsPath}/cutscene_helper");
 
 		public static void WarmUp()
 		{
@@ -81,9 +98,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				try
 				{
 					if (GetFileContent(filename) is string content && !content.IsWhiteSpace() &&
-						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), command.Name) is object[] array)
+						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), command.Name) is LuaData data)
 					{
-						funcs = [.. array.Skip(1).OfType<LuaFunction>()];
+						funcs = data.Funcs;
 					}
 					else
 					{

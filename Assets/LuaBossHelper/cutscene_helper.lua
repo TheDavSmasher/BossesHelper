@@ -33,9 +33,7 @@ end
 
 --#region Lua Preparers
 
----@alias LuaPreparer
----| fun(env: table, func: function): false
----| fun(env: table, func: function): function, ...
+---@alias LuaPreparer fun(env: table, func: function): false|function, ...
 
 ---@type { [string]: LuaPreparer }
 local luaPreparers = {}

@@ -439,17 +439,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		#endregion
 
 		#region Miscellaneous
-		public static IEnumerable<T> ToType<T>(this LuaTable table) => table.Values.OfType<T>();
+		public static IEnumerable<T> OfType<T>(this LuaTable table) => table.Values.OfType<T>();
 
 		public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
 		{
-			return new([.. luaTable.ToType<Collider>()]);
+			return new([.. luaTable.OfType<Collider>()]);
 		}
 
 		public static IEnumerator Say(string dialog, LuaTable luaEvents)
 		{
 			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaProxyCoroutine(func);
-			return Textbox.Say(dialog, [.. luaEvents.ToType<LuaFunction>().Select(Selector)]);
+			return Textbox.Say(dialog, [.. luaEvents.OfType<LuaFunction>().Select(Selector)]);
 		}
 
 		public static void DoMethodAfterDelay(LuaFunction func, float delay)
