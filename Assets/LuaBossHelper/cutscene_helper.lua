@@ -24,7 +24,7 @@ local function threadProxyResume(self, ...)
 end
 
 ---@param func function
----@return LuaCoroutineProxy?
+---@return LuaProxy?
 function cutsceneHelper.getProxyTable(func)
     return func and {value = coroutine.create(func), resume = threadProxyResume}
 end
@@ -33,10 +33,13 @@ end
 
 --#region Lua Preparers
 
----@class Preparers : { [string]: LuaPreparer }
+---@alias LuaPreparer
+---| fun(env: table, func: function): false
+---| fun(env: table, func: function): function, ...
+
+---@type { [string]: LuaPreparer }
 local luaPreparers = {}
 
----@type LuaPreparer
 function luaPreparers.getCutsceneData(env, func)
     local success, onBegin, onEnd = pcall(func)
 
@@ -51,7 +54,6 @@ function luaPreparers.getCutsceneData(env, func)
     return success
 end
 
----@type LuaPreparer
 function luaPreparers.getAttackData(env, func)
     local success, onBegin, onEnd, onComplete, onInterrupt, onDeath = pcall(func)
 
@@ -69,7 +71,6 @@ function luaPreparers.getAttackData(env, func)
     return success
 end
 
----@type LuaPreparer
 function luaPreparers.getInterruptData(env, func)
     local success, onHit, onContact, onDash, onBounce, onLaser, setup = pcall(func)
 
@@ -88,7 +89,6 @@ function luaPreparers.getInterruptData(env, func)
     return success
 end
 
----@type LuaPreparer
 function luaPreparers.getFunctionData(env, func)
     local success, onDamage, onRecover = pcall(func)
 
@@ -103,7 +103,6 @@ function luaPreparers.getFunctionData(env, func)
     return success
 end
 
----@type LuaPreparer
 function luaPreparers.getSavePointData(env, func)
     local success, onTalk = pcall(func)
 
