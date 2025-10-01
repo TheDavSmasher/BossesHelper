@@ -1402,27 +1402,6 @@ function helpers.addComponentToBoss(component)
     puppet:Add(component)
 end
 
----Wrap a function in another function to call the inner one with parameters but the outer one without.
----@param func function The function to wrap.
----@param ... any The parameters to call func with.
----@return function function Function that will wrap the passed function with the arguements passed.
-local function callFunc(func, ...)
-    local args = {...}
-    if select("#", ...) < 1 then
-        return func
-    end
-    return function ()
-        return func(table.unpack(args))
-    end
-end
-
----Add a function that will run in the background.
----@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
----@param ... any Parameters to pass to the wrapped function, if any
-function helpers.addConstantBackgroundCoroutine(func, ...)
-    puppet:Add(bossesHelper.Code.Components.LuaCoroutineComponent(callFunc(func, {...})))
-end
-
 ---@param entity Entity
 ---@param player Player
 local function killPlayer(entity, player)
@@ -1477,6 +1456,13 @@ function helpers.getEntityChain(entity, startChained, remove)
     return bossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
+---Take the function and create a Coroutine Component that will run it.
+---@param func function The function to create a coroutine of.
+---@return LuaCoroutineComponent # The Coroutine Component
+function helpers.getLuaCoroutine(func)
+    return bossesHelper.Code.Components.LuaCoroutineComponent(func)
+end
+
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
@@ -1516,6 +1502,27 @@ end
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
     return celesteMod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
         startSolidCollidable or startSolidCollidable == nil, spriteName or '', gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
+end
+
+---Wrap a function in another function to call the inner one with parameters but the outer one without.
+---@param func function The function to wrap.
+---@param ... any The parameters to call func with.
+---@return function function Function that will wrap the passed function with the arguements passed.
+local function callFunc(func, ...)
+    local args = {...}
+    if select("#", ...) < 1 then
+        return func
+    end
+    return function ()
+        return func(table.unpack(args))
+    end
+end
+
+---Add a function that will run in the background.
+---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
+---@param ... any Parameters to pass to the wrapped function, if any
+function helpers.addConstantBackgroundCoroutine(func, ...)
+    puppet:Add(helpers.getLuaCoroutine(callFunc(func, {...})))
 end
 
 --#endregion
