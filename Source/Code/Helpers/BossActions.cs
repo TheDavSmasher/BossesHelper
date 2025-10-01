@@ -28,15 +28,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public Scene Scene => controller.Scene;
 
-		public List<LuaTableItem> Values => _Values;
+		public Dictionary<string, object> Values => _Values;
 
-		protected List<LuaTableItem> _Values =
-		[
-			( "boss", controller ),
-			( "bossID", controller.BossID ),
-			( "puppet", controller.Puppet ),
-			( "sidekick", controller.Scene.GetEntity<BadelineSidekick>() )
-		];
+		protected Dictionary<string, object> _Values = new()
+		{
+			{ "boss", controller },
+			{ "bossID", controller.BossID },
+			{ "puppet", controller.Puppet },
+			{ "sidekick", controller.Scene.GetEntity<BadelineSidekick>() }
+		};
 	}
 
 	public class BossAttack : BossLuaLoader, IBossActionCreator<BossAttack>
@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			this.controller = controller;
 			cutscene = new(this.LoadFile(filepath));
-			_Values.Add(("cutsceneEntity", cutscene));
+			_Values.Add("cutsceneEntity", cutscene);
 		}
 
 		public IEnumerator Perform()

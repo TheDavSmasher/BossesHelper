@@ -1,5 +1,4 @@
-﻿global using LuaTableItem = (object Key, object Value);
-using Monocle;
+﻿using Monocle;
 using NLua;
 using System;
 using System.Collections;
@@ -25,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 	{
 		PrepareMode Mode { get; }
 
-		List<LuaTableItem> Values { get; }
+		Dictionary<string, object> Values { get; }
 
 		Scene Scene { get; }
 	}
@@ -72,10 +71,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			return streamReader.ReadToEnd();
 		}
 
-		public static LuaTable ToLuaTable(this IDictionary<object, object> dict)
+		public static LuaTable ToLuaTable(this IDictionary<string, object> dict)
 		{
 			LuaTable luaTable = GetEmptyTable();
-			foreach (KeyValuePair<object, object> item in dict)
+			foreach (KeyValuePair<string, object> item in dict)
 			{
 				luaTable[item.Key] = item.Value;
 			}
@@ -95,12 +94,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
 		{
-			Dictionary<object, object> passedVals = self.Values.ToDictionary();
-			passedVals.Add("player", self.Scene.GetPlayer());
-			return LoadCommand(filename, self.Mode, passedVals);
+			self.Values.Add("player", self.Scene.GetPlayer());
+			return LoadCommand(filename, self.Mode, self.Values);
 		}
 
-		public static LuaFunction[] LoadCommand(string filename, PrepareMode mode, Dictionary<object, object> passedVals = null)
+		public static LuaFunction[] LoadCommand(string filename, PrepareMode mode, Dictionary<string, object> passedVals = null)
 		{
 			passedVals ??= [];
 			LuaFunction[] funcs = null;

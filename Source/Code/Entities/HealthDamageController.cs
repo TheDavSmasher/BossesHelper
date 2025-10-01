@@ -36,12 +36,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public PrepareMode Mode => PrepareMode.Function;
 
-			public List<LuaTableItem> Values { get; private set; }
+			public Dictionary<string, object> Values { get; private set; }
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
 				this.ChangeTagState(Tags.Global, HealthData.globalController);
-				Values = [("healthBar", healthBar)];
+				Values = new() { { "healthBar", healthBar } };
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
 				onDamage = array[0];
 				onRecover = array[1];
