@@ -28,9 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public Scene Scene => controller.Scene;
 
-		public Dictionary<string, object> Values => _Values;
-
-		protected Dictionary<string, object> _Values = new()
+		public Dictionary<string, object> Values { get; init; } = new()
 		{
 			{ "boss", controller },
 			{ "bossID", controller.BossID },
@@ -80,8 +78,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			private readonly LuaFunction endMethod = functions[1];
 
-			public IEnumerator Executer => While(() => Running, true);
-
 			public override void OnBegin(Level level)
 			{
 				Coroutine(level).AsCoroutine(this);
@@ -118,13 +114,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			this.controller = controller;
 			cutscene = new(this.LoadFile(filepath));
-			_Values.Add("cutsceneEntity", cutscene);
+			Values.Add("cutsceneEntity", cutscene);
 		}
 
 		public IEnumerator Perform()
 		{
 			controller.Scene.Add(cutscene);
-			return cutscene.Executer;
+			return While(() => cutscene.Running, true);
 		}
 
 		public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
