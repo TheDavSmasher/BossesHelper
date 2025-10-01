@@ -190,6 +190,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			target.Add(new Coroutine(enumerator));
 		}
+
+		public static T[] GetAttributes<T>(this object self, bool findInherited = false) where T : Attribute
+		{
+			return (T[]) self.GetType().GetCustomAttributes(typeof(T), findInherited);
+		}
 		#endregion
 
 		#region Classes
