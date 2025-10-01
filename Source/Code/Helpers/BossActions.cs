@@ -72,34 +72,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public class BossEvent : BossLuaLoader, IBossActionCreator<BossEvent>
 	{
-		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity(true, false)
+		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity()
 		{
-			private readonly LuaProxyCoroutine Cutscene = new(functions[0]);
-
-			private readonly LuaFunction endMethod = functions[1];
-
 			public override void OnBegin(Level level)
 			{
-				Coroutine(level).AsCoroutine(this);
+				Add(new Coroutine(Cutscene(level)));
 			}
 
-			private IEnumerator Coroutine(Level level)
+			private IEnumerator Cutscene(Level level)
 			{
-				yield return Cutscene;
+				yield return new LuaProxyCoroutine(functions[0]);
 				EndCutscene(level);
 			}
 
 			public override void OnEnd(Level level)
 			{
-				try
-				{
-					endMethod?.Call(level, WasSkipped);
-				}
-				catch (Exception e)
-				{
-					Logger.Log(LogLevel.Error, "Bosses Helper", "Failed to call OnEnd");
-					Logger.LogDetailed(e);
-				}
+				functions[1]?.Call(level, WasSkipped);
 			}
 		}
 
@@ -137,8 +125,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			LuaFunction[] array = this.LoadFile(filepath);
 			array[0]?.Call();
-			LuaFunction OnHitLua = array[1];
-			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? OnHitLua);
+			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? array[1]);
 		}
 
 		public LuaProxyCoroutine OnDamage(BossPuppet.HurtModes source)
