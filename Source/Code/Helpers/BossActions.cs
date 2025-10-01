@@ -1,6 +1,4 @@
-﻿global using LuaCommand = (string Name, int Count);
-global using LuaTableItem = (object Key, object Value);
-using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;

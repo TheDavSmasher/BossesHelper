@@ -1,4 +1,6 @@
-﻿using Monocle;
+﻿global using LuaCommand = (string Name, int Count);
+global using LuaTableItem = (object Key, object Value);
+using Monocle;
 using NLua;
 using System;
 using System.Collections;
