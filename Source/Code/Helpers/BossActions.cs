@@ -72,8 +72,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public class BossEvent : BossLuaLoader, IBossActionCreator<BossEvent>
 	{
-		private class CutsceneWrapper(LuaFunction[] functions) : CutsceneEntity()
+		private class CutsceneWrapper : CutsceneEntity
 		{
+			private readonly LuaFunction StartFunction;
+
+			private readonly LuaFunction EndFunction;
+
+			public CutsceneWrapper(BossEvent @event, string filepath)
+				: base()
+			{
+				@event.Values.Add("cutsceneEntity", this);
+				LuaFunction[] funcs = @event.LoadFile(filepath);
+				StartFunction = funcs[0];
+				EndFunction = funcs[1];
+			}
+
 			public override void OnBegin(Level level)
 			{
 				Add(new Coroutine(Cutscene(level)));
@@ -81,31 +94,30 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			private IEnumerator Cutscene(Level level)
 			{
-				yield return new LuaProxyCoroutine(functions[0]);
+				yield return new LuaProxyCoroutine(StartFunction);
 				EndCutscene(level);
 			}
 
 			public override void OnEnd(Level level)
 			{
-				functions[1]?.Call(level, WasSkipped);
+				EndFunction?.Call(level, WasSkipped);
 			}
 		}
 
-		private readonly CutsceneWrapper cutscene;
+		private readonly CutsceneWrapper Cutscene;
 
 		public override PrepareMode Mode => PrepareMode.Cutscene;
 
 		public BossEvent(string filepath, BossController controller)
 			: base(controller)
 		{
-			Values.Add("cutsceneEntity", cutscene);
-			cutscene = new(this.LoadFile(filepath));
+			Cutscene = new(this, filepath);
 		}
 
 		public IEnumerator Perform()
 		{
-			Scene.Add(cutscene);
-			return While(() => cutscene.Running, true);
+			Scene.Add(Cutscene);
+			return While(() => Cutscene.Running, true);
 		}
 
 		public static BossEvent Create(string filepath, BossController controller) => new(filepath, controller);
