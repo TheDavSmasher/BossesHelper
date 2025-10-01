@@ -101,8 +101,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			: base(controller)
 		{
 			this.controller = controller;
-			cutscene = new(this.LoadFile(filepath));
 			Values.Add("cutsceneEntity", cutscene);
+			cutscene = new(this.LoadFile(filepath));
 		}
 
 		public IEnumerator Perform()
