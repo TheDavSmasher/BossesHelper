@@ -93,21 +93,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private readonly CutsceneWrapper cutscene;
 
-		private readonly BossController controller;
-
 		public override PrepareMode Mode => PrepareMode.Cutscene;
 
 		public BossEvent(string filepath, BossController controller)
 			: base(controller)
 		{
-			this.controller = controller;
 			Values.Add("cutsceneEntity", cutscene);
 			cutscene = new(this.LoadFile(filepath));
 		}
 
 		public IEnumerator Perform()
 		{
-			controller.Scene.Add(cutscene);
+			Scene.Add(cutscene);
 			return While(() => cutscene.Running, true);
 		}
 
