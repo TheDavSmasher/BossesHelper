@@ -34,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			private Stopwatch DamageCooldown => Scene.GetPlayer()?.Get<Stopwatch>();
 
-			public LuaCommand Command => ("getFunctionData", 2);
+			public PrepareMode Mode => PrepareMode.Function;
 
 			public List<LuaTableItem> Values { get; private set; }
 

@@ -28,7 +28,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private LuaFunction onInteract;
 
-		public LuaCommand Command => ("getSavePointData", 1);
+		public PrepareMode Mode => PrepareMode.SavePoint;
 
 		public List<LuaTableItem> Values { get; init; }
 

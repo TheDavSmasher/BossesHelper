@@ -1,5 +1,4 @@
-﻿global using LuaCommand = (string Name, int Count);
-global using LuaTableItem = (object Key, object Value);
+﻿global using LuaTableItem = (object Key, object Value);
 using Monocle;
 using NLua;
 using System;
@@ -12,14 +11,25 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	using LuaData = (LuaTable Env, LuaFunction[] Funcs);
 
+	#region Lua Loading
+	public enum PrepareMode
+	{
+		Cutscene,
+		Attack,
+		Interrupt,
+		Function,
+		SavePoint
+	}
+
 	public interface ILuaLoader
 	{
-		LuaCommand Command { get; }
+		PrepareMode Mode { get; }
 
 		List<LuaTableItem> Values { get; }
 
 		Scene Scene { get; }
 	}
+	#endregion
 
 	#region Lua Structure
 	public class CutsceneHelper(string filepath)
@@ -50,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		public static void WarmUp()
 		{
 			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-			foreach (var func in LoadCommand($"{FilesPath}/warmup_cutscene", ("getCutsceneData", 2)))
+			foreach (var func in LoadCommand($"{FilesPath}/warmup_cutscene", PrepareMode.Cutscene))
 				func.Call();
 		}
 
@@ -87,10 +97,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			Dictionary<object, object> passedVals = self.Values.ToDictionary();
 			passedVals.Add("player", self.Scene.GetPlayer());
-			return LoadCommand(filename, self.Command, passedVals);
+			return LoadCommand(filename, self.Mode, passedVals);
 		}
 
-		public static LuaFunction[] LoadCommand(string filename, LuaCommand command, Dictionary<object, object> passedVals = null)
+		public static LuaFunction[] LoadCommand(string filename, PrepareMode mode, Dictionary<object, object> passedVals = null)
 		{
 			passedVals ??= [];
 			LuaFunction[] funcs = null;
@@ -100,7 +110,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				try
 				{
 					if (GetFileContent(filename) is string content && !content.IsWhiteSpace() &&
-						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), command.Name) is LuaData data)
+						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), $"get{mode}Data") is LuaData data)
 					{
 						funcs = data.Funcs;
 					}
@@ -114,8 +124,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 					Logger.Log(LogLevel.Error, "Bosses Helper", $"Failed to execute cutscene in C#: {e}");
 				}
 			}
-			Array.Resize(ref funcs, command.Count);
+			Array.Resize(ref funcs, mode.FuncNumber());
 			return funcs;
+		}
+
+		public static int FuncNumber(this PrepareMode mode)
+		{
+			return mode switch
+			{
+				PrepareMode.Function => 6,
+				PrepareMode.Attack => 5,
+				PrepareMode.Cutscene or PrepareMode.Function => 2,
+				PrepareMode.SavePoint => 1,
+				_ => 0
+			};
 		}
 
 		public static LuaTable GetEmptyTable()

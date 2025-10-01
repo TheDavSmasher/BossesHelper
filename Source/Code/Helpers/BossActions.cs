@@ -24,7 +24,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public abstract class BossLuaLoader(BossController controller) : ILuaLoader
 	{
-		public abstract LuaCommand Command { get; }
+		public abstract PrepareMode Mode { get; }
 
 		public Scene Scene => controller.Scene;
 
@@ -47,7 +47,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private readonly EnumDict<MethodEndReason, LuaFunction> onEndMethods;
 
-		public override LuaCommand Command => ("getAttackData", 5);
+		public override PrepareMode Mode => PrepareMode.Attack;
 
 		public BossAttack(string filepath, BossController controller)
 			: base(controller)
@@ -111,7 +111,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private readonly BossController controller;
 
-		public override LuaCommand Command => ("getCutsceneData", 2);
+		public override PrepareMode Mode => PrepareMode.Cutscene;
 
 		public BossEvent(string filepath, BossController controller)
 			: base(controller)
@@ -134,7 +134,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private readonly EnumDict<BossPuppet.HurtModes, LuaFunction> onDamageMethods;
 
-		public override LuaCommand Command => ("getInterruptData", 6);
+		public override PrepareMode Mode => PrepareMode.Interrupt;
 
 		public BossFunctions(string filepath, BossController controller)
 			: base(controller)
