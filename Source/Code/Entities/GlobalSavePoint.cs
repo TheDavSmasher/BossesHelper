@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -7,7 +8,6 @@ using NLua;
 using System.Collections.Generic;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities

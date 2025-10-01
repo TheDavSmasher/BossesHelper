@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
@@ -302,7 +301,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			try
 			{
-				LuaTable luaTable = GetEmptyTable();
+				LuaTable luaTable = LuaBossHelper.GetEmptyTable();
 				int num = 1;
 				foreach (Entity entity in Entities)
 				{

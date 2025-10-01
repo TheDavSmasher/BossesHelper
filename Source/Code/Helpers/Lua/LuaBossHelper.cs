@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using static Celeste.Mod.BossesHelper.Code.Helpers.Lua.LuaStructure;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	public interface ILuaLoader
 	{

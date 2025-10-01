@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
@@ -8,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {

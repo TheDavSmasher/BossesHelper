@@ -122,7 +122,7 @@ end
 --#region Lua Data Getters
 
 local function addHelperFunctions(env)
-    local helperContent = celesteMod.BossesHelper.Code.Helpers.LuaBossHelper.HelperFunctions
+    local helperContent = celesteMod.BossesHelper.Code.Helpers.Lua.LuaBossHelper.HelperFunctions
     local helperFunctions = load(helperContent, nil, nil, env)()
 
     for k, v in pairs(helperFunctions) do

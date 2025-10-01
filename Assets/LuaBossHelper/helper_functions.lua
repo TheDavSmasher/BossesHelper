@@ -107,7 +107,7 @@ end
 ---@param filename string Filename to load. Filename should not have a extention.
 ---@return string content The content of the file
 function helpers.readCelesteAsset(filename)
-    return bossesHelper.Code.Helpers.LuaBossHelper.GetFileContent(filename)
+    return bossesHelper.Code.Helpers.Lua.LuaBossHelper.GetFileContent(filename)
 end
 
 --- Loads and returns the result of a Lua asset.
