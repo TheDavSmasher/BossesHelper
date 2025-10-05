@@ -147,10 +147,11 @@ function helpers.log(message, tag)
     celesteMod.Logger.Info(tag or "Bosses Helper", tostring(message))
 end
 
---- Gets enum value.
----@param enum string String name of enum.
----@param value any string name or enum value to get.
----@return userdata enumValue
+---Gets enum value.
+---@generic T enum Type
+---@param enum `T` String name of enum.
+---@param value T|string string name or enum value to get.
+---@return T enumValue
 function helpers.getEnum(enum, value)
     local enumValue = luanet.enum(luanet.import_type(enum), value)
 
@@ -490,7 +491,7 @@ end
 ---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
+        introType = helpers.getEnum("IntroTypes", introType)
     end
 
     if room then
