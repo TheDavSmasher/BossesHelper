@@ -148,7 +148,7 @@ function helpers.log(message, tag)
 end
 
 ---Gets enum value.
----@generic T enum Type
+---@generic T : Enum enum Type
 ---@param enum `T` String name of enum.
 ---@param value T|string string name or enum value to get.
 ---@return T enumValue
