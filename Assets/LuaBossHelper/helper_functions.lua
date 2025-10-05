@@ -148,10 +148,9 @@ function helpers.log(message, tag)
 end
 
 ---Gets enum value.
----@generic T : Enum enum Type
----@param enum `T` String name of enum.
+---@param enum string String name of enum.
 ---@param value int|string string name or enum value to get.
----@return T enumValue
+---@return Enum enumValue
 function helpers.getEnum(enum, value)
     local enumValue = luanet.enum(luanet.import_type(enum), value)
 
@@ -491,7 +490,7 @@ end
 ---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = helpers.getEnum("IntroTypes", introType)
+        introType = helpers.getEnum("Celeste.Player.IntroTypes", introType) --[[@as IntroTypes]]
     end
 
     if room then
