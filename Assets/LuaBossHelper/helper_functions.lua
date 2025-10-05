@@ -521,7 +521,7 @@ end
 ---@param x float X offset on X axis.
 ---@param y float Y offset on Y axis.
 ---@param room? string What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType? any intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
+---@param introType? string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
 function helpers.teleport(x, y, room, introType)
     helpers.teleportTo(player.Position.X + x, player.Position.Y + y, room, introType)
 end
