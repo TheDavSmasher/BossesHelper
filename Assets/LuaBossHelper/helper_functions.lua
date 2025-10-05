@@ -150,7 +150,7 @@ end
 ---Gets enum value.
 ---@generic T : Enum enum Type
 ---@param enum `T` String name of enum.
----@param value T|string string name or enum value to get.
+---@param value int|string string name or enum value to get.
 ---@return T enumValue
 function helpers.getEnum(enum, value)
     local enumValue = luanet.enum(luanet.import_type(enum), value)
