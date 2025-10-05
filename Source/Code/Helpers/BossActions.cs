@@ -2,7 +2,6 @@
 using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using NLua;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

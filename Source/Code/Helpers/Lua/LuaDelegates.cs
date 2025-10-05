@@ -12,10 +12,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			=> data => f.Call(data);
 
 		public static Ease.Easer ToEaser(this LuaFunction f)
-			=> t => (float) f.Call(t)[0];
+			=> t => (float)f.Call(t)[0];
 
 		public static DashCollision ToDashCollision(this LuaFunction f)
-			=> (player, direction) => (DashCollisionResults) f.Call(player, direction)[0];
+			=> (player, direction) => (DashCollisionResults)f.Call(player, direction)[0];
 		#endregion
 
 		#region To Action
