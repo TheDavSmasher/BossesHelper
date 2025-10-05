@@ -4,6 +4,7 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.ModInterop;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections;
@@ -58,6 +59,7 @@ public partial class BossesHelperModule : EverestModule
 
 	public override void Load()
 	{
+		typeof(BossesHelperExports).ModInterop();
 		using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 0, after: ["*"])).Use())
 		{
 			On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
