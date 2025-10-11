@@ -55,14 +55,28 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				?? XNAAssembly.GetType(prefix + name, false, true);
 		}
 
-		public static object CallGeneric(this object on, MethodInfo method, Type type)
+#nullable enable
+		public static object CallGeneric(this object on, MethodInfo method, Type type, params object[]? args)
+#nullable disable
 		{
-			return method.MakeGenericMethod(type).Invoke(on, null);
+			return method.MakeGenericMethod(type).Invoke(on, args);
+		}
+
+#nullable enable
+		public static object CallGeneric(this object on, MethodInfo method, Type[] types, params object[]? args)
+#nullable disable
+		{
+			return method.MakeGenericMethod(types).Invoke(on, args);
 		}
 
 		public static object CreateGeneric(Type classType, Type generic, params object[] args)
 		{
 			return Activator.CreateInstance(classType.MakeGenericType(generic), args);
+		}
+
+		public static object CreateGeneric(Type classType, Type[] generics, params object[] args)
+		{
+			return Activator.CreateInstance(classType.MakeGenericType(generics), args);
 		}
 		#endregion
 
