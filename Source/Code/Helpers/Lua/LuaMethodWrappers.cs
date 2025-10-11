@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.Helpers;
+﻿using Celeste.Mod.Entities;
+using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
@@ -484,33 +485,27 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		#endregion
 
 		#region Entity Collider Creator
-		/*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
-            Type baseType;
-            if (baseEntity is string val)
-            {
-                baseType = GetTypeFromString(val);
-            }
-            else if (baseEntity is Entity entity)
-            {
-                baseType = entity.GetType();
-            }
+		public static object GetEntityCollider(Entity baseEntity, LuaFunction func, Collider collider = null)
+			=> GetEntityCollider(baseEntity.GetType(), func, collider);
 
-            return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [func, collider]);
-        }
+		public static object GetEntityCollider(string baseType, LuaFunction func, Collider collider = null)
+			=> GetEntityCollider(GetTypeFromString(baseType), func, collider);
 
-        public static object GetEntityColliderByComponent(object baseComponent, LuaFunction func, Collider collider = null)
-            Type baseType;
-            if (baseComponent is string val)
-            {
-                baseType = GetTypeFromString(val);
-            }
-            else if (baseComponent is Component component)
-            {
-                baseType = component.GetType();
-            }
+		public static object GetEntityCollider(Type type, LuaFunction func, Collider collider = null)
+		{
+			return CreateGeneric(typeof(EntityCollider<>), type, GetAction(func, type), collider);
+		}
 
-            return Activator.CreateInstance(typeof(EntityColliderByComponent<>).MakeGenericType(baseType), [func, collider]);
-        }*/
+		public static object GetEntityColliderByComponent(Component baseComp, LuaFunction func, Collider collider = null)
+			=> GetEntityColliderByComponent(baseComp.GetType(), func, collider);
+
+		public static object GetEntityColliderByComponent(string baseType, LuaFunction func, Collider collider = null)
+			=> GetEntityColliderByComponent(GetTypeFromString(baseType), func, collider);
+
+		public static object GetEntityColliderByComponent(Type type, LuaFunction func, Collider collider = null)
+		{
+			return CreateGeneric(typeof(EntityColliderByComponent<>), type, GetAction(func, type), collider);
+		}
 		#endregion
 	}
 }
