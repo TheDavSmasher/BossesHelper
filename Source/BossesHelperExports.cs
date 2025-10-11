@@ -56,7 +56,7 @@ namespace Celeste.Mod.BossesHelper
 			Engine.Scene.Tracker.GetEntity<HealthSystemManager>()?.RecoverHealth(amount);
 		}
 
-		public static void MakePlayerTakeDamage(Vector2? from = null, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
+		public static void MakePlayerTakeDamage(Vector2 from = default, int amount = 1, bool silent = false, bool stagger = true, bool ignoreCooldown = false)
 		{
 			BossesHelperModule.PlayerTakesDamage(from, amount, silent, stagger, ignoreCooldown);
 		}
