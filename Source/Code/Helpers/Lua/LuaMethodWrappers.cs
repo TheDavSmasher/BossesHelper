@@ -38,6 +38,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 
 		private static readonly MethodInfo entityIsTracked = Tracker.GetType().GetMethod("IsEntityTracked");
+
+
+		private static readonly MethodInfo toAction = typeof(LuaDelegates).GetMethod("ToAction");
+
+		private static readonly MethodInfo toFunc = typeof(LuaDelegates).GetMethod("ToFunc");
 		#endregion
 
 		#region Types and Generics
@@ -52,6 +57,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		public static object CallGeneric(this object on, MethodInfo method, Type type)
 		{
 			return method.MakeGenericMethod(type).Invoke(on, null);
+		}
+
+		public static object CreateGeneric(Type classType, Type generic, params object[] args)
+		{
+			return Activator.CreateInstance(classType.MakeGenericType(generic), args);
+		}
+		#endregion
+
+		#region Delegates
+		public static object GetAction(LuaFunction func, params Type[] types)
+		{
+			return toAction.MakeGenericMethod(types).Invoke(null, [func]);
+		}
+
+		public static object GetFunc(LuaFunction func, Type returnType, params Type[] types)
+		{
+			return toFunc.MakeGenericMethod([returnType, ..types]).Invoke(null, [func]);
 		}
 		#endregion
 
