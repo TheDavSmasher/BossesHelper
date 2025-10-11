@@ -41,9 +41,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		#endregion
 
 		#region Types and Generics
+		private static readonly Assembly XNAAssembly = typeof(Vector2).Assembly;
+
 		public static Type GetTypeFromString(string name, string prefix = "Celeste.")
 		{
-			return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name);
+			return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name, false, true)
+				?? XNAAssembly.GetType(prefix + name, false, true);
 		}
 
 		public static object CallGeneric(this object on, MethodInfo method, Type type)
