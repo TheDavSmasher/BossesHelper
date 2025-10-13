@@ -30,24 +30,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 	}
 	#endregion
 
-	#region Lua Structure
-	public class CutsceneHelper(string filepath)
-	{
-		private readonly LuaTable Base = Everest.LuaLoader.Require(filepath) as LuaTable;
-
-		public LuaData GetLuaData(string content, LuaTable data, string preparer)
-		{
-			object[] luaData = (Base["getLuaData"] as LuaFunction).Call(content, data, preparer);
-			return (luaData[0] as LuaTable, [.. luaData.Skip(1).OfType<LuaFunction>()]);
-		}
-
-		public LuaTable GetProxyTable(LuaFunction func)
-			=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
-	}
-	#endregion
-
 	internal static class LuaBossHelper
 	{
+		public class CutsceneHelper(string filepath)
+		{
+			private readonly LuaTable Base = Everest.LuaLoader.Require(filepath) as LuaTable;
+
+			public LuaData GetLuaData(string content, LuaTable data, string preparer)
+			{
+				object[] luaData = (Base["getLuaData"] as LuaFunction).Call(content, data, preparer);
+				return (luaData[0] as LuaTable, [.. luaData.Skip(1).OfType<LuaFunction>()]);
+			}
+
+			public LuaTable GetProxyTable(LuaFunction func)
+				=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
+		}
+
 		private static readonly string FilesPath = "Assets/LuaBossHelper";
 
 		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
