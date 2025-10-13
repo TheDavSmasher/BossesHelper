@@ -20,10 +20,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public readonly Sprite Sprite;
 
-		private readonly Rectangle talkerRect;
-
-		private readonly Vector2 talkerOffset;
-
 		private readonly string filepath;
 
 		private LuaFunction onInteract;
@@ -45,19 +41,19 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			string spriteName = entityData.String("savePointSprite");
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
 				Add(Sprite);
-			talkerRect = new(entityData.Int("rectXOffset"),
-				entityData.Int("rectYOffset"), entityData.Int("rectWidth"), 8);
-			talkerOffset = new(entityData.Float("talkerXOffset"), entityData.Float("talkerYOffset"));
+			Add(new TalkComponent(
+				new(entityData.Int("rectXOffset"), entityData.Int("rectYOffset"), entityData.Int("rectWidth"), 8),
+				new(entityData.Float("talkerXOffset"), entityData.Float("talkerYOffset")),
+				OnTalk)
+			{
+				Enabled = true,
+				PlayerMustBeFacing = false
+			});
 		}
 
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
-			Add(new TalkComponent(talkerRect, talkerOffset, OnTalk)
-			{
-				Enabled = true,
-				PlayerMustBeFacing = false
-			});
 			onInteract = ReadLuaFilePath(filepath, this.LoadFile)[0];
 		}
 
