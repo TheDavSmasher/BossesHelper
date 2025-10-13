@@ -130,7 +130,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			return mode switch
 			{
-				PrepareMode.Function => 6,
+				PrepareMode.Interrupt => 6,
 				PrepareMode.Attack => 5,
 				PrepareMode.Cutscene or PrepareMode.Function => 2,
 				PrepareMode.SavePoint => 1,
