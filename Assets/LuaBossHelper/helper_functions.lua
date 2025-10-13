@@ -1470,6 +1470,24 @@ function helpers.getLuaCoroutine(func)
     return monocle.Coroutine(helpers.funcToIEnumerator(func))
 end
 
+---Creates a new EntityCollider component.
+---@param entityType Entity|string|Type The type of Entity this component will try to collide with.
+---@param func fun(entity: Entity) The function to call on collision.
+---@param collider? Collider The collider to use. nil if it should use the entity the component is added to's collider.
+---@return EntityCollider # The new EntityCollider component.
+function helpers.getEntityCollider(entityType, func, collider)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntityCollider(entityType, func, collider)
+end
+
+---Creates a new EntityColliderByComponent component.
+---@param entityType Component|string|Type The type of Component this component will try to collide with.
+---@param func fun(entity: Component) The function to call on collision.
+---@param collider? Collider The collider to use. nil if it should use the entity the component is added to's collider.
+---@return EntityColliderByComponent # The new EntityColliderByComponent component.
+function helpers.getEntityColliderByComponent(entityType, func, collider)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntityColliderByComponent(entityType, func, collider)
+end
+
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
