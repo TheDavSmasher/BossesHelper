@@ -1456,11 +1456,18 @@ function helpers.getEntityChain(entity, startChained, remove)
     return bossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
+---Take the function and create an IEnumerator that can execute it.
+---@param func function
+---@return IEnumerator
+function helpers.funcToIEnumerator(func)
+    return celesteMod.BossesHelper.Code.Helpers.Lua.LuaProxyCoroutine(func)
+end
+
 ---Take the function and create a Coroutine Component that will run it.
 ---@param func function The function to create a coroutine of.
----@return LuaCoroutineComponent # The Coroutine Component
+---@return Coroutine # The Coroutine Component
 function helpers.getLuaCoroutine(func)
-    return bossesHelper.Code.Components.LuaCoroutineComponent(func)
+    return monocle.Coroutine(helpers.funcToIEnumerator(func))
 end
 
 ---Create and return a basic entity to use in attacks.
