@@ -94,7 +94,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				AddLuaCoroutine(onRecover);
 			}
 
-			private void AddLuaCoroutine(LuaFunction func) => Add(new LuaCoroutineComponent(func));
+			private void AddLuaCoroutine(LuaFunction func) => Add(new Coroutine(new LuaProxyCoroutine(func)));
 
 			private IEnumerator PlayerStagger(Vector2 from, Vector2 bounce)
 			{
