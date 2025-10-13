@@ -5,7 +5,7 @@ using System.Collections;
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	public class LuaProxyCoroutine(LuaFunction func)
-		: LuaCoroutine(LuaBossHelper.cutsceneHelper.GetProxyTable(func)), IEnumerator
+		: LuaCoroutine(LuaBossHelper.CutsceneHelper.GetProxyTable(func)), IEnumerator
 	{
 		private object _Current;
 

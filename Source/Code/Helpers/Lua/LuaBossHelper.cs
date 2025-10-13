@@ -32,25 +32,23 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 	internal static class LuaBossHelper
 	{
-		public class CutsceneHelper(string filepath)
-		{
-			private readonly LuaTable Base = Everest.LuaLoader.Require(filepath) as LuaTable;
+		private static readonly string FilesPath = "Assets/LuaBossHelper";
 
-			public LuaData GetLuaData(string content, LuaTable data, string preparer)
+		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
+
+		public static class CutsceneHelper
+		{
+			private static readonly LuaTable Base = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+
+			public static LuaData GetLuaData(string content, LuaTable data, string preparer)
 			{
 				object[] luaData = (Base["getLuaData"] as LuaFunction).Call(content, data, preparer);
 				return (luaData[0] as LuaTable, [.. luaData.Skip(1).OfType<LuaFunction>()]);
 			}
 
-			public LuaTable GetProxyTable(LuaFunction func)
+			public static LuaTable GetProxyTable(LuaFunction func)
 				=> (Base["getProxyTable"] as LuaFunction).Call(func).ElementAtOrDefault(0) as LuaTable;
 		}
-
-		private static readonly string FilesPath = "Assets/LuaBossHelper";
-
-		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
-
-		public static readonly CutsceneHelper cutsceneHelper = new($"{LuaAssetsPath}/cutscene_helper");
 
 		public static void WarmUp()
 		{
@@ -109,7 +107,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				try
 				{
 					if (GetFileContent(filename) is string content && !content.IsWhiteSpace() &&
-						cutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), $"get{mode}Data") is LuaData data)
+						CutsceneHelper.GetLuaData(content, passedVals.ToLuaTable(), $"get{mode}Data") is LuaData data)
 					{
 						funcs = data.Funcs;
 					}
