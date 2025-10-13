@@ -52,8 +52,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
 
-		public static readonly string HelperFunctions = GetFileContent($"{LuaAssetsPath}/helper_functions");
-
 		public static readonly CutsceneHelper cutsceneHelper = new($"{LuaAssetsPath}/cutscene_helper");
 
 		public static void WarmUp()
@@ -69,6 +67,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				return null;
 			using StreamReader streamReader = new(stream);
 			return streamReader.ReadToEnd();
+		}
+
+		public static string GetHelperFunctions()
+		{
+			return GetFileContent($"{LuaAssetsPath}/helper_functions");
 		}
 
 		public static LuaTable ToLuaTable(this IDictionary<string, object> dict)
