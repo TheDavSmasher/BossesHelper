@@ -143,6 +143,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private static ColliderList GetAllColliders(this XmlNode source)
 		{
+			if (source.ChildNodes.Count == 0)
+				return null;
 			return new([.. (source.ChildNodes as IEnumerable<XmlElement>).Select<XmlElement, Collider>(
 				opt => opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f, 8f)
 			)]);
