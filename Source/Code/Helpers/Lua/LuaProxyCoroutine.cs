@@ -4,6 +4,8 @@ using System.Collections;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
+	public class LuaException(string message) : Exception(message) { }
+
 	public class LuaProxyCoroutine(LuaFunction func)
 		: LuaCoroutine(LuaBossHelper.CutsceneHelper.GetProxyTable(func)), IEnumerator
 	{
