@@ -53,7 +53,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		public static void WarmUp()
 		{
 			Logger.Log("Bosses Helper", "Warming up Lua cutscenes");
-			foreach (var func in LoadCommand($"{FilesPath}/warmup_cutscene", PrepareMode.Cutscene))
+			foreach (var func in LoadFile($"{FilesPath}/warmup_cutscene", PrepareMode.Cutscene))
 				func.Call();
 		}
 
@@ -94,10 +94,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		public static LuaFunction[] LoadFile(this ILuaLoader self, string filename)
 		{
 			self.Values.Add("player", self.Scene.GetPlayer());
-			return LoadCommand(filename, self.Mode, self.Values);
+			return LoadFile(filename, self.Mode, self.Values);
 		}
 
-		public static LuaFunction[] LoadCommand(string filename, PrepareMode mode, Dictionary<string, object> passedVals = null)
+		public static LuaFunction[] LoadFile(string filename, PrepareMode mode, Dictionary<string, object> passedVals = null)
 		{
 			passedVals ??= [];
 			LuaFunction[] funcs = null;
