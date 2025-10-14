@@ -75,10 +75,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetTagOrDefault(ColliderOption.Hitboxes, Sprite.Height);
-			Hurtbox = GetTagOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
+			Hurtbox = GetHurtbox();
 			if ((BossCollision = GetBossCollision()) != null)
 				Add(BossCollision);
 		}
+
+		protected virtual Collider GetHurtbox()
+			=> GetTagOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
 
 		protected abstract Component GetBossCollision();
 
@@ -182,11 +185,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	{
 		public override HurtModes HurtMode => HurtModes.HeadBonk;
 
-		public Collider Bouncebox { get; private set; }
+		protected override Collider GetHurtbox()
+			=> GetTagOrDefault(ColliderOption.Bouncebox, 6f);
 
 		protected override Component GetBossCollision()
-			=> new PlayerCollider(OnPlayerBounce,
-				Bouncebox = GetTagOrDefault(ColliderOption.Bouncebox, 6f));
+			=> new PlayerCollider(OnPlayerBounce, Hurtbox);
 
 		private void OnPlayerBounce(Player player)
 		{
@@ -209,8 +212,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly float sidekickCooldown = data.Float("sidekickCooldown");
 
-		public Collider Target { get; private set; }
-
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
@@ -221,9 +222,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			}
 		}
 
+		protected override Collider GetHurtbox()
+			=> GetTagOrDefault(ColliderOption.Target, null);
+
 		protected override Component GetBossCollision()
-			=> new SidekickTarget(() => OnDamage(), BossID,
-				Target = GetTagOrDefault(ColliderOption.Target, null));
+			=> new SidekickTarget(() => OnDamage(), BossID, Hurtbox);
 	}
 
 	public class CustomBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)

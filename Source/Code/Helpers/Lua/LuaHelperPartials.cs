@@ -141,24 +141,28 @@ namespace Celeste.Mod.BossesHelper
 
 		public partial class BounceBossPuppet
 		{
+			public ref Collider Bouncebox => ref Hurtbox;
+
 			public void ChangeBounceboxOption(string tag)
 			{
-				Bouncebox = GetTagOrDefault(ColliderOption.Bouncebox, 6f, tag);
+				Hurtbox = GetTagOrDefault(ColliderOption.Bouncebox, 6f, tag);
 				if (BossCollision is PlayerCollider collider)
 				{
-					collider.Collider = Bouncebox;
+					collider.Collider = Hurtbox;
 				}
 			}
 		}
 
 		public partial class SidekickBossPuppet
 		{
+			public ref Collider Target => ref Hurtbox;
+
 			public void ChangeTargetOption(string tag)
 			{
-				Target = GetTagOrDefault(ColliderOption.Target, null, tag);
+				Hurtbox = GetTagOrDefault(ColliderOption.Target, null, tag);
 				if (BossCollision is SidekickTarget target)
 				{
-					target.Collider = Target;
+					target.Collider = Hurtbox;
 				}
 			}
 		}
