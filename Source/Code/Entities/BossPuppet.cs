@@ -34,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		protected readonly Component BossCollision;
 
-		public Collider Hurtbox { get; private set; }
+		public Collider Hurtbox;
 
 		public abstract HurtModes HurtMode { get; }
 
