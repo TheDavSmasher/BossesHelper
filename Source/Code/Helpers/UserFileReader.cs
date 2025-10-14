@@ -90,7 +90,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
 				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
-					ColliderOption.Hitboxes or ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
+					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.SolidColliders => hitboxNode.GetAllColliders(),
 					ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
 					ColliderOption.Target => hitboxNode.GetCircle(),
 					_ => null

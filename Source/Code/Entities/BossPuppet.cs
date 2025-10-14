@@ -16,6 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			Hitboxes,
 			Hurtboxes,
+			SolidColliders,
 			Bouncebox,
 			Target
 		}
@@ -35,6 +36,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		protected readonly Component BossCollision;
 
 		public Collider Hurtbox;
+
+		public Collider SolidCollider;
 
 		public abstract HurtModes HurtMode { get; }
 
