@@ -74,6 +74,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			PlayAnim(data.String("startingAnim", "idle"));
 
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
+			SolidCollider = GetCollider(ColliderOption.SolidColliders);
 			Collider = GetCollider(ColliderOption.Hitboxes);
 			Hurtbox = GetCollider(HurtMode switch
 			{

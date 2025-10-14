@@ -129,6 +129,11 @@ namespace Celeste.Mod.BossesHelper
 				Collider = GetCollider(ColliderOption.Hitboxes, tag);
 			}
 
+			public void ChangeSolidCollider(string tag)
+			{
+				SolidCollider = GetCollider(ColliderOption.SolidColliders, tag);
+			}
+
 			public void ChangeHurtboxOption(string tag)
 			{
 				Hurtbox = GetCollider(ColliderOption.Hurtboxes, tag);
