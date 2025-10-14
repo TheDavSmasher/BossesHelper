@@ -88,7 +88,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
 			{
 				ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
-				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag") ?? "main", option switch
+				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
 					ColliderOption.Hitboxes or ColliderOption.Hurtboxes => hitboxNode.GetAllColliders(),
 					ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
@@ -128,9 +128,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return source.GetValue(tag)?.Parse<T>();
 		}
 
-		private static string GetValue(this XmlNode source, string tag)
+		private static string GetValue(this XmlNode source, string tag, string @default = null)
 		{
-			return source.Attributes[tag]?.Value;
+			return source.Attributes[tag]?.Value ?? @default;
 		}
 
 		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
@@ -218,7 +218,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private static bool ReadLuaPath(string path, bool isFile, out ModAsset asset)
 		{
-			asset = null;
 			if (isFile)
 				path = CleanPath(path, ".lua");
 			if (!Everest.Content.TryGet(path, out asset))
