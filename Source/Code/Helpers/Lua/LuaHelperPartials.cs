@@ -126,12 +126,12 @@ namespace Celeste.Mod.BossesHelper
 
 			public void ChangeHitboxOption(string tag)
 			{
-				Collider = GetTagOrDefault(ColliderOption.Hitboxes, Sprite.Height, tag);
+				Collider = GetCollider(ColliderOption.Hitboxes, tag);
 			}
 
 			public void ChangeHurtboxOption(string tag)
 			{
-				Hurtbox = GetTagOrDefault(ColliderOption.Hurtboxes, Sprite.Height, tag);
+				Hurtbox = GetCollider(ColliderOption.Hurtboxes, tag);
 				if (BossCollision is PlayerCollider collider)
 				{
 					collider.Collider = Hurtbox;
@@ -145,7 +145,7 @@ namespace Celeste.Mod.BossesHelper
 
 			public void ChangeBounceboxOption(string tag)
 			{
-				Hurtbox = GetTagOrDefault(ColliderOption.Bouncebox, 6f, tag);
+				Hurtbox = GetCollider(ColliderOption.Bouncebox, tag);
 				if (BossCollision is PlayerCollider collider)
 				{
 					collider.Collider = Hurtbox;
@@ -159,7 +159,7 @@ namespace Celeste.Mod.BossesHelper
 
 			public void ChangeTargetOption(string tag)
 			{
-				Hurtbox = GetTagOrDefault(ColliderOption.Target, null, tag);
+				Hurtbox = GetCollider(ColliderOption.Target, tag);
 				if (BossCollision is SidekickTarget target)
 				{
 					target.Collider = Hurtbox;

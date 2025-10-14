@@ -74,14 +74,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			PlayAnim(data.String("startingAnim", "idle"));
 
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
-			Collider = GetTagOrDefault(ColliderOption.Hitboxes, Sprite.Height);
-			Hurtbox = GetHurtbox();
+			Collider = GetCollider(ColliderOption.Hitboxes);
+			Hurtbox = GetCollider(HurtMode switch
+			{
+				HurtModes.HeadBonk => ColliderOption.Bouncebox,
+				HurtModes.SidekickAttack => ColliderOption.Target,
+				_ => ColliderOption.Hurtboxes
+			});
 			if ((BossCollision = GetBossCollision()) != null)
 				Add(BossCollision);
 		}
-
-		protected virtual Collider GetHurtbox()
-			=> GetTagOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
 
 		protected abstract Component GetBossCollision();
 
@@ -131,14 +133,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Sprite.Scale.X = realFacing;
 		}
 
-		protected Collider GetTagOrDefault(ColliderOption option, float? value, string key = "main")
+		protected Collider GetCollider(ColliderOption option, string key = "main")
 		{
 			if (hitboxMetadata[option].TryGetValue(key, out var result))
 				return result;
 
-			if (value == null)
+			if (option == ColliderOption.Target)
 				return new Circle(4f);
-			return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+
+			return new Hitbox(Sprite.Width, option == ColliderOption.Bouncebox ? 6f : Sprite.Height,
+				Sprite.Width * -0.5f, Sprite.Height * -0.5f);
 		}
 
 		#region Collision Methods
@@ -185,9 +189,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	{
 		public override HurtModes HurtMode => HurtModes.HeadBonk;
 
-		protected override Collider GetHurtbox()
-			=> GetTagOrDefault(ColliderOption.Bouncebox, 6f);
-
 		protected override Component GetBossCollision()
 			=> new PlayerCollider(OnPlayerBounce, Hurtbox);
 
@@ -221,9 +222,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				(scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
 			}
 		}
-
-		protected override Collider GetHurtbox()
-			=> GetTagOrDefault(ColliderOption.Target, null);
 
 		protected override Component GetBossCollision()
 			=> new SidekickTarget(() => OnDamage(), BossID, Hurtbox);
