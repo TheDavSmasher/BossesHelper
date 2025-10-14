@@ -91,7 +91,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			return luaTable;
 		}
 
-		public static LuaFunction[] LoadFile<T>(this T self, string filename) where T : ILuaLoader
+		public static LuaFunction[] LoadFile(this ILuaLoader self, string filename)
 		{
 			self.Values.Add("player", self.Scene.GetPlayer());
 			return LoadCommand(filename, self.Mode, self.Values);
