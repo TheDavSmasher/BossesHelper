@@ -101,6 +101,17 @@ namespace Celeste.Mod.BossesHelper
 		{
 			public float BossHitCooldown => BossDamageCooldown.TimeLeft;
 
+			protected virtual Collider HurtboxOption
+			{
+				set
+				{
+					if (BossCollision is PlayerCollider collider)
+					{
+						collider.Collider = Hurtbox;
+					}
+				}
+			}
+
 			public void Set1DSpeedDuring(float speed, bool isX, float time)
 			{
 				Keep1DSpeed(speed, isX, time).AsCoroutine(this);
@@ -134,14 +145,13 @@ namespace Celeste.Mod.BossesHelper
 				KillCollider = GetCollider(ColliderOption.KillColliders, tag);
 			}
 
-			public void ChangeHurtboxOption(string tag = "main")
+			protected void ChangeOption(ColliderOption option, string tag)
 			{
-				Hurtbox = GetCollider(ColliderOption.Hurtboxes, tag);
-				if (BossCollision is PlayerCollider collider)
-				{
-					collider.Collider = Hurtbox;
-				}
+				HurtboxOption = Hurtbox = GetCollider(option, tag);
 			}
+
+			public void ChangeHurtboxOption(string tag = "main")
+				=> ChangeOption(ColliderOption.Hurtboxes, tag);
 		}
 
 		public partial class BounceBossPuppet
@@ -149,27 +159,26 @@ namespace Celeste.Mod.BossesHelper
 			public Collider Bouncebox => Hurtbox;
 
 			public void ChangeBounceboxOption(string tag = "main")
-			{
-				Hurtbox = GetCollider(ColliderOption.Bouncebox, tag);
-				if (BossCollision is PlayerCollider collider)
-				{
-					collider.Collider = Hurtbox;
-				}
-			}
+				=> ChangeOption(ColliderOption.Bouncebox, tag);
 		}
 
 		public partial class SidekickBossPuppet
 		{
 			public Collider Target => Hurtbox;
 
-			public void ChangeTargetOption(string tag = "main")
+			protected override Collider HurtboxOption
 			{
-				Hurtbox = GetCollider(ColliderOption.Target, tag);
-				if (BossCollision is SidekickTarget target)
+				set
 				{
-					target.Collider = Hurtbox;
+					if (BossCollision is PlayerCollider collider)
+					{
+						collider.Collider = Hurtbox;
+					}
 				}
 			}
+
+			public void ChangeTargetOption(string tag = "main")
+				=> ChangeOption(ColliderOption.Target, tag);
 		}
 	}
 }
