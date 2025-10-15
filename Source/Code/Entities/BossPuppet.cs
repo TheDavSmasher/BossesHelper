@@ -16,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			Hitboxes,
 			Hurtboxes,
-			SolidColliders,
+			KillColliders,
 			Bouncebox,
 			Target
 		}
@@ -35,7 +35,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public Collider Hurtbox;
 
-		public Collider SolidCollider;
+		public Collider KillCollider
+		{
+			get;
+			set => PlayerKillCollider.Collider = field = value;
+		}
+
+		private readonly PlayerCollider PlayerKillCollider;
 
 		protected readonly Component BossCollision;
 
@@ -70,12 +76,12 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			killOnContact = data.Bool("killOnContact");
 
 			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
-			Add(new PlayerCollider(KillOnContact));
+			Add(PlayerKillCollider = new(KillOnContact));
 			PlayAnim(data.String("startingAnim", "idle"));
 
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
-			SolidCollider = GetCollider(ColliderOption.SolidColliders);
 			Collider = GetCollider(ColliderOption.Hitboxes);
+			KillCollider = GetCollider(ColliderOption.KillColliders);
 			Hurtbox = GetCollider(HurtMode switch
 			{
 				HurtModes.HeadBonk => ColliderOption.Bouncebox,
@@ -136,6 +142,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		protected Collider GetCollider(ColliderOption option, string key = "main")
 		{
+			if (option != ColliderOption.Hitboxes && hitboxMetadata[option].Count == 0)
+				return null;
+
 			if (hitboxMetadata[option].TryGetValue(key, out var result))
 				return result;
 
