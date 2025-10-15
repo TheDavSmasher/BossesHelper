@@ -87,7 +87,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
 			{
-				ColliderOption option = Enum.Parse<ColliderOption>(hitboxNode.LocalName, true);
+				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
+					return;
+
 				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
 					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.SolidColliders => hitboxNode.GetAllColliders(),
