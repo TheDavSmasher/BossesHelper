@@ -101,14 +101,11 @@ namespace Celeste.Mod.BossesHelper
 		{
 			public float BossHitCooldown => BossDamageCooldown.TimeLeft;
 
-			protected virtual Collider HurtboxOption
+			protected virtual void SetBossCollisionCollider()
 			{
-				set
+				if (BossCollision is PlayerCollider collider)
 				{
-					if (BossCollision is PlayerCollider collider)
-					{
-						collider.Collider = Hurtbox;
-					}
+					collider.Collider = Hurtbox;
 				}
 			}
 
@@ -147,7 +144,8 @@ namespace Celeste.Mod.BossesHelper
 
 			protected void ChangeOption(ColliderOption option, string tag)
 			{
-				HurtboxOption = Hurtbox = GetCollider(option, tag);
+				Hurtbox = GetCollider(option, tag);
+				SetBossCollisionCollider();
 			}
 
 			public void ChangeHurtboxOption(string tag = "main")
@@ -166,14 +164,11 @@ namespace Celeste.Mod.BossesHelper
 		{
 			public Collider Target => Hurtbox;
 
-			protected override Collider HurtboxOption
+			protected override void SetBossCollisionCollider()
 			{
-				set
+				if (BossCollision is PlayerCollider collider)
 				{
-					if (BossCollision is PlayerCollider collider)
-					{
-						collider.Collider = Hurtbox;
-					}
+					collider.Collider = Hurtbox;
 				}
 			}
 
