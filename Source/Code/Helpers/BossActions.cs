@@ -128,17 +128,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public override PrepareMode Mode => PrepareMode.Interrupt;
 
+		public LuaProxyCoroutine this[BossPuppet.HurtModes m] => new(onDamageMethods[m]);
+
 		public BossFunctions(string filepath, BossController controller)
 			: base(controller)
 		{
 			LuaFunction[] array = this.LoadFile(filepath);
 			array[0]?.Call();
 			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? array[1]);
-		}
-
-		public LuaProxyCoroutine OnDamage(BossPuppet.HurtModes source)
-		{
-			return new(onDamageMethods[source]);
 		}
 	}
 }
