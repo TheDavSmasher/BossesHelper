@@ -146,7 +146,7 @@ namespace Celeste.Mod.BossesHelper
 
 		public partial class BounceBossPuppet
 		{
-			public ref Collider Bouncebox => ref Hurtbox;
+			public Collider Bouncebox => Hurtbox;
 
 			public void ChangeBounceboxOption(string tag = "main")
 			{
@@ -160,7 +160,7 @@ namespace Celeste.Mod.BossesHelper
 
 		public partial class SidekickBossPuppet
 		{
-			public ref Collider Target => ref Hurtbox;
+			public Collider Target => Hurtbox;
 
 			public void ChangeTargetOption(string tag = "main")
 			{
