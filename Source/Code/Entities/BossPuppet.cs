@@ -69,6 +69,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			airFriction = data.Float("airFriction");
 			killOnContact = data.Bool("killOnContact");
 
+			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
+			Add(new PlayerCollider(KillOnContact));
+			PlayAnim(data.String("startingAnim", "idle"));
+
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			SolidCollider = GetCollider(ColliderOption.SolidColliders);
 			Collider = GetCollider(ColliderOption.Hitboxes);
@@ -80,10 +84,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			});
 			if ((BossCollision = GetBossCollision()) != null)
 				Add(BossCollision);
-
-			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
-			Add(new PlayerCollider(KillOnContact, KillCollider));
-			PlayAnim(data.String("startingAnim", "idle"));
 		}
 
 		protected abstract Component GetBossCollision();

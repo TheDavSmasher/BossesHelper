@@ -124,17 +124,17 @@ namespace Celeste.Mod.BossesHelper
 				return tween;
 			}
 
-			public void ChangeHitboxOption(string tag)
+			public void ChangeHitboxOption(string tag = "main")
 			{
 				Collider = GetCollider(ColliderOption.Hitboxes, tag);
 			}
 
-			public void ChangeSolidCollider(string tag)
+			public void ChangeSolidColliderOption(string tag = "main")
 			{
 				SolidCollider = GetCollider(ColliderOption.SolidColliders, tag);
 			}
 
-			public void ChangeHurtboxOption(string tag)
+			public void ChangeHurtboxOption(string tag = "main")
 			{
 				Hurtbox = GetCollider(ColliderOption.Hurtboxes, tag);
 				if (BossCollision is PlayerCollider collider)
@@ -148,7 +148,7 @@ namespace Celeste.Mod.BossesHelper
 		{
 			public ref Collider Bouncebox => ref Hurtbox;
 
-			public void ChangeBounceboxOption(string tag)
+			public void ChangeBounceboxOption(string tag = "main")
 			{
 				Hurtbox = GetCollider(ColliderOption.Bouncebox, tag);
 				if (BossCollision is PlayerCollider collider)
@@ -162,7 +162,7 @@ namespace Celeste.Mod.BossesHelper
 		{
 			public ref Collider Target => ref Hurtbox;
 
-			public void ChangeTargetOption(string tag)
+			public void ChangeTargetOption(string tag = "main")
 			{
 				Hurtbox = GetCollider(ColliderOption.Target, tag);
 				if (BossCollision is SidekickTarget target)
