@@ -140,9 +140,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Sprite.Scale.X = realFacing;
 		}
 
-		protected Collider GetCollider(ColliderOption option, string key = "main")
+		public Collider GetCollider(ColliderOption option, string key = "main")
 		{
-			if (option != ColliderOption.Hitboxes && hitboxMetadata[option].Count == 0)
+			if (key == "empty" || option != ColliderOption.Hitboxes && hitboxMetadata[option].Count == 0)
 				return null;
 
 			if (hitboxMetadata[option].TryGetValue(key, out var result))
