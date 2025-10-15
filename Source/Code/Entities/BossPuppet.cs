@@ -117,11 +117,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			//Apply friction
 			Speed.X = Calc.Approach(Speed.X, 0f, (Grounded ? groundFriction : airFriction) * Engine.DeltaTime);
 			//Return Sprite Scale
-			if (Sprite != null)
-			{
-				Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
-				Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
-			}
+			Sprite.Scale = Calc.Approach(Sprite.Scale, Vector2.One, 1.75f * Engine.DeltaTime);
 		}
 
 		private bool DynamicPositionOver_Quarter(float pos)
@@ -155,7 +151,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Sprite.Width * -0.5f, Sprite.Height * -0.5f);
 		}
 
-		#region Collision Methods
 		private void KillOnContact(Player player)
 		{
 			if (killOnContact)
@@ -171,7 +166,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				postLua?.Invoke();
 			}
 		}
-		#endregion
 	}
 
 	public class ContactBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
