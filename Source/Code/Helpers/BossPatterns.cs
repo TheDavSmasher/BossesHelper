@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
-		public bool IsWait => ActionName.ToLower().Equals("wait");
+		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
 	}
 
 	public enum ActionEndReason
