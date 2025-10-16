@@ -76,8 +76,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Awake(scene);
 			BossActions = this.ReadLuaFiles(
-				(SourceData.Attr("attacksPath"), BossAttack.Create),
-				(SourceData.Attr("eventsPath"), BossEvent.Create)
+				new(SourceData.Attr("attacksPath"), BossAttack.Create),
+				new(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
 			Puppet.BossFunctions = ReadLuaFilePath(SourceData.Attr("functionsPath"), path => new BossFunctions(path, this));
 			AllPatterns.AddRange(this.ReadPatternFile(SourceData.Attr("patternsPath")));

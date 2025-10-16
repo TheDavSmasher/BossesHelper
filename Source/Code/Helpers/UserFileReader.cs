@@ -10,8 +10,6 @@ using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	using LuaPathReader = (string Path, Func<string, BossController, IBossAction> Creator);
-
 	internal static class UserFileReader
 	{
 		#region XML Files
@@ -210,6 +208,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Lua Files
+		public record LuaPathReader(string Path, Func<string, BossController, IBossAction> Creator);
+
 		public static Dictionary<string, IBossAction> ReadLuaFiles(
 			this BossController controller, params LuaPathReader[] readers)
 		{
