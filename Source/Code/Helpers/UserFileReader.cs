@@ -15,17 +15,19 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	internal static class UserFileReader
 	{
 		#region XML Files
+
 		#region XML Reading
+
+		#region Patterns
 		public static List<BossPattern> ReadPatternFile(this BossController controller, string filepath)
 		{
-			List<BossPattern> targetOut = [];
-
-			ReadXMLFile(filepath, "Failed to find any Pattern file.", "Patterns", patternNode =>
+			if (GetXMLDocument(filepath) is not XmlDocument xml)
 			{
-				BossPattern newPattern = patternNode.ParseNewPattern(controller);
-				targetOut.Add(newPattern);
-			});
-			return targetOut;
+				Logger.Error("Bosses Helper", "Failed to find any Pattern file.");
+				return [];
+			}
+
+			return [.. xml.GetChildNodes("Patterns").Select(node => node.ParseNewPattern(controller))];
 		}
 
 		private static BossPattern ParseNewPattern(this XmlNode patternNode, BossController controller)
@@ -40,8 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, controller);
 			}
 
-			Vector2 offset = controller.SceneAs<Level>().LevelOffset;
-			Hitbox trigger = patternNode.GetHitbox(offset);
+			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
 			int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
 			int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo is null ? null : 0);
 			minCount ??= count;
@@ -50,7 +51,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			if (nodeType.Equals("random"))
 			{
-				foreach (XmlNode action in patternNode.ChildNodes)
+				foreach (XmlNode action in patternNode.GetChildNodes())
 				{
 					methodList.AddRange(Enumerable.Repeat(
 						action.GetMethod(true, true),
@@ -61,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 
 			List<Method> preLoopList = [];
-			foreach (XmlNode action in patternNode.ChildNodes)
+			foreach (XmlNode action in patternNode.GetChildNodes())
 			{
 				switch (action.LocalName.ToLower())
 				{
@@ -81,14 +82,43 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, controller);
 		}
 
+		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
+		{
+			return new Method(
+				isFile ? source.GetValue("file") : "wait",
+				source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
+			);
+		}
+
+		private static Hitbox GetTriggerHitbox(this XmlNode source, BossController controller)
+		{
+			float width = source.GetValueOrDefault("width", 0f);
+			float height = source.GetValueOrDefault("height", 0f);
+			if (width <= 0 || height <= 0)
+				return null;
+
+			Vector2 offset = controller.SceneAs<Level>().LevelOffset;
+			return new Hitbox(width, height,
+				source.GetValueOrDefault("x", 0f) + offset.X, source.GetValueOrDefault("y", 0f) + offset.Y
+			);
+		}
+		#endregion
+
+		#region Hitbox Metadata
 		public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
 		{
 			EnumDict<ColliderOption, Dictionary<string, Collider>> dataHolder = new(_ => []);
 
-			ReadXMLFile(filepath, "No Hitbox Metadata file found. Boss will use all default hitboxes.", "HitboxMetadata", hitboxNode =>
+			if (GetXMLDocument(filepath) is not XmlDocument xml)
+			{
+				Logger.Error("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
+				return dataHolder;
+			}
+
+			foreach (XmlNode hitboxNode in xml.GetChildNodes("HitboxMetadata"))
 			{
 				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
-					return;
+					continue;
 
 				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
@@ -97,26 +127,67 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					ColliderOption.Target => hitboxNode.GetCircle(),
 					_ => null
 				});
-			});
+			};
 			return dataHolder;
+		}
+
+		private static Hitbox GetHitbox(this XmlNode source, float defaultHeight)
+		{
+			return new Hitbox(
+				source.GetValueOrDefault("width", 8f), source.GetValueOrDefault("height", defaultHeight),
+				source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
+			);
+		}
+
+		private static Circle GetCircle(this XmlNode source, float defaultRadius = 4f)
+		{
+			return new Circle(
+				source.GetValueOrDefault("radius", defaultRadius),
+				source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
+			);
+		}
+
+		private static ColliderList GetAllColliders(this XmlNode source)
+		{
+			if (!source.HasChildNodes)
+				return null;
+
+			return new([.. source.GetChildNodes().Cast<XmlElement>().Select<XmlElement, Collider>(
+				opt => opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f)
+			)]);
+		}
+
+		private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
+		{
+			if (newCollider == null || baseOptions.TryAdd(tag, newCollider))
+				return;
+			if (baseOptions[tag] is ColliderList list)
+				list.Add(newCollider);
+			else
+				baseOptions[tag] = new ColliderList(baseOptions[tag], newCollider);
 		}
 		#endregion
 
-		#region XML Helper Functions
-		private static void ReadXMLFile(string filepath, string error, string node, Action<XmlNode> nodeReader)
+		private static XmlDocument GetXMLDocument(string filepath)
 		{
-			if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset xml))
-			{
-				Logger.Log(LogLevel.Error, "Bosses Helper", error);
-				return;
-			}
-			XmlDocument document = new();
-			document.Load(xml.Stream);
-			foreach (XmlNode xmlNode in document.SelectSingleNode(node).ChildNodes)
+			if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset asset))
+				return null;
+
+			XmlDocument xml = new();
+			xml.Load(asset.Stream);
+			return xml;
+		}
+
+		private static IEnumerable<XmlNode> GetChildNodes(this XmlNode source, string xpath = null)
+		{
+			if (!string.IsNullOrWhiteSpace(xpath))
+				source = source.SelectSingleNode(xpath);
+
+			foreach (XmlNode xmlNode in source.ChildNodes)
 			{
 				if (xmlNode.NodeType == XmlNodeType.Comment) continue;
 
-				nodeReader(xmlNode);
+				yield return xmlNode;
 			}
 		}
 
@@ -134,65 +205,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			return source.Attributes[tag]?.Value ?? @default;
 		}
-
-		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
-		{
-			return new Method(
-				isFile ? source.GetValue("file") : "wait",
-				source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
-			);
-		}
-
-		private static ColliderList GetAllColliders(this XmlNode source)
-		{
-			if (source.ChildNodes.Count == 0)
-				return null;
-
-			List<Collider> colliders = [];
-			foreach (XmlElement opt in source.ChildNodes)
-			{
-				colliders.Add(opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f));
-			}
-			return new([.. colliders]);
-		}
-
-		private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
-		{
-			if (newCollider == null || baseOptions.TryAdd(tag, newCollider))
-				return;
-			if (baseOptions[tag] is ColliderList list)
-				list.Add(newCollider);
-			else
-				baseOptions[tag] = new ColliderList(baseOptions[tag], newCollider);
-		}
-
-		private static Hitbox GetHitbox(this XmlNode source, float defaultHeight)
-		{
-			return new Hitbox(
-				source.GetValueOrDefault("width", 8f), source.GetValueOrDefault("height", defaultHeight),
-				source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
-			);
-		}
-
-		private static Hitbox GetHitbox(this XmlNode source, Vector2 offset)
-		{
-			float width = source.GetValueOrDefault("width", 0f);
-			float height = source.GetValueOrDefault("height", 0f);
-			if (width <= 0 || height <= 0)
-				return null;
-			return new Hitbox(width, height,
-				source.GetValueOrDefault("x", 0f) + offset.X, source.GetValueOrDefault("y", 0f) + offset.Y
-			);
-		}
-
-		private static Circle GetCircle(this XmlNode source, float defaultRadius = 4f)
-		{
-			return new Circle(
-				source.GetValueOrDefault("radius", defaultRadius),
-				source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
-			);
-		}
 		#endregion
+
 		#endregion
 
 		#region Lua Files
