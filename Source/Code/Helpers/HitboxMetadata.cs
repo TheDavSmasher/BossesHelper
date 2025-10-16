@@ -1,0 +1,15 @@
+﻿using Monocle;
+using System.Collections.Generic;
+using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
+
+namespace Celeste.Mod.BossesHelper.Code.Helpers
+{
+	public class HitboxMetadata
+	{
+		public readonly EnumDict<ColliderOption, Dictionary<string, Collider>> ColliderOptions = new(_ => []);
+
+		public Dictionary<string, Collider> this[ColliderOption opt]
+			=> ColliderOptions[opt];
+	}
+}

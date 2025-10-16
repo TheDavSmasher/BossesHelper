@@ -103,14 +103,14 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Hitbox Metadata
-		public static EnumDict<ColliderOption, Dictionary<string, Collider>> ReadMetadataFile(string filepath)
+		public static HitboxMetadata ReadMetadataFile(string filepath)
 		{
-			EnumDict<ColliderOption, Dictionary<string, Collider>> dataHolder = new(_ => []);
+			HitboxMetadata metadata = new();
 
 			if (GetXMLDocument(filepath) is not XmlDocument xml)
 			{
 				Logger.Error("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
-				return dataHolder;
+				return metadata;
 			}
 
 			foreach (XmlNode hitboxNode in xml.GetChildNodes("HitboxMetadata"))
@@ -118,7 +118,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
 					continue;
 
-				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
+				metadata[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
 					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.KillColliders => hitboxNode.GetAllColliders(),
 					ColliderOption.Bouncebox => hitboxNode.GetHitbox(6f),
@@ -126,7 +126,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					_ => null
 				});
 			};
-			return dataHolder;
+			return metadata;
 		}
 
 		private static Hitbox GetHitbox(this XmlNode source, float defaultHeight)
@@ -166,6 +166,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
+		#region Helper Functions
 		private static XmlDocument GetXMLDocument(string filepath)
 		{
 			if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset asset))
@@ -203,6 +204,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			return source.Attributes[tag]?.Value ?? @default;
 		}
+		#endregion
+
 		#endregion
 
 		#endregion

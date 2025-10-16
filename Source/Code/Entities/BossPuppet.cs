@@ -31,7 +31,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 		#endregion
 
-		private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
+		private readonly HitboxMetadata hitboxMetadata;
 
 		public Collider Hurtbox;
 
