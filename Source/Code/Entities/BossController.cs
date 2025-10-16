@@ -62,7 +62,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Health = data.Int("bossHealthMax", -1);
 				startAttackingImmediately = data.Bool("startAttackingImmediately");
 			}
-			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(ActionEndReason.PlayerDied);
+			Everest.Events.Player.OnDie += CurrentPattern.OnPlayerDie;
 		}
 
 		public override void Added(Scene scene)
@@ -133,7 +133,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void InterruptPattern()
 		{
 			PatternCoroutine.Active = false;
-			CurrentPattern.EndAction(ActionEndReason.Interrupted);
+			CurrentPattern.Interrupt();
 		}
 
 		public void StartAttackPattern(int goTo = -1)

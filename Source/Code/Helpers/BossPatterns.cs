@@ -12,13 +12,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
 	}
 
-	public enum ActionEndReason
-	{
-		Completed,
-		Interrupted,
-		PlayerDied
-	}
-
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
 		public IBossAction CurrentAction { get; private set; }
@@ -34,7 +27,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					CurrentAction = _currentAct;
 					IsActing = true;
 					yield return CurrentAction.Perform();
-					EndAction(ActionEndReason.Completed);
+					EndAction(BossAttack.EndReason.Completed);
 				}
 				else
 				{
@@ -44,10 +37,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			yield return method.Duration;
 		}
 
-		public void EndAction(ActionEndReason reason)
+		public void OnPlayerDie(Player _)
+			=> EndAction(BossAttack.EndReason.PlayerDied);
+
+		public void Interrupt()
+			=> EndAction(BossAttack.EndReason.Interrupted);
+
+		private void EndAction(BossAttack.EndReason reason)
 		{
 			IsActing = false;
-			CurrentAction?.End(reason);
+			if (CurrentAction is BossAttack attack)
+				attack.End(reason);
 			CurrentAction = null;
 		}
 
