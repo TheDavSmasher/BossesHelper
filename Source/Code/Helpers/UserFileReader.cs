@@ -115,7 +115,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, controller);
 			}
 
-			List<Method> methodList = [];
 			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
 			int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
 			int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo is null ? null : 0);
@@ -125,16 +124,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			if (nodeType == PatternType.Random)
 			{
-				foreach (XmlNode action in patternNode.GetChildNodes())
-				{
-					methodList.AddRange(Enumerable.Repeat(
-						action.GetMethod(true, true),
-						Math.Max(action.GetValueOrDefault("weight", 0), 1)
-					));
-				}
-				return new RandomPattern(patternName, methodList, trigger, minCount, count, goTo, controller);
+				return new RandomPattern(patternName,
+					[..patternNode.GetChildNodes().SelectMany(
+						node => Enumerable.Repeat(
+							node.GetMethod(true, true),
+							Math.Max(node.GetValueOrDefault("weight", 0), 1))
+						)
+					],
+					trigger, minCount, count, goTo, controller);
 			}
 
+			List<Method> methodList = [];
 			List<Method> preLoopList = [];
 			foreach (XmlNode action in patternNode.GetChildNodes())
 			{

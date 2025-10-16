@@ -59,6 +59,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			yield return PerformMethod(Event);
 			Controller.ChangeToPattern();
+			yield return null;
 		}
 	}
 
