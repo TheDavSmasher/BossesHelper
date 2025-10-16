@@ -16,7 +16,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#region XML Reading
 
 		#region Patterns
-		public static List<BossPattern> ReadPatternFile(this BossController controller, string filepath)
+		public static List<BossPattern> ReadPatternFile(string filepath, BossController controller)
 		{
 			if (GetXMLDocument(filepath) is not XmlDocument xml)
 				throw new Exception("Failed to find any Pattern file.");

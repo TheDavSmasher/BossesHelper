@@ -80,7 +80,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				new(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
 			Puppet.BossFunctions = ReadLuaFilePath(SourceData.Attr("functionsPath"), path => new BossFunctions(path, this));
-			AllPatterns.AddRange(this.ReadPatternFile(SourceData.Attr("patternsPath")));
+			AllPatterns.AddRange(ReadPatternFile(SourceData.Attr("patternsPath"), this));
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
 				if (AllPatterns[i].Name is string name)
