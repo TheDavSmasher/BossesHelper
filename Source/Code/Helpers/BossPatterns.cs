@@ -14,9 +14,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
-		public bool IsActing { get; private set; }
+		public bool IsActing => currentAction == null;
 
 		private IBossAction currentAction;
+
+		public abstract IEnumerator Perform();
+
+		public void EndAction(BossAttack.EndReason reason)
+		{
+			if (currentAction is BossAttack attack)
+				attack.End(reason);
+			currentAction = null;
+		}
 
 		protected IEnumerator PerformMethod(Method method)
 		{
@@ -24,7 +33,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			{
 				if (Controller.TryGet(method.ActionName, out currentAction))
 				{
-					IsActing = true;
 					yield return currentAction.Perform();
 					EndAction(BossAttack.EndReason.Completed);
 				}
@@ -35,38 +43,16 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 			yield return method.Duration;
 		}
-
-		public void OnPlayerDie(Player _)
-			=> EndAction(BossAttack.EndReason.PlayerDied);
-
-		public void Interrupt()
-			=> EndAction(BossAttack.EndReason.Interrupted);
-
-		private void EndAction(BossAttack.EndReason reason)
-		{
-			IsActing = false;
-			if (currentAction is BossAttack attack)
-				attack.End(reason);
-			currentAction = null;
-		}
-
-		public abstract IEnumerator Perform();
-
-		protected IEnumerator PerformAndChange(Func<Method> getMethod, Func<bool> changePattern)
-		{
-			yield return PerformMethod(getMethod());
-			if (changePattern())
-			{
-				Controller.ChangeToPattern();
-				yield return null;
-			}
-		}
 	}
 
 	public record EventCutscene(string Name, Method Event, string GoToPattern, BossController Controller)
 		: BossPattern(Name, GoToPattern, Controller)
 	{
-		public override IEnumerator Perform() => PerformAndChange(() => Event, () => true);
+		public override IEnumerator Perform()
+		{
+			yield return PerformMethod(Event);
+			Controller.ChangeToPattern();
+		}
 	}
 
 	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
@@ -82,11 +68,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			currentAction = 0;
 			while (true)
 			{
-				yield return PerformAndChange(() => StatePatternOrder[AttackIndex % StatePatternOrder.Count], () =>
+				yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Count]);
+				int counter = UpdateLoop();
+				if (counter > MinRandomIter && (counter > IterationCount || Controller.Random.Next() % 2 == 1))
 				{
-					int counter = UpdateLoop();
-					return counter > MinRandomIter && (counter > IterationCount || Controller.Random.Next() % 2 == 1);
-				});
+					Controller.ChangeToPattern();
+					yield return null;
+				}
 			}
 		}
 
