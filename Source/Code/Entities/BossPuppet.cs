@@ -61,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public float airFriction;
 
-		public bool killOnContact;
+		public bool KillOnContact;
 
 		protected BossPuppet(EntityData data, Vector2 offset)
 			: base(data.Position + offset, data.Attr("bossSprite"), Vector2.One, data.Float("maxFall", 90f),
@@ -73,11 +73,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			GravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
 			airFriction = data.Float("airFriction");
-			killOnContact = data.Bool("killOnContact");
 
-			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
-			Add(PlayerKillCollider = new(KillOnContact));
 			PlayAnim(data.String("startingAnim", "idle"));
+			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
+			Add(PlayerKillCollider = new(KillPlayer));
+			KillOnContact = data.Bool("killOnContact");
 
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
 			Collider = GetCollider(ColliderOption.Hitboxes);
@@ -151,9 +151,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Sprite.Width * -0.5f, Sprite.Height * -0.5f);
 		}
 
-		private void KillOnContact(Player player)
+		private void KillPlayer(Player player)
 		{
-			if (killOnContact)
+			if (KillOnContact)
 				player.Die((player.Position - Position).SafeNormalize());
 		}
 
