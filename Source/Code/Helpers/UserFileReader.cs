@@ -93,7 +93,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				dataHolder[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
 					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.KillColliders => hitboxNode.GetAllColliders(),
-					ColliderOption.Bouncebox => hitboxNode.GetHitbox(8f, 6f),
+					ColliderOption.Bouncebox => hitboxNode.GetHitbox(6f),
 					ColliderOption.Target => hitboxNode.GetCircle(),
 					_ => null
 				});
@@ -151,7 +151,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			List<Collider> colliders = [];
 			foreach (XmlElement opt in source.ChildNodes)
 			{
-				colliders.Add(opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f, 8f));
+				colliders.Add(opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f));
 			}
 			return new([.. colliders]);
 		}
@@ -166,10 +166,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				baseOptions[tag] = new ColliderList(baseOptions[tag], newCollider);
 		}
 
-		private static Hitbox GetHitbox(this XmlNode source, float defaultWidth, float defaultHeight)
+		private static Hitbox GetHitbox(this XmlNode source, float defaultHeight)
 		{
 			return new Hitbox(
-				source.GetValueOrDefault("width", defaultWidth), source.GetValueOrDefault("height", defaultHeight),
+				source.GetValueOrDefault("width", 8f), source.GetValueOrDefault("height", defaultHeight),
 				source.GetValueOrDefault("xOffset", 0f), source.GetValueOrDefault("yOffset", 0f)
 			);
 		}
