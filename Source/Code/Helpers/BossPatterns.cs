@@ -14,19 +14,18 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
-		public IBossAction CurrentAction { get; private set; }
-
 		public bool IsActing { get; private set; }
+
+		private IBossAction currentAction;
 
 		protected IEnumerator PerformMethod(Method method)
 		{
 			if (!method.IsWait)
 			{
-				if (Controller.TryGet(method.ActionName, out IBossAction _currentAct))
+				if (Controller.TryGet(method.ActionName, out currentAction))
 				{
-					CurrentAction = _currentAct;
 					IsActing = true;
-					yield return CurrentAction.Perform();
+					yield return currentAction.Perform();
 					EndAction(BossAttack.EndReason.Completed);
 				}
 				else
@@ -46,9 +45,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		private void EndAction(BossAttack.EndReason reason)
 		{
 			IsActing = false;
-			if (CurrentAction is BossAttack attack)
+			if (currentAction is BossAttack attack)
 				attack.End(reason);
-			CurrentAction = null;
+			currentAction = null;
 		}
 
 		public abstract IEnumerator Perform();
