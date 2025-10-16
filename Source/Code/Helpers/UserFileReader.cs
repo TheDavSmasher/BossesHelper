@@ -147,9 +147,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			if (source.ChildNodes.Count == 0)
 				return null;
-			return new([.. (source.ChildNodes as IEnumerable<XmlElement>).Select<XmlElement, Collider>(
-				opt => opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f, 8f)
-			)]);
+
+			List<Collider> colliders = [];
+			foreach (XmlElement opt in source.ChildNodes)
+			{
+				colliders.Add(opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f, 8f));
+			}
+			return new([.. colliders]);
 		}
 
 		private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
