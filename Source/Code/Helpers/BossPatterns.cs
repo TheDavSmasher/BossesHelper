@@ -35,7 +35,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					IsActing = true;
 					yield return CurrentAction.Perform();
 					EndAction(ActionEndReason.Completed);
-					CurrentAction = null;
 				}
 				else
 				{
@@ -49,6 +48,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			IsActing = false;
 			CurrentAction?.End(reason);
+			CurrentAction = null;
 		}
 
 		public abstract IEnumerator Perform();
