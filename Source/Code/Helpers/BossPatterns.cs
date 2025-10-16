@@ -59,9 +59,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
 		: BossPattern(Name, GoToPattern, Controller)
 	{
+		private int currentAction;
+
 		protected virtual int AttackIndex => currentAction;
 
-		private int currentAction;
+		protected virtual int UpdateLoop()
+			=> currentAction++;
 
 		public override IEnumerator Perform()
 		{
@@ -77,8 +80,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 			}
 		}
-
-		protected virtual int UpdateLoop() => currentAction++;
 	}
 
 	public record RandomPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
@@ -96,6 +97,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private int loop;
 
+		protected override int UpdateLoop()
+		{
+			if (base.UpdateLoop() % StatePatternOrder.Count == 0)
+				loop++;
+			return loop;
+		}
+
 		public override IEnumerator Perform()
 		{
 			loop = 0;
@@ -105,7 +113,5 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 			yield return base.Perform();
 		}
-
-		protected override int UpdateLoop() => loop += base.UpdateLoop() % StatePatternOrder.Count == 0 ? 1 : 0;
 	}
 }
