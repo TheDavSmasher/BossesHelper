@@ -85,14 +85,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
 		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
 	{
-		private readonly SingleUse<int> ForcedAttackIndex = new();
-
-		public void ForceNextAttack(int value)
-		{
-			ForcedAttackIndex.Value = value;
-		}
-
 		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
+
+		public readonly SingleUse<int> ForcedAttackIndex = new();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
