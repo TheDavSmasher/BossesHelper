@@ -12,6 +12,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
 	}
 
+	public enum PatternType
+	{
+		Event,
+		Pattern,
+		Random
+	}
+
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
 		public bool IsActing => currentAction == null;

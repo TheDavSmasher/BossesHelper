@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
-using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -20,12 +19,20 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static List<BossPattern> ReadPatternFile(this BossController controller, string filepath)
 		{
 			if (GetXMLDocument(filepath) is not XmlDocument xml)
-			{
-				Logger.Error("Bosses Helper", "Failed to find any Pattern file.");
-				return [];
-			}
+				throw new Exception("Failed to find any Pattern file.");
 
-			return [.. xml.GetChildNodes("Patterns").Select(node => node.ParseNewPattern(controller))];
+			List<BossPattern> result = [];
+			foreach (XmlNode node in xml.GetChildNodes("Patterns"))
+			{
+				if (!Enum.TryParse(node.LocalName, true, out PatternType type))
+				{
+					Logger.Warn("Bosses Helper", $"{node.LocalName} is not an accepted Patterns node type.");
+					continue;
+				}
+
+				result.Add(node.ParseNewPattern(controller));
+			}
+			return result;
 		}
 
 		private static BossPattern ParseNewPattern(this XmlNode patternNode, BossController controller)
@@ -109,14 +116,17 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			if (GetXMLDocument(filepath) is not XmlDocument xml)
 			{
-				Logger.Error("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
+				Logger.Warn("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
 				return metadata;
 			}
 
 			foreach (XmlNode hitboxNode in xml.GetChildNodes("HitboxMetadata"))
 			{
 				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
+				{
+					Logger.Warn("Bosses Helper", $"{hitboxNode.LocalName} is not an accepted HitboxMetadata node type.");
 					continue;
+				}	
 
 				metadata[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
 				{
