@@ -13,7 +13,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		IEnumerator Perform();
 
-		void End(MethodEndReason reason) { }
+		void End(ActionEndReason reason) { }
 	}
 
 	public interface IBossActionCreator<TSelf> : IBossAction where TSelf : IBossActionCreator<TSelf>
@@ -42,7 +42,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		private readonly LuaFunction endFunction;
 
-		private readonly EnumDict<MethodEndReason, LuaFunction> onEndMethods;
+		private readonly EnumDict<ActionEndReason, LuaFunction> onEndMethods;
 
 		public override PrepareMode Mode => PrepareMode.Attack;
 
@@ -60,7 +60,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			return new LuaProxyCoroutine(attackFunction);
 		}
 
-		public void End(MethodEndReason reason)
+		public void End(ActionEndReason reason)
 		{
 			endFunction?.Call(reason);
 			onEndMethods[reason]?.Call();

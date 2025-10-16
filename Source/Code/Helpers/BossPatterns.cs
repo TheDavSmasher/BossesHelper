@@ -12,7 +12,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public bool IsWait => ActionName.ToLower().Equals("wait");
 	}
 
-	public enum MethodEndReason
+	public enum ActionEndReason
 	{
 		Completed,
 		Interrupted,
@@ -34,7 +34,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					CurrentAction = _currentAct;
 					IsActing = true;
 					yield return CurrentAction.Perform();
-					EndAction(MethodEndReason.Completed);
+					EndAction(ActionEndReason.Completed);
 					CurrentAction = null;
 				}
 				else
@@ -45,7 +45,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			yield return method.Duration;
 		}
 
-		public void EndAction(MethodEndReason reason)
+		public void EndAction(ActionEndReason reason)
 		{
 			IsActing = false;
 			CurrentAction?.End(reason);
