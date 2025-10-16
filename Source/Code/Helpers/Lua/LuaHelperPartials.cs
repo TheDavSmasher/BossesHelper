@@ -28,6 +28,23 @@ namespace Celeste.Mod.BossesHelper
 
 			public bool IsActing => CurrentPattern.IsActing;
 
+			private readonly Dictionary<string, object> storedObjects = [];
+
+			public void StoreObject(string key, object toStore)
+			{
+				storedObjects.TryAdd(key, toStore);
+			}
+
+			public object GetStoredObject(string key)
+			{
+				return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
+			}
+
+			public void DeleteStoredObject(string key)
+			{
+				storedObjects.Remove(key);
+			}
+
 			public void AddEntity(Entity entity)
 			{
 				if (!activeEntities.Contains(entity))
@@ -70,23 +87,6 @@ namespace Celeste.Mod.BossesHelper
 				{
 					Scene.DoNotLoad(SourceId);
 				}
-			}
-
-			private readonly Dictionary<string, object> storedObjects = [];
-
-			public void StoreObject(string key, object toStore)
-			{
-				storedObjects.TryAdd(key, toStore);
-			}
-
-			public object GetStoredObject(string key)
-			{
-				return storedObjects.TryGetValue(key, out object storedObject) ? storedObject : null;
-			}
-
-			public void DeleteStoredObject(string key)
-			{
-				storedObjects.Remove(key);
 			}
 
 			public int GetHealth() => Health;
