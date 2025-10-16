@@ -49,7 +49,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					continue;
 				}
 
-				metadata[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
+				metadata.Add(option, hitboxNode.GetValue("tag", "main"), option switch
 				{
 					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.KillColliders => hitboxNode.GetAllColliders(),
 					ColliderOption.Bouncebox => hitboxNode.GetHitbox(6f),
@@ -201,18 +201,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return null;
 
 			return new([.. source.GetChildNodes().Cast<XmlElement>().Select<XmlElement, Collider>(
-				opt => opt.LocalName.ToLower().Equals("circle") ? opt.GetCircle() : opt.GetHitbox(8f)
+				opt => opt.LocalName.Equals("circle", StringComparison.OrdinalIgnoreCase) ? opt.GetCircle() : opt.GetHitbox(8f)
 			)]);
-		}
-
-		private static void InsertNewCollider(this Dictionary<string, Collider> baseOptions, string tag, Collider newCollider)
-		{
-			if (newCollider == null || baseOptions.TryAdd(tag, newCollider))
-				return;
-			if (baseOptions[tag] is ColliderList list)
-				list.Add(newCollider);
-			else
-				baseOptions[tag] = new ColliderList(baseOptions[tag], newCollider);
 		}
 		#endregion
 
