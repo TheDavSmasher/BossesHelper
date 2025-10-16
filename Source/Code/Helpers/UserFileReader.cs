@@ -12,10 +12,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	internal static class UserFileReader
 	{
 		#region XML Files
-
-		#region XML Reading
-
-		#region Patterns
 		public static List<BossPattern> ReadPatternFile(string filepath, BossController controller)
 		{
 			if (GetXMLDocument(filepath) is not XmlDocument xml)
@@ -30,23 +26,96 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					continue;
 				}
 
-				result.Add(node.ParseNewPattern(controller));
+				result.Add(node.ParseNewPattern(controller, type));
 			}
 			return result;
 		}
 
-		private static BossPattern ParseNewPattern(this XmlNode patternNode, BossController controller)
+		public static HitboxMetadata ReadMetadataFile(string filepath)
 		{
-			string nodeType = patternNode.LocalName.ToLower();
-			List<Method> methodList = [];
+			HitboxMetadata metadata = new();
 
+			if (GetXMLDocument(filepath) is not XmlDocument xml)
+			{
+				Logger.Warn("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
+				return metadata;
+			}
+
+			foreach (XmlNode hitboxNode in xml.GetChildNodes("HitboxMetadata"))
+			{
+				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
+				{
+					Logger.Warn("Bosses Helper", $"{hitboxNode.LocalName} is not an accepted HitboxMetadata node type.");
+					continue;
+				}
+
+				metadata[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
+				{
+					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.KillColliders => hitboxNode.GetAllColliders(),
+					ColliderOption.Bouncebox => hitboxNode.GetHitbox(6f),
+					ColliderOption.Target => hitboxNode.GetCircle(),
+					_ => null
+				});
+			}
+			return metadata;
+		}
+		#endregion
+
+		#region Lua Files
+		public record LuaPathReader(string Path, Func<string, BossController, IBossAction> Creator);
+
+		public static Dictionary<string, IBossAction> ReadLuaFiles(
+			this BossController controller, params LuaPathReader[] readers)
+		{
+			Dictionary<string, IBossAction> actions = [];
+			foreach (var (path, creator) in readers)
+			{
+				if (TryGetLuaAsset(path, false, out ModAsset luaFiles))
+				{
+					foreach (ModAsset luaFile in luaFiles.Children)
+					{
+						IBossAction action = creator(luaFile.PathVirtual, controller);
+						if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
+							Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
+					}
+				}
+			}
+			return actions;
+		}
+
+		public static T ReadLuaFilePath<T>(string filepath, Func<string, T> parser)
+		{
+			return parser(TryGetLuaAsset(filepath, true, out ModAsset saveFile) ? saveFile.PathVirtual : null);
+		}
+
+		private static bool TryGetLuaAsset(string path, bool isFile, out ModAsset asset)
+		{
+			if (isFile)
+				path = CleanPath(path, ".lua");
+			if (!Everest.Content.TryGet(path, out asset))
+			{
+				Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
+				return false;
+			}
+			return true;
+		}
+		#endregion
+
+		#region Helper Functions
+
+		#region XML
+
+		#region Patterns
+		private static BossPattern ParseNewPattern(this XmlNode patternNode, BossController controller, PatternType nodeType)
+		{
 			string patternName = patternNode.GetValue("name");
 			string goTo = patternNode.GetValue("goto");
-			if (nodeType.Equals("event"))
+			if (nodeType == PatternType.Event)
 			{
 				return new EventCutscene(patternName, patternNode.GetMethod(true), goTo, controller);
 			}
 
+			List<Method> methodList = [];
 			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
 			int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
 			int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo is null ? null : 0);
@@ -54,7 +123,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			if (count < minCount)
 				count = minCount;
 
-			if (nodeType.Equals("random"))
+			if (nodeType == PatternType.Random)
 			{
 				foreach (XmlNode action in patternNode.GetChildNodes())
 				{
@@ -110,35 +179,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Hitbox Metadata
-		public static HitboxMetadata ReadMetadataFile(string filepath)
-		{
-			HitboxMetadata metadata = new();
-
-			if (GetXMLDocument(filepath) is not XmlDocument xml)
-			{
-				Logger.Warn("Bosses Helper", "No Hitbox Metadata file found. Boss will use all default hitboxes.");
-				return metadata;
-			}
-
-			foreach (XmlNode hitboxNode in xml.GetChildNodes("HitboxMetadata"))
-			{
-				if (!Enum.TryParse(hitboxNode.LocalName, true, out ColliderOption option))
-				{
-					Logger.Warn("Bosses Helper", $"{hitboxNode.LocalName} is not an accepted HitboxMetadata node type.");
-					continue;
-				}	
-
-				metadata[option].InsertNewCollider(hitboxNode.GetValue("tag", "main"), option switch
-				{
-					ColliderOption.Hitboxes or ColliderOption.Hurtboxes or ColliderOption.KillColliders => hitboxNode.GetAllColliders(),
-					ColliderOption.Bouncebox => hitboxNode.GetHitbox(6f),
-					ColliderOption.Target => hitboxNode.GetCircle(),
-					_ => null
-				});
-			};
-			return metadata;
-		}
-
 		private static Hitbox GetHitbox(this XmlNode source, float defaultHeight)
 		{
 			return new Hitbox(
@@ -176,7 +216,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
-		#region Helper Functions
 		private static XmlDocument GetXMLDocument(string filepath)
 		{
 			if (!Everest.Content.TryGet(CleanPath(filepath, ".xml"), out ModAsset asset))
@@ -216,51 +255,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
-		#endregion
-
-		#endregion
-
-		#region Lua Files
-		public record LuaPathReader(string Path, Func<string, BossController, IBossAction> Creator);
-
-		public static Dictionary<string, IBossAction> ReadLuaFiles(
-			this BossController controller, params LuaPathReader[] readers)
-		{
-			Dictionary<string, IBossAction> actions = [];
-			foreach (var (path, creator) in readers)
-			{
-				if (ReadLuaPath(path, false, out ModAsset luaFiles))
-				{
-					foreach (ModAsset luaFile in luaFiles.Children)
-					{
-						IBossAction action = creator(luaFile.PathVirtual, controller);
-						if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
-							Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
-					}
-				}
-			}
-			return actions;
-		}
-
-		public static T ReadLuaFilePath<T>(string filepath, Func<string, T> parser)
-		{
-			return parser(ReadLuaPath(filepath, true, out ModAsset saveFile) ? saveFile.PathVirtual : null);
-		}
-
-		private static bool ReadLuaPath(string path, bool isFile, out ModAsset asset)
-		{
-			if (isFile)
-				path = CleanPath(path, ".lua");
-			if (!Everest.Content.TryGet(path, out asset))
-			{
-				Logger.Log(LogLevel.Info, "Bosses Helper", $"No Lua files were found in ${path}.");
-				return false;
-			}
-			return true;
-		}
-		#endregion
-
-		#region Other Helper Functions
 		private static string CleanPath(string path, string extension)
 		{
 			if (path == null) return "";
