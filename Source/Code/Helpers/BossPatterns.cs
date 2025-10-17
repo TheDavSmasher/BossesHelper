@@ -63,58 +63,52 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 	}
 
-	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
+	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder,
+		Hitbox PlayerPositionTrigger, NullRange RangeCounter, string GoToPattern, BossController Controller)
 		: BossPattern(Name, GoToPattern, Controller)
 	{
-		private int currentAction;
+		protected abstract int AttackIndex { get; }
 
-		protected virtual int AttackIndex => currentAction;
-
-		protected virtual int UpdateLoop()
-			=> currentAction++;
+		protected virtual bool Update => true;
 
 		public override IEnumerator Perform()
 		{
-			currentAction = 0;
-			while (true)
+			RangeCounter.Reset();
+			do
 			{
 				yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Count]);
-				int counter = UpdateLoop();
-				if (counter > MinRandomIter && (counter > IterationCount || Controller.Random.Next() % 2 == 1))
-				{
-					Controller.ChangeToPattern();
-					yield return null;
-				}
+				if (Update)
+					RangeCounter.Inc();
 			}
+			while (RangeCounter.CanContinue);
+			Controller.ChangeToPattern();
+			yield return null;
 		}
 	}
 
-	public record RandomPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
+	public record RandomPattern(string Name, List<Method> StatePatternOrder,
+		Hitbox PlayerPositionTrigger, NullRange IterationRange, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, IterationRange, GoToPattern, Controller)
 	{
-		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
 
 		public readonly SingleUse<int> ForcedAttackIndex = new();
+
+		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
 	}
 
-	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
+	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods,
+		Hitbox PlayerPositionTrigger, NullRange IterationRange, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, IterationRange, GoToPattern, Controller)
 	{
-		private int loop;
+		private int actions;
 
-		protected override int UpdateLoop()
-		{
-			if (base.UpdateLoop() % StatePatternOrder.Count == 0)
-				loop++;
-			return loop;
-		}
+		protected override bool Update => actions++ % StatePatternOrder.Count == 0;
+
+		protected override int AttackIndex => RangeCounter.Counter;
 
 		public override IEnumerator Perform()
 		{
-			loop = 0;
+			actions = 0;
 			foreach (Method method in PrePatternMethods)
 			{
 				yield return PerformMethod(method);

@@ -246,6 +246,39 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				set;
 			}
 		}
+
+		public class NullRange
+		{
+			private readonly int? MinRange;
+
+			private readonly int? MaxRange;
+
+			private readonly int Chance;
+
+			public readonly Random Random;
+
+			public int Counter { get; private set; }
+
+			public bool CanContinue
+				=> Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
+
+			public NullRange(int? min, int? max, int? @default, Random random, int randomChance = 50)
+			{
+				MinRange = min ?? max ?? @default;
+				MaxRange = max ?? min ?? @default;
+				if (MaxRange < MinRange)
+					MaxRange = MinRange;
+				Random = random;
+				Chance = Math.Clamp(randomChance, 0, 100);
+			}
+
+			public void Reset() => Counter = 0;
+
+			public void Inc()
+			{
+				Counter++;
+			}
+		}
 		#endregion
 
 		public enum Alignment

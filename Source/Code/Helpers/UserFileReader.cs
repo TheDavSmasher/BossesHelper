@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using static Celeste.Mod.BossesHelper.Code.Entities.BossPuppet;
+using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 
 namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
@@ -116,11 +117,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 
 			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
-			int? minCount = patternNode.GetValueOrDefault<int>("minRepeat");
-			int? count = patternNode.GetValueOrDefault<int>("repeat") ?? minCount ?? (goTo is null ? null : 0);
-			minCount ??= count;
-			if (count < minCount)
-				count = minCount;
+			NullRange nRange = new(
+				patternNode.GetValueOrDefault<int>("minRepeat"),
+				patternNode.GetValueOrDefault<int>("repeat"),
+				goTo is null ? null : 0,
+				controller.Random);
 
 			if (nodeType == PatternType.Random)
 			{
@@ -131,7 +132,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 							Math.Max(node.GetValueOrDefault("weight", 0), 1))
 						)
 					],
-					trigger, minCount, count, goTo, controller);
+					trigger, nRange, goTo, controller);
 			}
 
 			List<Method> methodList = [];
@@ -153,7 +154,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 			}
 
-			return new SequentialPattern(patternName, methodList, preLoopList, trigger, minCount, count, goTo, controller);
+			return new SequentialPattern(patternName, methodList, preLoopList, trigger, nRange, goTo, controller);
 		}
 
 		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
