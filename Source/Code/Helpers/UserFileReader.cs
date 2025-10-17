@@ -202,7 +202,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				return null;
 
 			return new([.. source.GetChildNodes().Cast<XmlElement>().Select<XmlElement, Collider>(
-				opt => opt.LocalName.Equals("circle", StringComparison.OrdinalIgnoreCase) ? opt.GetCircle() : opt.GetHitbox(8f)
+				opt => opt.NameEquals("circle") ? opt.GetCircle() : opt.GetHitbox(8f)
 			)]);
 		}
 		#endregion
@@ -243,6 +243,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		private static string GetValue(this XmlNode source, string tag, string @default = null)
 		{
 			return source.Attributes[tag]?.Value ?? @default;
+		}
+
+		private static bool NameEquals(this XmlNode node, string compared)
+		{
+			return node.LocalName.Equals(compared, StringComparison.OrdinalIgnoreCase);
 		}
 		#endregion
 
