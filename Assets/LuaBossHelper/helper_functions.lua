@@ -168,8 +168,9 @@ function helpers.getEnum(enum, value)
 end
 
 --- Pause code exection for duration seconds.
----@param duration number|IEnumerator? Duration to wait (in seconds).
----@return IEnumerator
+---@param duration? float Duration to wait (in seconds).
+---@return float?
+---@overload fun(routine: IEnumerator): IEnumerator
 function helpers.wait(duration)
     return coroutine.yield(duration)
 end
@@ -383,16 +384,16 @@ function helpers.walk(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
 end
 
 --- Player runs to the given X coordinate. This is in pixels and uses map based coordinates.
----@param x number X coordinate to run to.
----@param fastAnimation boolean Whether this should use the fast animation or not.
+---@param x float X coordinate to run to.
+---@param fastAnimation? boolean Whether this should use the fast animation or not.
 ---@return IEnumerator
 function helpers.runTo(x, fastAnimation)
     return wait(player:DummyRunTo(x, fastAnimation or false))
 end
 
 --- Player runs x pixels from current position.
----@param x number X offset for where player should run.
----@param fastAnimation boolean Whether this should use the fast animation or not.
+---@param x float X coordinate to run to.
+---@param fastAnimation? boolean Whether this should use the fast animation or not.
 ---@return IEnumerator
 function helpers.run(x, fastAnimation)
     return helpers.runTo(player.Position.X + x, fastAnimation)
@@ -488,7 +489,7 @@ end
 ---@param y number Target y coordinate.
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
----@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
+---@overload fun(x: float, y: float, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
         introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
@@ -661,8 +662,8 @@ function helpers.getMusicProgression()
 end
 
 --- Set music layer on/off.
----@param layer number[]|number number or table of numbers to set.
----@param value number|boolean The state of the layer.
+---@param layer float[]|float float or table of floats to set.
+---@param value boolean The state of the layer.
 function helpers.setMusicLayer(layer, value)
     if type(layer) == "table" then
         for _, index in ipairs(layer) do
@@ -1658,7 +1659,7 @@ end
 ---@param ... function Functions that will be called whenever a trigger is activated through dialogue.
 ---@return IEnumerator
 function helpers.sayExt(dialog, ...)
-    return wait(bossesHelper.Code.Helpers.LuaBossHelper.Say(tostring(dialog), {...}))
+    return wait(bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.Say(tostring(dialog), {...}))
 end
 
 ---Creates a new SoundSource and adds it to the provided entity, starting the sound immediately
