@@ -134,9 +134,11 @@ function helpers.loadCelesteAsset(filename)
         if success then
             return result
         end
+
+        celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
     end
 
-    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
+    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: Not valid lua.")
 end
 
 ---Load the file given by the path as a Lua table.
@@ -690,10 +692,9 @@ end
 ---@default false
 function helpers.setSpawnPoint(target, absolute)
     local session = getSession()
-    local ct = cutsceneTrigger
 
     target = target or {0, 0}
-    target = absolute and target or vector2(ct.Position.X + ct.Width / 2 + target[1], ct.Position.Y + ct.Height / 2 + target[2])
+    target = absolute and target or vector2(player.Position.X + target[1], player.Position.Y + target[2])
 
     if session.RespawnPoint and (session.RespawnPoint.X ~= target.X or session.RespawnPoint.Y ~= target.Y) then
         session.HitCheckpoint = true
@@ -719,7 +720,7 @@ end
 ---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
-        getSession().Inventory = PlayerInventory[inventory]
+        getSession().Inventory = celeste.PlayerInventory[inventory]
 
     else
         getSession().Inventory = inventory
@@ -731,7 +732,7 @@ end
 ---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
-        return PlayerInventory[inventory]
+        return celeste.PlayerInventory[inventory]
 
     else
         return getSession().Inventory

@@ -61,7 +61,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		{
 			if (string.IsNullOrWhiteSpace(modName))
 				modName = BossesHelperModule.Instance.Metadata.Name;
-			return Everest.LuaLoader.Require($"{modName}:{path}") as LuaTable;
+			return Everest.LuaLoader.Require($"{modName}:/{path}") as LuaTable;
 		}
 
 		public static string GetFileContent(string path)
