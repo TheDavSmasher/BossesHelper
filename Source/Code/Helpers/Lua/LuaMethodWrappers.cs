@@ -86,7 +86,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static object GetFunc(LuaFunction func, Type returnType, params Type[] types)
 		{
-			return toFunc.MakeGenericMethod([returnType, ..types]).Invoke(null, [func]);
+			return toFunc.MakeGenericMethod([returnType, .. types]).Invoke(null, [func]);
 		}
 		#endregion
 

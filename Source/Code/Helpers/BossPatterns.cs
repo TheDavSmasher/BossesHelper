@@ -1,6 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;

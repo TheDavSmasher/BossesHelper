@@ -1,5 +1,4 @@
-﻿using Celeste.Mod.BossesHelper.Code.Components;
-using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using System.Collections;
 using System.Collections.Generic;

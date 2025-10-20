@@ -3,7 +3,6 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
