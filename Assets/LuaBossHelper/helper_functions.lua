@@ -392,7 +392,7 @@ function helpers.runTo(x, fastAnimation)
 end
 
 --- Player runs x pixels from current position.
----@param x float X coordinate to run to.
+---@param x float X offset for where player should run.
 ---@param fastAnimation? boolean Whether this should use the fast animation or not.
 ---@return IEnumerator
 function helpers.run(x, fastAnimation)
@@ -490,6 +490,7 @@ end
 ---@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 ---@overload fun(x: float, y: float, room?: string, introType?: string|IntroTypes)
+---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
         introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
