@@ -46,14 +46,15 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Update();
 			//Move based on speed
+			Vector2 delta = Speed * Engine.DeltaTime;
 			if (SolidCollidable)
 			{
-				MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
-				MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
+				MoveH(delta.X, OnCollideH);
+				MoveV(delta.Y, OnCollideV);
 			}
 			else
 			{
-				NaiveMove(Speed * Engine.DeltaTime);
+				NaiveMove(delta);
 			}
 			//Apply gravity
 			if (!Grounded)
