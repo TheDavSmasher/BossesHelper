@@ -34,11 +34,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 	{
 		private static readonly string FilesPath = "Assets/LuaBossHelper";
 
-		private static readonly string LuaAssetsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}";
+		private static readonly string HelperFunctionsPath = $"{BossesHelperModule.Instance.Metadata.Name}:/{FilesPath}/helper_functions";
 
 		public static class CutsceneHelper
 		{
-			private static readonly LuaTable Base = Everest.LuaLoader.Require($"{LuaAssetsPath}/cutscene_helper") as LuaTable;
+			private static readonly LuaTable Base = GetLuaAsset($"{FilesPath}/cutscene_helper");
 
 			public static LuaData GetLuaData(string content, LuaTable data, string preparer)
 			{
@@ -57,6 +57,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 				func.Call();
 		}
 
+		public static LuaTable GetLuaAsset(string path, string modName = "")
+		{
+			if (string.IsNullOrWhiteSpace(modName))
+				modName = BossesHelperModule.Instance.Metadata.Name;
+			return Everest.LuaLoader.Require($"{modName}:{path}") as LuaTable;
+		}
+
 		public static string GetFileContent(string path)
 		{
 			if (Everest.Content.Get(path)?.Stream is not Stream stream)
@@ -67,7 +74,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 
 		public static string GetHelperFunctions()
 		{
-			return GetFileContent($"{LuaAssetsPath}/helper_functions");
+			return GetFileContent(HelperFunctionsPath);
 		}
 
 		public static LuaTable ToLuaTable(this IDictionary<string, object> dict)

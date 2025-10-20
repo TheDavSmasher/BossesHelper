@@ -139,6 +139,14 @@ function helpers.loadCelesteAsset(filename)
     celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
 end
 
+---Load the file given by the path as a Lua table.
+---@param path string The file path within the mod.
+---@param assetMod? string The name of the mod to get the asset from. Defaults to BossesHelper
+---@return table # The table loaded from the file given, if successful.
+function helpers.getLuaAsset(path, assetMod)
+    return celesteMod.BossesHelper.Code.Helpers.Lua.LuaBossHelper.GetLuaAsset(path, assetMod)
+end
+
 --- Put debug message in the Celeste console.
 ---@param message any The debug message.
 ---@param tag? string The tag in the console.
