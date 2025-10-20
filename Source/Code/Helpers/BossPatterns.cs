@@ -21,7 +21,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
-		public bool IsActing => currentAction == null;
+		public bool IsActing => currentAction != null;
 
 		private IBossAction currentAction;
 
