@@ -80,5 +80,43 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			}
 			Speed.Y = 0;
 		}
+
+		public bool SolidCollideCheck(Vector2 at)
+		{
+			return SolidCollidable && CollideCheck<Solid>(at);
+		}
+
+		public bool SolidCollideCheck()
+		{
+			return SolidCollidable && CollideCheck<Solid>();
+		}
+
+		public bool TryWiggle(int wiggleX = 3, int wiggleY = 3)
+		{
+			for (int i = 0; i <= wiggleX; i++)
+			{
+				for (int j = 0; j <= wiggleY; j++)
+				{
+					if (i == 0 && j == 0)
+					{
+						continue;
+					}
+
+					for (int num = 1; num >= -1; num -= 2)
+					{
+						for (int num2 = 1; num2 >= -1; num2 -= 2)
+						{
+							Vector2 vector = new(i * num, j * num2);
+							if (!SolidCollideCheck(Position + vector))
+							{
+								Position += vector;
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
 	}
 }
