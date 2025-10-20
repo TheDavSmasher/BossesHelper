@@ -938,7 +938,6 @@ end
 
 --- Disables skip cutscene from menu.
 function helpers.makeUnskippable()
-    getLevel().InCutscene = false
     getLevel():CancelCutscene()
 end
 
