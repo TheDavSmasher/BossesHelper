@@ -1,7 +1,10 @@
-﻿using Celeste.Mod.BossesHelper.Code.Entities;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Entities;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.ModInterop;
 using MonoMod.RuntimeDetour;
 using System;
 using System.Collections;
@@ -51,11 +54,12 @@ public partial class BossesHelperModule : EverestModule
 	public override void LoadContent(bool firstLoad)
 	{
 		base.LoadContent(firstLoad);
-		new LuaWarmer().WarmUp();
+		LuaBossHelper.WarmUp();
 	}
 
 	public override void Load()
 	{
+		typeof(BossesHelperExports).ModInterop();
 		using (new DetourConfigContext(new DetourConfig("BossesHelperEnforceBounds", 0, after: ["*"])).Use())
 		{
 			On.Celeste.Level.EnforceBounds += PlayerDiedWhileEnforceBounds;
@@ -191,7 +195,7 @@ public partial class BossesHelperModule : EverestModule
 			case HealthSystemManager.OffscreenEffect.BubbleBack:
 				PlayerTakesDamage(stagger: false);
 				if (!Session.alreadyFlying)
-					PlayerFlyBack(player).Coroutine(player);
+					PlayerFlyBack(player).AsCoroutine(player);
 				break;
 			default:
 				SharedDeath(player, HealthData.playerOffscreen == HealthSystemManager.OffscreenEffect.FakeDeath);
@@ -281,9 +285,9 @@ public partial class BossesHelperModule : EverestModule
 		player.StartCassetteFly(Session.lastSafePosition, middle - Vector2.UnitY * 8);
 	}
 
-	public static void PlayerTakesDamage(Vector2? origin = null, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
+	public static void PlayerTakesDamage(Vector2 origin = default, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
 	{
-		Engine.Scene.GetEntity<HealthSystemManager>()?.TakeDamage(origin ?? Vector2.Zero, amount, silent, stagger, evenIfInvincible);
+		Engine.Scene.GetEntity<HealthSystemManager>()?.TakeDamage(origin, amount, silent, stagger, evenIfInvincible);
 	}
 
 	private static float? GetFromY(Player player)
@@ -306,15 +310,6 @@ public partial class BossesHelperModule : EverestModule
 		return null;
 	}
 	#endregion
-
-	public static EntityData MakeEntityData()
-	{
-		EntityData entityData = new()
-		{
-			Values = []
-		};
-		return entityData;
-	}
 
 	public static void GiveIFrames(float time)
 	{

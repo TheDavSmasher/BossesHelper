@@ -13,8 +13,8 @@ local _monocle = require("#monocle")
 ---@module "Celeste"
 local _celeste = require("#celeste")
 
----@module "Microsoft.XNA.Framework"
-local _framework = require("#microsoft.xna.framework")
+---@module "Microsoft.XNA.Framework.Vector2"
+local _vector2 = require("#microsoft.xna.framework.vector2")
 
 helpers.monocle = _monocle
 helpers.engine = _monocle.Engine
@@ -31,7 +31,7 @@ local celesteMod = _celeste.Mod
 local engine = helpers.engine
 
 local modName = modMetaData.Name
-local bossesHelper = celesteMod[modName] --[[@as BossesHelper]]
+local bossesHelper = celesteMod[modName] --[[@as Celeste.Mod.BossesHelper]]
 local classNamePrefix = "Celeste."
 
 local luanet = _G.luanet
@@ -49,23 +49,20 @@ local luanet = _G.luanet
 -- @module helper_functions
 
 ---Returns a new Vector2
----@param x number
----@param y number
+---@param x float
+---@param y float
 ---@return Vector2
 ---@overload fun(x: table): Vector2
----@overload fun(x: userdata): userdata
 ---@overload fun(x: Vector2): Vector2
 function helpers.vector2(x, y)
-    local typ = type(x)
+    if type(x) == "table" and not y then
+        return _vector2(x[1], x[2])
 
-    if typ == "table" and not y then
-        return _framework.Vector2(x[1], x[2])
-
-    elseif typ == "userdata" and not y then
-        return x
+    elseif type(x) == "userdata" and not y then
+        return x --[[@as Vector2]]
 
     else
-        return _framework.Vector2(x, y)
+        return _vector2(x, y)
     end
 end
 
@@ -110,7 +107,7 @@ end
 ---@param filename string Filename to load. Filename should not have a extention.
 ---@return string content The content of the file
 function helpers.readCelesteAsset(filename)
-    return bossesHelper.Code.Helpers.LuaBossHelper.GetFileContent(filename)
+    return bossesHelper.Code.Helpers.Lua.LuaBossHelper.GetFileContent(filename)
 end
 
 --- Loads and returns the result of a Lua asset.
@@ -137,23 +134,33 @@ function helpers.loadCelesteAsset(filename)
         if success then
             return result
         end
+
+        celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
     end
 
-    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: " .. result)
+    celesteMod.Logger.Error("Bosses Helper", "Failed to require asset in Lua: Not valid lua.")
+end
+
+---Load the file given by the path as a Lua table.
+---@param path string The file path within the mod.
+---@param assetMod? string The name of the mod to get the asset from. Defaults to BossesHelper
+---@return table # The table loaded from the file given, if successful.
+function helpers.getLuaAsset(path, assetMod)
+    return celesteMod.BossesHelper.Code.Helpers.Lua.LuaBossHelper.GetLuaAsset(path, assetMod)
 end
 
 --- Put debug message in the Celeste console.
----@param message string The debug message.
----@param tag string? The tag in the console.
+---@param message any The debug message.
+---@param tag? string The tag in the console.
 ---@default "Bosses Helper"
 function helpers.log(message, tag)
     celesteMod.Logger.Info(tag or "Bosses Helper", tostring(message))
 end
 
---- Gets enum value.
+---Gets enum value.
 ---@param enum string String name of enum.
----@param value any string name or enum value to get.
----@return userdata enumValue
+---@param value int|string string name or enum value to get.
+---@return Enum enumValue
 function helpers.getEnum(enum, value)
     local enumValue = luanet.enum(luanet.import_type(enum), value)
 
@@ -210,9 +217,9 @@ end
 
 --- Allow the user to select one of several minitextboxes, similar to intro cutscene of Reflection.
 ---@param ... string Dialog IDs for each of the textboxes as varargs. First argument can be a table of dialog ids instead.
----@return integer index The index of the option the player selected.
----@overload fun(ids: string[]): integer
----@overload fun(...: string): integer
+---@return int index The index of the option the player selected.
+---@overload fun(ids: string[]): int
+---@overload fun(...: string): int
 function helpers.choice(...)
     local choices = {...}
 
@@ -337,8 +344,8 @@ end
 
 --- Display postcard.
 ---@param dialog string Dialog ID or message to show in the postcard.
----@param sfxIn string|integer effect when opening the postcard or area ID.
----@param sfxOut string? Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
+---@param sfxIn string|int effect when opening the postcard or area ID.
+---@param sfxOut? string Sound effect when closing the postcard. If not used then second argument is assumed to be area ID.
 ---@default nil
 function helpers.postcard(dialog, sfxIn, sfxOut)
     local message = _celeste.Dialog.Get(dialog) or dialog
@@ -347,7 +354,7 @@ function helpers.postcard(dialog, sfxIn, sfxOut)
     if sfxOut then ---@cast sfxIn string
         postcard = _celeste.Postcard(message, sfxIn, sfxOut)
 
-    else ---@cast sfxIn integer
+    else ---@cast sfxIn int
         postcard = _celeste.Postcard(message, sfxIn)
     end
 
@@ -358,12 +365,12 @@ function helpers.postcard(dialog, sfxIn, sfxOut)
 end
 
 --- Player walks to the given X coordinate. This is in pixels and uses map based coordinates.
----@param x number X coordinate to walk to.
----@param walkBackwards boolean? If the player should visually be walking backwards.
+---@param x float X coordinate to walk to.
+---@param walkBackwards? boolean If the player should visually be walking backwards.
 ---@default false
----@param speedMultiplier number? How fast the player should move. Walking is considered a speed multiplier of 1.0.
+---@param speedMultiplier? float How fast the player should move. Walking is considered a speed multiplier of 1.0.
 ---@default 1.0
----@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
+---@param keepWalkingIntoWalls? boolean If the player should keep walking into walls.
 ---@default false
 ---@return IEnumerator
 function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
@@ -371,12 +378,12 @@ function helpers.walkTo(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
 end
 
 --- Player walks x pixels from current position.
----@param x number X offset for where player should walk.
----@param walkBackwards boolean? If the player should visually be walking backwards.
+---@param x float X offset for where player should walk.
+---@param walkBackwards? boolean If the player should visually be walking backwards.
 ---@default false
----@param speedMultiplier number? How fast the player should move. Walking is considered a speed multiplier of 1.0.
+---@param speedMultiplier? float How fast the player should move. Walking is considered a speed multiplier of 1.0.
 ---@default 1.0
----@param keepWalkingIntoWalls boolean? If the player should keep walking into walls.
+---@param keepWalkingIntoWalls? boolean If the player should keep walking into walls.
 ---@default false
 ---@return IEnumerator
 function helpers.walk(x, walkBackwards, speedMultiplier, keepWalkingIntoWalls)
@@ -400,11 +407,11 @@ function helpers.run(x, fastAnimation)
 end
 
 --- Kills the player.
----@param direction table|Vector2? The direction the player dies from.
+---@param direction? table|Vector2 The direction the player dies from.
 ---@default {0, 0}
----@param evenIfInvincible boolean? If the player should die even if they are invincible (assist mode).
+---@param evenIfInvincible? boolean If the player should die even if they are invincible (assist mode).
 ---@default false
----@param registerDeathInStats boolean? If it should count as a death in journal.
+---@param registerDeathInStats? boolean If it should count as a death in journal.
 ---@default true
 function helpers.die(direction, evenIfInvincible, registerDeathInStats)
     if player and not player.Dead then
@@ -413,8 +420,8 @@ function helpers.die(direction, evenIfInvincible, registerDeathInStats)
 end
 
 --- Sets the current player state.
----@param state string|integer Name of the state or the state number.
----@param locked boolean? If this should prevent the player for changing state afterwards.
+---@param state string|int Name of the state or the state float.
+---@param locked? boolean If this should prevent the player for changing state afterwards.
 ---@default false
 function helpers.setPlayerState(state, locked)
     if type(state) == "string" then
@@ -422,7 +429,7 @@ function helpers.setPlayerState(state, locked)
             state = "St" .. state
         end
 
-        player.StateMachine.State = Player[state]
+        player.StateMachine.State = player[state]
 
     else
         player.StateMachine.State = state
@@ -432,7 +439,7 @@ function helpers.setPlayerState(state, locked)
 end
 
 --- Gets the current state of the player.
----@return integer state The current Player's state
+---@return int state The current Player's state
 ---@return boolean locked If the StateMachine is Locked
 function helpers.getPlayerState()
     return player.StateMachine.State, player.StateMachine.Locked
@@ -449,7 +456,7 @@ function helpers.enableMovement()
 end
 
 --- Make the player jump.
----@param duration number? How long the "jump button" would be held (in seconds).
+---@param duration? float How long the "jump button" would be held (in seconds).
 ---@default 2.0
 function helpers.jump(duration)
     player:Jump(true, true)
@@ -466,8 +473,8 @@ end
 
 --- Changes the room the game thinks the player is in.
 ---@param name string Room name.
----@param spawnX number? X coordinate for new spawn point, by default it uses bottom left of room.
----@param spawnY number? Y coordinate for new spawn point, by default it uses bottom left of room.
+---@param spawnX? float X coordinate for new spawn point, by default it uses bottom left of room.
+---@param spawnY? float Y coordinate for new spawn point, by default it uses bottom left of room.
 function helpers.changeRoom(name, spawnX, spawnY)
     local level = getLevel()
 
@@ -485,15 +492,15 @@ function helpers.getRoomPosition(name)
 end
 
 --- Sets the player position to the absolute coordinates.
----@param x number Target x coordinate.
----@param y number Target y coordinate.
----@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
+---@param x float Target x coordinate.
+---@param y float Target y coordinate.
+---@param room? string What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
 ---@param introType string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string
 ---@overload fun(x: float, y: float, room?: string, introType?: string|IntroTypes)
 ---@overload fun(pos: Vector2, room?: string, introType?: string|IntroTypes)
 function helpers.teleportTo(x, y, room, introType)
     if type(introType) == "string" then
-        introType = helpers.getEnum("IntroTypes", introType) --[[@as IntroTypes]]
+        introType = helpers.getEnum("Celeste.Player.IntroTypes", introType) --[[@as IntroTypes]]
     end
 
     if room then
@@ -521,10 +528,10 @@ function helpers.teleportTo(x, y, room, introType)
 end
 
 --- Teleport the player to (x, y) pixels from current position.
----@param x number X offset on X axis.
----@param y number Y offset on Y axis.
----@param room string? What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
----@param introType any? intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
+---@param x float X offset on X axis.
+---@param y float Y offset on Y axis.
+---@param room? string What room the game should attempt to load. If room is specified player will land at closest spawnpoint to target location.
+---@param introType? string|IntroTypes intro type to use, can be either a #IntroTypes enum or a string. Only applies if room is specified.
 function helpers.teleport(x, y, room, introType)
     helpers.teleportTo(player.Position.X + x, player.Position.Y + y, room, introType)
 end
@@ -532,12 +539,12 @@ end
 --- Instantly teleport the player seamlessly.
 --- Teleport player to (x, y) position, in pixels.
 --- Room name as only argument will seamlessly teleport to that room at the same relative position.
----@param x number|string X offset on X axis if number. Target room if string.
----@param y number? Y offset on Y axis.
----@param room string? What room the game should attempt to load. By default same room.
+---@param x float|string X offset on X axis if float. Target room if string.
+---@param y? float Y offset on Y axis.
+---@param room? string What room the game should attempt to load. By default same room.
 ---@overload fun(x: string)
 function helpers.instantTeleportTo(x, y, room)
-    if x and y then ---@cast x number
+    if x and y then ---@cast x float
         -- Provide own position
         bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.InstantTeleport(getLevel(), player, room or "", false, x, y)
 
@@ -550,9 +557,9 @@ end
 --- Instantly teleport the player to the same coordinates in another room seamlessly.
 --- Teleport player (x, y) pixels from current position.
 --- Room name as only argument will seamlessly teleport to that room at the same relative position.
----@param x number X offset on X axis if number. Target room if string.
----@param y number Y offset on Y axis.
----@param room string? What room the game should attempt to load. By default same room.
+---@param x float X offset on X axis if float. Target room if string.
+---@param y float Y offset on Y axis.
+---@param room? string What room the game should attempt to load. By default same room.
 ---@overload fun(x: string)
 function helpers.instantTeleport(x, y, room)
     if x and y then
@@ -564,11 +571,11 @@ function helpers.instantTeleport(x, y, room)
 end
 
 --- Completes the level and returns the player to the chapter screen.
----@param spotlightWipe boolean? Whether this should be a spotlight wipe or not.
+---@param spotlightWipe? boolean Whether this should be a spotlight wipe or not.
 ---@default false
----@param skipScreenWipe boolean? Whether this wipe is skipped or not.
+---@param skipScreenWipe? boolean Whether this wipe is skipped or not.
 ---@default false
----@param skipCompleteScreen boolean? Whether this skips the complete screen.
+---@param skipCompleteScreen? boolean Whether this skips the complete screen.
 ---@default false
 function helpers.completeArea(spotlightWipe, skipScreenWipe, skipCompleteScreen)
     getLevel():CompleteArea(spotlightWipe or false, skipScreenWipe or false, skipCompleteScreen or false)
@@ -576,8 +583,8 @@ end
 
 --- Plays a sound.
 ---@param name string Event for the song.
----@param position Vector2? Where the sound is played from.
----@return FMOD.Studio.EventInstance audio The audio instance of the sound.
+---@param position? Vector2 Where the sound is played from.
+---@return EventInstance audio The audio instance of the sound.
 function helpers.playSound(name, position)
     if position then
         return _celeste.Audio.Play(name, position)
@@ -589,7 +596,7 @@ end
 
 --- Gets all tracked entities by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return table entities Tracked entities of given class.
 function helpers.getEntities(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntities(name, prefix or classNamePrefix)
@@ -597,7 +604,7 @@ end
 
 --- Gets the first tracked entity by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return any entity First tracked entity of given class.
 function helpers.getEntity(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntity(name, prefix or classNamePrefix)
@@ -605,7 +612,7 @@ end
 
 --- Gets all entities by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return table entities All entities of given class.
 function helpers.getAllEntities(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetAllEntities(name, prefix or classNamePrefix)
@@ -613,7 +620,7 @@ end
 
 --- Gets the first entity by class name.
 ---@param name string Class name of the entity, relative to "Celeste." by default.
----@param prefix string? Overrides the global class name prefix.
+---@param prefix? string Overrides the global class name prefix.
 ---@return any entity First entity of given class.
 function helpers.getFirstEntity(name, prefix)
     return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetFirstEntity(name, prefix or classNamePrefix)
@@ -625,14 +632,14 @@ function helpers.giveFeather()
 end
 
 --- Get amount of deaths in current room.
----@return integer deaths Current deaths in room.
+---@return int deaths Current deaths in room.
 function helpers.deathsInCurrentRoom()
     return getSession().DeathsInCurrentLevel
 end
 
 --- Play and update the current music track.
 ---@param track string Name of song, same as in Ahorn's room window.
----@param progress integer? Which progress level the music should be at. Leave empty for no change.
+---@param progress? int Which progress level the music should be at. Leave empty for no change.
 function helpers.playMusic(track, progress)
     getSession().Audio.Music.Event = _celeste.SFX.EventnameByHandle(track)
 
@@ -650,14 +657,14 @@ function helpers.getMusic()
 end
 
 --- Sets music progression.
----@param progress number The new progress level.
+---@param progress float The new progress level.
 function helpers.setMusicProgression(progress)
     getSession().Audio.Music.Progress = progress
     getSession().Audio:Apply()
 end
 
 --- Gets the current music progression.
----@return integer progress Music progress level.
+---@return int progress Music progress level.
 function helpers.getMusicProgression()
     return getSession().Audio.Music.Progress
 end
@@ -679,16 +686,15 @@ function helpers.setMusicLayer(layer, value)
 end
 
 --- Attempt to set the player spawnpoint.
----@param target table? Where it should attempt to set the spawnpoint from.
+---@param target? table Where it should attempt to set the spawnpoint from.
 ---@default {0, 0}
----@param absolute boolean? If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
+---@param absolute? boolean If set uses absolute coordinates from target, otherwise it offsets from the center of the cutscene trigger.
 ---@default false
 function helpers.setSpawnPoint(target, absolute)
     local session = getSession()
-    local ct = cutsceneTrigger
 
     target = target or {0, 0}
-    target = absolute and target or vector2(ct.Position.X + ct.Width / 2 + target[1], ct.Position.Y + ct.Height / 2 + target[2])
+    target = absolute and target or vector2(player.Position.X + target[1], player.Position.Y + target[2])
 
     if session.RespawnPoint and (session.RespawnPoint.X ~= target.X or session.RespawnPoint.Y ~= target.Y) then
         session.HitCheckpoint = true
@@ -698,14 +704,14 @@ function helpers.setSpawnPoint(target, absolute)
 end
 
 --- Shakes the camera.
----@param direction Vector2|number Direction the screen should shake from.
----@param duration? number How long the screen should shake.
----@overload fun(direction: number)
+---@param direction Vector2|float Direction the screen should shake from.
+---@param duration? float How long the screen should shake.
+---@overload fun(direction: float)
 function helpers.shake(direction, duration)
     if direction and duration then ---@cast direction Vector2
         getLevel():DirectionalShake(direction, duration)
 
-    else ---@cast direction number
+    else ---@cast direction float
         getLevel():Shake(direction)
     end
 end
@@ -714,7 +720,7 @@ end
 ---@param inventory string|PlayerInventory Inventory to use. If name is string look it up in valid inventories, otherwise use the inventory.
 function helpers.setInventory(inventory)
     if type(inventory) == "string" then
-        getSession().Inventory = PlayerInventory[inventory]
+        getSession().Inventory = celeste.PlayerInventory[inventory]
 
     else
         getSession().Inventory = inventory
@@ -722,11 +728,11 @@ function helpers.setInventory(inventory)
 end
 
 --- Get player inventory
----@param inventory string? If name is given get inventory by name, otherwise the current player inventory
+---@param inventory? string If name is given get inventory by name, otherwise the current player inventory
 ---@return PlayerInventory inventory
 function helpers.getInventory(inventory)
     if inventory then
-        return PlayerInventory[inventory]
+        return celeste.PlayerInventory[inventory]
 
     else
         return getSession().Inventory
@@ -734,8 +740,8 @@ function helpers.getInventory(inventory)
 end
 
 --- Offset the camera by x and y like in camera offset trigger.
----@param x number X coordinate or table of coordinates to offset by.
----@param y number Y coordinate to offset by.
+---@param x float X coordinate or table of coordinates to offset by.
+---@param y float Y coordinate to offset by.
 ---@overload fun(x: table)
 function helpers.setCameraOffset(x, y)
     getLevel().CameraOffset = y and vector2(x * 48, y * 32) or x
@@ -754,12 +760,12 @@ function helpers.getRoomCoordinates()
 end
 
 --- Get the current room coordinates offset by x and y.
----@param x number X coordinate or table of coordinates to offset by.
----@param y number Y coordinate to offset by.
+---@param x float X coordinate or table of coordinates to offset by.
+---@param y float Y coordinate to offset by.
 ---@return Vector2 offset The camera offset.
 ---@overload fun(offset: table): Vector2
 function helpers.getRoomCoordinatesOffset(x, y)
-    if type(x) == "number" then
+    if type(x) == "float" then
         return getLevel().LevelOffset + vector2(x, y)
 
     else
@@ -769,7 +775,7 @@ end
 
 --- Set session flag.
 ---@param flag string Flag to set.
----@param value boolean State of flag.
+---@param value? boolean State of flag.
 function helpers.setFlag(flag, value)
     getSession():SetFlag(flag, value)
 end
@@ -783,9 +789,9 @@ end
 
 -- TODO - Accept table?
 -- TODO - Unhaunt, the index needs to be handled
----@param x number
----@param y number
----@param relativeToPlayer boolean?
+---@param x float
+---@param y float
+---@param relativeToPlayer? boolean
 ---@return BadelineOldsite
 function helpers.spawnBadeline(x, y, relativeToPlayer)
     local position = (relativeToPlayer or relativeToPlayer == nil) and vector2(player.Position.X + x, player.Position.Y + y) or vector2(x, y)
@@ -802,13 +808,13 @@ function helpers.endCutscene()
 end
 
 --- Sets the current bloom strength.
----@param amount number New bloom strength.
+---@param amount float New bloom strength.
 function helpers.setBloomStrength(amount)
     getLevel().Bloom.Strength = amount
 end
 
 --- Returns the current bloom strength.
----@return number strength Bloom strength.
+---@return float strength Bloom strength.
 function helpers.getBloomStrength()
     return getLevel().Bloom.Strength
 end
@@ -820,7 +826,7 @@ helpers.getDarkness = helpers.getBloomStrength
 ---@param mode string|CoreModes String name for mode or Core Mode enum.
 function helpers.setCoreMode(mode)
     if type(mode) == "string" then
-        getLevel().CoreMode = getSession().CoreModes[mode]
+        getLevel().CoreMode = celeste.Session.CoreModes[mode]
 
     else
         getLevel().CoreMode = mode
@@ -835,7 +841,7 @@ end
 
 --- Changes the current colorgrade to the new one.
 ---@param colorGrade string Name of the color grade
----@param instant boolean? Wheter the color grade should instantly change or gradually change
+---@param instant? boolean Wheter the color grade should instantly change or gradually change
 ---@default false
 function helpers.setColorGrade(colorGrade, instant)
     if instant then
@@ -847,17 +853,17 @@ function helpers.setColorGrade(colorGrade, instant)
 end
 
 --- Bubble flies (cassette collection) to the target. This is in pixels and uses map based coordinates.
----@param endX number X coordinate for end point.
----@param endY number Y coordinate for end point.
----@param controllX number? X coordinate for controll point.
+---@param endX float X coordinate for end point.
+---@param endY float Y coordinate for end point.
+---@param controlX? float X coordinate for control point.
 ---@default endX
----@param controllY number? Y coordinate for controll point.
+---@param controlY? float Y coordinate for control point.
 ---@default endY
-function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
+function helpers.cassetteFlyTo(endX, endY, controlX, controlY)
     playSound("event:/game/general/cassette_bubblereturn", vector2(getLevel().Camera.Position.X + 160, getLevel().Camera.Position.Y + 90))
 
-    if endX and endY and controllX and controllY then
-        player:StartCassetteFly(vector2(endX, endY), vector2(controllX, controllY))
+    if endX and endY and controlX and controlY then
+        player:StartCassetteFly(vector2(endX, endY), vector2(controlX, controlY))
 
     else
         player:StartCassetteFly(vector2(endX, endY), vector2(endX, endY))
@@ -865,20 +871,20 @@ function helpers.cassetteFlyTo(endX, endY, controllX, controllY)
 end
 
 --- Bubble flies (cassette collection) to the target relative to player. Values are in pixels and not tiles.
----@param endX number X offset for end point.
----@param endY number Y offset for end point.
----@param controllX number? X offset for controll point.
+---@param endX float X offset for end point.
+---@param endY float Y offset for end point.
+---@param controlX? float X offset for control point.
 ---@default endX
----@param controllY number? Y offset for controll point.
+---@param controlY? float Y offset for control point.
 ---@default endY
-function helpers.cassetteFly(endX, endY, controllX, controllY)
+function helpers.cassetteFly(endX, endY, controlX, controlY)
     local playerX = player.Position.X
     local playerY = player.Position.Y
 
-    controllX = controllX or endX
-    controllY = controllY or endY
+    controlX = controlX or endX
+    controlY = controlY or endY
 
-    helpers.cassetteFlyTo(endX + playerX, endY + playerY, controllX + playerX, controllY + playerY)
+    helpers.cassetteFlyTo(endX + playerX, endY + playerY, controlX + playerX, controlY + playerY)
 end
 
 --- Set session level flag.
@@ -941,7 +947,6 @@ end
 
 --- Disables skip cutscene from menu.
 function helpers.makeUnskippable()
-    getLevel().InCutscene = false
     getLevel():CancelCutscene()
 end
 
@@ -1009,26 +1014,26 @@ function helpers.playAndWaitPuppetAnim(anim)
     return wait(celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PlayAnim(puppet.Sprite, anim))
 end
 
----Get a random number based on the boss's random seed.
----@return integer next A seeded-random integer.
+---Get a random float based on the boss's random seed.
+---@return int next A seeded-random int.
 function helpers.seededRandom()
     return boss.Random:Next()
 end
 
 ---Get the Boss' current health value
----@return integer health The Boss's current health value
+---@return int health The Boss's current health value
 function helpers.getHealth()
     return boss.Health
 end
 
 ---Set the Boss' health value to a new value.
----@param health integer The value to set the health to.
+---@param health int The value to set the health to.
 function helpers.setHealth(health)
     boss.Health = health
 end
 
 ---Decrease the Boss' health by the given value
----@param health? integer The amount of health lost. Defaults to 1.
+---@param health? int The amount of health lost. Defaults to 1.
 ---@default 1
 function helpers.decreaseHealth(health)
     boss.Health = boss.Health - (health or 1)
@@ -1047,7 +1052,7 @@ function helpers.interruptPattern()
 end
 
 ---Gets the currently set pattern index
----@return integer ID The current pattern's index, base 0
+---@return int ID The current pattern's index, base 0
 function helpers.getCurrentPatternIndex()
     return boss.CurrentPatternIndex
 end
@@ -1062,13 +1067,13 @@ end
 
 ---Get the index of the Pattern that is identified by the given name, if any.
 ---@param name string The name of the Pattern to search for.
----@return integer index The index of the pattern with the given name, or -1 if not found.
+---@return int index The index of the pattern with the given name, or -1 if not found.
 function helpers.getPatternIndex(name)
     return boss:GetPatternIndex(name)
 end
 
 ---Start a new boss action pattern.
----@param goTo? integer The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
+---@param goTo? int The pattern index to start executing. Defaults to -1, which will start the currently set pattern again.
 ---@default -1
 function helpers.startAttackPattern(goTo)
     boss:StartAttackPattern(goTo or -1)
@@ -1081,14 +1086,14 @@ end
 
 ---Force the next attack to be the attack of the given index. Index is based off of position within the Pattern.
 ---Currently only supported in Random Patterns. The index is always ran past a modulo on the pattern attacks' count to avoid an out-of-bounds issue.
----@param index integer The attack index to select next. Will only take effect once per call.
+---@param index int The attack index to select next. Will only take effect once per call.
 function helpers.forceNextAttackIndex(index)
     boss:ForceNextAttack(index)
 end
 
----Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controller automatically when loaded back into the level.
----@param health integer The health value to save and set back upon reload.
----@param index integer The pattern index the boss should start with upon reload.
+---Saves certain values to the Mod's Session so they are stored on Retry and even on Save and Quit. These values will be fetched by the controler automatically when loaded back into the level.
+---@param health int The health value to save and set back upon reload.
+---@param index int The pattern index the boss should start with upon reload.
 ---@param startImmediately? boolean If the Boss should start the defined action pattern immediately instead of waiting for the player to move. Defaults to false.
 ---@default true
 function helpers.savePhaseChangeToSession(health, index, startImmediately)
@@ -1107,65 +1112,65 @@ end
 --#region Position and Movement
 
 --- Set the gravity multiplier to the given value. Gravity constant is 900.
---- @param mult number The multiplier to apply to the Gravity constant which the Boss will use.
+--- @param mult float The multiplier to apply to the Gravity constant which the Boss will use.
 function helpers.setEffectiveGravityMult(mult)
     puppet.GravityMult = mult
 end
 
 ---Set the Boss's horizontal ground friction deceleration rate.
----@param friction number The deceleration rate to set.
+---@param friction float The deceleration rate to set.
 function helpers.setGroundFriction(friction)
     puppet.groundFriction = friction
 end
 
 ---Set the Boss's horizontal air friction deceleration rate.
----@param friction number The deceleration rate to set.
+---@param friction float The deceleration rate to set.
 function helpers.setAirFriction(friction)
     puppet.airFriction = friction
 end
 
 ---Set the Boss' x speed to the given value
----@param value number The value to set the Boss' speed x component to.
+---@param value float The value to set the Boss' speed x component to.
 function helpers.setXSpeed(value)
     puppet.Speed = vector2(value, puppet.Speed.Y)
 end
 
 ---Set the Boss' y speed to the given value
----@param value number The value to set the Boss' speed y component to.
+---@param value float The value to set the Boss' speed y component to.
 function helpers.setYSpeed(value)
     puppet.Speed = vector2(puppet.Speed.Y, value)
 end
 
 ---Set the Boss' speed to the given values
----@param x number The value to set the Boss' speed x component to.
----@param y number The value to set the Boss' speed y component to.
+---@param x float The value to set the Boss' speed x component to.
+---@param y float The value to set the Boss' speed y component to.
 function helpers.setSpeed(x, y)
     puppet.Speed = vector2(x, y)
 end
 
 ---Set the Boss' x speed to the given value, kept constant during the given time.
----@param value number The value to set the Boss' speed x component to.
----@param time number The time to hold the value for.
----@return number time The time given from the Tween
+---@param value float The value to set the Boss' speed x component to.
+---@param time float The time to hold the value for.
+---@return float time The time given from the Tween
 function helpers.setXSpeedDuring(value, time)
     puppet:Set1DSpeedDuring(value, true, time)
     return time
 end
 
 ---Set the Boss' y speed to the given value, kept constant during the given time.
----@param value number The value to set the Boss' speed y component to.
----@param time number The time to hold the value for.
----@return number time The time given from the Tween
+---@param value float The value to set the Boss' speed y component to.
+---@param time float The time to hold the value for.
+---@return float time The time given from the Tween
 function helpers.setYSpeedDuring(value, time)
     puppet:Set1DSpeedDuring(value, false, time)
     return time
 end
 
 ---Set the Boss' speed to the given values, kept constant during the given time.
----@param x number The value to set the Boss' speed x component to.
----@param y number The value to set the Boss' speed y component to.
----@param time number The time to hold the values for.
----@return number time The time given from the Tween
+---@param x float The value to set the Boss' speed x component to.
+---@param y float The value to set the Boss' speed y component to.
+---@param time float The time to hold the values for.
+---@return float time The time given from the Tween
 function helpers.setSpeedDuring(x, y, time)
     puppet:Set1DSpeedDuring(x, true, time)
     puppet:Set1DSpeedDuring(y, false, time)
@@ -1173,62 +1178,29 @@ function helpers.setSpeedDuring(x, y, time)
 end
 
 ---Keep the Boss' current x speed constant during the given time.
----@param time number The time to hold the value for.
----@return number time The time given from the Tween
+---@param time float The time to hold the value for.
+---@return float time The time given from the Tween
 function helpers.keepXSpeedDuring(time)
     puppet:Set1DSpeedDuring(puppet.Speed.X, true, time)
     return time
 end
 
 ---Keep the Boss' current y speed constant during the given time.
----@param time number The time to hold the value for.
----@return number time The time given from the Tween
+---@param time float The time to hold the value for.
+---@return float time The time given from the Tween
 function helpers.keepYSpeedDuring(time)
     puppet:Set1DSpeedDuring(puppet.Speed.Y, false, time)
     return time
 end
 
 ---Keep the Boss' current speed constant during the given time.
----@param time number The time to hold the values for.
----@return number time The time given from the Tween
+---@param time float The time to hold the values for.
+---@return float time The time given from the Tween
 function helpers.keepSpeedDuring(time)
     puppet:Set1DSpeedDuring(puppet.Speed.X, true, time)
     puppet:Set1DSpeedDuring(puppet.Speed.Y, false, time)
     return time
 end
-
----@enum Easers
-local easers = {
-    linear = ease.Linear,
-    sinein = ease.SineIn,
-    sineout = ease.SineOut,
-    sineinout = ease.SineInOut,
-    quadin = ease.QuadIn,
-    quadout = ease.QuadOut,
-    quadinout = ease.QuadInOut,
-    cubein = ease.CubeIn,
-    cubeout = ease.CubeOut,
-    cubeinout = ease.CubeInOut,
-    quintin = ease.QuintIn,
-    quintout = ease.QuintOut,
-    QuintInOut = ease.QuintInOut,
-    expoin = ease.ExpoIn,
-    expoout = ease.ExpoOut,
-    expoinout = ease.ExpoInOut,
-    backin = ease.BackIn,
-    backout = ease.BackOut,
-    backinout = ease.BackInOut,
-    bigbackin = ease.BigBackIn,
-    bigbackout = ease.BigBackOut,
-    bigbackinout = ease.BigBackInOut,
-    elasticin = ease.ElasticIn,
-    elasticout = ease.ElasticOut,
-    elasticinout = ease.ElasticInOut,
-    bouncein = ease.BounceIn,
-    bounceout = ease.BounceOut,
-    bounceinout = ease.BounceInOut,
-    default = nil
-}
 
 local function getEaser(easer, invert)
     if type(easer) == "string" then
@@ -1244,56 +1216,58 @@ end
 
 ---Create a new Position Tween, which will slowly move the Boss to the target.
 ---@param target Vector2 The vector2 target position the Boss will move towards.
----@param time number The time the Boss will take to reach the target.
+---@param time float The time the Boss will take to reach the target.
+---@param treatNaive? bool Whether to ignore collisions when moving.
+---@param stopOnCollide? bool Whether to stop the Tween on a collision.
 ---@param easer? string|Ease.Easer The easer to apply to the motion. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
-function helpers.positionTween(target, time, easer, invert)
-    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, getEaser(easer, invert))
+---@return float time The time given from the Tween
+function helpers.positionTween(target, time, treatNaive, stopOnCollide, easer, invert)
+    celesteMod.BossesHelper.Code.Helpers.BossesHelperUtils.PositionTween(puppet, target, time, treatNaive, stopOnCollide, getEaser(easer, invert))
     return time
 end
 
 ---Create a new Tween for the Boss' x speed.
----@param start number The initial value of the Tween, which the Boss' speed x component will set to at the start.
----@param target number The value the Boss' speed x component will slowly change to.
----@param time number The time the Boss will take to reach the target x speed.
+---@param start float The initial value of the Tween, which the Boss' speed x component will set to at the start.
+---@param target float The value the Boss' speed x component will slowly change to.
+---@param time float The time the Boss will take to reach the target x speed.
 ---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedXTween(start, target, time, easer, invert)
     puppet:Speed1DTween(start, target, time, true, getEaser(easer, invert))
     return time
 end
 
 ---Create a new Tween for the Boss' y speed.
----@param start number The initial value of the Tween, which the Boss' speed y component will set to at the start.
----@param target number The value the Boss' speed y component will slowly change to.
----@param time number The time the Boss will take to reach the target y speed.
+---@param start float The initial value of the Tween, which the Boss' speed y component will set to at the start.
+---@param target float The value the Boss' speed y component will slowly change to.
+---@param time float The time the Boss will take to reach the target y speed.
 ---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedYTween(start, target, time, easer, invert)
     puppet:Speed1DTween(start, target, time, false, getEaser(easer, invert))
     return time
 end
 
 ---Create a new Tween for the Boss' speed.
----@param xStart number The initial value of the Tween, which the Boss' speed x component will set to at the start.
----@param xTarget number The value the Boss' speed x component will slowly change to.
----@param yStart number The initial value of the Tween, which the Boss' speed y component will set to at the start.
----@param yTarget number The value the Boss' speed y component will slowly change to.
----@param time number The time the Boss will take to reach the target x speed.
+---@param xStart float The initial value of the Tween, which the Boss' speed x component will set to at the start.
+---@param xTarget float The value the Boss' speed x component will slowly change to.
+---@param yStart float The initial value of the Tween, which the Boss' speed y component will set to at the start.
+---@param yTarget float The value the Boss' speed y component will slowly change to.
+---@param time float The time the Boss will take to reach the target x speed.
 ---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, invert)
     helpers.speedXTween(xStart, xTarget, time, easer, invert)
     helpers.speedYTween(yStart, yTarget, time, easer, invert)
@@ -1301,38 +1275,38 @@ function helpers.speedTween(xStart, yStart, xTarget, yTarget, time, easer, inver
 end
 
 ---Create a new Tween for the Boss' x speed from its current x speed value.
----@param target number The value the Boss' speed x component will slowly change to.
----@param time number The time the Boss will take to reach the target x speed.
+---@param target float The value the Boss' speed x component will slowly change to.
+---@param time float The time the Boss will take to reach the target x speed.
 ---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedXTweenTo(target, time, easer, invert)
     return helpers.speedXTween(puppet.Speed.X, target, time, getEaser(easer, invert))
 end
 
 ---Create a new Tween for the Boss' x speed from its current y speed value.
----@param target number The value the Boss' speed y component will slowly change to.
----@param time number The time the Boss will take to reach the target y speed.
+---@param target float The value the Boss' speed y component will slowly change to.
+---@param time float The time the Boss will take to reach the target y speed.
 ---@param easer? string|Ease.Easer The easer to apply to the y speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedYTweenTo(target, time, easer, invert)
     return helpers.speedYTween(puppet.Speed.Y, target, time, getEaser(easer, invert))
 end
 
 ---Create a new Tween for the Boss'  speed from its current x speed value.
----@param xTarget number The value the Boss' speed x component will slowly change to.
----@param yTarget number The value the Boss' speed y component will slowly change to.
----@param time number The time the Boss will take to reach the target x speed.
+---@param xTarget float The value the Boss' speed x component will slowly change to.
+---@param yTarget float The value the Boss' speed y component will slowly change to.
+---@param time float The time the Boss will take to reach the target x speed.
 ---@param easer? string|Ease.Easer The easer to apply to the x speed value. If a string is provided, it will call helpers.getEaserByName. Defaults to nil.
 ---@default nil
 ---@param invert? boolean If the easer should be inverted. Defaults to false.
 ---@default false
----@return number time The time given from the Tween
+---@return float time The time given from the Tween
 function helpers.speedTweenTo(xTarget, yTarget, time, easer, invert)
     return helpers.speedTween(puppet.Speed.X, puppet.Speed.Y, xTarget, yTarget, time, getEaser(easer, invert))
 end
@@ -1362,7 +1336,7 @@ function helpers.disableSolidCollisions()
 end
 
 ---Set the Boss' hit cooldown to the given value
----@param value number The timer to set the cooldown to
+---@param value float The timer to set the cooldown to
 function helpers.setHitCooldown(value)
     puppet.BossDamageCooldown.TimeLeft = value
 end
@@ -1384,6 +1358,12 @@ function helpers.changeHurtboxTo(tag)
     puppet:ChangeHurtboxOption(tag)
 end
 
+---Change the Boss' hurtboxes to those stored under the given tag.
+---@param tag string The hurtbox group tag to use.
+function helpers.changeKillColliderTo(tag)
+    puppet:ChangeKillColliderOption(tag)
+end
+
 ---Change the Boss' bouncebox to that stored under the given tag.
 ---@param tag string The bouncebox tag to use.
 function helpers.changeBounceboxTo(tag)
@@ -1397,11 +1377,11 @@ function helpers.changeTargetTo(tag)
 end
 
 ---Create a new Rectangular Hitbox Collider
----@param width number The width of the collider.
----@param height number The height of the collider.
----@param x? number The x offset of the hitbox. Defaults to 0.
+---@param width float The width of the collider.
+---@param height float The height of the collider.
+---@param x? float The x offset of the hitbox. Defaults to 0.
 ---@default 0
----@param y? number The y offest of the Hitbox. Defaults to 0.
+---@param y? float The y offest of the Hitbox. Defaults to 0.
 ---@default 0
 ---@return Hitbox hitbox The created Hitbox Collider
 function helpers.getHitbox(width, height, x, y)
@@ -1409,10 +1389,10 @@ function helpers.getHitbox(width, height, x, y)
 end
 
 ---Create a new Circle Collider
----@param radius number The radius of the collider.
----@param x? number The x offset of the hitbox. Defaults to 0.
+---@param radius float The radius of the collider.
+---@param x? float The x offset of the hitbox. Defaults to 0.
 ---@default 0
----@param y? number The y offest of the Hitbox. Defaults to 0.
+---@param y? float The y offest of the Hitbox. Defaults to 0.
 ---@default 0
 ---@return Circle circle The created Hitbox Collider
 function helpers.getCircle(radius, x, y)
@@ -1423,7 +1403,7 @@ end
 ---@param ... Collider All the colliders to combine into a ColliderList
 ---@return ColliderList colliderList The combined ColliderList object.
 function helpers.getColliderList(...)
-    return bossesHelper.Code.Helpers.LuaBossHelper.GetColliderListFromLuaTable({...})
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetColliderListFromLuaTable({...})
 end
 
 --#endregion
@@ -1436,27 +1416,6 @@ function helpers.addComponentToBoss(component)
     puppet:Add(component)
 end
 
----Wrap a function in another function to call the inner one with parameters but the outer one without.
----@param func function The function to wrap.
----@param ... any The parameters to call func with.
----@return function function Function that will wrap the passed function with the arguements passed.
-local function callFunc(func, ...)
-    local args = {...}
-    if select("#", ...) < 1 then
-        return func
-    end
-    return function ()
-        return func(table.unpack(args))
-    end
-end
-
----Add a function that will run in the background.
----@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
----@param ... any Parameters to pass to the wrapped function, if any
-function helpers.addConstantBackgroundCoroutine(func, ...)
-    puppet:Add(bossesHelper.Code.Components.LuaCoroutineComponent(callFunc(func, {...})))
-end
-
 ---@param entity Entity
 ---@param player Player
 local function killPlayer(entity, player)
@@ -1464,7 +1423,7 @@ local function killPlayer(entity, player)
 end
 
 ---Returns an EntityChecker Component that will execute the second passed function when the first function's return value matches the state required.
----@param checker fun() The function that will be called every frame to test its value.
+---@param checker fun(): bool The function that will be called every frame to test its value.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
 ---@param state? boolean The state the checker function's return value must match. Defaults to true.
@@ -1478,7 +1437,7 @@ end
 
 ---Returns an EntityTimer Component that will execute the passed function when the timer ends.
 ---Can be added to any Entity.
----@param timer number The amount of time that must pass for the timer to execute.
+---@param timer float The amount of time that must pass for the timer to execute.
 ---@param func? fun(entity: Entity) The function that will execute once the timer ends. Takes an entity parameter, which will be the Entity the component is added to. Defaults to the DestroyEntity function.
 ---@default helpers.destroyEntity
 ---@return EntityTimer timer The Entity Timer that can be added to any Entity.
@@ -1511,30 +1470,62 @@ function helpers.getEntityChain(entity, startChained, remove)
     return bossesHelper.Code.Components.EntityChain(entity, startChained or startChained == nil, remove or false)
 end
 
----Create and return a basic entity to use in attacks.
----@param position Vector2 The position the entity will be at.
----@param hitboxes Collider The collider the entity will use.
----@param spriteName string The sprite the entity will use.
----@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
----@default true
----@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
----@default killPlayer
----@param xScale? number The horizontal sprite scale. Defaults to 1.
----@default 1
----@param yScale? number The vertical sprite scale. Defaults to 1.
----@default 1
----@return AttackEntity
-function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
-    return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName, xScale or 1, yScale or 1)
+---Take the function and create an IEnumerator that can execute it.
+---@param func function
+---@return IEnumerator
+function helpers.funcToIEnumerator(func)
+    return celesteMod.BossesHelper.Code.Helpers.Lua.LuaProxyCoroutine(func)
+end
+
+---Take the function and create a Coroutine Component that will run it.
+---@param func function The function to create a coroutine of.
+---@return Coroutine # The Coroutine Component
+function helpers.getLuaCoroutine(func)
+    return monocle.Coroutine(helpers.funcToIEnumerator(func))
+end
+
+---Creates a new EntityCollider component.
+---@param entityType Entity|string|Type The type of Entity this component will try to collide with.
+---@param func fun(entity: Entity) The function to call on collision.
+---@param collider? Collider The collider to use. nil if it should use the entity the component is added to's collider.
+---@return EntityCollider # The new EntityCollider component.
+function helpers.getEntityCollider(entityType, func, collider)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntityCollider(entityType, func, collider)
+end
+
+---Creates a new EntityColliderByComponent component.
+---@param entityType Component|string|Type The type of Component this component will try to collide with.
+---@param func fun(entity: Component) The function to call on collision.
+---@param collider? Collider The collider to use. nil if it should use the entity the component is added to's collider.
+---@return EntityColliderByComponent # The new EntityColliderByComponent component.
+function helpers.getEntityColliderByComponent(entityType, func, collider)
+    return bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.GetEntityColliderByComponent(entityType, func, collider)
 end
 
 ---Create and return a basic entity to use in attacks.
 ---@param position Vector2 The position the entity will be at.
 ---@param hitboxes Collider The collider the entity will use.
----@param spriteName string The sprite the entity will use.
----@param gravMult? number The multiplier to the Gravity constant the Actor should use. Defaults to 1.
+---@param spriteName? string The sprite the entity will use.
+---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
+---@default true
+---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
+---@default killPlayer
+---@param xScale? float The horizontal sprite scale. Defaults to 1.
 ---@default 1
----@param maxFall? number The fastest the Boss will fall naturally due to gravity. Defaults to 90.
+---@param yScale? float The vertical sprite scale. Defaults to 1.
+---@default 1
+---@return AttackEntity
+function helpers.getNewBasicAttackEntity(position, hitboxes, spriteName, startCollidable, funcOnPlayer, xScale, yScale)
+    return celesteMod.BossesHelper.Code.Entities.AttackEntity(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil, spriteName or '', xScale or 1, yScale or 1)
+end
+
+---Create and return a basic entity to use in attacks.
+---@param position Vector2 The position the entity will be at.
+---@param hitboxes Collider The collider the entity will use.
+---@param spriteName? string The sprite the entity will use.
+---@param gravMult? float The multiplier to the Gravity constant the Actor should use. Defaults to 1.
+---@default 1
+---@param maxFall? float The fastest the Boss will fall naturally due to gravity. Defaults to 90.
 ---@default 90
 ---@param startCollidable? boolean If the entity should spawn with collisions active. Defaults to true.
 ---@default true
@@ -1542,14 +1533,35 @@ end
 ---@default true
 ---@param funcOnPlayer? fun(self, player) The function that will be called when the entity "self" collides with the Player. Defaults to killing the Player.
 ---@default killPlayer
----@param xScale? number The horizontal sprite scale. Defaults to 1.
+---@param xScale? float The horizontal sprite scale. Defaults to 1.
 ---@default 1
----@param yScale? number The vertical sprite scale. Defaults to 1.
+---@param yScale? float The vertical sprite scale. Defaults to 1.
 ---@default 1
 ---@return AttackActor
 function helpers.getNewBasicAttackActor(position, hitboxes, spriteName, gravMult, maxFall, startCollidable, startSolidCollidable, funcOnPlayer,  xScale, yScale)
     return celesteMod.BossesHelper.Code.Entities.AttackActor(position, hitboxes, funcOnPlayer or killPlayer, startCollidable or startCollidable==nil,
-        startSolidCollidable or startSolidCollidable == nil, spriteName, gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
+        startSolidCollidable or startSolidCollidable == nil, spriteName or '', gravMult or 1, maxFall or 90, xScale or 1, yScale or 1)
+end
+
+---Wrap a function in another function to call the inner one with parameters but the outer one without.
+---@param func function The function to wrap.
+---@param ... any The parameters to call func with.
+---@return function function Function that will wrap the passed function with the arguements passed.
+local function callFunc(func, ...)
+    local args = {...}
+    if select("#", ...) < 1 then
+        return func
+    end
+    return function ()
+        return func(table.unpack(args))
+    end
+end
+
+---Add a function that will run in the background.
+---@param func fun(...) The function that will run in the background. Will run to completion or loop as defined.
+---@param ... any Parameters to pass to the wrapped function, if any
+function helpers.addConstantBackgroundCoroutine(func, ...)
+    puppet:Add(helpers.getLuaCoroutine(callFunc(func, {...})))
 end
 
 --#endregion
@@ -1640,15 +1652,42 @@ end
 --#region Health System
 
 ---Get the Player's current health value on the active Health System
----@return integer health The player's health value, or -1 if there's no active Health System
+---@return int health The player's health value, or -1 if there's no active Health System
 function helpers.getPlayerHealth()
     return bossesHelper.BossesHelperModule.PlayerHealth
 end
 
 ---Gives additional time where the player is invincible to taking damage.
----@param time number The time to add to the invincible timer.
+---@param time float The time to add to the invincible timer.
 function helpers.giveInvincibleFrames(time)
     bossesHelper.BossesHelperModule.GiveIFrames(time)
+end
+
+--#endregion
+
+--#region Delegates
+
+---These methods allow transforming a Lua function into C# delegates the API can then use correctly.
+
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_Ease.Easer
+---@return Ease.Easer
+function helpers.funcToEaser(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToEaser(func)
+end
+
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_Collision
+---@return Collision
+function helpers.funcToCollision(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToCollision(func)
+end
+
+---Transform a Ease.Easer function into its C# counterpart.
+---@param func L_DashCollision
+---@return DashCollision
+function helpers.funcToDashCollision(func)
+    return bossesHelper.Code.Helpers.Lua.LuaDelegates.ToDashCollision(func)
 end
 
 --#endregion
@@ -1680,13 +1719,22 @@ function helpers.addSoundToBoss(event)
     return helpers.addSoundTo(event, puppet)
 end
 
+---Normalizes the vector provided to the given length or 1.
+---@param vector Vector2 The vector to normalize
+---@param length? float The new length of the vector or 1
+---@default 1
+---@return Vector2 normal The normalized vector2
+function helpers.normalize(vector, length)
+    return _monocle.Calc.SafeNormalize(vector, length or 1)
+end
+
 ---Get a new EntityData object
 ---@param position Vector2 The vector2 position the entityData will hold.
----@param width? number The width the EntityData will hold. Defaults to 0.
+---@param width? float The width the EntityData will hold. Defaults to 0.
 ---@default 0
----@param height? number The height the EntityData will hold. Defaults to 0.
+---@param height? float The height the EntityData will hold. Defaults to 0.
 ---@default 0
----@param id? integer The id the EntityData will hold. Defaults to 1000.
+---@param id? int The id the EntityData will hold. Defaults to 1000.
 ---@default 1000
 ---@return EntityData entityData The formed EntityData object with the Values dictionary initialized empty.
 function helpers.getNewEntityData(position, width, height, id)
@@ -1730,9 +1778,17 @@ end
 
 ---Set a method that will execute after a given delay.
 ---@param func fun() The function to execute. Takes no parameters.
----@param delay number The time in seconds the function will be called after.
+---@param delay float The time in seconds the function will be called after.
 function helpers.doMethodAfterDelay(func, delay)
-    bossesHelper.Code.Helpers.LuaBossHelper.DoMethodAfterDelay(func, delay)
+    bossesHelper.Code.Helpers.Lua.LuaMethodWrappers.DoMethodAfterDelay(func, delay)
+end
+
+---Wait While the given predicate is true.
+---@param predicate fun(): bool The predicate to evaluate each frame.
+function helpers.waitWhile(predicate)
+    while predicate() do
+        wait()
+    end
 end
 
 ---A specific Easer can be obtained by calling "monocle.Ease.{name}" which returns the desired Easer.
@@ -1745,14 +1801,14 @@ function helpers.getEaserByName(name, invert)
         return nil
     end
     local value = string.lower(name)
-    local choice = easers[value]
+    local choice = ease[value]
     if choice then
         if invert or false then
             return ease.Invert(choice)
         end
         return choice
     else
-        return easers.default
+        return nil
     end
 end
 
@@ -1763,19 +1819,9 @@ end
 ---@deprecated Use Vector2:Length instead
 ---Get the length of the provided vector2
 ---@param vector Vector2 Vector to get length of
----@return number length The length of the vector2
+---@return float length The length of the vector2
 function helpers.v2L(vector)
     return vector:Length()
-end
-
----@deprecated Use Vector2:SafeNormalize instead
----Normalizes the vector provided to the given length or 1.
----@param vector Vector2 The vector to normalize
----@param length? number The new length of the vector or 1
----@default 1
----@return Vector2 normal The normalized vector2
-function helpers.normalize(vector, length)
-    return _monocle.Calc.SafeNormalize(vector, length or 1)
 end
 
 --#endregion

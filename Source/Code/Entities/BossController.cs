@@ -14,17 +14,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	[CustomEntity("BossesHelper/BossController")]
 	public partial class BossController : Entity
 	{
-		public Random Random { get; private set; }
-
 		public readonly string BossID;
 
 		public readonly BossPuppet Puppet;
-
-		public int Health;
-
-		private bool playerHasMoved;
-
-		public readonly SingleUse<int> ForcedAttackIndex = new();
 
 		private readonly bool startAttackingImmediately;
 
@@ -36,7 +28,13 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly Dictionary<string, int> NamedPatterns = [];
 
+		public int Health;
+
+		private bool playerHasMoved;
+
 		private Dictionary<string, IBossAction> BossActions;
+
+		public Random Random { get; private set; }
 
 		public int CurrentPatternIndex { get; private set; }
 
@@ -48,25 +46,21 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			SourceData = data;
 			SourceId = id;
 			BossID = data.Attr("bossID");
-			Health = data.Int("bossHealthMax", -1);
-			startAttackingImmediately = data.Bool("startAttackingImmediately");
-			Add(PatternCoroutine = new Coroutine());
-			Puppet = data.Enum<HurtModes>("hurtMode") switch
-			{
-				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
-				HurtModes.PlayerDash => new DashBossPuppet(data, offset),
-				HurtModes.HeadBonk => new BounceBossPuppet(data, offset),
-				HurtModes.SidekickAttack => new SidekickBossPuppet(data, offset),
-				_ => new CustomBossPuppet(data, offset)
-			};
-			Puppet.Add(new BossHealthTracker(() => Health));
+			Add(PatternCoroutine = new Coroutine(false));
+			Puppet = Create(data.Enum<HurtModes>("hurtMode"), data, offset);
+			Puppet.Add(new BossHealthTracker(GetHealth));
 			if (BossesHelperModule.Session.BossPhasesSaved.TryGetValue(BossID, out BossesHelperSession.BossPhase phase))
 			{
 				Health = phase.BossHealthAt;
 				CurrentPatternIndex = phase.StartWithPatternIndex;
 				startAttackingImmediately = phase.StartImmediately;
 			}
-			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(MethodEndReason.PlayerDied);
+			else
+			{
+				Health = data.Int("bossHealthMax", -1);
+				startAttackingImmediately = data.Bool("startAttackingImmediately");
+			}
+			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(BossAttack.EndReason.PlayerDied);
 		}
 
 		public override void Added(Scene scene)
@@ -82,11 +76,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Awake(scene);
 			BossActions = this.ReadLuaFiles(
-				(SourceData.Attr("attacksPath"), BossAttack.Create),
-				(SourceData.Attr("eventsPath"), BossEvent.Create)
+				new(SourceData.Attr("attacksPath"), BossAttack.Create),
+				new(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
 			Puppet.BossFunctions = ReadLuaFilePath(SourceData.Attr("functionsPath"), path => new BossFunctions(path, this));
-			AllPatterns.AddRange(this.ReadPatternFile(SourceData.Attr("patternsPath")));
+			AllPatterns.AddRange(ReadPatternFile(SourceData.Attr("patternsPath"), this));
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{
 				if (AllPatterns[i].Name is string name)
@@ -137,7 +131,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public void InterruptPattern()
 		{
 			PatternCoroutine.Active = false;
-			CurrentPattern.EndAction(MethodEndReason.Interrupted);
+			CurrentPattern.EndAction(BossAttack.EndReason.Interrupted);
 		}
 
 		public void StartAttackPattern(int goTo = -1)

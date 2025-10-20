@@ -1,12 +1,15 @@
-﻿using Celeste.Mod.Helpers;
+﻿using Celeste.Mod.Entities;
+using Celeste.Mod.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
-namespace Celeste.Mod.BossesHelper.Code.Helpers
+namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 {
 	internal static class LuaMethodWrappers
 	{
@@ -34,17 +37,58 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 
 		private static readonly MethodInfo entityIsTracked = Tracker.GetType().GetMethod("IsEntityTracked");
+
+
+		private static readonly MethodInfo toAction = typeof(LuaDelegates).GetMethod("ToAction");
+
+		private static readonly MethodInfo toFunc = typeof(LuaDelegates).GetMethod("ToFunc");
 		#endregion
+
+		#region Types and Generics
+		private static readonly Assembly XNAAssembly = typeof(Vector2).Assembly;
 
 		public static Type GetTypeFromString(string name, string prefix = "Celeste.")
 		{
-			return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name);
+			return FakeAssembly.GetFakeEntryAssembly().GetType(prefix + name, false, true)
+				?? XNAAssembly.GetType(prefix + name, false, true);
 		}
 
-		public static object CallGeneric(this object on, MethodInfo method, Type type)
+#nullable enable
+		public static object CallGeneric(this object on, MethodInfo method, Type type, params object[]? args)
+#nullable disable
 		{
-			return method.MakeGenericMethod(type).Invoke(on, null);
+			return method.MakeGenericMethod(type).Invoke(on, args);
 		}
+
+#nullable enable
+		public static object CallGeneric(this object on, MethodInfo method, Type[] types, params object[]? args)
+#nullable disable
+		{
+			return method.MakeGenericMethod(types).Invoke(on, args);
+		}
+
+		public static object CreateGeneric(Type classType, Type generic, params object[] args)
+		{
+			return Activator.CreateInstance(classType.MakeGenericType(generic), args);
+		}
+
+		public static object CreateGeneric(Type classType, Type[] generics, params object[] args)
+		{
+			return Activator.CreateInstance(classType.MakeGenericType(generics), args);
+		}
+		#endregion
+
+		#region Delegates
+		public static object GetAction(LuaFunction func, params Type[] types)
+		{
+			return toAction.MakeGenericMethod(types).Invoke(null, [func]);
+		}
+
+		public static object GetFunc(LuaFunction func, Type returnType, params Type[] types)
+		{
+			return toFunc.MakeGenericMethod([returnType, .. types]).Invoke(null, [func]);
+		}
+		#endregion
 
 		#region Entities
 		public static object GetEntity(string name, string prefix = "Celeste.")
@@ -82,7 +126,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getEntitiesMethodInfo, type) as IList);
+				return (Tracker.CallGeneric(getEntitiesMethodInfo, type) as IList).ToLuaTable();
 			}
 			catch (ArgumentNullException)
 			{
@@ -130,7 +174,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Entities.CallGeneric(entitiesFindAll, type) as IList);
+				return (Entities.CallGeneric(entitiesFindAll, type) as IList).ToLuaTable();
 			}
 			catch (ArgumentNullException)
 			{
@@ -180,7 +224,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(Tracker.CallGeneric(getComponentsMethodInfo, type) as IList);
+				return (Tracker.CallGeneric(getComponentsMethodInfo, type) as IList).ToLuaTable();
 			}
 			catch (ArgumentNullException)
 			{
@@ -348,7 +392,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			try
 			{
-				return LuaBossHelper.ListToLuaTable(entity.Components.CallGeneric(componentsGetAll, type) as IList);
+				return (entity.Components.CallGeneric(componentsGetAll, type) as IList).ToLuaTable();
 			}
 			catch (ArgumentNullException)
 			{
@@ -372,11 +416,12 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		}
 		#endregion
 
+		#region Teleports
 		public static void TeleportTo(Scene scene, Player player, string room, Player.IntroTypes introType = Player.IntroTypes.Transition, Vector2? nearestSpawn = null)
 		{
 			if (scene is Level level)
 			{
-				level.OnEndOfFrame += delegate
+				level.OnEndOfFrame += () =>
 				{
 					level.TeleportTo(player, room, introType, nearestSpawn);
 				};
@@ -397,7 +442,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				player.Hair.MoveHairBy(vector);
 				return;
 			}
-			level.OnEndOfFrame += delegate
+			level.OnEndOfFrame += () =>
 			{
 				Vector2 levelOffset = level.LevelOffset;
 				Vector2 vector2 = player.Position - level.LevelOffset;
@@ -429,35 +474,50 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				level.Wipe?.Cancel();
 			};
 		}
+		#endregion
+
+		#region Miscellaneous
+		public static IEnumerable<T> OfType<T>(this LuaTable table) => table.Values.OfType<T>();
+
+		public static ColliderList GetColliderListFromLuaTable(LuaTable luaTable)
+		{
+			return new([.. luaTable.OfType<Collider>()]);
+		}
+
+		public static IEnumerator Say(string dialog, LuaTable luaEvents)
+		{
+			Func<IEnumerator> Selector(LuaFunction func) => () => new LuaProxyCoroutine(func);
+			return Textbox.Say(dialog, [.. luaEvents.OfType<LuaFunction>().Select(Selector)]);
+		}
+
+		public static void DoMethodAfterDelay(LuaFunction func, float delay)
+		{
+			Alarm.Create(Alarm.AlarmMode.Oneshot, func.ToAction(), delay, true);
+		}
+		#endregion
 
 		#region Entity Collider Creator
-		/*public static object GetEntityCollider(object baseEntity, LuaFunction func, Collider collider = null)
-            Type baseType;
-            if (baseEntity is string val)
-            {
-                baseType = GetTypeFromString(val);
-            }
-            else if (baseEntity is Entity entity)
-            {
-                baseType = entity.GetType();
-            }
+		public static object GetEntityCollider(Entity baseEntity, LuaFunction func, Collider collider = null)
+			=> GetEntityCollider(baseEntity.GetType(), func, collider);
 
-            return Activator.CreateInstance(typeof(EntityCollider<>).MakeGenericType(baseType), [func, collider]);
-        }
+		public static object GetEntityCollider(string baseType, LuaFunction func, Collider collider = null)
+			=> GetEntityCollider(GetTypeFromString(baseType), func, collider);
 
-        public static object GetEntityColliderByComponent(object baseComponent, LuaFunction func, Collider collider = null)
-            Type baseType;
-            if (baseComponent is string val)
-            {
-                baseType = GetTypeFromString(val);
-            }
-            else if (baseComponent is Component component)
-            {
-                baseType = component.GetType();
-            }
+		public static object GetEntityCollider(Type type, LuaFunction func, Collider collider = null)
+		{
+			return CreateGeneric(typeof(EntityCollider<>), type, GetAction(func, type), collider);
+		}
 
-            return Activator.CreateInstance(typeof(EntityColliderByComponent<>).MakeGenericType(baseType), [func, collider]);
-        }*/
+		public static object GetEntityColliderByComponent(Component baseComp, LuaFunction func, Collider collider = null)
+			=> GetEntityColliderByComponent(baseComp.GetType(), func, collider);
+
+		public static object GetEntityColliderByComponent(string baseType, LuaFunction func, Collider collider = null)
+			=> GetEntityColliderByComponent(GetTypeFromString(baseType), func, collider);
+
+		public static object GetEntityColliderByComponent(Type type, LuaFunction func, Collider collider = null)
+		{
+			return CreateGeneric(typeof(EntityColliderByComponent<>), type, GetAction(func, type), collider);
+		}
 		#endregion
 	}
 }

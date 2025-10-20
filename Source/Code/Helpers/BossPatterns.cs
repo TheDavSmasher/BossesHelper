@@ -1,6 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
 using Monocle;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
@@ -9,33 +8,39 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
-		public bool IsWait => ActionName.ToLower().Equals("wait");
+		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
 	}
 
-	public enum MethodEndReason
+	public enum PatternType
 	{
-		Completed,
-		Interrupted,
-		PlayerDied
+		Event,
+		Pattern,
+		Random
 	}
 
 	public abstract record BossPattern(string Name, string GoToPattern, BossController Controller)
 	{
-		public IBossAction CurrentAction { get; private set; }
+		public bool IsActing => currentAction != null;
 
-		public bool IsActing { get; private set; }
+		private IBossAction currentAction;
+
+		public abstract IEnumerator Perform();
+
+		public void EndAction(BossAttack.EndReason reason)
+		{
+			if (currentAction is BossAttack attack)
+				attack.End(reason);
+			currentAction = null;
+		}
 
 		protected IEnumerator PerformMethod(Method method)
 		{
 			if (!method.IsWait)
 			{
-				if (Controller.TryGet(method.ActionName, out IBossAction _currentAct))
+				if (Controller.TryGet(method.ActionName, out currentAction))
 				{
-					CurrentAction = _currentAct;
-					IsActing = true;
-					yield return CurrentAction.Perform();
-					EndAction(MethodEndReason.Completed);
-					CurrentAction = null;
+					yield return currentAction.Perform();
+					EndAction(BossAttack.EndReason.Completed);
 				}
 				else
 				{
@@ -44,86 +49,70 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 			yield return method.Duration;
 		}
-
-		public void EndAction(MethodEndReason reason)
-		{
-			IsActing = false;
-			CurrentAction?.End(reason);
-		}
-
-		public abstract IEnumerator Perform();
-
-		protected IEnumerator PerformAndChange(Func<Method> getMethod, Func<bool> changePattern)
-		{
-			yield return PerformMethod(getMethod());
-			if (changePattern())
-			{
-				Controller.ChangeToPattern();
-				yield return null;
-			}
-		}
 	}
 
 	public record EventCutscene(string Name, Method Event, string GoToPattern, BossController Controller)
 		: BossPattern(Name, GoToPattern, Controller)
 	{
-		public override IEnumerator Perform() => PerformAndChange(() => Event, () => true);
+		public override IEnumerator Perform()
+		{
+			yield return PerformMethod(Event);
+			Controller.ChangeToPattern();
+			yield return null;
+		}
 	}
 
-	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
+	public abstract record AttackPattern(string Name, List<Method> StatePatternOrder,
+		Hitbox PlayerPositionTrigger, NullRange RangeCounter, string GoToPattern, BossController Controller)
 		: BossPattern(Name, GoToPattern, Controller)
 	{
-		protected virtual int AttackIndex => currentAction;
+		protected abstract int AttackIndex { get; }
 
-		private int currentAction;
+		protected virtual bool Update => true;
 
 		public override IEnumerator Perform()
 		{
-			currentAction = 0;
-			while (true)
+			RangeCounter.Reset();
+			do
 			{
-				yield return PerformAndChange(() => StatePatternOrder[AttackIndex % StatePatternOrder.Count], () =>
-				{
-					int counter = UpdateLoop();
-					return counter > MinRandomIter && (counter > IterationCount || Controller.Random.Next() % 2 == 1);
-				});
+				yield return PerformMethod(StatePatternOrder[AttackIndex % StatePatternOrder.Count]);
+				if (Update)
+					RangeCounter.Inc();
 			}
+			while (RangeCounter.CanContinue);
+			Controller.ChangeToPattern();
+			yield return null;
 		}
-
-		protected virtual int UpdateLoop() => currentAction++;
 	}
 
-	public record RandomPattern(string Name, List<Method> StatePatternOrder, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
+	public record RandomPattern(string Name, List<Method> StatePatternOrder,
+		Hitbox PlayerPositionTrigger, NullRange IterationRange, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, IterationRange, GoToPattern, Controller)
 	{
-		private readonly SingleUse<int> ForcedAttackIndex = new();
 
-		public void ForceNextAttack(int value)
-		{
-			ForcedAttackIndex.Value = value;
-		}
+		public readonly SingleUse<int> ForcedAttackIndex = new();
 
 		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
 	}
 
-	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods, Hitbox PlayerPositionTrigger,
-		int? MinRandomIter, int? IterationCount, string GoToPattern, BossController Controller)
-		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, MinRandomIter, IterationCount, GoToPattern, Controller)
+	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods,
+		Hitbox PlayerPositionTrigger, NullRange IterationRange, string GoToPattern, BossController Controller)
+		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, IterationRange, GoToPattern, Controller)
 	{
-		private int loop;
+		private int actions;
+
+		protected override bool Update => actions++ % StatePatternOrder.Count == 0;
+
+		protected override int AttackIndex => RangeCounter.Counter;
 
 		public override IEnumerator Perform()
 		{
-			loop = 0;
+			actions = 0;
 			foreach (Method method in PrePatternMethods)
 			{
 				yield return PerformMethod(method);
 			}
 			yield return base.Perform();
 		}
-
-		protected override int UpdateLoop() => loop += base.UpdateLoop() % StatePatternOrder.Count == 0 ? 1 : 0;
 	}
 }

@@ -186,7 +186,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (BossesHelperModule.Settings.SidekickLaserBind.Pressed && CanAttack)
 			{
 				CanAttack = false;
-				AttackSequence().Coroutine(this);
+				AttackSequence().AsCoroutine(this);
 			}
 			oldX = X;
 			base.Update();

@@ -3,19 +3,19 @@ using Celeste.Mod.BossesHelper.Code.Helpers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
 using static Celeste.Mod.BossesHelper.Code.Helpers.UserFileReader;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
-	public abstract partial class BossPuppet : Actor
+	public abstract partial class BossPuppet : BossActor
 	{
 		#region Enums
 		public enum ColliderOption
 		{
 			Hitboxes,
 			Hurtboxes,
+			KillColliders,
 			Bouncebox,
 			Target
 		}
@@ -30,9 +30,17 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 		#endregion
 
-		public readonly Sprite Sprite;
+		private readonly HitboxMetadata hitboxMetadata;
 
-		private readonly EnumDict<ColliderOption, Dictionary<string, Collider>> hitboxMetadata;
+		public Collider Hurtbox;
+
+		public Collider KillCollider
+		{
+			get;
+			set => PlayerKillCollider.Collider = field = value;
+		}
+
+		private readonly PlayerCollider PlayerKillCollider;
 
 		protected readonly Component BossCollision;
 
@@ -48,70 +56,53 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public int Facing;
 
-		public const float Gravity = 900f;
-
-		public float gravityMult;
-
-		public Vector2 Speed;
-
 		public float groundFriction;
 
 		public float airFriction;
 
-		public bool Grounded => Speed.Y >= 0 && OnGround();
+		public bool KillOnContact;
 
-		public Collider Hurtbox { get; private set; }
-
-		public bool SolidCollidable;
-
-		private readonly float maxFall;
-
-		public bool killOnContact;
-
-		public BossPuppet(EntityData data, Vector2 offset)
-			: base(data.Position + offset)
+		protected BossPuppet(EntityData data, Vector2 offset)
+			: base(data.Position + offset, data.Attr("bossSprite"), Vector2.One, data.Float("maxFall", 90f),
+				  data.Bool("startCollidable"), data.Bool("startSolidCollidable"), data.Float("baseGravityMultiplier", 1f))
 		{
+			Facing = 1;
 			DynamicFacing = data.Bool("dynamicFacing");
 			MirrorSprite = data.Bool("mirrorSprite");
-			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
-			maxFall = data.Float("maxFall", 90f);
-			gravityMult = data.Float("baseGravityMultiplier", 1f);
+			GravityMult = data.Float("baseGravityMultiplier", 1f);
 			groundFriction = data.Float("groundFriction");
 			airFriction = data.Float("airFriction");
-			SolidCollidable = data.Bool("startSolidCollidable");
-			Collidable = data.Bool("startCollidable");
-			killOnContact = data.Bool("killOnContact");
-			Add(new PlayerCollider(KillOnContact));
-			Facing = 1;
-			if (GFX.SpriteBank.TryCreate(data.Attr("bossSprite"), out Sprite sprite))
-			{
-				Add(Sprite = sprite);
-				Sprite.Scale = Vector2.One;
-				PlayBossAnim(data.String("startingAnim", "idle"));
-			}
-			else
-			{
-				Sprite = sprite;
-			}
+
+			PlayAnim(data.String("startingAnim", "idle"));
+			Add(BossDamageCooldown = new(data.Float("bossHitCooldown", 0.5f)));
+			Add(PlayerKillCollider = new(KillPlayer));
+			KillOnContact = data.Bool("killOnContact");
+
 			hitboxMetadata = ReadMetadataFile(data.Attr("hitboxMetadataPath"));
-			Collider = GetMainOrDefault(ColliderOption.Hitboxes, Sprite.Height);
-			Hurtbox = GetMainOrDefault(ColliderOption.Hurtboxes, Sprite.Height);
-			(BossCollision = GetBossCollision())?.AddTo(this);
+			Collider = GetCollider(ColliderOption.Hitboxes);
+			KillCollider = GetCollider(ColliderOption.KillColliders);
+			Hurtbox = GetCollider(HurtMode switch
+			{
+				HurtModes.HeadBonk => ColliderOption.Bouncebox,
+				HurtModes.SidekickAttack => ColliderOption.Target,
+				_ => ColliderOption.Hurtboxes
+			});
+			if ((BossCollision = GetBossCollision()) != null)
+				Add(BossCollision);
 		}
 
 		protected abstract Component GetBossCollision();
 
-		protected Collider GetMainOrDefault(ColliderOption option, float? value)
-			=> GetTagOrDefault(option, "main", value);
-
-		protected Collider GetTagOrDefault(ColliderOption option, string key, float? value)
+		internal static BossPuppet Create(HurtModes hurtMode, EntityData data, Vector2 offset)
 		{
-			if (hitboxMetadata[option].TryGetValue(key, out var result))
-				return result;
-
-			if (value == null)
-				return new Circle(4f);
-			return new Hitbox(Sprite.Width, (float)value, Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+			return hurtMode switch
+			{
+				HurtModes.PlayerContact => new ContactBossPuppet(data, offset),
+				HurtModes.PlayerDash => new DashBossPuppet(data, offset),
+				HurtModes.HeadBonk => new BounceBossPuppet(data, offset),
+				HurtModes.SidekickAttack => new SidekickBossPuppet(data, offset),
+				_ => new CustomBossPuppet(data, offset)
+			};
 		}
 
 		public override void Update()
@@ -122,29 +113,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Facing *= -1;
 			}
 			base.Update();
-			//Move based on speed
-			if (SolidCollidable)
-			{
-				MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
-				MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
-			}
-			else
-			{
-				NaiveMove(Speed * Engine.DeltaTime);
-			}
-			//Apply gravity
-			if (!Grounded)
-			{
-				Speed.Y = Calc.Approach(Speed.Y, maxFall, Gravity * gravityMult * Engine.DeltaTime);
-			}
 			//Apply friction
 			Speed.X = Calc.Approach(Speed.X, 0f, (Grounded ? groundFriction : airFriction) * Engine.DeltaTime);
 			//Return Sprite Scale
-			if (Sprite != null)
-			{
-				Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
-				Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
-			}
+			Sprite.Scale = Calc.Approach(Sprite.Scale, Vector2.One, 1.75f * Engine.DeltaTime);
 		}
 
 		private bool DynamicPositionOver_Quarter(float pos)
@@ -160,16 +132,27 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		{
 			base.Render();
 			int realFacing = Facing * (MirrorSprite ? -1 : 1);
-			Sprite?.Scale.X = realFacing;
+			Sprite.Scale.X = realFacing;
 		}
 
-		public void PlayBossAnim(string anim)
-			=> Sprite.PlayOrWarn(anim);
-
-		#region Collision Methods
-		private void KillOnContact(Player player)
+		public Collider GetCollider(ColliderOption option, string key = "main")
 		{
-			if (killOnContact)
+			if (key == "empty" || option != ColliderOption.Hitboxes && hitboxMetadata[option].Count == 0)
+				return null;
+
+			if (hitboxMetadata[option].TryGetValue(key, out var result))
+				return result;
+
+			if (option == ColliderOption.Target)
+				return new Circle(4f);
+
+			return new Hitbox(Sprite.Width, option == ColliderOption.Bouncebox ? 6f : Sprite.Height,
+				Sprite.Width * -0.5f, Sprite.Height * -0.5f);
+		}
+
+		private void KillPlayer(Player player)
+		{
+			if (KillOnContact)
 				player.Die((player.Position - Position).SafeNormalize());
 		}
 
@@ -178,29 +161,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			if (BossDamageCooldown.Finished && (predicate?.Invoke() ?? true))
 			{
 				BossDamageCooldown.Reset();
-				BossFunctions.OnDamage(HurtMode).Coroutine(this);
+				Add(new Coroutine(BossFunctions[HurtMode]));
 				postLua?.Invoke();
 			}
 		}
-
-		private void OnCollideH(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.X = 0;
-		}
-
-		private void OnCollideV(CollisionData data)
-		{
-			if (data.Hit != null && data.Hit.OnCollide != null)
-			{
-				data.Hit.OnCollide(data.Direction);
-			}
-			Speed.Y = 0;
-		}
-		#endregion
 	}
 
 	public class ContactBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)
@@ -228,11 +192,8 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	{
 		public override HurtModes HurtMode => HurtModes.HeadBonk;
 
-		public Collider Bouncebox { get; private set; }
-
 		protected override Component GetBossCollision()
-			=> new PlayerCollider(OnPlayerBounce,
-				Bouncebox = GetMainOrDefault(ColliderOption.Bouncebox, 6f));
+			=> new PlayerCollider(OnPlayerBounce, Hurtbox);
 
 		private void OnPlayerBounce(Player player)
 		{
@@ -255,8 +216,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private readonly float sidekickCooldown = data.Float("sidekickCooldown");
 
-		public Collider Target { get; private set; }
-
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
@@ -268,8 +227,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		protected override Component GetBossCollision()
-			=> new SidekickTarget(() => OnDamage(), BossID,
-				Target = GetMainOrDefault(ColliderOption.Target, null));
+			=> new SidekickTarget(() => OnDamage(), BossID, Hurtbox);
 	}
 
 	public class CustomBossPuppet(EntityData data, Vector2 offset) : BossPuppet(data, offset)

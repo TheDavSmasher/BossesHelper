@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Monocle;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;

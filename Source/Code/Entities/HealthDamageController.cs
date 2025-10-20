@@ -1,12 +1,14 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Microsoft.Xna.Framework;
 using Monocle;
 using NLua;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using static Celeste.Mod.BossesHelper.Code.Entities.HealthDisplays;
 using static Celeste.Mod.BossesHelper.Code.Helpers.BossesHelperUtils;
-using static Celeste.Mod.BossesHelper.Code.Helpers.LuaBossHelper;
 
 namespace Celeste.Mod.BossesHelper.Code.Entities
 {
@@ -24,7 +26,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		}
 
 		[Tracked(false)]
-		private class DamageController() : GlobalEntity(false), ILuaLoader
+		private class DamageController() : Entity, ILuaLoader
 		{
 			private LuaFunction onRecover;
 
@@ -32,19 +34,18 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			private Stopwatch DamageCooldown => Scene.GetPlayer()?.Get<Stopwatch>();
 
-			public LuaCommand Command => ("getFunctionData", 2);
+			public PrepareMode Mode => PrepareMode.Function;
 
-			public LuaTableItem[] Values { get; set; }
+			public Dictionary<string, object> Values { get; private set; }
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
-				ChangeGlobalState(HealthData.globalController);
-				Player player = Scene.GetPlayer();
-				Values = [("player", player), ("healthBar", healthBar)];
+				this.ChangeTagState(Tags.Global, HealthData.globalController);
+				Values = new() { { "healthBar", healthBar } };
 				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
 				onDamage = array[0];
 				onRecover = array[1];
-				player.AddIFramesWatch();
+				Scene.GetPlayer().AddIFramesWatch();
 			}
 
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
@@ -68,10 +69,10 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 						Level.Flash(Color.Red * 0.3f);
 						Audio.Play("event:/char/madeline/predeath");
 						if (HealthData.playerStagger && stagger)
-							PlayerStagger(entity.Position, direction).Coroutine(entity);
+							PlayerStagger(entity.Position, direction).AsCoroutine(entity);
 						if (HealthData.playerBlink)
-							PlayerInvincible().Coroutine(entity);
-						onDamage?.AddAsCoroutine(this);
+							PlayerInvincible().AsCoroutine(entity);
+						AddLuaCoroutine(onDamage);
 					}
 				}
 				else
@@ -84,14 +85,16 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			public void RecoverHealth(int amount = 1)
 			{
 				ModSession.currentPlayerHealth += amount;
-				onRecover?.AddAsCoroutine(this);
+				AddLuaCoroutine(onRecover);
 			}
 
 			public void RefillHealth()
 			{
 				ModSession.currentPlayerHealth = HealthData.playerHealthVal;
-				onRecover?.AddAsCoroutine(this);
+				AddLuaCoroutine(onRecover);
 			}
+
+			private void AddLuaCoroutine(LuaFunction func) => Add(new Coroutine(new LuaProxyCoroutine(func)));
 
 			private IEnumerator PlayerStagger(Vector2 from, Vector2 bounce)
 			{
@@ -100,7 +103,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					Celeste.Freeze(0.05f);
 					yield return null;
 					Vector2 to = new(from.X + (!(bounce.X < 0f) ? 1 : -1) * 20f, from.Y - 5f);
-					Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, delegate (Tween t)
+					Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.2f, Ease.CubeOut, t =>
 					{
 						Vector2 val = from + (to - from) * t.Eased;
 						if (Scene.GetPlayer() is Player player)
@@ -125,7 +128,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					}
 				}
 				int times = 1;
-				Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, HealthData.damageCooldown, Ease.CubeOut, delegate
+				Tween tween = Tween.Set(this, Tween.TweenMode.Oneshot, HealthData.damageCooldown, Ease.CubeOut, _ =>
 				{
 					if (Scene.OnInterval(0.02f))
 					{
