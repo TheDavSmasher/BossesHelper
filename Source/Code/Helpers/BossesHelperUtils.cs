@@ -249,9 +249,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public class NullRange
 		{
-			private readonly int? MinRange;
+			private readonly uint? MinRange;
 
-			private readonly int? MaxRange;
+			private readonly uint? MaxRange;
 
 			private readonly int Chance;
 
@@ -262,7 +262,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			public bool CanContinue
 				=> Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
 
-			public NullRange(int? min, int? max, int? @default, Random random, int randomChance = 50)
+			public NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
 			{
 				MinRange = min ?? max ?? @default;
 				MaxRange = max ?? min ?? @default;

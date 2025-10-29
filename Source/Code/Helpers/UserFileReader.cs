@@ -118,8 +118,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
 			NullRange nRange = new(
-				patternNode.GetValueOrDefault<int>("minRepeat"),
-				patternNode.GetValueOrDefault<int>("repeat"),
+				patternNode.GetValueOrDefault<uint>("minRepeat"),
+				patternNode.GetValueOrDefault<uint>("repeat"),
 				goTo is null ? null : 0,
 				controller.Random);
 
