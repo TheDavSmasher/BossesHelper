@@ -253,6 +253,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			private readonly uint? MaxRange;
 
+			private readonly bool Defined;
+
 			private readonly int Chance;
 
 			public readonly Random Random;
@@ -260,7 +262,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			public int Counter { get; private set; }
 
 			public bool CanContinue
-				=> Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
+				=> !Defined || Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
 
 			public NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
 			{
@@ -268,6 +270,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				MaxRange = max ?? min ?? @default;
 				if (MaxRange < MinRange)
 					MaxRange = MinRange;
+				Defined = (min ?? max ?? @default) >= 0;
 				Random = random;
 				Chance = Math.Clamp(randomChance, 0, 100);
 			}
