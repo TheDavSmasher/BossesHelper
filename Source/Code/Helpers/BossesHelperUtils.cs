@@ -267,9 +267,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			public NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
 			{
 				MinRange = min ?? max ?? @default;
-				MaxRange = max ?? min ?? @default;
-				if (MaxRange < MinRange)
-					MaxRange = MinRange;
+				MaxRange = Min(max ?? @default, min ?? @default);
 				Defined = (min ?? max ?? @default) >= 0;
 				Random = random;
 				Chance = Math.Clamp(randomChance, 0, 100);
@@ -281,6 +279,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			{
 				Counter++;
 			}
+		}
+
+		private static uint? Min(uint? a, uint? b)
+		{
+			return a < b ? a : b;
 		}
 		#endregion
 
