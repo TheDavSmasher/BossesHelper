@@ -1,26 +1,22 @@
 ﻿namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
-	public struct SingleUse<T> where T : struct
+	public struct SingleUse<T>(T val) where T : struct
 	{
-		public SingleUse(T val)
-		{
-			Value = val;
-		}
+		private T? value = val;
+
+		public readonly bool HasValue => value.HasValue;
 
 		public T? Value
 		{
 			get
 			{
-				T? value = field;
-				field = null;
-				return value;
+				T? val = value;
+				value = null;
+				return val;
 			}
-			set;
 		}
 
-		public static implicit operator SingleUse<T>(T? _) => new();
-
-		public static implicit operator SingleUse<T>(T v) => new(v);
+		public static implicit operator SingleUse<T>(T? v) => v.HasValue ? new(v.Value) : new();
 
 		public static implicit operator T?(SingleUse<T> s) => s.Value;
 	}

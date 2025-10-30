@@ -70,7 +70,7 @@ namespace Celeste.Mod.BossesHelper
 			public void ForceNextAttack(int index)
 			{
 				if (CurrentPattern is RandomPattern Random)
-					Random.ForcedAttackIndex.Value = index;
+					Random.ForcedAttackIndex = index;
 			}
 
 			public void SavePhaseChangeInSession(int health, int patternIndex, bool startImmediately)
