@@ -2,7 +2,7 @@
 {
 	public struct SingleUse<T> where T : struct
 	{
-		public SingleUse(T? val = null)
+		public SingleUse(T val)
 		{
 			Value = val;
 		}
@@ -18,7 +18,9 @@
 			set;
 		}
 
-		public static implicit operator SingleUse<T>(T? v) => new(v);
+		public static implicit operator SingleUse<T>(T? _) => new();
+
+		public static implicit operator SingleUse<T>(T v) => new(v);
 
 		public static implicit operator T?(SingleUse<T> s) => s.Value;
 	}
