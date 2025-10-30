@@ -262,7 +262,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			public int Counter { get; private set; }
 
 			public bool CanContinue
-				=> !Defined || Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
+				=> !Defined || Counter <= MinRange || Counter <= MaxRange && Random.Next(100) < Chance;
 
 			public void Reset() => Counter = 0;
 
