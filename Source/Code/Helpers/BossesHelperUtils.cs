@@ -273,7 +273,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			private static uint? MaxMin(uint? max, uint? min)
 			{
-				return max < min ? max : min;
+				return min > max ? min : max;
 			}
 		}
 		#endregion
