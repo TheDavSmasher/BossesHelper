@@ -279,11 +279,11 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			{
 				Counter++;
 			}
-		}
 
-		private static uint? Min(uint? a, uint? b)
-		{
-			return a < b ? a : b;
+			private static uint? Min(uint? a, uint? b)
+			{
+				return a < b ? a : b;
+			}
 		}
 		#endregion
 
