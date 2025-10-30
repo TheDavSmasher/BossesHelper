@@ -233,8 +233,13 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-		public class SingleUse<T> where T : struct
+		public struct SingleUse<T> where T : struct
 		{
+			public SingleUse(T? val = null)
+			{
+				Value = val;
+			}
+
 			public T? Value
 			{
 				get
@@ -245,6 +250,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				}
 				set;
 			}
+
+			public static implicit operator SingleUse<T>(T? v) => new(v);
+
+			public static implicit operator T?(SingleUse<T> s) => s.Value;
 		}
 
 		public class NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
