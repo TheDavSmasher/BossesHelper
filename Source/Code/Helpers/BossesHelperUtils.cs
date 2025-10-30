@@ -251,7 +251,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		{
 			private readonly uint? MinRange = min ?? max ?? @default;
 
-			private readonly uint? MaxRange = Min(max ?? @default, min ?? @default);
+			private readonly uint? MaxRange = MaxMin(max ?? @default, min ?? @default);
 
 			private readonly bool Defined = (min ?? max ?? @default) >= 0;
 
@@ -271,9 +271,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				Counter++;
 			}
 
-			private static uint? Min(uint? a, uint? b)
+			private static uint? MaxMin(uint? max, uint? min)
 			{
-				return a < b ? a : b;
+				return max < min ? max : min;
 			}
 		}
 		#endregion
