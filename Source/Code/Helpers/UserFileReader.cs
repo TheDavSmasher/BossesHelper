@@ -160,7 +160,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
 		{
 			return new Method(
-				isFile ? source.GetValue("file") : "wait",
+				isFile ? source.GetValue("file") : Method.WaitName,
 				source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
 			);
 		}

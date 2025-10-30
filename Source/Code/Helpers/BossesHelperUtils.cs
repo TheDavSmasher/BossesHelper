@@ -247,31 +247,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-		public class NullRange
+		public class NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
 		{
-			private readonly uint? MinRange;
+			private readonly uint? MinRange = min ?? max ?? @default;
 
-			private readonly uint? MaxRange;
+			private readonly uint? MaxRange = Min(max ?? @default, min ?? @default);
 
-			private readonly bool Defined;
+			private readonly bool Defined = (min ?? max ?? @default) >= 0;
 
-			private readonly int Chance;
+			private readonly int Chance = Math.Clamp(randomChance, 0, 100);
 
-			public readonly Random Random;
+			public readonly Random Random = random;
 
 			public int Counter { get; private set; }
 
 			public bool CanContinue
 				=> !Defined || Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
-
-			public NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
-			{
-				MinRange = min ?? max ?? @default;
-				MaxRange = Min(max ?? @default, min ?? @default);
-				Defined = (min ?? max ?? @default) >= 0;
-				Random = random;
-				Chance = Math.Clamp(randomChance, 0, 100);
-			}
 
 			public void Reset() => Counter = 0;
 

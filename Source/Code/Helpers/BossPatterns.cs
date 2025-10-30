@@ -8,7 +8,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
-		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
+		public const string WaitName = "wait";
+
+		public readonly bool IsWait = ActionName.ToLower().Equals(WaitName);
 	}
 
 	public enum PatternType
