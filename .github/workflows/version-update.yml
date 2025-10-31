@@ -21,6 +21,13 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v5
       
+    - name: Checkout Wiki
+      uses: actions/checkout@v5
+      with:
+        repository: ${{ github.repository }}.wiki
+        token: ${{ secrets.ADDON_WIKI_PAT }}
+        path: wiki
+
     - name: Configure Git
       run: |
         git config user.name "github-actions"
