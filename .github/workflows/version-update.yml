@@ -1,0 +1,32 @@
+name: Update latest Release Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      update:
+        description: 'Type of update'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - Major
+        default: patch
+
+jobs:
+  version_update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v5
+
+    - name: Get last version
+      id: last_version
+      run: 
+    
+    - name: Get new version
+      id: new_version
+      run: |
+        echo "Doing a ${{ inputs.update }} update."
+      
