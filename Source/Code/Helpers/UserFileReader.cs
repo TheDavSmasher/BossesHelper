@@ -118,8 +118,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 			Hitbox trigger = patternNode.GetTriggerHitbox(controller);
 			NullRange nRange = new(
-				patternNode.GetValueOrDefault<int>("minRepeat"),
-				patternNode.GetValueOrDefault<int>("repeat"),
+				patternNode.GetValueOrDefault<uint>("minRepeat"),
+				patternNode.GetValueOrDefault<uint>("repeat"),
 				goTo is null ? null : 0,
 				controller.Random);
 
@@ -160,7 +160,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		private static Method GetMethod(this XmlNode source, bool isFile, bool hasTime = false)
 		{
 			return new Method(
-				isFile ? source.GetValue("file") : "wait",
+				isFile ? source.GetValue("file") : Method.WaitName,
 				source.GetValueOrDefault<float>(!isFile || hasTime ? "time" : "")
 			);
 		}

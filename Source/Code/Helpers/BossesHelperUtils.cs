@@ -233,50 +233,33 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-		public class SingleUse<T> where T : struct
+		public class NullRange(uint? min, uint? max, uint? @default, Random random, int randomChance = 50)
 		{
-			public T? Value
-			{
-				get
-				{
-					T? value = field;
-					field = null;
-					return value;
-				}
-				set;
-			}
-		}
+			private readonly uint? MinRange = min ?? max ?? @default;
 
-		public class NullRange
-		{
-			private readonly int? MinRange;
+			private readonly uint? MaxRange = MaxMin(max ?? @default, min ?? @default);
 
-			private readonly int? MaxRange;
+			private readonly bool Defined = (min ?? max ?? @default) >= 0;
 
-			private readonly int Chance;
+			private readonly int Chance = Math.Clamp(randomChance, 0, 100);
 
-			public readonly Random Random;
+			public readonly Random Random = random;
 
 			public int Counter { get; private set; }
 
 			public bool CanContinue
-				=> Counter > MinRange && (Counter > MaxRange || Random.Next(100) < Chance);
-
-			public NullRange(int? min, int? max, int? @default, Random random, int randomChance = 50)
-			{
-				MinRange = min ?? max ?? @default;
-				MaxRange = max ?? min ?? @default;
-				if (MaxRange < MinRange)
-					MaxRange = MinRange;
-				Random = random;
-				Chance = Math.Clamp(randomChance, 0, 100);
-			}
+				=> !Defined || Counter <= MinRange || Counter <= MaxRange && Random.Next(100) < Chance;
 
 			public void Reset() => Counter = 0;
 
 			public void Inc()
 			{
 				Counter++;
+			}
+
+			private static uint? MaxMin(uint? max, uint? min)
+			{
+				return min > max ? min : max;
 			}
 		}
 		#endregion

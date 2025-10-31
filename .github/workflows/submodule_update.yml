@@ -54,7 +54,7 @@ jobs:
           git push origin "${{ env.UPDATE_BRANCH }}"
 
       - name: Create PR to upstream
-        if: steps.sync_remote.outcome == 'skipped'
+        if: steps.sync_remote.outcome != 'skipped'
         env:
           GH_TOKEN: ${{ secrets.ADDON_WIKI_PAT }}
         run: |

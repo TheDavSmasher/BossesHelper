@@ -8,7 +8,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 {
 	public readonly record struct Method(string ActionName, float? Duration)
 	{
-		public readonly bool IsWait = ActionName.ToLower().Equals("wait");
+		public const string WaitName = "wait";
+
+		public readonly bool IsWait = ActionName.ToLower().Equals(WaitName);
 	}
 
 	public enum PatternType
@@ -90,9 +92,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		: AttackPattern(Name, StatePatternOrder, PlayerPositionTrigger, IterationRange, GoToPattern, Controller)
 	{
 
-		public readonly SingleUse<int> ForcedAttackIndex = new();
+		public SingleUse<int> ForcedAttackIndex = null;
 
-		protected override int AttackIndex => ForcedAttackIndex.Value ?? Controller.Random.Next();
+		protected override int AttackIndex => (int?)ForcedAttackIndex ?? Controller.Random.Next();
 	}
 
 	public record SequentialPattern(string Name, List<Method> StatePatternOrder, List<Method> PrePatternMethods,
