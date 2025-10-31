@@ -69,6 +69,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git add everest.yaml
-        git commit -m "Bump version to ${{ steps.new_version.outputs.new_version }}"
+        git commit -am "[chore] Updated to ${{ steps.new_version.outputs.new_version }}"
+        git push
+
+    - name: Commit and push to Wiki
+      run: |
+        cd wiki
+        git commit -am "[chore] Updated to ${{ steps.new_version.outputs.new_version }}"
         git push
