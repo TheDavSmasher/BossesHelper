@@ -57,6 +57,14 @@ jobs:
       run: |
         yq -i ".[0].Version = \"${{ steps.new_version.outputs.new_version }}\"" everest.yaml
     
+    - name: Update README and Wiki Home
+      run: |
+        for file in README.md wiki/Home.md; do
+          if [ -f "$file" ]; then
+            sed -i "s/\`${{ steps.last_version.outputs.version }}\`/\`${{ steps.new_version.outputs.new_version }}\`" "$file"
+          fi
+        done
+    
     - name: Commit and push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
