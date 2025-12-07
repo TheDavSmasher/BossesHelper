@@ -36,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public Random Random { get; private set; }
 
-		public int CurrentPatternIndex { get; private set; }
+		public int CurrentPatternIndex { get; private set; } = 0;
 
 		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
 
