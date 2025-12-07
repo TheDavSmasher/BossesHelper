@@ -67,7 +67,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 		public void End(EndReason reason)
 		{
-			endFunction?.Call(reason);
+			endFunction?.Call();
 			onEndMethods[reason]?.Call();
 		}
 
