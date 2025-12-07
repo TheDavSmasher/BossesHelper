@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -76,7 +77,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					foreach (ModAsset luaFile in luaFiles.Children)
 					{
 						IBossAction action = creator(luaFile.PathVirtual, controller);
-						if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
+						if (!actions.TryAdd(Path.GetFileName(luaFile.PathVirtual), action))
 							Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
 					}
 				}
