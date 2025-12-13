@@ -59,7 +59,7 @@ jobs:
 
     - name: Update everest.yaml
       run: |
-        VERS="${{ steps.new_version.outputs.new_version }}"
+        export VERS="${{ steps.new_version.outputs.new_version }}"
         yq e '.[0].Version = strenv(VERS)' -i everest.yaml
         git commit -am "[chore] Updated everest.yaml to version $VERS" && git push
       
