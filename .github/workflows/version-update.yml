@@ -26,9 +26,15 @@ jobs:
       run: |
         LAST_VERSION=$(yq e '.[0].Version' everest.yaml)
         echo $LAST_VERSION
+        echo "last_version=$LAST_VERSION" >> $GITHUB_OUTPUT
     
     - name: Get new version
       id: new_version
       run: |
+        ver_parts=$(echo ${{ steps.last_version.outputs.last_version }} | tr "." "\n")
+        for part in $ver_parts
+        do
+          echo $part
+        done
         echo "Doing a ${{ inputs.update }} update."
       
