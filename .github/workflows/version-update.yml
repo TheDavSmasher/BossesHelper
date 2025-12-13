@@ -18,13 +18,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v5
+
     - name: Configure git
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-    - name: Checkout Repo
-      uses: actions/checkout@v5
 
     - name: Get last version
       id: last_version
