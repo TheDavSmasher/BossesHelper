@@ -24,7 +24,6 @@ jobs:
     - name: Get last version
       id: last_version
       run: |
-        cd ../..
         LAST_VERSION=$(yq e '.[0].Version' everest.yaml)
         echo $LAST_VERSION
     
