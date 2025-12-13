@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Configure git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
     - name: Checkout Repo
       uses: actions/checkout@v5
 
@@ -49,4 +54,10 @@ jobs:
         NEW_VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
         echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "Doing a ${{ inputs.update }} update to v$NEW_VERSION."
+
+    - name: Update everest.yaml
+      run: |
+        vers = ${{ steps.new_version.outputs.new_version }}
+        yq e '.[0].Version = $vers' -i everest.yaml
+        git commit -am "[chore] Updated everest.yaml to version $vers" && git push
       
