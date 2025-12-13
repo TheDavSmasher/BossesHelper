@@ -36,5 +36,6 @@ jobs:
         do
           echo $part
         done
+        echo ${{ inputs }}
         echo "Doing a ${{ inputs.update }} update."
       
