@@ -36,7 +36,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public Random Random { get; private set; }
 
-		public int CurrentPatternIndex { get; private set; }
+		public int CurrentPatternIndex { get; private set; } = 0;
 
 		private BossPattern CurrentPattern => AllPatterns[CurrentPatternIndex];
 
@@ -60,7 +60,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				Health = data.Int("bossHealthMax", -1);
 				startAttackingImmediately = data.Bool("startAttackingImmediately");
 			}
-			Everest.Events.Player.OnDie += _ => CurrentPattern.EndAction(BossAttack.EndReason.PlayerDied);
 		}
 
 		public override void Added(Scene scene)
@@ -70,6 +69,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			int tasSeed = BossesHelperModule.Instance.TASSeed;
 			int generalSeed = tasSeed > 0 ? tasSeed : (int)Math.Floor(Scene.TimeActive);
 			Random = new Random(generalSeed * 37 + new Crc32().Get(SourceId.Key));
+			Everest.Events.Player.OnDie += OnPlayerDie;
 		}
 
 		public override void Awake(Scene scene)
@@ -93,6 +93,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			base.Removed(scene);
 			DestroyAll();
 			Puppet.RemoveSelf();
+			Everest.Events.Player.OnDie -= OnPlayerDie;
 		}
 
 		public override void Update()
@@ -113,6 +114,11 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 					ChangeToPattern();
 				}
 			}
+		}
+
+		private void OnPlayerDie(Player _)
+		{
+			CurrentPattern.EndAction(BossAttack.EndReason.PlayerDied);
 		}
 
 		private bool IsPlayerWithinSpecifiedRegion(Vector2 entityPos)
