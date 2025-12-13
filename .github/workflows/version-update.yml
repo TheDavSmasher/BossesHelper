@@ -18,15 +18,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Configure git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
     - name: Checkout Repo
       uses: actions/checkout@v5
 
     - name: Get last version
       id: last_version
-      run: 
+      run: |
+        LAST_VERSION=$(yq e '.[0].Version' everest.yaml)
+        echo $LAST_VERSION
+        echo "last_version=$LAST_VERSION" >> $GITHUB_OUTPUT
     
     - name: Get new version
       id: new_version
       run: |
-        echo "Doing a ${{ inputs.update }} update."
+        IFS='.' read -ra PARTS <<< ${{ steps.last_version.outputs.last_version }}
+        case ${{ inputs.update }} in
+          patch)
+            ((PARTS[2]++))
+            ;;
+          minor)
+            ((PARTS[1]++))
+            PARTS[2]=0
+            ;;
+          Major)
+            ((PARTS[0]++))
+            PARTS[1]=0
+            PARTS[2]=0
+            ;;
+        esac
+        NEW_VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}"
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "Doing a ${{ inputs.update }} update to v$NEW_VERSION."
+
+    - name: Update everest.yaml
+      run: |
+        vers = ${{ steps.new_version.outputs.new_version }}
+        yq e '.[0].Version = $vers' -i everest.yaml
+        git commit -am "[chore] Updated everest.yaml to version $vers" && git push
       
