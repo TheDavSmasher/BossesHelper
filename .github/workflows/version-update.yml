@@ -32,6 +32,19 @@ jobs:
       id: new_version
       run: |
         IFS='.' read -ra PARTS <<< ${{ steps.last_version.outputs.last_version }}
+        case ${{ inputs.update }} in
+          patch)
+            PARTS[2]=PARTS[2] + 1
+            ;;
+          minor)
+            PARTS[1]=PARTS[1] + 1
+            PARTS[2]=0
+            ;;
+          Major)
+            PARTS[0]=PARTS[0] + 1
+            PARTS[1]=0
+            PARTS[2]=0
+            ;;
         for part in ${PARTS[@]}
         do
           echo $part
