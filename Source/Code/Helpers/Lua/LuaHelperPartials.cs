@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.BossesHelper.Code.Helpers;
+﻿using Celeste.Mod.BossesHelper.Code.Components;
+using Celeste.Mod.BossesHelper.Code.Helpers;
 using Monocle;
 using System.Collections;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace Celeste.Mod.BossesHelper
 
 			protected override void SetBossCollisionCollider()
 			{
-				if (BossCollision is PlayerCollider collider)
+				if (BossCollision is SidekickTarget collider)
 				{
 					collider.Collider = Hurtbox;
 				}
