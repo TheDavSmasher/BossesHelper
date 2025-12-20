@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Components;
 using Celeste.Mod.BossesHelper.Code.Helpers;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -79,7 +80,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				new(SourceData.Attr("attacksPath"), BossAttack.Create),
 				new(SourceData.Attr("eventsPath"), BossEvent.Create)
 			);
-			Puppet.BossFunctions = new(GetLuaPath(SourceData.Attr("functionsPath")), this);
+			Puppet.BossFunctions = new BossFunctions(this).LoadFile(GetLuaPath(SourceData.Attr("functionsPath")));
 			AllPatterns.AddRange(ReadPatternFile(SourceData.Attr("patternsPath"), this));
 			for (int i = 0; i < AllPatterns.Count; i++)
 			{

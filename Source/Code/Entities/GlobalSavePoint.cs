@@ -20,7 +20,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		public readonly Sprite Sprite;
 
-		public string Filepath { get; init; }
+		private readonly string filepath;
 
 		private LuaFunction onInteract;
 
@@ -37,7 +37,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				{ "savePoint", this },
 				{ "spawnPoint", Changer.spawnPoint }
 			};
-			Filepath = GetLuaPath(entityData.String("luaFile"));
+			filepath = GetLuaPath(entityData.String("luaFile"));
 			string spriteName = entityData.String("savePointSprite");
 			if (GFX.SpriteBank.TryCreate(spriteName, out Sprite))
 				Add(Sprite);
@@ -54,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
-			this.LoadFile();
+			this.LoadFile(filepath);
 		}
 
 		public void Initialize(LuaFunction[] funcs)

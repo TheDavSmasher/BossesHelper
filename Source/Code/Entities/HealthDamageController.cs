@@ -36,8 +36,6 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public PrepareMode Mode => PrepareMode.Function;
 
-			public string Filepath => HealthData.onDamageFunction;
-
 			public Dictionary<string, object> Values { get; private set; }
 
 			public void UpdateState(PlayerHealthBar healthBar)
@@ -45,7 +43,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 				this.ChangeTagState(Tags.Global, HealthData.globalController);
 				Scene.GetPlayer().AddIFramesWatch();
 				Values = new() { { "healthBar", healthBar } };
-				this.LoadFile();
+				this.LoadFile(HealthData.onDamageFunction);
 			}
 
 			public void Initialize(LuaFunction[] funcs)

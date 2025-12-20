@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.BossesHelper.Code.Entities;
+using Celeste.Mod.BossesHelper.Code.Helpers.Lua;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -63,7 +64,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Lua Files
-		public record LuaPathReader(string Path, Func<string, BossController, IBossAction> Creator);
+		public record LuaPathReader(string Path, Func<BossController, ILuaBossAction> Creator);
 
 		public static Dictionary<string, IBossAction> ReadLuaFiles(
 			this BossController controller, params LuaPathReader[] readers)
@@ -75,7 +76,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				{
 					foreach (ModAsset luaFile in luaFiles.Children)
 					{
-						IBossAction action = creator(luaFile.PathVirtual, controller);
+						IBossAction action = creator(controller).LoadFile(luaFile.PathVirtual);
 						if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
 							Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
 					}
