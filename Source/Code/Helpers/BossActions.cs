@@ -14,11 +14,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		IEnumerator Perform();
 	}
 
-	public interface IBossActionCreator<TSelf> : IBossAction where TSelf : IBossActionCreator<TSelf>
-	{
-		abstract static TSelf Create(string filepath, BossController controller);
-	}
-
 	public abstract class BossLuaLoader(BossController controller) : ILuaLoader
 	{
 		public abstract PrepareMode Mode { get; }
@@ -34,7 +29,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		};
 	}
 
-	public class BossAttack : BossLuaLoader, IBossActionCreator<BossAttack>
+	public class BossAttack : BossLuaLoader, IBossAction
 	{
 		private readonly LuaFunction attackFunction;
 
@@ -74,7 +69,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		public static BossAttack Create(string filepath, BossController controller) => new(filepath, controller);
 	}
 
-	public class BossEvent : BossLuaLoader, IBossActionCreator<BossEvent>
+	public class BossEvent : BossLuaLoader, IBossAction
 	{
 		private class CutsceneWrapper : CutsceneEntity
 		{
