@@ -76,9 +76,9 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
-			BossActions = this.ReadLuaFiles(
-				new(SourceData.Attr("attacksPath"), BossAttack.Create),
-				new(SourceData.Attr("eventsPath"), BossEvent.Create)
+			BossActions = ReadLuaFiles(
+				new(SourceData.Attr("attacksPath"), () => new BossAttack(this)),
+				new(SourceData.Attr("eventsPath"), () => new BossEvent(this))
 			);
 			Puppet.BossFunctions = new BossFunctions(this).LoadFile(GetLuaPath(SourceData.Attr("functionsPath")));
 			AllPatterns.AddRange(ReadPatternFile(SourceData.Attr("patternsPath"), this));

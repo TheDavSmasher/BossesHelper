@@ -68,8 +68,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			endFunction?.Call(reason);
 			onEndMethods[reason]?.Call();
 		}
-
-		public static BossAttack Create(BossController controller) => new(controller);
 	}
 
 	public class BossEvent : BossLuaLoader, ILuaBossAction
@@ -118,8 +116,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			Scene.Add(Cutscene);
 			return While(() => Cutscene.Running, true);
 		}
-
-		public static BossEvent Create(BossController controller) => new(controller);
 	}
 
 	internal class BossFunctions(BossController controller)

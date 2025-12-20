@@ -64,10 +64,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#endregion
 
 		#region Lua Files
-		public record LuaPathReader(string Path, Func<BossController, ILuaBossAction> Creator);
+		public record LuaPathReader(string Path, Func<ILuaBossAction> Creator);
 
-		public static Dictionary<string, IBossAction> ReadLuaFiles(
-			this BossController controller, params LuaPathReader[] readers)
+		public static Dictionary<string, IBossAction> ReadLuaFiles(params LuaPathReader[] readers)
 		{
 			Dictionary<string, IBossAction> actions = [];
 			foreach (var (path, creator) in readers)
@@ -76,7 +75,7 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 				{
 					foreach (ModAsset luaFile in luaFiles.Children)
 					{
-						IBossAction action = creator(controller).LoadFile(luaFile.PathVirtual);
+						IBossAction action = creator().LoadFile(luaFile.PathVirtual);
 						if (!actions.TryAdd(luaFile.PathVirtual[(path.Length + 1)..], action))
 							Logger.Error("Bosses Helper", "Two Lua files with the same name were given.");
 					}
