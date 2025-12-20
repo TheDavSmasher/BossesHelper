@@ -222,7 +222,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			Player player = scene.GetPlayer();
 			if (scene.Tracker.GetEntity<BadelineSidekick>() == null)
 			{
-				(scene as Level).Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
+				scene.Add(new BadelineSidekick(player.Position + new Vector2(-16f * (int)player.Facing, -4f), freezeSidekickOnAttack, sidekickCooldown));
 			}
 		}
 
