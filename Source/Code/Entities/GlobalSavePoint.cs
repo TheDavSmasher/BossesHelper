@@ -54,7 +54,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
-			onInteract = ReadLuaFilePath(filepath, this.LoadFile)[0];
+			onInteract = this.LoadFile(GetLuaPath(filepath))[0];
 		}
 
 		public void OnTalk(Player _)
