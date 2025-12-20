@@ -66,9 +66,8 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		#region Lua Files
 		public record LuaPathReader(string Path, Func<ILuaBossAction> Creator);
 
-		public static Dictionary<string, IBossAction> ReadLuaFiles(params LuaPathReader[] readers)
+		public static void ReadLuaFiles(Dictionary<string, IBossAction> actions, params LuaPathReader[] readers)
 		{
-			Dictionary<string, IBossAction> actions = [];
 			foreach (var (path, creator) in readers)
 			{
 				if (TryGetLuaAsset(path, false, out ModAsset luaFiles))
@@ -81,7 +80,6 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 					}
 				}
 			}
-			return actions;
 		}
 
 		public static string GetLuaPath(string filepath)

@@ -33,7 +33,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 		private bool playerHasMoved;
 
-		private Dictionary<string, IBossAction> BossActions;
+		private readonly Dictionary<string, IBossAction> BossActions = [];
 
 		public Random Random { get; private set; }
 
@@ -76,7 +76,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 		public override void Awake(Scene scene)
 		{
 			base.Awake(scene);
-			BossActions = ReadLuaFiles(
+			ReadLuaFiles(BossActions,
 				new(SourceData.Attr("attacksPath"), () => new BossAttack(this)),
 				new(SourceData.Attr("eventsPath"), () => new BossEvent(this))
 			);
