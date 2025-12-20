@@ -14,11 +14,15 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 		IEnumerator Perform();
 	}
 
-	public abstract class BossLuaLoader(BossController controller) : ILuaLoader
+	public abstract class BossLuaLoader(string filepath, BossController controller) : ILuaLoader
 	{
 		public abstract PrepareMode Mode { get; }
 
+		public abstract void Initialize(LuaFunction[] funcs);
+
 		public Scene Scene => controller.Scene;
+
+		public string Filepath => filepath;
 
 		public Dictionary<string, object> Values { get; init; } = new()
 		{
@@ -31,9 +35,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	public class BossAttack : BossLuaLoader, IBossAction
 	{
-		private readonly LuaFunction attackFunction;
+		private LuaFunction attackFunction;
 
-		private readonly LuaFunction endFunction;
+		private LuaFunction endFunction;
 
 		public enum EndReason
 		{
@@ -42,17 +46,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			PlayerDied
 		}
 
-		private readonly EnumDict<EndReason, LuaFunction> onEndMethods;
+		private EnumDict<EndReason, LuaFunction> onEndMethods;
 
 		public override PrepareMode Mode => PrepareMode.Attack;
 
 		public BossAttack(string filepath, BossController controller)
-			: base(controller)
+			: base(filepath, controller)
 		{
-			LuaFunction[] array = this.LoadFile(filepath);
-			attackFunction = array[0];
-			endFunction = array[1];
-			onEndMethods = new(option => array[(int)option + 2]);
+			this.LoadFile();
+		}
+
+		public override void Initialize(LuaFunction[] funcs)
+		{
+			attackFunction = funcs[0];
+			endFunction = funcs[1];
+			onEndMethods = new(option => funcs[(int)option + 2]);
 		}
 
 		public IEnumerator Perform()
@@ -73,18 +81,9 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 	{
 		private class CutsceneWrapper : CutsceneEntity
 		{
-			private readonly LuaFunction StartFunction;
+			public LuaFunction StartFunction;
 
-			private readonly LuaFunction EndFunction;
-
-			public CutsceneWrapper(BossEvent @event, string filepath)
-				: base()
-			{
-				@event.Values.Add("cutsceneEntity", this);
-				LuaFunction[] funcs = @event.LoadFile(filepath);
-				StartFunction = funcs[0];
-				EndFunction = funcs[1];
-			}
+			public LuaFunction EndFunction;
 
 			public override void OnBegin(Level level)
 			{
@@ -103,14 +102,21 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 			}
 		}
 
-		private readonly CutsceneWrapper Cutscene;
+		private readonly CutsceneWrapper Cutscene = new();
 
 		public override PrepareMode Mode => PrepareMode.Cutscene;
 
 		public BossEvent(string filepath, BossController controller)
-			: base(controller)
+			: base(filepath, controller)
 		{
-			Cutscene = new(this, filepath);
+			Values.Add("cutsceneEntity", Cutscene);
+			this.LoadFile();
+		}
+
+		public override void Initialize(LuaFunction[] funcs)
+		{
+			Cutscene.StartFunction = funcs[0];
+			Cutscene.EndFunction = funcs[1];
 		}
 
 		public IEnumerator Perform()
@@ -124,18 +130,22 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers
 
 	internal class BossFunctions : BossLuaLoader
 	{
-		private readonly EnumDict<BossPuppet.HurtModes, LuaFunction> onDamageMethods;
+		private EnumDict<BossPuppet.HurtModes, LuaFunction> onDamageMethods;
 
 		public override PrepareMode Mode => PrepareMode.Interrupt;
 
 		public LuaProxyCoroutine this[BossPuppet.HurtModes m] => new(onDamageMethods[m]);
 
 		public BossFunctions(string filepath, BossController controller)
-			: base(controller)
+			: base(filepath,controller)
 		{
-			LuaFunction[] array = this.LoadFile(filepath);
-			array[0]?.Call();
-			onDamageMethods = new(option => array.ElementAtOrDefault((int)option + 2) ?? array[1]);
+			this.LoadFile();
+		}
+
+		public override void Initialize(LuaFunction[] funcs)
+		{
+			funcs[0]?.Call();
+			onDamageMethods = new(option => funcs.ElementAtOrDefault((int)option + 2) ?? funcs[1]);
 		}
 	}
 }

@@ -27,6 +27,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 		Dictionary<string, object> Values { get; }
 
 		Scene Scene { get; }
+
+		string Filepath { get; }
+
+		void Initialize(LuaFunction[] funcs);
 	}
 	#endregion
 
@@ -98,10 +102,10 @@ namespace Celeste.Mod.BossesHelper.Code.Helpers.Lua
 			return luaTable;
 		}
 
-		public static LuaFunction[] LoadFile(this ILuaLoader self, string filename)
+		public static void LoadFile(this ILuaLoader self)
 		{
 			self.Values.Add("player", self.Scene.GetPlayer());
-			return LoadFile(filename, self.Mode, self.Values);
+			self.Initialize(LoadFile(self.Filepath, self.Mode, self.Values));
 		}
 
 		public static LuaFunction[] LoadFile(string filename, PrepareMode mode, Dictionary<string, object> passedVals = null)

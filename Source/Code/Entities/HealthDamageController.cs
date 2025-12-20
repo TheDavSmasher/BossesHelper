@@ -36,16 +36,22 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 
 			public PrepareMode Mode => PrepareMode.Function;
 
+			public string Filepath => HealthData.onDamageFunction;
+
 			public Dictionary<string, object> Values { get; private set; }
 
 			public void UpdateState(PlayerHealthBar healthBar)
 			{
 				this.ChangeTagState(Tags.Global, HealthData.globalController);
-				Values = new() { { "healthBar", healthBar } };
-				LuaFunction[] array = this.LoadFile(HealthData.onDamageFunction);
-				onDamage = array[0];
-				onRecover = array[1];
 				Scene.GetPlayer().AddIFramesWatch();
+				Values = new() { { "healthBar", healthBar } };
+				this.LoadFile();
+			}
+
+			public void Initialize(LuaFunction[] funcs)
+			{
+				onDamage = funcs[0];
+				onRecover = funcs[1];
 			}
 
 			public int TakeDamage(Vector2 direction, int amount = 1, bool silent = false, bool stagger = true, bool evenIfInvincible = false)
