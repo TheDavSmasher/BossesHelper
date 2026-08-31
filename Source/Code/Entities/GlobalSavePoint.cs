@@ -32,7 +32,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 			: base(entityData.Position + offset)
 		{
 			Add(Changer = new(entityData.Level, entityData.Nodes.FirstOrDefault(Position),
-				entityData.Enum("respawnType", Player.IntroTypes.Respawn)));
+				entityData.Enum("respawnType", GlobalSavePointChanger.UseOldIntroType)));
 			Values = new() {
 				{ "savePoint", this },
 				{ "spawnPoint", Changer.spawnPoint }

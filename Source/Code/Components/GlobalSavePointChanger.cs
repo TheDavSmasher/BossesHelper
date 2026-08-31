@@ -9,6 +9,8 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 	public partial class GlobalSavePointChanger(object levelNameSrc, Vector2 spawnPoint, Player.IntroTypes spawnType = Player.IntroTypes.Respawn)
 		: Component(active: false, visible: false)
 	{
+		public const Player.IntroTypes UseOldIntroType = (Player.IntroTypes)(-1);
+
 		public readonly string spawnLevel = LevelName(levelNameSrc);
 
 		public Vector2 spawnPoint = spawnPoint;
@@ -52,7 +54,14 @@ namespace Celeste.Mod.BossesHelper.Code.Components
 		{
 			BossesHelperModule.Session.savePointLevel = spawnLevel;
 			BossesHelperModule.Session.savePointSpawn = spawnPoint;
-			BossesHelperModule.Session.savePointSpawnType = spawnType;
+			if (spawnType is UseOldIntroType && !BossesHelperModule.Session.savePointSet)
+			{
+				BossesHelperModule.Session.savePointSpawnType = Player.IntroTypes.Respawn;
+			}
+			else
+			{
+				BossesHelperModule.Session.savePointSpawnType = spawnType;
+			}
 			BossesHelperModule.Session.savePointSet = true;
 			Active = false;
 		}

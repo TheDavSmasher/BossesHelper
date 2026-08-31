@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Entities
 	[CustomEntity("BossesHelper/AutoSavePointSet")]
 	public class AutoSavePointSet(EntityData data, Vector2 pos, EntityID ID) : Entity(pos)
 	{
-		private readonly Player.IntroTypes spawnType = data.Enum<Player.IntroTypes>("respawnType");
+		private readonly Player.IntroTypes spawnType = data.Enum("respawnType", GlobalSavePointChanger.UseOldIntroType);
 
 		private readonly Vector2? spawnPosition = data.FirstNodeNullable();
 

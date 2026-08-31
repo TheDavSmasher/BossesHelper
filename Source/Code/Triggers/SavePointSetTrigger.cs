@@ -9,7 +9,7 @@ namespace Celeste.Mod.BossesHelper.Code.Triggers
 	public class SavePointSetTrigger(EntityData data, Vector2 offset, EntityID id)
 				: SingleUseTrigger(data, offset, id, data.Bool("onlyOnce"), true)
 	{
-		private readonly Player.IntroTypes spawnType = data.Enum<Player.IntroTypes>("respawnType");
+		private readonly Player.IntroTypes spawnType = data.Enum("respawnType", GlobalSavePointChanger.UseOldIntroType);
 
 		private readonly Vector2? spawnPosition = data.FirstNodeNullable() + offset;
 
