@@ -1,27 +1,12 @@
-local globalSavePoint = {}
+local mods = require("mods")
+---@module "SavePointShared"
+local savePointObj = mods.requireFromPlugin("libraries.savePointShared")
 
-local respawnOpts = {
-    "Transition",
-    "Respawn",
-    "WalkInRight",
-    "WalkInLeft",
-    "Jump",
-    "WakeUp",
-    "Fall",
-    "TempleMirrorVoid",
-    "None",
-    "ThinkForABit",
-    "UseOldValue"
-}
+local globalSavePoint = savePointObj.createData("PlayerSavePoint")
 
-globalSavePoint.name = "BossesHelper/PlayerSavePoint"
-globalSavePoint.depth = 0
---globalSavePoint.texture = ""
-globalSavePoint.nodeLimits = {0, 1}
-globalSavePoint.nodeLineRenderType = "line"
 globalSavePoint.fieldInformation = {
     respawnType = {
-        options = respawnOpts,
+        options = savePointObj.respawnOpts,
         editable = false
     },
     luaFile = {

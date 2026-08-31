@@ -1,26 +1,12 @@
-local autoSavePointSet = {}
+local mods = require("mods")
+---@module "SavePointShared"
+local savePointObj = mods.requireFromPlugin("libraries.savePointShared")
 
-local respawnOpts = {
-    "Transition",
-    "Respawn",
-    "WalkInRight",
-    "WalkInLeft",
-    "Jump",
-    "WakeUp",
-    "Fall",
-    "TempleMirrorVoid",
-    "None",
-    "ThinkForABit"
-}
+local autoSavePointSet = savePointObj.createData("AutoSavePointSet")
 
-autoSavePointSet.name = "BossesHelper/AutoSavePointSet"
-autoSavePointSet.depth = 0
---autoSavePointSet.texture = ""
-autoSavePointSet.nodeLimits = {0, 1}
-autoSavePointSet.nodeLineRenderType = "line"
 autoSavePointSet.fieldInformation = {
     respawnType = {
-        options = respawnOpts,
+        options = savePointObj.respawnOpts,
         editable = false
     }
 }
