@@ -24,6 +24,7 @@ healthSystemManager.fieldInformation = {
     healthIcons = {
         fieldType = "list",
         elementDefault = "",
+        minimumElements = 1,
         elementOptions = {
             fieldType = "string"
         }
